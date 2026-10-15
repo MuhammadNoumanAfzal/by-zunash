@@ -32,7 +32,7 @@ import {
     Phone,
     MapPin,
     Clock,
-    Sparkles,
+    Award,
     CheckCircle2,
     AlertCircle
 } from 'lucide';
@@ -67,7 +67,7 @@ const iconSet = {
     Phone,
     MapPin,
     Clock,
-    Sparkles,
+    Award,
     CheckCircle2,
     AlertCircle
 };

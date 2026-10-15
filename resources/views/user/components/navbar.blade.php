@@ -286,7 +286,7 @@
                         @click="mobileMenuOpen = false"
                         class="block text-sm font-medium tracking-wide uppercase text-gold-600 font-semibold"
                     >
-                        ✦ New Arrivals
+                        New Arrivals
                     </a>
                     <a 
                         href="{{ route('about') }}" 

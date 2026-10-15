@@ -159,7 +159,7 @@
 
                         <!-- Top Right Hallmark Emblem -->
                         <div class="absolute top-4 right-4 z-10 w-11 h-11 rounded-full bg-espresso-900/80 border border-gold/50 backdrop-blur-md flex items-center justify-center text-gold shadow-lg">
-                            <i data-lucide="sparkles" class="w-5 h-5"></i>
+                            <i data-lucide="award" class="w-5 h-5"></i>
                         </div>
                     </div>
 
@@ -489,7 +489,7 @@
 
             <div class="reveal delay-225 flex flex-col items-center p-4">
                 <div class="w-12 h-12 rounded-full bg-white border border-ivory-300 shadow-xs flex items-center justify-center text-gold-600 mb-3">
-                    <i data-lucide="sparkles" class="w-6 h-6"></i>
+                    <i data-lucide="award" class="w-6 h-6"></i>
                 </div>
                 <h4 class="font-serif text-sm font-semibold text-espresso-900 mb-1">100% Pure Leather</h4>
                 <p class="text-xs text-muted leading-relaxed">

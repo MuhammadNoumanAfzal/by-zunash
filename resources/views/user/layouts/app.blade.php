@@ -96,7 +96,7 @@
                 <div class="px-6 py-3 bg-ivory-100/60 border-b border-ivory-200 text-xs text-espresso-800">
                     <template x-if="$store.cart.subtotal >= 6000">
                         <div class="flex items-center gap-1.5 text-chocolate-700 font-medium">
-                            <i data-lucide="sparkles" class="w-4 h-4 text-gold"></i>
+                            <i data-lucide="truck" class="w-4 h-4 text-gold"></i>
                             <span>Complimentary Nationwide Delivery unlocked!</span>
                         </div>
                     </template>
@@ -238,7 +238,7 @@
         x-transition:leave="transition ease-in duration-200"
         x-transition:leave-start="opacity-100 translate-y-0"
         x-transition:leave-end="opacity-0 -translate-y-3"
-        class="fixed top-24 right-6 z-50 max-w-sm w-full bg-espresso-950 text-ivory px-4 py-3 rounded-lg shadow-2xl border border-gold/40 flex items-center justify-between gap-3"
+        class="fixed top-6 right-6 z-50 max-w-sm w-full bg-espresso-950 text-ivory px-4 py-3 rounded-lg shadow-2xl border border-gold/40 flex items-center justify-between gap-3"
         role="alert"
     >
         <div class="flex items-center gap-3">
@@ -249,7 +249,7 @@
             </template>
             <template x-if="$store.toast.type === 'info'">
                 <div class="w-7 h-7 rounded-full bg-white/10 flex items-center justify-center text-ivory flex-shrink-0">
-                    <i data-lucide="sparkles" class="w-4 h-4"></i>
+                    <i data-lucide="check" class="w-4 h-4 text-gold"></i>
                 </div>
             </template>
             <p class="text-xs font-medium text-ivory-200" x-text="$store.toast.message"></p>
