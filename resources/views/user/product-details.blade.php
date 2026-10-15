@@ -101,9 +101,34 @@
     x-data="{ 
         product: {{ $productJson }},
         activeImage: '{{ $product['image'] }}',
+        activeImageIndex: 0,
+        gallery: {{ json_encode($product['gallery'] ?? [$product['image']]) }},
         selectedColor: '{{ !empty($product['colors']) ? $product['colors'][0]['name'] : '' }}',
         quantity: 1,
         activeTab: 'specifications',
+        isZoomed: false,
+        zoomX: 50,
+        zoomY: 50,
+        lightboxOpen: false,
+        handleMouseMove(e) {
+            const rect = e.currentTarget.getBoundingClientRect();
+            const x = ((e.clientX - rect.left) / rect.width) * 100;
+            const y = ((e.clientY - rect.top) / rect.height) * 100;
+            this.zoomX = Math.max(0, Math.min(100, x));
+            this.zoomY = Math.max(0, Math.min(100, y));
+        },
+        setActiveImage(url, index) {
+            this.activeImage = url;
+            this.activeImageIndex = index;
+        },
+        nextImage() {
+            this.activeImageIndex = (this.activeImageIndex + 1) % this.gallery.length;
+            this.activeImage = this.gallery[this.activeImageIndex];
+        },
+        prevImage() {
+            this.activeImageIndex = (this.activeImageIndex - 1 + this.gallery.length) % this.gallery.length;
+            this.activeImage = this.gallery[this.activeImageIndex];
+        },
         addToCart() {
             $store.cart.addItem(this.product, this.selectedColor, this.quantity, true);
         },
@@ -112,6 +137,9 @@
             window.location.href = '{{ route('checkout') }}';
         }
     }" 
+    @keydown.escape.window="lightboxOpen = false"
+    @keydown.arrow-right.window="if (lightboxOpen) nextImage()"
+    @keydown.arrow-left.window="if (lightboxOpen) prevImage()"
     class="bg-white min-h-screen py-8 lg:py-12"
 >
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -130,31 +158,65 @@
             
             <!-- Gallery Section (Left 7 Cols) -->
             <div class="lg:col-span-7 space-y-4">
-                <!-- Large Active Image -->
-                <div class="relative aspect-[4/5] rounded-xl overflow-hidden bg-ivory-100 border border-ivory-300 shadow-luxury group">
+                <!-- Large Active Image with Precision Grain Zoom -->
+                <div 
+                    class="relative aspect-[4/5] rounded-2xl overflow-hidden bg-ivory-100 border border-ivory-300 shadow-luxury group select-none cursor-crosshair"
+                    @mouseenter="isZoomed = true"
+                    @mouseleave="isZoomed = false"
+                    @mousemove="handleMouseMove($event)"
+                    @click="lightboxOpen = true"
+                >
                     <img 
                         :src="activeImage" 
                         alt="{{ $product['name'] }}" 
-                        class="w-full h-full object-cover object-center transition-all duration-500 group-hover:scale-105"
+                        class="w-full h-full object-cover object-center transition-transform duration-150 ease-out will-change-transform"
+                        :style="isZoomed ? `transform-origin: ${zoomX}% ${zoomY}%; transform: scale(2.2);` : 'transform-origin: center center; transform: scale(1);'"
                     >
+
+                    <!-- Product Badge -->
                     @if(!empty($product['badge']))
-                        <div class="absolute top-4 left-4 z-10">
+                        <div class="absolute top-4 left-4 z-10 pointer-events-none">
                             <x-user.components.product-badge :badge="$product['badge']" />
                         </div>
                     @endif
+
+                    <!-- Expand / Fullscreen Lightbox Button -->
+                    <button 
+                        type="button"
+                        @click.stop="lightboxOpen = true"
+                        class="absolute top-4 right-4 z-10 p-2.5 rounded-full bg-white/90 backdrop-blur-md text-espresso-900 border border-ivory-300 shadow-md hover:bg-white hover:text-gold-600 transition-all transform hover:scale-110 focus:outline-none"
+                        title="View Fullscreen Lightbox"
+                        aria-label="Expand image"
+                    >
+                        <i data-lucide="maximize-2" class="w-4 h-4"></i>
+                    </button>
+
+                    <!-- Interactive Zoom Guide Indicator Pill -->
+                    <div class="absolute bottom-4 right-4 z-10 pointer-events-none flex items-center gap-2 px-3 py-1.5 rounded-full bg-black/65 backdrop-blur-md border border-white/20 text-white text-xs font-medium transition-all shadow-md">
+                        <i data-lucide="zoom-in" class="w-3.5 h-3.5 text-gold-300"></i>
+                        <span x-text="isZoomed ? 'Inspecting Grain (2.2x)' : 'Hover to Inspect Leather'"></span>
+                    </div>
+
+                    <!-- Slide Position Badge -->
+                    <div class="absolute bottom-4 left-4 z-10 pointer-events-none px-3 py-1 rounded-full bg-white/90 backdrop-blur-md border border-ivory-300 text-espresso-950 text-xs font-serif font-bold tracking-wider shadow-sm">
+                        <span x-text="(activeImageIndex + 1) + ' / ' + gallery.length"></span>
+                    </div>
                 </div>
 
-                <!-- Thumbnails Strip -->
+                <!-- Thumbnails Strip with Variation Badges -->
                 @if(!empty($product['gallery']) && count($product['gallery']) > 1)
-                    <div class="flex items-center gap-3 overflow-x-auto pb-2">
-                        @foreach($product['gallery'] as $img)
+                    <div class="flex items-center gap-3.5 overflow-x-auto pb-2 pt-1">
+                        @foreach($product['gallery'] as $idx => $img)
                             <button 
                                 type="button" 
-                                @click="activeImage = '{{ $img }}'" 
-                                class="w-20 h-24 rounded-lg overflow-hidden border-2 flex-shrink-0 transition-all focus:outline-none"
-                                :class="activeImage === '{{ $img }}' ? 'border-gold shadow-md' : 'border-ivory-300 opacity-70 hover:opacity-100'"
+                                @click="setActiveImage('{{ $img }}', {{ $idx }})" 
+                                class="relative w-20 sm:w-24 h-24 sm:h-28 rounded-xl overflow-hidden border-2 flex-shrink-0 transition-all duration-200 focus:outline-none group/thumb"
+                                :class="activeImage === '{{ $img }}' ? 'border-gold shadow-md ring-2 ring-gold/25 scale-[1.02]' : 'border-ivory-300 opacity-70 hover:opacity-100 hover:border-ivory-400'"
                             >
-                                <img src="{{ $img }}" alt="{{ $product['name'] }} Thumbnail" class="w-full h-full object-cover">
+                                <img src="{{ $img }}" alt="{{ $product['name'] }} Angle {{ $idx + 1 }}" class="w-full h-full object-cover group-hover/thumb:scale-105 transition-transform duration-300">
+                                <span class="absolute bottom-1 right-1 px-1.5 py-0.5 rounded text-[9px] font-bold bg-black/75 text-white backdrop-blur-xs">
+                                    0{{ $idx + 1 }}
+                                </span>
                             </button>
                         @endforeach
                     </div>
@@ -401,6 +463,62 @@
                 </div>
             </div>
         @endif
+
+        <!-- Fullscreen Editorial Lightbox Modal -->
+        <div 
+            x-show="lightboxOpen" 
+            x-cloak
+            x-transition:enter="transition ease-out duration-300"
+            x-transition:enter-start="opacity-0"
+            x-transition:enter-end="opacity-100"
+            x-transition:leave="transition ease-in duration-200"
+            x-transition:leave-start="opacity-100"
+            x-transition:leave-end="opacity-0"
+            class="fixed inset-0 z-50 bg-black/95 backdrop-blur-xl flex items-center justify-center p-4 sm:p-8"
+            @click.self="lightboxOpen = false"
+        >
+            <!-- Close Button -->
+            <button 
+                type="button" 
+                @click="lightboxOpen = false"
+                class="absolute top-6 right-6 z-50 p-3 rounded-full bg-white/10 hover:bg-white/20 text-white transition-all transform hover:scale-110 focus:outline-none"
+                aria-label="Close fullscreen view"
+            >
+                <i data-lucide="x" class="w-6 h-6"></i>
+            </button>
+
+            <!-- Navigation Buttons -->
+            <button 
+                type="button" 
+                @click="prevImage()"
+                class="absolute left-4 sm:left-8 top-1/2 -translate-y-1/2 p-3.5 rounded-full bg-white/10 hover:bg-white/25 text-white transition-all transform hover:scale-110 focus:outline-none"
+                aria-label="Previous image"
+            >
+                <i data-lucide="chevron-left" class="w-6 h-6"></i>
+            </button>
+            <button 
+                type="button" 
+                @click="nextImage()"
+                class="absolute right-4 sm:right-8 top-1/2 -translate-y-1/2 p-3.5 rounded-full bg-white/10 hover:bg-white/25 text-white transition-all transform hover:scale-110 focus:outline-none"
+                aria-label="Next image"
+            >
+                <i data-lucide="chevron-right" class="w-6 h-6"></i>
+            </button>
+
+            <!-- Image View Container -->
+            <div class="max-w-5xl max-h-[85vh] flex flex-col items-center">
+                <img 
+                    :src="activeImage" 
+                    alt="{{ $product['name'] }}" 
+                    class="max-h-[78vh] max-w-full object-contain rounded-2xl shadow-2xl border border-white/10"
+                >
+                <div class="mt-4 flex items-center gap-3 text-ivory-300 text-xs font-serif tracking-widest uppercase">
+                    <span>{{ $product['name'] }}</span>
+                    <span>•</span>
+                    <span>Angle <span x-text="activeImageIndex + 1"></span> of <span x-text="gallery.length"></span></span>
+                </div>
+            </div>
+        </div>
 
     </div>
 </div>

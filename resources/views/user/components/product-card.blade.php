@@ -63,6 +63,13 @@
                     loading="lazy"
                     class="absolute inset-0 w-full h-full object-cover object-center opacity-0 group-hover:opacity-100 transition-opacity duration-500 ease-in-out"
                 >
+                <!-- Multi-angle indicator pill -->
+                <div class="absolute bottom-3 left-3 z-10 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none">
+                    <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-black/65 backdrop-blur-sm text-[10px] text-white font-medium border border-white/10 shadow-xs">
+                        <i data-lucide="layers" class="w-2.5 h-2.5 text-gold-300"></i>
+                        <span>{{ count($product['gallery']) }} Angles</span>
+                    </span>
+                </div>
             @endif
         </a>
 
