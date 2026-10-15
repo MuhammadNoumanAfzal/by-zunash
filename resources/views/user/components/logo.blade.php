@@ -37,10 +37,10 @@
             <div class="flex flex-col">
                 <div class="flex items-center justify-center gap-1.5 -mb-0.5">
                     <span class="h-[0.5px] w-3 {{ $variant === 'white' ? 'bg-gold/60' : 'bg-gold/80' }}"></span>
-                    <span class="text-[9px] tracking-widest uppercase font-serif font-semibold {{ $variant === 'white' ? 'text-gold-200' : 'text-gold-600' }}">BY</span>
+                    <span class="text-[9px] tracking-[0.28em] uppercase font-cinzel font-semibold {{ $variant === 'white' ? 'text-gold-200' : 'text-gold-600' }}">BY</span>
                     <span class="h-[0.5px] w-3 {{ $variant === 'white' ? 'bg-gold/60' : 'bg-gold/80' }}"></span>
                 </div>
-                <span class="font-serif tracking-widest text-lg font-bold uppercase leading-none {{ $variant === 'white' ? 'text-ivory' : 'text-espresso-900' }} group-hover:text-gold transition-colors">
+                <span class="font-cinzel tracking-[0.22em] text-[17px] font-bold uppercase leading-none {{ $variant === 'white' ? 'text-ivory' : 'text-espresso-950' }} group-hover:text-gold transition-colors">
                     ZUNASH
                 </span>
             </div>

@@ -93,7 +93,19 @@
 
     @stack('schema')
 
-    <!-- Google Fonts & Stylesheet via Vite -->
+    <!-- Preconnect & Luxury Google Fonts (Cormorant Garamond, Cinzel, Plus Jakarta Sans) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Critical Alpine Cloak Protection (Prevents sidepane and drawer flash on navigation) -->
+    <style>
+        [x-cloak] {
+            display: none !important;
+        }
+    </style>
+
+    <!-- Stylesheet & Scripts via Vite -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     
     @stack('styles')
@@ -118,11 +130,12 @@
     <!-- Global Footer -->
     <x-user.components.footer />
 
-    <!-- Slide-over Shopping Bag Drawer -->
+    <!-- Slide-over Shopping Bag Drawer (Zero-FOUC Glitch Protected) -->
     <div 
         x-data 
         x-show="$store.cart.isOpen" 
         x-cloak 
+        style="display: none;"
         class="fixed inset-0 z-50 overflow-hidden" 
         role="dialog" 
         aria-modal="true"
@@ -131,6 +144,7 @@
         <!-- Background Backdrop -->
         <div 
             x-show="$store.cart.isOpen" 
+            x-cloak
             x-transition:enter="ease-in-out duration-400"
             x-transition:enter-start="opacity-0"
             x-transition:enter-end="opacity-100"
@@ -141,9 +155,10 @@
             class="fixed inset-0 bg-espresso-950/70 backdrop-blur-xs transition-opacity"
         ></div>
 
-        <div class="fixed inset-y-0 right-0 max-w-full flex pl-10">
+        <div class="fixed inset-y-0 right-0 max-w-full flex pl-10" x-show="$store.cart.isOpen" x-cloak style="display: none;">
             <div 
                 x-show="$store.cart.isOpen" 
+                x-cloak
                 x-transition:enter="transform transition ease-in-out duration-400 sm:duration-500"
                 x-transition:enter-start="translate-x-full"
                 x-transition:enter-end="translate-x-0"
@@ -309,6 +324,7 @@
         x-data 
         x-show="$store.toast.visible" 
         x-cloak
+        style="display: none;"
         x-transition:enter="transition ease-out duration-300"
         x-transition:enter-start="opacity-0 -translate-y-3"
         x-transition:enter-end="opacity-100 translate-y-0"

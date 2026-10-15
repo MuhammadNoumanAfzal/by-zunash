@@ -67,7 +67,8 @@ export default {
         },
       },
       fontFamily: {
-        serif: ['"Playfair Display"', 'Georgia', 'Cambria', 'serif'],
+        serif: ['"Cormorant Garamond"', 'Georgia', 'Cambria', 'serif'],
+        cinzel: ['"Cinzel"', 'serif'],
         sans: ['"Plus Jakarta Sans"', 'Inter', '-apple-system', 'BlinkMacSystemFont', 'sans-serif'],
       },
       letterSpacing: {

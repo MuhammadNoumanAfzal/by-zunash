@@ -90,12 +90,12 @@
     <div class="p-4 flex flex-col flex-grow justify-between bg-white">
         <div>
             <!-- Category Tag -->
-            <span class="text-[11px] uppercase tracking-wider text-muted font-medium block mb-1">
+            <span class="text-[10px] uppercase tracking-[0.18em] text-muted-dark font-medium font-sans block mb-1">
                 {{ $product['category_name'] ?? $product['category'] }}
             </span>
 
-            <!-- Title -->
-            <h3 class="font-serif text-base font-semibold text-espresso-900 group-hover:text-tan-600 transition-colors line-clamp-1 mb-1.5">
+            <!-- Title (Refined Couture Serif) -->
+            <h3 class="font-serif text-[17px] sm:text-[18px] font-medium text-espresso-950 group-hover:text-gold-600 transition-colors line-clamp-1 mb-1 leading-snug">
                 <a href="{{ route('product.details', $product['slug']) }}">
                     {{ $product['name'] }}
                 </a>
@@ -116,14 +116,14 @@
             @endif
         </div>
 
-        <!-- Price Section -->
+        <!-- Price Section (Clean Modern Luxury Sans) -->
         <div class="pt-2 border-t border-ivory-200 flex items-baseline justify-between">
             <div class="flex items-baseline gap-2">
-                <span class="font-serif text-base font-bold text-espresso-900">
-                    PKR {{ number_format($product['price']) }}
+                <span class="font-sans text-sm sm:text-[15px] font-semibold text-espresso-950 tracking-tight">
+                    <span class="text-[11px] font-medium text-muted mr-0.5">PKR</span>{{ number_format($product['price']) }}
                 </span>
                 @if(!empty($product['original_price']))
-                    <span class="text-xs text-muted-light line-through font-sans">
+                    <span class="text-[11px] text-muted-light line-through font-sans">
                         PKR {{ number_format($product['original_price']) }}
                     </span>
                 @endif

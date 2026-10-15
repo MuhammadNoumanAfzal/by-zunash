@@ -360,59 +360,194 @@
 </section>
 
 <!-- ========================================================
-     D. FEATURED CATEGORIES SECTION (With Scroll-Reveal)
+     D. FEATURED CATEGORIES SECTION (Interactive Luxury Slider)
      ======================================================== -->
-<section class="py-24 bg-ivory-50">
+<section 
+    x-data="{
+        scrollContainer: null,
+        canScrollPrev: false,
+        canScrollNext: true,
+        autoPlayTimer: null,
+        isHovered: false,
+        init() {
+            this.scrollContainer = this.$refs.slider;
+            this.updateScrollState();
+            this.scrollContainer.addEventListener('scroll', () => this.updateScrollState(), { passive: true });
+            this.startAutoPlay();
+        },
+        updateScrollState() {
+            if (!this.scrollContainer) return;
+            this.canScrollPrev = this.scrollContainer.scrollLeft > 15;
+            this.canScrollNext = this.scrollContainer.scrollLeft < (this.scrollContainer.scrollWidth - this.scrollContainer.clientWidth - 15);
+        },
+        startAutoPlay() {
+            this.stopAutoPlay();
+            this.autoPlayTimer = setInterval(() => {
+                if (this.isHovered || !this.scrollContainer) return;
+                const maxScroll = this.scrollContainer.scrollWidth - this.scrollContainer.clientWidth;
+                if (this.scrollContainer.scrollLeft >= maxScroll - 30) {
+                    this.scrollContainer.scrollTo({ left: 0, behavior: 'smooth' });
+                } else {
+                    this.scrollNext();
+                }
+            }, 2000);
+        },
+        stopAutoPlay() {
+            if (this.autoPlayTimer) {
+                clearInterval(this.autoPlayTimer);
+                this.autoPlayTimer = null;
+            }
+        },
+        scrollPrev() {
+            if (!this.scrollContainer) return;
+            const firstCard = this.scrollContainer.querySelector('a');
+            const step = firstCard ? (firstCard.offsetWidth + 20) : 280;
+            this.scrollContainer.scrollBy({ left: -step, behavior: 'smooth' });
+        },
+        scrollNext() {
+            if (!this.scrollContainer) return;
+            const firstCard = this.scrollContainer.querySelector('a');
+            const step = firstCard ? (firstCard.offsetWidth + 20) : 280;
+            this.scrollContainer.scrollBy({ left: step, behavior: 'smooth' });
+        }
+    }"
+    @mouseenter="isHovered = true"
+    @mouseleave="isHovered = false"
+    class="pt-6 pb-8 lg:pt-8 lg:pb-10 bg-ivory-50 overflow-hidden"
+>
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
-        <!-- Header -->
-        <div class="text-center max-w-2xl mx-auto mb-16 reveal">
-            <span class="text-gold-600 text-xs uppercase tracking-widest font-serif font-bold">Distinguished Lines</span>
-            <h2 class="font-serif text-3xl sm:text-4xl font-bold text-espresso-900 mt-2 mb-3">
-                Curated by Category
-            </h2>
-            <p class="text-sm text-muted leading-relaxed">
-                Explore our signature leather creations, each cut and assembled with uncompromising attention to longevity and tactile warmth.
-            </p>
+        <!-- Header with Slider Navigation Controls -->
+        <div class="flex flex-col md:flex-row md:items-end justify-between mb-5 sm:mb-6 reveal">
+            <div class="max-w-xl">
+                <span class="text-gold-600 text-[11px] uppercase tracking-widest font-serif font-bold">Distinguished Lines</span>
+                <h2 class="font-serif text-2xl sm:text-3xl lg:text-4xl font-bold text-espresso-900 mt-1 mb-1">
+                    Curated by Category
+                </h2>
+                <p class="text-xs sm:text-sm text-muted leading-relaxed">
+                    Slide through our signature leather collections, each hand-finished with uncompromising attention to longevity and tactile warmth.
+                </p>
+            </div>
+
+            <!-- Header Arrows (Previous & Next Navigation Icons) -->
+            <div class="flex items-center gap-2.5 mt-3 md:mt-0">
+                <button 
+                    type="button" 
+                    @click="scrollPrev()" 
+                    :disabled="!canScrollPrev" 
+                    class="w-10 h-10 rounded-full border border-espresso-950/20 bg-white text-espresso-900 flex items-center justify-center transition-all duration-200 shadow-xs focus:outline-none disabled:opacity-30 disabled:cursor-not-allowed hover:not-disabled:bg-espresso-950 hover:not-disabled:text-gold hover:not-disabled:border-espresso-950 active:scale-95"
+                    aria-label="Previous categories"
+                >
+                    <i data-lucide="chevron-left" class="w-5 h-5"></i>
+                </button>
+                <button 
+                    type="button" 
+                    @click="scrollNext()" 
+                    :disabled="!canScrollNext" 
+                    class="w-10 h-10 rounded-full border border-espresso-950/20 bg-white text-espresso-900 flex items-center justify-center transition-all duration-200 shadow-xs focus:outline-none disabled:opacity-30 disabled:cursor-not-allowed hover:not-disabled:bg-espresso-950 hover:not-disabled:text-gold hover:not-disabled:border-espresso-950 active:scale-95"
+                    aria-label="Next categories"
+                >
+                    <i data-lucide="chevron-right" class="w-5 h-5"></i>
+                </button>
+            </div>
         </div>
 
-        <!-- 5 Category Cards Grid with staggered reveal -->
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6">
-            @foreach($categories as $index => $cat)
-                @php
-                    $delayClass = ['delay-75', 'delay-150', 'delay-225', 'delay-300', 'delay-450'][$loop->index % 5];
-                @endphp
-                <a 
-                    href="{{ route('category', $cat['slug']) }}" 
-                    class="reveal {{ $delayClass }} group relative h-96 rounded-xl overflow-hidden shadow-xs hover:shadow-luxury hover:border-gold/50 transition-all duration-500 flex flex-col justify-end p-6 border border-ivory-300 bg-espresso-950"
-                >
-                    <!-- Background Image -->
-                    <img 
-                        src="{{ $cat['image'] }}" 
-                        alt="{{ $cat['name'] }}" 
-                        class="absolute inset-0 w-full h-full object-cover object-center transform transition-transform duration-700 group-hover:scale-110"
+        <!-- Slider Track (4 Cards Visible at once on desktop, Auto-scrolls, Pauses on Hover) -->
+        <div class="relative">
+            <div 
+                x-ref="slider"
+                class="flex items-stretch gap-4 sm:gap-5 overflow-x-auto scroll-smooth snap-x snap-mandatory hide-scrollbar pb-3 pt-1 -mx-4 px-4 sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8"
+            >
+                @foreach($categories as $cat)
+                    <a 
+                        href="{{ route('category', $cat['slug']) }}" 
+                        class="snap-start flex-shrink-0 w-[240px] sm:w-[260px] md:w-[270px] lg:w-[calc(25%-15px)] h-[370px] sm:h-[390px] lg:h-[400px] rounded-2xl overflow-hidden relative shadow-sm hover:shadow-2xl border border-ivory-300/80 group transition-all duration-500 bg-espresso-950 flex flex-col justify-end"
                     >
-                    <!-- Dark Gradient -->
-                    <div class="absolute inset-0 bg-gradient-to-t from-espresso-950/95 via-espresso-950/40 to-transparent group-hover:from-espresso-950 transition-all duration-500"></div>
+                        <!-- Atelier Collection Pill Badge -->
+                        <div class="absolute top-4 left-4 z-20">
+                            <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-black/55 backdrop-blur-md border border-white/20 text-gold-300 text-[10px] tracking-wider uppercase font-medium shadow-sm">
+                                <span>0{{ $loop->iteration }}</span>
+                                <span class="w-1 h-1 rounded-full bg-gold/70"></span>
+                                <span>{{ $cat['count'] ?? '4' }} Designs</span>
+                            </span>
+                        </div>
 
-                    <!-- Content -->
-                    <div class="relative z-10 text-ivory">
-                        <span class="text-[10px] uppercase tracking-widest text-gold font-serif block mb-1">
-                            {{ $cat['count'] }} Distinct Designs
-                        </span>
-                        <h3 class="font-serif text-xl font-bold text-white mb-1.5 group-hover:text-gold-200 transition-colors">
-                            {{ $cat['name'] }}
+                        <!-- Background Product Image with Smooth Hover Zoom -->
+                        <img 
+                            src="{{ $cat['image'] }}" 
+                            alt="{{ $cat['name'] }}" 
+                            class="absolute inset-0 w-full h-full object-cover object-center transform transition-transform duration-700 ease-out group-hover:scale-108 filter brightness-[0.98] contrast-[1.02]"
+                        >
+
+                        <!-- Base Deep Gradient (Keeps title anchored to the bottom and 100% readable) -->
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/92 via-black/40 to-transparent transition-opacity duration-300 z-10 pointer-events-none"></div>
+
+                        <!-- Enhanced Hover Dark Scrim (Guarantees 100% crisp visibility for revealed text) -->
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/98 via-black/85 to-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10 pointer-events-none backdrop-blur-[1px]"></div>
+
+                        <!-- Bottom Content Area (Anchored to Bottom Edge) -->
+                        <div class="relative z-20 p-5 sm:p-6 flex flex-col justify-end transition-all duration-300">
+                            <!-- Category Name (Always visible right at the bottom) -->
+                            <h3 class="font-serif text-xl sm:text-2xl font-bold text-white group-hover:text-gold-200 transition-colors duration-200 drop-shadow-md leading-tight">
+                                {{ $cat['name'] }}
+                            </h3>
+
+                            <!-- Detail Tagline & Explore Link (Smoothly revealed on hover with high contrast) -->
+                            <div class="grid grid-rows-[0fr] group-hover:grid-rows-[1fr] transition-all duration-400 ease-out">
+                                <div class="overflow-hidden opacity-0 group-hover:opacity-100 transition-opacity duration-400 ease-out delay-75">
+                                    <p class="text-xs text-ivory-100/90 font-light line-clamp-2 mt-2 mb-3 leading-relaxed drop-shadow-sm">
+                                        {{ $cat['tagline'] }}
+                                    </p>
+                                    <div class="inline-flex items-center gap-2 text-xs text-gold-300 font-bold uppercase tracking-widest group-hover:text-gold-200 transition-colors">
+                                        <span>Explore Collection</span>
+                                        <i data-lucide="arrow-right" class="w-3.5 h-3.5 transition-transform group-hover:translate-x-1.5"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </a>
+                @endforeach
+
+                <!-- 6th Slide: View Full Atelier Card -->
+                <a 
+                    href="{{ route('shop') }}" 
+                    class="snap-start flex-shrink-0 w-[240px] sm:w-[260px] md:w-[270px] lg:w-[calc(25%-15px)] h-[370px] sm:h-[390px] lg:h-[400px] rounded-2xl overflow-hidden relative shadow-sm hover:shadow-2xl border border-gold/40 group transition-all duration-500 bg-gradient-to-br from-espresso-950 via-[#1c120c] to-black flex flex-col justify-between p-6 sm:p-7 text-white"
+                >
+                    <div class="relative z-10">
+                        <div class="w-11 h-11 rounded-xl bg-gold/15 border border-gold/30 flex items-center justify-center text-gold mb-5 group-hover:scale-110 transition-transform">
+                            <i data-lucide="sparkles" class="w-5 h-5"></i>
+                        </div>
+                        <span class="text-gold-400 text-[10px] uppercase tracking-widest font-mono">Complete Archive</span>
+                        <h3 class="font-serif text-2xl font-bold text-white mt-1 mb-2">
+                            Discover Full Atelier
                         </h3>
-                        <p class="text-xs text-ivory-300 font-light line-clamp-2 opacity-90 mb-3">
-                            {{ $cat['tagline'] }}
+                        <p class="text-xs text-ivory-300/90 leading-relaxed font-light line-clamp-3">
+                            Explore all handcrafted leather creations with bespoke filters for price, hide type, and finish.
                         </p>
-                        <div class="inline-flex items-center gap-1 text-xs text-gold font-medium uppercase tracking-wider group-hover:translate-x-1.5 transition-transform">
-                            <span>Explore</span>
-                            <i data-lucide="chevron-right" class="w-3.5 h-3.5"></i>
+                    </div>
+
+                    <div class="relative z-10 pt-4 border-t border-white/10 flex items-center justify-between">
+                        <span class="text-xs uppercase tracking-widest font-bold text-gold group-hover:text-gold-light transition-colors">
+                            Browse All
+                        </span>
+                        <div class="w-9 h-9 rounded-full bg-gold text-black flex items-center justify-center transition-transform group-hover:translate-x-1 shadow-md">
+                            <i data-lucide="arrow-right" class="w-4 h-4"></i>
                         </div>
                     </div>
                 </a>
-            @endforeach
+            </div>
+        </div>
+
+        <!-- Slider Hint & Explore All Link -->
+        <div class="flex items-center justify-between text-xs text-muted pt-3 mt-2 border-t border-ivory-200/80">
+            <span class="flex items-center gap-1.5">
+                <i data-lucide="move-horizontal" class="w-4 h-4 text-gold-600"></i>
+                <span>Auto-sliding every 2s • Hover over any card to pause</span>
+            </span>
+            <a href="{{ route('shop') }}" class="font-semibold text-espresso-800 hover:text-gold-600 uppercase tracking-widest transition-colors flex items-center gap-1">
+                <span>View Full Catalog</span>
+                <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
+            </a>
         </div>
 
     </div>
@@ -421,7 +556,7 @@
 <!-- ========================================================
      E. BESTSELLERS SECTION (With Scroll-Reveal)
      ======================================================== -->
-<section class="py-24 bg-white border-t border-b border-ivory-200">
+<section class="pt-10 pb-16 lg:pt-12 lg:pb-20 bg-white border-t border-b border-ivory-200">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
         <div class="flex flex-col md:flex-row md:items-end justify-between mb-14 reveal">

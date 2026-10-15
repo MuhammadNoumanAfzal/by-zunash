@@ -32,7 +32,7 @@ return array (
       'slug' => 'shoulder-bags',
       'name' => 'Shoulder Bags',
       'tagline' => 'Timeless crossbodies and saddle bags designed for effortless mobility.',
-      'image' => 'https://images.unsplash.com/photo-1591561954557-26941169b49e?auto=format&fit=crop&w=800&q=80',
+      'image' => 'https://images.unsplash.com/photo-1548036328-c9fa89d128fa?auto=format&fit=crop&w=800&q=80',
       'count' => 4,
     ),
     'accessories' => 
