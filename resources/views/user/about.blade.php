@@ -1,7 +1,44 @@
 @extends('user.layouts.app')
 
-@section('title', 'About Our Atelier | By Zunash Luxury Leather')
-@section('meta_description', 'Discover the story behind By Zunash: pure drum-dyed full-grain hides, ancestral craftsmanship, and timeless leather goods in Pakistan.')
+@section('title', 'About Our Atelier & Heritage | By Zunash Leather Pakistan')
+@section('meta_description', 'Discover the story behind By Zunash: pure drum-dyed full-grain hides, ancestral Pakistani craftsmanship, and timeless heirloom leather goods.')
+@section('meta_keywords', 'about by zunash, pakistani leather brand, leather workshop lahore, full grain leather craft pakistan')
+@section('canonical', route('about'))
+
+@push('schema')
+<script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@graph": [
+        {
+            "@type": "AboutPage",
+            "@id": "{{ route('about') }}/#about",
+            "name": "About By Zunash Atelier",
+            "description": "Discover the story behind By Zunash: pure drum-dyed full-grain hides, ancestral Pakistani craftsmanship, and timeless heirloom leather goods.",
+            "url": "{{ route('about') }}"
+        },
+        {
+            "@type": "BreadcrumbList",
+            "@id": "{{ route('about') }}/#breadcrumb",
+            "itemListElement": [
+                {
+                    "@type": "ListItem",
+                    "position": 1,
+                    "name": "Home",
+                    "item": "{{ route('home') }}"
+                },
+                {
+                    "@type": "ListItem",
+                    "position": 2,
+                    "name": "About Atelier",
+                    "item": "{{ route('about') }}"
+                }
+            ]
+        }
+    ]
+}
+</script>
+@endpush
 
 @section('content')
 <div class="bg-white min-h-screen">

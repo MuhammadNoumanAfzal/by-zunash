@@ -5,16 +5,93 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <!-- SEO Meta Tags -->
-    <title>@yield('title', 'By Zunash | Premium Pakistani Leather Goods & Accessories')</title>
-    <meta name="description" content="@yield('meta_description', 'Discover handcrafted full-grain leather belts, luxury wallets, handbags, shoulder bags, and accessories in Pakistan by By Zunash. Nationwide Cash on Delivery.')">
-    <meta name="keywords" content="leather bags Pakistan, pure leather belts, leather wallets Pakistan, handmade leather accessories, By Zunash">
+    <!-- Primary SEO Meta Tags -->
+    <title>@yield('title', 'By Zunash | Luxury Pakistani Leather Goods — Belts, Wallets & Bags')</title>
+    <meta name="title" content="@yield('title', 'By Zunash | Luxury Pakistani Leather Goods — Belts, Wallets & Bags')">
+    <meta name="description" content="@yield('meta_description', 'Discover handcrafted full-grain leather belts, luxury bifold wallets, sculpted handbags, shoulder bags, and accessories in Pakistan by By Zunash. Nationwide Cash on Delivery.')">
+    <meta name="keywords" content="@yield('meta_keywords', 'pure leather belts Pakistan, full grain leather wallets Pakistan, luxury leather handbags Lahore, handmade leather bags Karachi, Pakistani leather goods, By Zunash')">
+    <meta name="robots" content="@yield('robots', 'index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1')">
+    <meta name="author" content="By Zunash Atelier">
+    <link rel="canonical" href="@yield('canonical', url()->current())">
 
-    <!-- OpenGraph / Social Media -->
-    <meta property="og:type" content="website">
-    <meta property="og:title" content="@yield('title', 'By Zunash | Premium Pakistani Leather Goods')">
-    <meta property="og:description" content="@yield('meta_description', 'Handcrafted full-grain leather goods for the discerning connoisseur.')">
+    <!-- Regional & Local Pakistani E-Commerce SEO -->
+    <meta name="geo.region" content="PK">
+    <meta name="geo.placename" content="Lahore, Karachi, Islamabad, Pakistan">
+    <meta name="geo.position" content="31.5204;74.3587">
+    <meta name="ICBM" content="31.5204, 74.3587">
+    <meta name="language" content="English">
+
+    <!-- Open Graph / Facebook / WhatsApp -->
+    <meta property="og:type" content="@yield('og_type', 'website')">
     <meta property="og:site_name" content="By Zunash">
+    <meta property="og:url" content="{{ url()->current() }}">
+    <meta property="og:title" content="@yield('og_title', View::getSection('title', 'By Zunash | Luxury Pakistani Leather Goods'))">
+    <meta property="og:description" content="@yield('og_description', View::getSection('meta_description', 'Handcrafted full-grain leather silhouettes, reversible belts, and accessories in Pakistan.'))">
+    <meta property="og:image" content="@yield('og_image', asset('images/hero/slide-bag.jpg'))">
+    <meta property="og:image:alt" content="By Zunash Luxury Pakistani Leathercraft">
+    <meta property="og:locale" content="en_PK">
+
+    <!-- Twitter Cards -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:url" content="{{ url()->current() }}">
+    <meta name="twitter:title" content="@yield('og_title', View::getSection('title', 'By Zunash | Luxury Pakistani Leather Goods'))">
+    <meta name="twitter:description" content="@yield('og_description', View::getSection('meta_description', 'Handcrafted full-grain leather silhouettes, reversible belts, and accessories in Pakistan.'))">
+    <meta name="twitter:image" content="@yield('og_image', asset('images/hero/slide-bag.jpg'))">
+
+    <!-- Google Global Structured Data (Organization & WebSite) -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@graph": [
+            {
+                "@type": "Organization",
+                "@id": "{{ url('/') }}/#organization",
+                "name": "By Zunash",
+                "url": "{{ url('/') }}",
+                "logo": {
+                    "@type": "ImageObject",
+                    "@id": "{{ url('/') }}/#logo",
+                    "url": "{{ asset('images/logo.png') }}",
+                    "caption": "By Zunash Luxury Leather"
+                },
+                "description": "Artisanal full-grain leather goods handcrafted in Pakistan. Heirloom reversible belts, RFID wallets, handbags, and bespoke accessories.",
+                "address": {
+                    "@type": "PostalAddress",
+                    "addressCountry": "PK",
+                    "addressLocality": "Lahore",
+                    "addressRegion": "Punjab"
+                },
+                "contactPoint": {
+                    "@type": "ContactPoint",
+                    "telephone": "+92-300-1234567",
+                    "contactType": "customer service",
+                    "areaServed": "PK",
+                    "availableLanguage": ["English", "Urdu"]
+                },
+                "sameAs": [
+                    "https://www.instagram.com",
+                    "https://www.facebook.com"
+                ]
+            },
+            {
+                "@type": "WebSite",
+                "@id": "{{ url('/') }}/#website",
+                "url": "{{ url('/') }}",
+                "name": "By Zunash",
+                "publisher": {
+                    "@id": "{{ url('/') }}/#organization"
+                },
+                "potentialAction": {
+                    "@type": "SearchAction",
+                    "target": "{{ route('search') }}?q={search_term_string}",
+                    "query-input": "required name=search_term_string"
+                }
+            }
+        ]
+    }
+    </script>
+
+    @stack('schema')
 
     <!-- Google Fonts & Stylesheet via Vite -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])

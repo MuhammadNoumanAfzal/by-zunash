@@ -8,13 +8,13 @@
   html {
     scroll-behavior: smooth;
     font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
-    color: #24160F;
-    background-color: #FAF8F5;
+    color: #121212;
+    background-color: #FAF9F6;
   }
 
   ::selection {
     background-color: #C5A16B;
-    color: #FFFFFF;
+    color: #0A0A0A;
   }
 
   h1, h2, h3, h4, .font-serif {
@@ -26,7 +26,7 @@
 /* Custom luxury utility classes */
 @layer utilities {
   .bg-leather-radial {
-    background: radial-gradient(circle at 50% 30%, rgba(74, 44, 32, 0.08) 0%, rgba(36, 22, 15, 0.02) 100%);
+    background: radial-gradient(circle at 50% 30%, rgba(197, 161, 107, 0.08) 0%, rgba(18, 18, 18, 0.02) 100%);
   }
 
   .text-gold-gradient {
@@ -139,6 +139,34 @@
   animation: pulseGold 4s ease-in-out infinite;
 }
 
+/* Hero Slider Staggered Animations */
+@keyframes heroReveal {
+  0% {
+    opacity: 0;
+    transform: translateY(22px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-hero-tag {
+  animation: heroReveal 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.05s both;
+}
+
+.animate-hero-title {
+  animation: heroReveal 0.75s cubic-bezier(0.16, 1, 0.3, 1) 0.15s both;
+}
+
+.animate-hero-desc {
+  animation: heroReveal 0.75s cubic-bezier(0.16, 1, 0.3, 1) 0.25s both;
+}
+
+.animate-hero-actions {
+  animation: heroReveal 0.75s cubic-bezier(0.16, 1, 0.3, 1) 0.35s both;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .reveal, .reveal-left, .reveal-right, .reveal-scale {
     opacity: 1 !important;
@@ -154,11 +182,11 @@
    CUSTOM LUXURY SWEETALERT2 STYLES
    ======================================================== */
 .swal2-popup.byzunash-swal-popup {
-  background: #24160F !important;
-  color: #F8F4ED !important;
+  background: #121212 !important;
+  color: #FAF9F6 !important;
   border: 1px solid rgba(197, 161, 107, 0.4) !important;
   border-radius: 1rem !important;
-  box-shadow: 0 25px 50px -12px rgba(15, 8, 4, 0.75), 0 0 25px -5px rgba(197, 161, 107, 0.25) !important;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.85), 0 0 25px -5px rgba(197, 161, 107, 0.25) !important;
   padding: 2rem 1.75rem !important;
   font-family: 'Plus Jakarta Sans', system-ui, sans-serif !important;
 }
@@ -173,7 +201,7 @@
 }
 
 .swal2-html-container.byzunash-swal-html {
-  color: #D3C7B5 !important;
+  color: #D4CDC0 !important;
   font-size: 0.875rem !important;
   line-height: 1.6 !important;
   font-weight: 300 !important;
@@ -186,7 +214,7 @@
 
 .byzunash-swal-confirm-btn {
   background-color: #C5A16B !important;
-  color: #17110E !important;
+  color: #0A0A0A !important;
   font-family: 'Plus Jakarta Sans', sans-serif !important;
   font-size: 0.75rem !important;
   font-weight: 700 !important;
@@ -207,8 +235,8 @@
 }
 
 .byzunash-swal-cancel-btn {
-  background-color: rgba(255, 255, 255, 0.1) !important;
-  color: #F8F4ED !important;
+  background-color: rgba(255, 255, 255, 0.08) !important;
+  color: #FAF9F6 !important;
   font-family: 'Plus Jakarta Sans', sans-serif !important;
   font-size: 0.75rem !important;
   font-weight: 600 !important;
@@ -222,7 +250,7 @@
 }
 
 .byzunash-swal-cancel-btn:hover {
-  background-color: rgba(255, 255, 255, 0.18) !important;
+  background-color: rgba(255, 255, 255, 0.15) !important;
   color: #FFFFFF !important;
 }
 
@@ -236,11 +264,11 @@
 }
 
 .swal2-popup.byzunash-swal-toast {
-  background: #24160F !important;
-  color: #F8F4ED !important;
+  background: #121212 !important;
+  color: #FAF9F6 !important;
   border: 1px solid rgba(197, 161, 107, 0.45) !important;
   border-radius: 0.75rem !important;
-  box-shadow: 0 20px 40px -10px rgba(15, 8, 4, 0.8), 0 0 25px -5px rgba(197, 161, 107, 0.25) !important;
+  box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.9), 0 0 25px -5px rgba(197, 161, 107, 0.25) !important;
   padding: 0.85rem 1.25rem !important;
 }
 

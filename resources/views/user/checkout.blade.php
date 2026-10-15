@@ -2,6 +2,7 @@
 
 @section('title', 'Secure Checkout | By Zunash Luxury Leather')
 @section('meta_description', 'Complete your order with nationwide Cash on Delivery or direct bank transfer across Pakistan.')
+@section('robots', 'noindex, nofollow')
 
 @section('content')
 <div 

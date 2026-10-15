@@ -1,7 +1,33 @@
 @extends('user.layouts.app')
 
-@section('title', 'Privacy & Data Protection Policy | By Zunash Luxury Leather')
-@section('meta_description', 'How By Zunash protects client personal data, telephone numbers, and delivery addresses in Pakistan.')
+@section('title', 'Privacy & Data Protection Policy | By Zunash Luxury Leather Pakistan')
+@section('meta_description', 'How By Zunash protects client personal data, telephone numbers, and delivery addresses in Pakistan under strict confidentiality.')
+@section('meta_keywords', 'by zunash privacy policy, data protection pakistan, customer confidentiality')
+@section('canonical', route('policy.privacy'))
+
+@push('schema')
+<script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "@id": "{{ route('policy.privacy') }}/#breadcrumb",
+    "itemListElement": [
+        {
+            "@type": "ListItem",
+            "position": 1,
+            "name": "Home",
+            "item": "{{ route('home') }}"
+        },
+        {
+            "@type": "ListItem",
+            "position": 2,
+            "name": "Privacy Policy",
+            "item": "{{ route('policy.privacy') }}"
+        }
+    ]
+}
+</script>
+@endpush
 
 @section('content')
 <div class="bg-white min-h-screen py-12 lg:py-20">

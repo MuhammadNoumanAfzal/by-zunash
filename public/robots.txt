@@ -1,2 +1,19 @@
 User-agent: *
-Disallow:
+Allow: /
+Allow: /shop
+Allow: /category/
+Allow: /product/
+Allow: /about
+Allow: /contact
+Allow: /faq
+Allow: /policies/
+
+# Disallow cart, checkout, private wishlist and internal search crawl
+Disallow: /cart
+Disallow: /checkout
+Disallow: /wishlist
+Disallow: /search
+
+# Dynamic XML Sitemaps
+Sitemap: http://127.0.0.1:8000/sitemap.xml
+Sitemap: https://byzunash.com/sitemap.xml

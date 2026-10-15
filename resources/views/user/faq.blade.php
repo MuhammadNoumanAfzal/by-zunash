@@ -1,7 +1,107 @@
 @extends('user.layouts.app')
 
-@section('title', 'Frequently Asked Questions | By Zunash Luxury Leather')
-@section('meta_description', 'Find answers regarding belt sizing, Cash on Delivery, genuine full-grain leather care, and shipping across Pakistan.')
+@section('title', 'Frequently Asked Questions & Leather Care | By Zunash Pakistan')
+@section('meta_description', 'Find clear answers regarding belt sizing, nationwide Cash on Delivery, genuine full-grain leather care, and shipping across Pakistan.')
+@section('meta_keywords', 'by zunash faqs, leather belt sizing pakistan, leather care tips, cash on delivery pakistan leather, exchange policy by zunash')
+@section('canonical', route('faq'))
+
+@push('schema')
+<script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@graph": [
+        {
+            "@type": "FAQPage",
+            "@id": "{{ route('faq') }}/#faq",
+            "mainEntity": [
+                {
+                    "@type": "Question",
+                    "name": "Is Cash on Delivery (COD) available across all of Pakistan?",
+                    "acceptedAnswer": {
+                        "@type": "Answer",
+                        "text": "Yes. We provide nationwide Cash on Delivery service covering all major urban hubs (Karachi, Lahore, Islamabad, Rawalpindi, Faisalabad, Multan, Peshawar, Quetta, Sialkot) as well as over 250 regional towns. You pay in cash directly to the courier rider upon delivery."
+                    }
+                },
+                {
+                    "@type": "Question",
+                    "name": "Can I pay via direct online bank transfer (IBFT)?",
+                    "acceptedAnswer": {
+                        "@type": "Answer",
+                        "text": "Yes. Simply select 'Direct Bank Transfer' during checkout. Our corporate account details (Meezan Bank & HBL) will be displayed. Please share your payment receipt via WhatsApp along with your order ID to expedite dispatch."
+                    }
+                },
+                {
+                    "@type": "Question",
+                    "name": "Are prices inclusive of applicable taxes?",
+                    "acceptedAnswer": {
+                        "@type": "Answer",
+                        "text": "All prices listed in PKR on By Zunash are all-inclusive product prices. Shipping is calculated transparently: orders of PKR 6,000 and above qualify for complimentary courier delivery."
+                    }
+                },
+                {
+                    "@type": "Question",
+                    "name": "How do I determine my correct belt size?",
+                    "acceptedAnswer": {
+                        "@type": "Answer",
+                        "text": "The golden rule for leather belts: order exactly 2 inches larger than your tailored trouser waist size. For example, if you wear a size 34 pant, order a size 36 belt. This allows the prong to sit comfortably in the middle hole."
+                    }
+                },
+                {
+                    "@type": "Question",
+                    "name": "Can the belts be shortened at home?",
+                    "acceptedAnswer": {
+                        "@type": "Answer",
+                        "text": "Our dress and casual belts feature a discreet screw-rivet buckle mount. With a simple flathead screwdriver, you can unscrew the buckle, trim the leather strap cleanly from the top end, punch a new hole, and re-tighten."
+                    }
+                },
+                {
+                    "@type": "Question",
+                    "name": "How many days does courier delivery take across Pakistan?",
+                    "acceptedAnswer": {
+                        "@type": "Answer",
+                        "text": "Orders placed before 2:00 PM are processed and handed over to courier dispatch within 24 hours. Major metropolitan cities (Lahore, Karachi, Islamabad, Rawalpindi) typically receive deliveries in 2–3 business days. Regional destinations require 3–5 business days."
+                    }
+                },
+                {
+                    "@type": "Question",
+                    "name": "Can I inspect the parcel before paying the courier rider?",
+                    "acceptedAnswer": {
+                        "@type": "Answer",
+                        "text": "Per standard courier operational regulations across Pakistan (TCS, Leopard, Trax), riders cannot allow flyers to be opened prior to payment handover. However, we back every shipment with an effortless 7-day direct exchange policy."
+                    }
+                },
+                {
+                    "@type": "Question",
+                    "name": "How do I maintain and condition pure full-grain leather?",
+                    "acceptedAnswer": {
+                        "@type": "Answer",
+                        "text": "Full-grain leather is a natural biological material that breathes. Keep it away from prolonged direct harsh sunlight or high humidity. If it gets wet from rain, pat gently with a dry microfibre towel and allow to air-dry naturally. Once every six months, apply a pea-sized dab of neutral beeswax leather balm."
+                    }
+                }
+            ]
+        },
+        {
+            "@type": "BreadcrumbList",
+            "@id": "{{ route('faq') }}/#breadcrumb",
+            "itemListElement": [
+                {
+                    "@type": "ListItem",
+                    "position": 1,
+                    "name": "Home",
+                    "item": "{{ route('home') }}"
+                },
+                {
+                    "@type": "ListItem",
+                    "position": 2,
+                    "name": "FAQs",
+                    "item": "{{ route('faq') }}"
+                }
+            ]
+        }
+    ]
+}
+</script>
+@endpush
 
 @section('content')
 <div 

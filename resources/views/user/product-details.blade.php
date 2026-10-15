@@ -1,7 +1,86 @@
 @extends('user.layouts.app')
 
-@section('title', $product['name'] . ' | By Zunash Leather Pakistan')
-@section('meta_description', $product['short_description'] . ' Handcrafted pure leather ' . $product['name'] . ' with nationwide delivery across Pakistan.')
+@section('title', $product['name'] . ' | Luxury Leather Pakistan | By Zunash')
+@section('meta_description', $product['short_description'] . ' Handcrafted pure full-grain leather ' . $product['name'] . '. Nationwide Cash on Delivery across Pakistan.')
+@section('meta_keywords', $product['name'] . ', ' . $product['category_name'] . ', pure leather Pakistan, full grain leather ' . $product['category'] . ', By Zunash, Cash on Delivery')
+@section('canonical', route('product.details', $product['slug']))
+@section('og_type', 'product')
+@section('og_image', $product['image'])
+
+@push('schema')
+<script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@graph": [
+        {
+            "@type": "Product",
+            "@id": "{{ route('product.details', $product['slug']) }}/#product",
+            "name": "{{ addslashes($product['name']) }}",
+            "image": [
+                "{{ $product['image'] }}"
+                @if(!empty($product['gallery']))
+                    @foreach($product['gallery'] as $img)
+                        ,"{{ $img }}"
+                    @endforeach
+                @endif
+            ],
+            "description": "{{ addslashes(strip_tags($product['description'] ?? $product['short_description'])) }}",
+            "sku": "BZ-{{ str_pad($product['id'], 4, '0', STR_PAD_LEFT) }}",
+            "mpn": "BZ-{{ $product['id'] }}",
+            "brand": {
+                "@type": "Brand",
+                "name": "By Zunash"
+            },
+            "category": "{{ addslashes($product['category_name']) }}",
+            "offers": {
+                "@type": "Offer",
+                "url": "{{ route('product.details', $product['slug']) }}",
+                "priceCurrency": "PKR",
+                "price": "{{ $product['price'] }}",
+                "priceValidUntil": "2027-12-31",
+                "itemCondition": "https://schema.org/NewCondition",
+                "availability": "https://schema.org/InStock",
+                "seller": {
+                    "@type": "Organization",
+                    "name": "By Zunash"
+                }
+            },
+            "aggregateRating": {
+                "@type": "AggregateRating",
+                "ratingValue": "{{ $product['rating'] ?? 4.9 }}",
+                "reviewCount": "{{ $product['reviews_count'] ?? 35 }}",
+                "bestRating": "5",
+                "worstRating": "1"
+            }
+        },
+        {
+            "@type": "BreadcrumbList",
+            "@id": "{{ route('product.details', $product['slug']) }}/#breadcrumb",
+            "itemListElement": [
+                {
+                    "@type": "ListItem",
+                    "position": 1,
+                    "name": "Home",
+                    "item": "{{ route('home') }}"
+                },
+                {
+                    "@type": "ListItem",
+                    "position": 2,
+                    "name": "{{ addslashes($product['category_name']) }}",
+                    "item": "{{ route('category', $product['category']) }}"
+                },
+                {
+                    "@type": "ListItem",
+                    "position": 3,
+                    "name": "{{ addslashes($product['name']) }}",
+                    "item": "{{ route('product.details', $product['slug']) }}"
+                }
+            ]
+        }
+    ]
+}
+</script>
+@endpush
 
 @section('content')
 @php

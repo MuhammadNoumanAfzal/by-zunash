@@ -249,4 +249,18 @@ class StoreController extends Controller
     {
         return view('user.policies.privacy');
     }
+
+    /**
+     * XML Sitemap for Google, Bing, and search crawlers
+     */
+    public function sitemap()
+    {
+        $products = $this->getProducts();
+        $categories = $this->getCategories();
+
+        $xml = view('user.sitemap', compact('products', 'categories'))->render();
+
+        return response($xml, 200)
+            ->header('Content-Type', 'application/xml; charset=utf-8');
+    }
 }

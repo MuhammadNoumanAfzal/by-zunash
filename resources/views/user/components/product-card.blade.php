@@ -42,7 +42,7 @@
             <i 
                 data-lucide="heart" 
                 class="w-4 h-4 transition-colors duration-200"
-                :class="$store.wishlist.has(product.id) ? 'fill-chocolate-700 text-chocolate-700' : 'text-espresso-700 group-hover:text-gold-600'"
+                :class="$store.wishlist.has(product.id) ? 'fill-red-600 text-red-600' : 'text-espresso-700 group-hover:text-gold-600'"
             ></i>
         </button>
 

@@ -1,7 +1,64 @@
 @extends('user.layouts.app')
 
-@section('title', $category['name'] . ' | By Zunash Luxury Leather Pakistan')
-@section('meta_description', $category['tagline'] . ' Handcrafted pure leather ' . $category['name'] . ' with nationwide delivery across Pakistan.')
+@section('title', $category['name'] . ' | Luxury Leather Pakistan | By Zunash')
+@section('meta_description', $category['tagline'] . ' Handcrafted pure full-grain ' . $category['name'] . ' with nationwide delivery and Cash on Delivery across Pakistan.')
+@section('meta_keywords', $category['name'] . ' Pakistan, pure leather ' . $category['name'] . ', buy ' . $category['name'] . ' online Lahore Karachi Islamabad, By Zunash')
+@section('canonical', route('category', $category['slug']))
+@section('og_image', $category['image'])
+
+@push('schema')
+<script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@graph": [
+        {
+            "@type": "CollectionPage",
+            "@id": "{{ route('category', $category['slug']) }}/#collection",
+            "name": "{{ addslashes($category['name']) }}",
+            "description": "{{ addslashes($category['tagline']) }}",
+            "url": "{{ route('category', $category['slug']) }}",
+            "mainEntity": {
+                "@type": "ItemList",
+                "itemListElement": [
+                    @foreach($products as $idx => $item)
+                    {
+                        "@type": "ListItem",
+                        "position": {{ $loop->iteration }},
+                        "url": "{{ route('product.details', $item['slug']) }}",
+                        "name": "{{ addslashes($item['name']) }}"
+                    }{{ !$loop->last ? ',' : '' }}
+                    @endforeach
+                ]
+            }
+        },
+        {
+            "@type": "BreadcrumbList",
+            "@id": "{{ route('category', $category['slug']) }}/#breadcrumb",
+            "itemListElement": [
+                {
+                    "@type": "ListItem",
+                    "position": 1,
+                    "name": "Home",
+                    "item": "{{ route('home') }}"
+                },
+                {
+                    "@type": "ListItem",
+                    "position": 2,
+                    "name": "Catalog",
+                    "item": "{{ route('shop') }}"
+                },
+                {
+                    "@type": "ListItem",
+                    "position": 3,
+                    "name": "{{ addslashes($category['name']) }}",
+                    "item": "{{ route('category', $category['slug']) }}"
+                }
+            ]
+        }
+    ]
+}
+</script>
+@endpush
 
 @section('content')
 <div class="bg-white min-h-screen">

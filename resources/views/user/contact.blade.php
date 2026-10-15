@@ -1,7 +1,56 @@
 @extends('user.layouts.app')
 
-@section('title', 'Client Concierge & Contact | By Zunash Luxury Leather')
-@section('meta_description', 'Contact By Zunash for bespoke leather orders, sizing assistance, corporate gifting, or order inquiries across Pakistan.')
+@section('title', 'Client Concierge & Contact | By Zunash Luxury Leather Pakistan')
+@section('meta_description', 'Contact the By Zunash client concierge for custom sizing, order tracking, corporate gifting, or WhatsApp support across Pakistan.')
+@section('meta_keywords', 'contact by zunash, customer support leather pakistan, custom leather order pakistan, by zunash whatsapp')
+@section('canonical', route('contact'))
+
+@push('schema')
+<script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@graph": [
+        {
+            "@type": "ContactPage",
+            "@id": "{{ route('contact') }}/#contact",
+            "name": "Contact By Zunash Concierge",
+            "description": "Contact the By Zunash client concierge for custom sizing, order tracking, corporate gifting, or WhatsApp support across Pakistan.",
+            "url": "{{ route('contact') }}",
+            "mainEntity": {
+                "@type": "Organization",
+                "name": "By Zunash",
+                "telephone": "+92-300-1234567",
+                "email": "concierge@byzunash.com",
+                "address": {
+                    "@type": "PostalAddress",
+                    "addressLocality": "Lahore",
+                    "addressRegion": "Punjab",
+                    "addressCountry": "PK"
+                }
+            }
+        },
+        {
+            "@type": "BreadcrumbList",
+            "@id": "{{ route('contact') }}/#breadcrumb",
+            "itemListElement": [
+                {
+                    "@type": "ListItem",
+                    "position": 1,
+                    "name": "Home",
+                    "item": "{{ route('home') }}"
+                },
+                {
+                    "@type": "ListItem",
+                    "position": 2,
+                    "name": "Contact Concierge",
+                    "item": "{{ route('contact') }}"
+                }
+            ]
+        }
+    ]
+}
+</script>
+@endpush
 
 @section('content')
 <div class="bg-ivory-50 min-h-screen py-12 lg:py-20">

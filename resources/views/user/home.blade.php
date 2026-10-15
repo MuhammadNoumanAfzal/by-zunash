@@ -2,224 +2,357 @@
 
 @section('title', 'By Zunash | Crafted to Be Yours — Luxury Pakistani Leather Goods')
 @section('meta_description', 'Experience heirloom Pakistani leathercraft. Handcrafted full-grain belts, structured handbags, slim wallets, and accessories. Nationwide Cash on Delivery.')
+@section('meta_keywords', 'luxury leather Pakistan, pure leather belts Lahore, handcrafted leather wallets Karachi, genuine leather handbags Islamabad, Pakistani leather brands, By Zunash atelier, cash on delivery leather')
+@section('canonical', route('home'))
+
+@push('schema')
+<script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "Store",
+    "@id": "{{ route('home') }}/#store",
+    "name": "By Zunash",
+    "image": "{{ asset('images/hero/slide-bag.jpg') }}",
+    "url": "{{ route('home') }}",
+    "telephone": "+92-300-1234567",
+    "priceRange": "PKR 1,850 - PKR 18,900",
+    "currenciesAccepted": "PKR",
+    "paymentAccepted": "Cash on Delivery, Direct Bank Transfer, Visa, MasterCard",
+    "address": {
+        "@type": "PostalAddress",
+        "streetAddress": "Gulberg III",
+        "addressLocality": "Lahore",
+        "addressRegion": "Punjab",
+        "postalCode": "54000",
+        "addressCountry": "PK"
+    },
+    "geo": {
+        "@type": "GeoCoordinates",
+        "latitude": 31.5204,
+        "longitude": 74.3587
+    },
+    "openingHoursSpecification": [
+        {
+            "@type": "OpeningHoursSpecification",
+            "dayOfWeek": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
+            "opens": "10:00",
+            "closes": "21:00"
+        }
+    ]
+}
+</script>
+@endpush
 
 @section('content')
 
 <!-- ========================================================
      C. REDESIGNED HIGH-END EDITORIAL HERO SECTION
      ======================================================== -->
+<!-- ========================================================
+     C. COMPACT CINEMATIC EDITORIAL HERO SLIDER
+     ======================================================== -->
 <section 
     x-data="{
-        activeHeroTab: 0,
-        heroItems: [
-            {
-                name: 'The Zunash Signature Satchel',
-                category: 'Luxury Handbag',
-                price: 14950,
-                rating: '5.0',
-                reviews: '58',
-                image: 'https://images.unsplash.com/photo-1584917865442-de89df76afd3?auto=format&fit=crop&w=1200&q=85',
-                slug: 'the-zunash-signature-satchel',
-                tag: 'Flagship Edition'
-            },
-            {
-                name: 'The Royal Reversible Calfskin Belt',
-                category: 'Dress & Casual Belt',
-                price: 4950,
-                rating: '4.9',
-                reviews: '42',
-                image: 'https://images.unsplash.com/photo-1624222247344-550fb60583dc?auto=format&fit=crop&w=1200&q=85',
-                slug: 'the-royal-reversible-calfskin-belt',
-                tag: 'Reversible Dual-Tone'
-            },
-            {
-                name: 'The Heritage Bifold Leather Wallet',
-                category: 'Full-Grain RFID Wallet',
-                price: 3850,
-                rating: '4.9',
-                reviews: '64',
-                image: 'https://images.unsplash.com/photo-1627123424574-724758594e93?auto=format&fit=crop&w=1200&q=85',
-                slug: 'the-heritage-bifold-leather-wallet',
-                tag: 'Sized for PKR Notes'
+        currentSlide: 0,
+        autoplayTimer: null,
+        totalSlides: 3,
+        next() {
+            this.currentSlide = (this.currentSlide + 1) % this.totalSlides;
+        },
+        prev() {
+            this.currentSlide = (this.currentSlide - 1 + this.totalSlides) % this.totalSlides;
+        },
+        goTo(idx) {
+            this.currentSlide = idx;
+        },
+        startAutoplay() {
+            this.stopAutoplay();
+            this.autoplayTimer = setInterval(() => {
+                this.next();
+            }, 6000);
+        },
+        stopAutoplay() {
+            if (this.autoplayTimer) {
+                clearInterval(this.autoplayTimer);
+                this.autoplayTimer = null;
             }
-        ]
+        }
     }"
-    class="relative bg-espresso-950 text-ivory overflow-hidden min-h-[92vh] flex items-center pt-8 pb-16 lg:py-20"
+    x-init="startAutoplay()"
+    @mouseenter="stopAutoplay()"
+    @mouseleave="startAutoplay()"
+    class="relative w-full h-[460px] sm:h-[500px] lg:h-[540px] overflow-hidden bg-black text-ivory select-none"
 >
-    <!-- Ambient Luxury Background Lighting & Textures -->
-    <div class="absolute inset-0 pointer-events-none">
-        <!-- Radial gold glow top right -->
-        <div class="absolute -top-32 -right-32 w-[600px] h-[600px] rounded-full bg-gold/10 blur-[130px] animate-pulse-gold"></div>
-        <!-- Deep chocolate glow bottom left -->
-        <div class="absolute -bottom-40 -left-40 w-[600px] h-[600px] rounded-full bg-chocolate-700/20 blur-[140px]"></div>
-        <!-- Subtle leather grain overlay -->
-        <div class="absolute inset-0 bg-[radial-gradient(#C5A16B_1px,transparent_1px)] [background-size:32px_32px] opacity-[0.04]"></div>
+    <!-- ================= SLIDE 1: HANDBAGS / SATCHEL ================= -->
+    <div 
+        x-show="currentSlide === 0"
+        x-transition:enter="transition ease-out duration-700"
+        x-transition:enter-start="opacity-0"
+        x-transition:enter-end="opacity-100"
+        x-transition:leave="transition ease-in duration-400 absolute inset-0"
+        x-transition:leave-start="opacity-100"
+        x-transition:leave-end="opacity-0"
+        class="absolute inset-0 w-full h-full"
+    >
+        <!-- Generated Background Image (Absolute so it doesn't push down text) -->
+        <img 
+            src="{{ asset('images/hero/slide-bag.jpg') }}" 
+            alt="By Zunash Handcrafted Italian Leather Bag" 
+            class="absolute inset-0 w-full h-full object-cover object-center filter brightness-[0.95] contrast-[1.02]"
+        >
+        <!-- Lighter Subtle Luxury Gradient Scrim (Lets the leather photo shine through) -->
+        <div class="absolute inset-0 bg-gradient-to-r from-black/65 via-black/35 to-transparent"></div>
+        <div class="absolute inset-0 bg-gradient-to-t from-black/45 via-transparent to-black/15"></div>
+
+        <!-- Overlaid Animated Text Content -->
+        <div class="relative z-10 w-full h-full flex items-center">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
+                <div class="max-w-2xl py-6">
+                    
+                    <!-- Tag / Badge (NO numbers) -->
+                    <div class="inline-flex items-center gap-2 mb-3 animate-hero-tag">
+                        <span class="px-3.5 py-1.5 rounded-full bg-black/45 border border-gold/45 text-gold-300 text-xs uppercase tracking-widest font-serif backdrop-blur-md shadow-sm flex items-center gap-2">
+                            <span class="w-2 h-2 rounded-full bg-gold animate-pulse"></span>
+                            The Heirloom Collection
+                        </span>
+                    </div>
+
+                    <!-- Animated Headline -->
+                    <h1 class="font-serif text-3xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-white leading-[1.1] mb-3.5 drop-shadow-[0_4px_14px_rgba(0,0,0,0.65)] animate-hero-title">
+                        Crafted to Be 
+                        <span class="italic font-light text-gold-300 relative inline-block ml-1">
+                            Yours.
+                            <span class="absolute left-0 -bottom-1 w-full h-[2px] bg-gradient-to-r from-gold via-gold-light to-transparent"></span>
+                        </span>
+                    </h1>
+
+                    <!-- Description -->
+                    <p class="text-sm sm:text-base text-white/95 font-light leading-relaxed max-w-xl mb-6 drop-shadow-[0_2px_8px_rgba(0,0,0,0.75)] line-clamp-2 animate-hero-desc">
+                        Hand-sculpted full-grain leather silhouettes and bespoke antique gold accents tailored for Pakistan's most discerning patrons. Created to mature with quiet grace.
+                    </p>
+
+                    <!-- CTAs & Spec Pill -->
+                    <div class="flex flex-wrap items-center gap-4 animate-hero-actions">
+                        <a 
+                            href="{{ route('category', 'handbags') }}" 
+                            class="px-7 py-3.5 bg-gold hover:bg-gold-light text-black text-xs uppercase tracking-widest font-bold rounded-lg shadow-luxury hover:shadow-gold-glow transition-all duration-300 flex items-center gap-2 group active:scale-95"
+                        >
+                            <span>Shop Handbags</span>
+                            <i data-lucide="arrow-right" class="w-4 h-4 transition-transform group-hover:translate-x-1"></i>
+                        </a>
+                        
+                        <a 
+                            href="{{ route('about') }}" 
+                            class="px-6 py-3.5 bg-black/40 hover:bg-white/20 text-white text-xs uppercase tracking-widest font-semibold rounded-lg border border-white/35 hover:border-gold/50 backdrop-blur-md transition-all duration-300 text-center"
+                        >
+                            Discover Atelier
+                        </a>
+
+                        <div class="hidden sm:inline-flex items-center gap-2 px-3.5 py-2.5 rounded-full bg-black/45 border border-white/25 text-xs text-white/90 backdrop-blur-md">
+                            <i data-lucide="award" class="w-3.5 h-3.5 text-gold"></i>
+                            <span>100% Full-Grain Italian Hide</span>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
     </div>
 
-    <div class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
-        <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-8 items-center">
-            
-            <!-- LEFT COLUMN: Brand Manifesto & Primary CTAs (7 Cols) -->
-            <div class="lg:col-span-7 space-y-6">
-                
-                <!-- Floating Gold Heritage Badge -->
-                <div class="inline-flex items-center gap-2.5 px-3.5 py-1.5 rounded-full bg-gradient-to-r from-espresso-900/90 to-chocolate-900/90 border border-gold/40 text-gold text-xs uppercase tracking-widest font-serif backdrop-blur-md shadow-xs animate-fade-in">
-                    <span class="w-2 h-2 rounded-full bg-gold animate-pulse"></span>
-                    <span>Bespoke Pakistani Leathercraft</span>
-                    <span class="text-gold-300">•</span>
-                    <span class="text-[10px] text-ivory-300 tracking-wider">The Heirloom Edition</span>
-                </div>
+    <!-- ================= SLIDE 2: LEATHER BELTS ================= -->
+    <div 
+        x-show="currentSlide === 1"
+        x-transition:enter="transition ease-out duration-700"
+        x-transition:enter-start="opacity-0"
+        x-transition:enter-end="opacity-100"
+        x-transition:leave="transition ease-in duration-400 absolute inset-0"
+        x-transition:leave-start="opacity-100"
+        x-transition:leave-end="opacity-0"
+        class="absolute inset-0 w-full h-full"
+    >
+        <!-- Generated Background Image (Absolute so it doesn't push down text) -->
+        <img 
+            src="{{ asset('images/hero/slide-belt.jpg') }}" 
+            alt="By Zunash Reversible Calfskin Leather Belts" 
+            class="absolute inset-0 w-full h-full object-cover object-center filter brightness-[0.95] contrast-[1.02]"
+        >
+        <!-- Lighter Subtle Luxury Gradient Scrim -->
+        <div class="absolute inset-0 bg-gradient-to-r from-black/65 via-black/35 to-transparent"></div>
+        <div class="absolute inset-0 bg-gradient-to-t from-black/45 via-transparent to-black/15"></div>
 
-                <!-- Main Editorial Headline -->
-                <h1 class="font-serif text-4xl sm:text-6xl lg:text-7xl font-bold tracking-tight text-white leading-[1.08] animate-slide-up">
-                    Crafted to Be <br>
-                    <span class="italic font-light text-gold-300 relative inline-block">
-                        Yours.
-                        <!-- Delicate gold underline rule -->
-                        <span class="absolute left-0 -bottom-1 w-full h-[2px] bg-gradient-to-r from-gold via-gold-light to-transparent"></span>
-                    </span>
-                </h1>
-
-                <!-- Supporting Description -->
-                <p class="text-base sm:text-lg text-ivory-300 font-light leading-relaxed max-w-xl animate-fade-in delay-150">
-                    Born from vegetable-tanned full-grain cowhide and drum-dyed skins, our leather accessories merge ancestral Pakistani leatherworking disciplines with understated contemporary poise. Made to acquire character with every passing journey.
-                </p>
-
-                <!-- Primary & Secondary CTAs -->
-                <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-4 pt-2 animate-fade-in delay-225">
-                    <a 
-                        href="{{ route('shop') }}" 
-                        class="px-8 py-4 bg-gold hover:bg-gold-light text-espresso-950 text-xs uppercase tracking-widest font-bold rounded-lg shadow-luxury hover:shadow-gold-glow transition-all duration-300 text-center flex items-center justify-center gap-2 group active:scale-95"
-                    >
-                        <span>Shop The Collection</span>
-                        <i data-lucide="arrow-right" class="w-4 h-4 transition-transform group-hover:translate-x-1"></i>
-                    </a>
+        <!-- Overlaid Animated Text Content -->
+        <div class="relative z-10 w-full h-full flex items-center">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
+                <div class="max-w-2xl py-6">
                     
-                    <a 
-                        href="{{ route('about') }}" 
-                        class="px-8 py-4 bg-white/5 hover:bg-white/15 text-ivory text-xs uppercase tracking-widest font-semibold rounded-lg border border-gold/30 backdrop-blur-sm transition-all duration-300 text-center flex items-center justify-center gap-2"
+                    <!-- Tag / Badge (NO numbers) -->
+                    <div class="inline-flex items-center gap-2 mb-3 animate-hero-tag">
+                        <span class="px-3.5 py-1.5 rounded-full bg-black/45 border border-gold/45 text-gold-300 text-xs uppercase tracking-widest font-serif backdrop-blur-md shadow-sm flex items-center gap-2">
+                            <span class="w-2 h-2 rounded-full bg-gold animate-pulse"></span>
+                            Dual-Tone Reversible Luxury
+                        </span>
+                    </div>
+
+                    <!-- Animated Headline -->
+                    <h1 class="font-serif text-3xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-white leading-[1.1] mb-3.5 drop-shadow-[0_4px_14px_rgba(0,0,0,0.65)] animate-hero-title">
+                        The Art of 
+                        <span class="italic font-light text-gold-300 relative inline-block ml-1">
+                            Dual Tone.
+                            <span class="absolute left-0 -bottom-1 w-full h-[2px] bg-gradient-to-r from-gold via-gold-light to-transparent"></span>
+                        </span>
+                    </h1>
+
+                    <!-- Description -->
+                    <p class="text-sm sm:text-base text-white/95 font-light leading-relaxed max-w-xl mb-6 drop-shadow-[0_2px_8px_rgba(0,0,0,0.75)] line-clamp-2 animate-hero-desc">
+                        Italian calfskin with a 360-degree brushed antique brass swivel buckle. Transition seamlessly from obsidian formal trousers to casual chinos in one smooth rotation.
+                    </p>
+
+                    <!-- CTAs & Spec Pill -->
+                    <div class="flex flex-wrap items-center gap-4 animate-hero-actions">
+                        <a 
+                            href="{{ route('category', 'belts') }}" 
+                            class="px-7 py-3.5 bg-gold hover:bg-gold-light text-black text-xs uppercase tracking-widest font-bold rounded-lg shadow-luxury hover:shadow-gold-glow transition-all duration-300 flex items-center gap-2 group active:scale-95"
+                        >
+                            <span>Explore Belts</span>
+                            <i data-lucide="arrow-right" class="w-4 h-4 transition-transform group-hover:translate-x-1"></i>
+                        </a>
+                        
+                        <a 
+                            href="{{ route('shop') }}" 
+                            class="px-6 py-3.5 bg-black/40 hover:bg-white/20 text-white text-xs uppercase tracking-widest font-semibold rounded-lg border border-white/35 hover:border-gold/50 backdrop-blur-md transition-all duration-300 text-center"
+                        >
+                            View Bestsellers
+                        </a>
+
+                        <div class="hidden sm:inline-flex items-center gap-2 px-3.5 py-2.5 rounded-full bg-black/45 border border-white/25 text-xs text-white/90 backdrop-blur-md">
+                            <i data-lucide="shield-check" class="w-3.5 h-3.5 text-gold"></i>
+                            <span>360° Swivel Buckle • Wax-Burnished Edges</span>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ================= SLIDE 3: WALLETS & ACCESSORIES ================= -->
+    <div 
+        x-show="currentSlide === 2"
+        x-transition:enter="transition ease-out duration-700"
+        x-transition:enter-start="opacity-0"
+        x-transition:enter-end="opacity-100"
+        x-transition:leave="transition ease-in duration-400 absolute inset-0"
+        x-transition:leave-start="opacity-100"
+        x-transition:leave-end="opacity-0"
+        class="absolute inset-0 w-full h-full"
+    >
+        <!-- Generated Background Image (Absolute so it doesn't push down text) -->
+        <img 
+            src="{{ asset('images/hero/slide-wallet.jpg') }}" 
+            alt="By Zunash Slim Bifold Leather Wallet" 
+            class="absolute inset-0 w-full h-full object-cover object-center filter brightness-[0.95] contrast-[1.02]"
+        >
+        <!-- Lighter Subtle Luxury Gradient Scrim -->
+        <div class="absolute inset-0 bg-gradient-to-r from-black/65 via-black/35 to-transparent"></div>
+        <div class="absolute inset-0 bg-gradient-to-t from-black/45 via-transparent to-black/15"></div>
+
+        <!-- Overlaid Animated Text Content -->
+        <div class="relative z-10 w-full h-full flex items-center">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
+                <div class="max-w-2xl py-6">
+                    
+                    <!-- Tag / Badge (NO numbers) -->
+                    <div class="inline-flex items-center gap-2 mb-3 animate-hero-tag">
+                        <span class="px-3.5 py-1.5 rounded-full bg-black/45 border border-gold/45 text-gold-300 text-xs uppercase tracking-widest font-serif backdrop-blur-md shadow-sm flex items-center gap-2">
+                            <span class="w-2 h-2 rounded-full bg-gold animate-pulse"></span>
+                            Everyday Architecture
+                        </span>
+                    </div>
+
+                    <!-- Animated Headline -->
+                    <h1 class="font-serif text-3xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-white leading-[1.1] mb-3.5 drop-shadow-[0_4px_14px_rgba(0,0,0,0.65)] animate-hero-title">
+                        Pure Form. 
+                        <span class="italic font-light text-gold-300 relative inline-block ml-1">
+                            Enduring Touch.
+                            <span class="absolute left-0 -bottom-1 w-full h-[2px] bg-gradient-to-r from-gold via-gold-light to-transparent"></span>
+                        </span>
+                    </h1>
+
+                    <!-- Description -->
+                    <p class="text-sm sm:text-base text-white/95 font-light leading-relaxed max-w-xl mb-6 drop-shadow-[0_2px_8px_rgba(0,0,0,0.75)] line-clamp-2 animate-hero-desc">
+                        Calibrated for Pakistani 5000-rupee notes and integrated with certified German RFID protective shielding. Drum-dyed vegetable tanned hides with dual dividers.
+                    </p>
+
+                    <!-- CTAs & Spec Pill -->
+                    <div class="flex flex-wrap items-center gap-4 animate-hero-actions">
+                        <a 
+                            href="{{ route('category', 'wallets') }}" 
+                            class="px-7 py-3.5 bg-gold hover:bg-gold-light text-black text-xs uppercase tracking-widest font-bold rounded-lg shadow-luxury hover:shadow-gold-glow transition-all duration-300 flex items-center gap-2 group active:scale-95"
+                        >
+                            <span>Shop Wallets</span>
+                            <i data-lucide="arrow-right" class="w-4 h-4 transition-transform group-hover:translate-x-1"></i>
+                        </a>
+                        
+                        <a 
+                            href="{{ route('shop', ['sort' => 'latest']) }}" 
+                            class="px-6 py-3.5 bg-black/40 hover:bg-white/20 text-white text-xs uppercase tracking-widest font-semibold rounded-lg border border-white/35 hover:border-gold/50 backdrop-blur-md transition-all duration-300 text-center"
+                        >
+                            View Releases
+                        </a>
+
+                        <div class="hidden sm:inline-flex items-center gap-2 px-3.5 py-2.5 rounded-full bg-black/45 border border-white/25 text-xs text-white/90 backdrop-blur-md">
+                            <i data-lucide="shield-check" class="w-3.5 h-3.5 text-gold"></i>
+                            <span>RFID Shielded • PKR 5,000 Note Calibrated</span>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ================= BOTTOM CONTROLS & PROGRESS (NO NUMBERS) ================= -->
+    <div class="absolute bottom-5 left-0 right-0 z-20 pointer-events-auto">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between">
+            
+            <!-- Minimalist Slide Progress Bars (NO 1 2 3 numbers) -->
+            <div class="flex items-center gap-2.5">
+                <template x-for="idx in [0, 1, 2]" :key="idx">
+                    <button 
+                        type="button" 
+                        @click="goTo(idx)" 
+                        class="group py-2 px-1 focus:outline-none"
+                        :aria-label="'Go to slide ' + (idx + 1)"
                     >
-                        <span>Our Atelier Story</span>
-                    </a>
-                </div>
-
-                <!-- Trust Points Grid -->
-                <div class="pt-8 border-t border-white/10 grid grid-cols-3 gap-4 text-xs text-ivory-300 animate-fade-in delay-300">
-                    <div class="flex items-start gap-2.5">
-                        <i data-lucide="shield-check" class="w-5 h-5 text-gold flex-shrink-0 mt-0.5"></i>
-                        <div>
-                            <div class="font-serif font-bold text-white text-sm">100% Pure Hide</div>
-                            <div class="text-[11px] text-ivory-400">Zero synthetic plastics</div>
+                        <div class="h-1 rounded-full overflow-hidden transition-all duration-300"
+                             :class="currentSlide === idx ? 'w-10 sm:w-14 bg-white/30' : 'w-5 sm:w-7 bg-white/20 group-hover:bg-white/40'">
+                            <div 
+                                class="h-full bg-gold transition-all duration-300"
+                                :class="currentSlide === idx ? 'w-full' : 'w-0'"
+                            ></div>
                         </div>
-                    </div>
-                    <div class="flex items-start gap-2.5">
-                        <i data-lucide="truck" class="w-5 h-5 text-gold flex-shrink-0 mt-0.5"></i>
-                        <div>
-                            <div class="font-serif font-bold text-white text-sm">Nationwide COD</div>
-                            <div class="text-[11px] text-ivory-400">Doorstep delivery in Pakistan</div>
-                        </div>
-                    </div>
-                    <div class="flex items-start gap-2.5">
-                        <i data-lucide="rotate-ccw" class="w-5 h-5 text-gold flex-shrink-0 mt-0.5"></i>
-                        <div>
-                            <div class="font-serif font-bold text-white text-sm">7-Day Exchange</div>
-                            <div class="text-[11px] text-ivory-400">Hassle-free guarantee</div>
-                        </div>
-                    </div>
-                </div>
-
+                    </button>
+                </template>
             </div>
 
-            <!-- RIGHT COLUMN: Interactive Luxury Product Spotlight Showcase (5 Cols) -->
-            <div class="lg:col-span-5 relative mt-6 lg:mt-0">
-                
-                <!-- Rotating Decorative Ring -->
-                <div class="absolute -top-10 -right-10 w-44 h-44 rounded-full border border-gold/20 animate-slow-spin pointer-events-none hidden sm:block"></div>
-
-                <!-- Main Showcase Card -->
-                <div class="relative rounded-2xl overflow-hidden bg-espresso-900 border border-gold/30 shadow-2xl group">
-                    
-                    <!-- Dynamic Featured Image with subtle zoom on hover -->
-                    <div class="relative aspect-[4/5] overflow-hidden bg-espresso-950">
-                        <img 
-                            :src="heroItems[activeHeroTab].image" 
-                            :alt="heroItems[activeHeroTab].name" 
-                            class="w-full h-full object-cover object-center transform transition-all duration-700 ease-out group-hover:scale-105"
-                        >
-                        <!-- Gradient wash -->
-                        <div class="absolute inset-0 bg-gradient-to-t from-espresso-950/95 via-espresso-950/20 to-transparent"></div>
-
-                        <!-- Top Floating Tag -->
-                        <div class="absolute top-4 left-4 z-10">
-                            <span 
-                                x-text="heroItems[activeHeroTab].tag" 
-                                class="px-3 py-1 bg-espresso-950/90 text-gold border border-gold/40 text-[10px] uppercase tracking-widest font-serif rounded-full backdrop-blur-md shadow-md"
-                            ></span>
-                        </div>
-
-                        <!-- Top Right Hallmark Emblem -->
-                        <div class="absolute top-4 right-4 z-10 w-11 h-11 rounded-full bg-espresso-900/80 border border-gold/50 backdrop-blur-md flex items-center justify-center text-gold shadow-lg">
-                            <i data-lucide="award" class="w-5 h-5"></i>
-                        </div>
-                    </div>
-
-                    <!-- Bottom Floating Spotlight Details Card -->
-                    <div class="p-6 bg-gradient-to-b from-espresso-900/90 to-espresso-950 border-t border-gold/20">
-                        
-                        <!-- Mini Tabs Switcher -->
-                        <div class="flex items-center gap-1.5 mb-4 pb-3 border-b border-white/10">
-                            <template x-for="(item, idx) in heroItems" :key="idx">
-                                <button 
-                                    type="button" 
-                                    @click="activeHeroTab = idx"
-                                    class="text-[11px] uppercase tracking-wider py-1 px-3 rounded-md transition-all font-medium"
-                                    :class="activeHeroTab === idx ? 'bg-gold text-espresso-950 font-bold shadow-xs' : 'text-ivory-300 hover:text-white bg-white/5'"
-                                    x-text="item.category"
-                                ></button>
-                            </template>
-                        </div>
-
-                        <!-- Active Item Summary -->
-                        <div class="flex items-center justify-between gap-4">
-                            <div>
-                                <span class="text-[10px] uppercase tracking-widest text-gold font-serif block mb-0.5" x-text="heroItems[activeHeroTab].category"></span>
-                                <h3 class="font-serif text-lg font-bold text-white line-clamp-1" x-text="heroItems[activeHeroTab].name"></h3>
-                                <div class="flex items-center gap-1.5 text-xs text-gold mt-1">
-                                    <i data-lucide="star" class="w-3.5 h-3.5 fill-gold"></i>
-                                    <span class="font-bold text-white" x-text="heroItems[activeHeroTab].rating"></span>
-                                    <span class="text-ivory-400 text-[11px]" x-text="'(' + heroItems[activeHeroTab].reviews + ' reviews)'"></span>
-                                </div>
-                            </div>
-
-                            <div class="text-right flex-shrink-0">
-                                <div class="font-serif text-xl font-bold text-gold">
-                                    PKR <span x-text="heroItems[activeHeroTab].price.toLocaleString()"></span>
-                                </div>
-                                <a 
-                                    :href="'/product/' + heroItems[activeHeroTab].slug" 
-                                    class="inline-flex items-center gap-1 text-[11px] uppercase tracking-widest text-white hover:text-gold-200 mt-1 font-semibold underline underline-offset-4"
-                                >
-                                    <span>Inspect Piece</span>
-                                    <i data-lucide="arrow-right" class="w-3 h-3"></i>
-                                </a>
-                            </div>
-                        </div>
-
-                    </div>
-
-                </div>
-
-                <!-- Floating Artisan Accent Badge (Bottom Left overlap with gentle float) -->
-                <div class="absolute -bottom-6 -left-6 z-20 hidden sm:flex items-center gap-3 bg-white text-espresso-900 p-3.5 rounded-xl border border-gold/40 shadow-2xl animate-gentle-float">
-                    <div class="w-10 h-10 rounded-full bg-gold/20 flex items-center justify-center text-chocolate-800">
-                        <i data-lucide="shield-check" class="w-5 h-5"></i>
-                    </div>
-                    <div>
-                        <div class="font-serif text-xs font-bold uppercase tracking-wider text-espresso-950">Artisan Hallmark</div>
-                        <div class="text-[10px] text-muted-dark">Hand-Beveled & Waxed in Pakistan</div>
-                    </div>
-                </div>
-
+            <!-- Prev / Next Arrows -->
+            <div class="flex items-center gap-2.5">
+                <button 
+                    type="button" 
+                    @click="prev()" 
+                    class="w-10 h-10 rounded-full border border-white/25 bg-black/40 hover:bg-gold hover:text-black hover:border-gold flex items-center justify-center text-white transition-all active:scale-95 shadow-md backdrop-blur-md"
+                    aria-label="Previous Slide"
+                >
+                    <i data-lucide="chevron-left" class="w-4 h-4"></i>
+                </button>
+                <button 
+                    type="button" 
+                    @click="next()" 
+                    class="w-10 h-10 rounded-full border border-white/25 bg-black/40 hover:bg-gold hover:text-black hover:border-gold flex items-center justify-center text-white transition-all active:scale-95 shadow-md backdrop-blur-md"
+                    aria-label="Next Slide"
+                >
+                    <i data-lucide="chevron-right" class="w-4 h-4"></i>
+                </button>
             </div>
 
         </div>

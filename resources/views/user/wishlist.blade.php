@@ -2,6 +2,7 @@
 
 @section('title', 'My Saved Pieces | By Zunash Luxury Leather')
 @section('meta_description', 'View your saved wishlist items, manage your favorites, or move them into your shopping bag.')
+@section('robots', 'noindex, follow')
 
 @section('content')
 <div x-data class="bg-ivory-50 min-h-screen py-12 lg:py-16">

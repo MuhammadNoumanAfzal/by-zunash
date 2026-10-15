@@ -1,7 +1,33 @@
 @extends('user.layouts.app')
 
-@section('title', 'Returns & Exchanges Policy | By Zunash Luxury Leather')
-@section('meta_description', 'Learn about our 7-day exchange window, conditions of return, and bespoke support for By Zunash leather goods in Pakistan.')
+@section('title', 'Returns & Exchanges Policy | By Zunash Luxury Leather Pakistan')
+@section('meta_description', 'Learn about our 7-day direct exchange policy, conditions of return, and dedicated client concierge support across Pakistan.')
+@section('meta_keywords', 'by zunash return policy, leather exchange pakistan, 7 days return by zunash')
+@section('canonical', route('policy.returns'))
+
+@push('schema')
+<script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "@id": "{{ route('policy.returns') }}/#breadcrumb",
+    "itemListElement": [
+        {
+            "@type": "ListItem",
+            "position": 1,
+            "name": "Home",
+            "item": "{{ route('home') }}"
+        },
+        {
+            "@type": "ListItem",
+            "position": 2,
+            "name": "Returns & Exchanges",
+            "item": "{{ route('policy.returns') }}"
+        }
+    ]
+}
+</script>
+@endpush
 
 @section('content')
 <div class="bg-white min-h-screen py-12 lg:py-20">

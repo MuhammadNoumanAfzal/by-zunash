@@ -2,6 +2,7 @@
 
 @section('title', 'Shopping Bag | By Zunash Luxury Leather')
 @section('meta_description', 'Review your selected luxury leather goods, adjust quantities, and proceed to checkout.')
+@section('robots', 'noindex, nofollow')
 
 @section('content')
 <div x-data class="bg-ivory-50 min-h-screen py-12 lg:py-16">

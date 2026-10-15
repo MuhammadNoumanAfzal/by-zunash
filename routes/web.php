@@ -38,3 +38,7 @@ Route::prefix('policies')->name('policy.')->group(function () {
     Route::get('/returns', [StoreController::class, 'returnsPolicy'])->name('returns');
     Route::get('/privacy', [StoreController::class, 'privacyPolicy'])->name('privacy');
 });
+
+// XML Sitemap for Search Engines
+Route::get('/sitemap.xml', [StoreController::class, 'sitemap'])->name('sitemap');
+

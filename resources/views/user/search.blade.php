@@ -2,6 +2,8 @@
 
 @section('title', (!empty($query) ? 'Search: "' . $query . '"' : 'Search Catalog') . ' | By Zunash Luxury Leather')
 @section('meta_description', 'Search handcrafted Pakistani leather belts, bifold wallets, handbags, and accessories at By Zunash.')
+@section('robots', 'noindex, follow')
+@section('canonical', route('search'))
 
 @section('content')
 <div class="bg-white min-h-screen py-12 lg:py-16">

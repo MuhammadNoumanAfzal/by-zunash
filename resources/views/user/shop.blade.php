@@ -1,7 +1,57 @@
 @extends('user.layouts.app')
 
-@section('title', 'Shop Full Leather Collection | By Zunash')
-@section('meta_description', 'Explore our handcrafted collection of pure leather belts, bifold wallets, cardholders, luxury handbags, and shoulder bags in Pakistan.')
+@section('title', 'Luxury Leather Catalog | Belts, Wallets & Handbags | By Zunash Pakistan')
+@section('meta_description', 'Explore handcrafted full-grain leather belts, bifold wallets, cardholders, luxury handbags, and accessories. Nationwide Cash on Delivery across Pakistan.')
+@section('meta_keywords', 'buy leather products Pakistan, handcrafted leather shop Pakistan, leather bags Karachi, pure leather belts Lahore, luxury wallets Islamabad, By Zunash')
+@section('canonical', route('shop'))
+
+@push('schema')
+<script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@graph": [
+        {
+            "@type": "CollectionPage",
+            "@id": "{{ route('shop') }}/#catalog",
+            "name": "Luxury Leather Goods Collection",
+            "description": "Hand-cut, drum-dyed, and wax-finished full-grain leather goods crafted for everyday utility and enduring distinction.",
+            "url": "{{ route('shop') }}",
+            "mainEntity": {
+                "@type": "ItemList",
+                "itemListElement": [
+                    @foreach($products as $idx => $item)
+                    {
+                        "@type": "ListItem",
+                        "position": {{ $loop->iteration }},
+                        "url": "{{ route('product.details', $item['slug']) }}",
+                        "name": "{{ addslashes($item['name']) }}"
+                    }{{ !$loop->last ? ',' : '' }}
+                    @endforeach
+                ]
+            }
+        },
+        {
+            "@type": "BreadcrumbList",
+            "@id": "{{ route('shop') }}/#breadcrumb",
+            "itemListElement": [
+                {
+                    "@type": "ListItem",
+                    "position": 1,
+                    "name": "Home",
+                    "item": "{{ route('home') }}"
+                },
+                {
+                    "@type": "ListItem",
+                    "position": 2,
+                    "name": "Catalog",
+                    "item": "{{ route('shop') }}"
+                }
+            ]
+        }
+    ]
+}
+</script>
+@endpush
 
 @section('content')
 <div 

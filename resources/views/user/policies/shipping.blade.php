@@ -1,7 +1,33 @@
 @extends('user.layouts.app')
 
-@section('title', 'Shipping & Delivery Policy | By Zunash Luxury Leather')
-@section('meta_description', 'Information regarding delivery times, courier partners, and nationwide Cash on Delivery coverage across Pakistan.')
+@section('title', 'Shipping & Nationwide Delivery Policy | By Zunash Pakistan')
+@section('meta_description', 'Information regarding delivery times, TCS/Leopards courier partners, and nationwide Cash on Delivery coverage across Pakistan.')
+@section('meta_keywords', 'by zunash shipping, cash on delivery delivery time pakistan, courier delivery karachi lahore islamabad')
+@section('canonical', route('policy.shipping'))
+
+@push('schema')
+<script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "@id": "{{ route('policy.shipping') }}/#breadcrumb",
+    "itemListElement": [
+        {
+            "@type": "ListItem",
+            "position": 1,
+            "name": "Home",
+            "item": "{{ route('home') }}"
+        },
+        {
+            "@type": "ListItem",
+            "position": 2,
+            "name": "Shipping Policy",
+            "item": "{{ route('policy.shipping') }}"
+        }
+    ]
+}
+</script>
+@endpush
 
 @section('content')
 <div class="bg-white min-h-screen py-12 lg:py-20">
