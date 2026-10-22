@@ -105,20 +105,26 @@
         }
     </style>
 
+    <!-- Immediate Theme Initialization (Zero-Flash Dark Mode) -->
+    <script>
+        (function() {
+            const saved = localStorage.getItem('byzunash_theme');
+            const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+            if (saved === 'dark' || (!saved && prefersDark)) {
+                document.documentElement.classList.add('dark');
+            } else {
+                document.documentElement.classList.remove('dark');
+            }
+        })();
+    </script>
+
     <!-- Stylesheet & Scripts via Vite -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     
     @stack('styles')
 </head>
-<body class="antialiased bg-[#FAF8F5] text-espresso-900 selection:bg-gold selection:text-white flex flex-col min-h-screen">
+<body class="antialiased bg-[#FAF8F5] dark:bg-[#161210] text-espresso-900 dark:text-[#F7F4EE] selection:bg-gold selection:text-white flex flex-col min-h-screen transition-colors duration-300">
     
-    <!-- Announcement Bar -->
-    <div class="bg-espresso-950 text-gold-200 text-[11px] py-2 px-4 text-center font-medium tracking-widest border-b border-gold/20 flex items-center justify-center gap-2">
-        <span class="inline-block w-1.5 h-1.5 rounded-full bg-gold animate-pulse"></span>
-        <span>TIMELESS LEATHER. EVERYDAY LUXURY. | Nationwide Delivery Across Pakistan</span>
-        <span class="inline-block w-1.5 h-1.5 rounded-full bg-gold animate-pulse"></span>
-    </div>
-
     <!-- Main Navigation Bar -->
     <x-user.components.navbar />
 

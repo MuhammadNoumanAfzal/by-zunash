@@ -31,7 +31,16 @@ class StoreController extends Controller
         $products = $this->getProducts();
         $categories = $this->getCategories();
 
-        $bestsellers = $products->where('is_bestseller', true)->take(4);
+        $featuredBestsellerIds = [1, 5, 9, 13, 2, 6, 10, 17];
+        $bestsellers = $products->whereIn('id', $featuredBestsellerIds)
+            ->sortBy(function ($p) use ($featuredBestsellerIds) {
+                return array_search($p['id'], $featuredBestsellerIds);
+            })
+            ->values();
+
+        if ($bestsellers->count() < 8) {
+            $bestsellers = $products->take(8);
+        }
         $newArrivals = $products->where('is_new', true)->take(4);
 
         return view('user.home', compact('bestsellers', 'newArrivals', 'categories'));

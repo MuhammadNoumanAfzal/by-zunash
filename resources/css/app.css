@@ -176,6 +176,19 @@
   animation: heroReveal 0.75s cubic-bezier(0.16, 1, 0.3, 1) 0.35s both;
 }
 
+.animate-hero-specs {
+  animation: heroReveal 0.75s cubic-bezier(0.16, 1, 0.3, 1) 0.45s both;
+}
+
+@keyframes heroProgress {
+  0% { width: 0%; }
+  100% { width: 100%; }
+}
+
+.animate-hero-progress {
+  animation: heroProgress 6s linear forwards;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .reveal, .reveal-left, .reveal-right, .reveal-scale {
     opacity: 1 !important;
@@ -298,3 +311,102 @@
 .swal2-icon.swal2-success .swal2-success-ring {
   border-color: rgba(197, 161, 107, 0.3) !important;
 }
+
+/* ========================================================
+   BY ZUNASH BESPOKE WARM DARK ATELIER THEME
+   (Organic Smoked Espresso & Champagne Gold - Not Harsh Black)
+   ======================================================== */
+html.dark {
+  color-scheme: dark;
+  background-color: #161210;
+  color: #F7F4EE;
+}
+
+html.dark body {
+  background-color: #161210;
+  color: #F7F4EE;
+}
+
+/* Card & Surface Overrides */
+html.dark .bg-white {
+  background-color: #1E1815 !important;
+}
+
+html.dark .bg-ivory-50,
+html.dark .bg-ivory,
+html.dark .bg-ivory-100 {
+  background-color: #191310 !important;
+}
+
+html.dark .bg-ivory-200 {
+  background-color: #241C18 !important;
+}
+
+html.dark .bg-ivory-300 {
+  background-color: #2F241F !important;
+}
+
+/* Headings & Text Color */
+html.dark .text-espresso-900,
+html.dark .text-espresso-950,
+html.dark .text-espresso {
+  color: #F7F4EE !important;
+}
+
+html.dark .text-espresso-800 {
+  color: #E8E0D4 !important;
+}
+
+html.dark .text-espresso-700 {
+  color: #D6CCC0 !important;
+}
+
+html.dark .text-muted,
+html.dark .text-muted-dark {
+  color: #A39786 !important;
+}
+
+html.dark .text-muted-light {
+  color: #7A7061 !important;
+}
+
+/* Borders & Dividers */
+html.dark .border-ivory-200,
+html.dark .border-ivory-300,
+html.dark .border-ivory-300\/80 {
+  border-color: rgba(255, 255, 255, 0.08) !important;
+}
+
+/* Form Controls & Inputs */
+html.dark input[type="text"],
+html.dark input[type="email"],
+html.dark input[type="search"],
+html.dark input[type="tel"],
+html.dark input[type="number"],
+html.dark textarea,
+html.dark select {
+  background-color: #241C18 !important;
+  color: #F7F4EE !important;
+  border-color: rgba(255, 255, 255, 0.12) !important;
+}
+
+html.dark input::placeholder,
+html.dark textarea::placeholder {
+  color: #8C8070 !important;
+}
+
+/* Shadow elevation for dark theme */
+html.dark .shadow-xs,
+html.dark .shadow-sm,
+html.dark .shadow-md,
+html.dark .shadow-lg,
+html.dark .shadow-xl {
+  box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.65) !important;
+}
+
+/* Mega-Menu in Dark Mode */
+html.dark .byzunash-mega-menu {
+  background-color: #1A1411 !important;
+  border-color: rgba(197, 161, 107, 0.3) !important;
+}
+
