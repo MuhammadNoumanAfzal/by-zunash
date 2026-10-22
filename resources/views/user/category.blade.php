@@ -4,7 +4,7 @@
 @section('meta_description', $category['tagline'] . ' Handcrafted pure full-grain ' . $category['name'] . ' with nationwide delivery and Cash on Delivery across Pakistan.')
 @section('meta_keywords', $category['name'] . ' Pakistan, pure leather ' . $category['name'] . ', buy ' . $category['name'] . ' online Lahore Karachi Islamabad, By Zunash')
 @section('canonical', route('category', $category['slug']))
-@section('og_image', $category['image'])
+@section('og_image', asset($category['image']))
 
 @push('schema')
 <script type="application/ld+json">
@@ -67,7 +67,7 @@
     <div class="relative bg-espresso-950 text-ivory py-16 lg:py-24 overflow-hidden">
         <div class="absolute inset-0 z-0 opacity-30">
             <img 
-                src="{{ $category['image'] }}" 
+                src="{{ asset($category['image']) }}" 
                 alt="{{ $category['name'] }}" 
                 class="w-full h-full object-cover filter contrast-125"
             >

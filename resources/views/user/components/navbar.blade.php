@@ -343,6 +343,22 @@
                     ></span>
                 </button>
 
+                <!-- Theme Switcher Button (Light / Warm Dark Atelier) -->
+                <button 
+                    type="button" 
+                    @click="$store.theme.toggle()" 
+                    class="p-2 text-espresso-900 dark:text-ivory-200 hover:text-gold dark:hover:text-gold transition-colors focus:outline-none rounded-full"
+                    :aria-label="$store.theme.current === 'dark' ? 'Switch to Light Theme' : 'Switch to Dark Atelier Theme'"
+                    :title="$store.theme.current === 'dark' ? 'Switch to Light Theme' : 'Switch to Dark Atelier Theme'"
+                >
+                    <span x-show="$store.theme.current === 'dark'" x-cloak>
+                        <i data-lucide="sun" class="w-5 h-5 text-gold"></i>
+                    </span>
+                    <span x-show="$store.theme.current === 'light'" x-cloak>
+                        <i data-lucide="moon" class="w-5 h-5 text-espresso-900"></i>
+                    </span>
+                </button>
+
             </div>
         </div>
     </div>
@@ -433,14 +449,30 @@
                 <!-- Drawer Header -->
                 <div class="flex items-center justify-between pb-6 border-b border-ivory-200">
                     <x-user.components.logo height="h-8" />
-                    <button 
-                        type="button" 
-                        @click="mobileMenuOpen = false" 
-                        class="p-2 -mr-2 text-espresso-800 hover:text-gold-600"
-                        aria-label="Close menu"
-                    >
-                        <i data-lucide="x" class="w-5 h-5"></i>
-                    </button>
+                    <div class="flex items-center gap-1">
+                        <!-- Mobile Theme Toggle -->
+                        <button 
+                            type="button" 
+                            @click="$store.theme.toggle()" 
+                            class="p-2 text-espresso-800 dark:text-ivory-200 hover:text-gold rounded-full focus:outline-none"
+                            aria-label="Toggle Theme"
+                        >
+                            <span x-show="$store.theme.current === 'dark'" x-cloak>
+                                <i data-lucide="sun" class="w-5 h-5 text-gold"></i>
+                            </span>
+                            <span x-show="$store.theme.current === 'light'" x-cloak>
+                                <i data-lucide="moon" class="w-5 h-5 text-espresso-800"></i>
+                            </span>
+                        </button>
+                        <button 
+                            type="button" 
+                            @click="mobileMenuOpen = false" 
+                            class="p-2 -mr-2 text-espresso-800 hover:text-gold-600 focus:outline-none"
+                            aria-label="Close menu"
+                        >
+                            <i data-lucide="x" class="w-5 h-5"></i>
+                        </button>
+                    </div>
                 </div>
 
                 <!-- Navigation Links List with Accordion -->

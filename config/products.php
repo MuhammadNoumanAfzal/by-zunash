@@ -1,6 +1,4 @@
-<?php
-
-return array (
+<?php return array (
   'categories' => 
   array (
     'belts' => 
@@ -8,7 +6,7 @@ return array (
       'slug' => 'belts',
       'name' => 'Leather Belts',
       'tagline' => 'Hand-burnished, full-grain belts tailored for dress and casual distinction.',
-      'image' => 'https://images.unsplash.com/photo-1624222247344-550fb60583dc?auto=format&fit=crop&w=800&q=80',
+      'image' => '/images/categories/cat-belts.jpg',
       'count' => 4,
     ),
     'wallets' => 
@@ -16,7 +14,7 @@ return array (
       'slug' => 'wallets',
       'name' => 'Wallets & Cardholders',
       'tagline' => 'Slim, enduring bifold and front-pocket wallets cut from top-grade hides.',
-      'image' => 'https://images.unsplash.com/photo-1627123424574-724758594e93?auto=format&fit=crop&w=800&q=80',
+      'image' => '/images/categories/cat-wallets.jpg',
       'count' => 4,
     ),
     'handbags' => 
@@ -24,7 +22,7 @@ return array (
       'slug' => 'handbags',
       'name' => 'Handbags',
       'tagline' => 'Sculpted silhouettes, rolled top handles, and bespoke gold-finish accents.',
-      'image' => 'https://images.unsplash.com/photo-1584917865442-de89df76afd3?auto=format&fit=crop&w=800&q=80',
+      'image' => '/images/categories/cat-handbags.jpg',
       'count' => 4,
     ),
     'shoulder-bags' => 
@@ -32,7 +30,7 @@ return array (
       'slug' => 'shoulder-bags',
       'name' => 'Shoulder Bags',
       'tagline' => 'Timeless crossbodies and saddle bags designed for effortless mobility.',
-      'image' => 'https://images.unsplash.com/photo-1548036328-c9fa89d128fa?auto=format&fit=crop&w=800&q=80',
+      'image' => '/images/categories/cat-shoulder-bags.jpg',
       'count' => 4,
     ),
     'accessories' => 
@@ -40,7 +38,7 @@ return array (
       'slug' => 'accessories',
       'name' => 'Everyday Accessories',
       'tagline' => 'Passport folios, solid brass key fobs, and heirloom desk accents.',
-      'image' => 'https://images.unsplash.com/photo-1614252235316-8c857d38b5f4?auto=format&fit=crop&w=800&q=80',
+      'image' => '/images/categories/cat-accessories.jpg',
       'count' => 4,
     ),
   ),
@@ -62,10 +60,10 @@ return array (
       'reviews_count' => 42,
       'short_description' => 'Two refined looks in one. Premium supple calfskin in espresso brown on one face and obsidian black on the reverse, secured by a solid brushed antique brass swivel buckle.',
       'description' => 'Handcrafted for the modern professional in Pakistan, The Royal Reversible Belt offers unmatched versatility. Made from drum-dyed full-grain calfskin leather, it delivers subtle sheen, supple bend, and impeccable durability. The rotatable solid brass buckle transitions effortlessly between black suit trousers and warm earth-toned chinos.',
-      'image' => 'https://images.unsplash.com/photo-1624222247344-550fb60583dc?auto=format&fit=crop&w=800&q=80',
+      'image' => '/images/products/prod-reversible-belt.jpg',
       'gallery' => 
       array (
-        0 => 'https://images.unsplash.com/photo-1624222247344-550fb60583dc?auto=format&fit=crop&w=800&q=80',
+        0 => '/images/products/prod-reversible-belt.jpg',
         1 => 'https://images.unsplash.com/photo-1616401784845-180882ba9ba8?auto=format&fit=crop&w=800&q=80',
         2 => 'https://images.unsplash.com/photo-1601924994987-69e26d50dc26?auto=format&fit=crop&w=800&q=80',
       ),
@@ -117,10 +115,10 @@ return array (
       'reviews_count' => 19,
       'short_description' => 'A timeless 32mm dress belt featuring feather-edge craftsmanship and rich hand-applied patina in cognac tan.',
       'description' => 'Precision cut and hand-polished at every step, this dress belt is an essential companion for bespoke tailoring. It boasts a subtly domed profile, tonal perimeter micro-stitching, and a sleek brushed nickel buckle.',
-      'image' => 'https://images.unsplash.com/photo-1553062407-98eeb64c6a62?auto=format&fit=crop&w=800&q=80',
+      'image' => '/images/products/prod-dress-belt.jpg',
       'gallery' => 
       array (
-        0 => 'https://images.unsplash.com/photo-1553062407-98eeb64c6a62?auto=format&fit=crop&w=800&q=80',
+        0 => '/images/products/prod-dress-belt.jpg',
         1 => 'https://images.unsplash.com/photo-1549497538-303791108f95?auto=format&fit=crop&w=800&q=80',
         2 => 'https://images.unsplash.com/photo-1616401784845-180882ba9ba8?auto=format&fit=crop&w=800&q=80',
       ),
@@ -270,10 +268,10 @@ return array (
       'reviews_count' => 64,
       'short_description' => 'Classic 8-card bifold featuring full-grain vegetable-tanned leather, dual currency dividers sized for PKR banknotes, and RFID lining.',
       'description' => 'The cornerstone of our leather goods collection. Meticulously designed for Pakistani currency dimensions with dual bill compartments to separate PKR banknotes from receipts. Lined with an ultra-thin RFID blocking fabric to safeguard your payment cards.',
-      'image' => 'https://images.unsplash.com/photo-1627123424574-724758594e93?auto=format&fit=crop&w=800&q=80',
+      'image' => '/images/products/prod-bifold-wallet.jpg',
       'gallery' => 
       array (
-        0 => 'https://images.unsplash.com/photo-1627123424574-724758594e93?auto=format&fit=crop&w=800&q=80',
+        0 => '/images/products/prod-bifold-wallet.jpg',
         1 => 'https://images.unsplash.com/photo-1559563458-527698bf5295?auto=format&fit=crop&w=800&q=80',
         2 => 'https://images.unsplash.com/photo-1563903530908-afdd155d057a?auto=format&fit=crop&w=800&q=80',
       ),
@@ -324,10 +322,10 @@ return array (
       'reviews_count' => 31,
       'short_description' => 'Front-pocket essential holding up to 6 cards plus folded cash in a central slip compartment.',
       'description' => 'Designed for those who travel light. Slim enough to slide undetected into suit breast pockets or front trouser pockets while keeping your essential CNIC, credit cards, and folded currency organized.',
-      'image' => 'https://images.unsplash.com/photo-1563903530908-afdd155d057a?auto=format&fit=crop&w=800&q=80',
+      'image' => '/images/products/prod-cardholder.jpg',
       'gallery' => 
       array (
-        0 => 'https://images.unsplash.com/photo-1563903530908-afdd155d057a?auto=format&fit=crop&w=800&q=80',
+        0 => '/images/products/prod-cardholder.jpg',
         1 => 'https://images.unsplash.com/photo-1627123424574-724758594e93?auto=format&fit=crop&w=800&q=80',
         2 => 'https://images.unsplash.com/photo-1559563458-527698bf5295?auto=format&fit=crop&w=800&q=80',
       ),
@@ -466,10 +464,10 @@ return array (
       'reviews_count' => 58,
       'short_description' => 'Our flagship silhouette. Hand-sculpted architectural curves, rolled handles, and 24k gold-toned hardware accents.',
       'description' => 'The quintessential statement handbag crafted for refined gatherings and daily grandeur. Constructed from structured, scratch-resistant pebble leather with reinforced base studs, custom monogram lock, and an adjustable shoulder strap for hand or shoulder styling.',
-      'image' => 'https://images.unsplash.com/photo-1584917865442-de89df76afd3?auto=format&fit=crop&w=800&q=80',
+      'image' => '/images/products/prod-signature-satchel.jpg',
       'gallery' => 
       array (
-        0 => 'https://images.unsplash.com/photo-1584917865442-de89df76afd3?auto=format&fit=crop&w=800&q=80',
+        0 => '/images/products/prod-signature-satchel.jpg',
         1 => 'https://images.unsplash.com/photo-1590874103328-eac38a683ce7?auto=format&fit=crop&w=800&q=80',
         2 => 'https://images.unsplash.com/photo-1548036328-c9fa89d128fa?auto=format&fit=crop&w=800&q=80',
       ),
@@ -521,10 +519,10 @@ return array (
       'reviews_count' => 24,
       'short_description' => 'Generously proportioned luxury carryall fitting a 14\\" laptop, planner, and vanity pouch with seamless grace.',
       'description' => 'Engineered for executive women who demand both aesthetic poise and effortless utility. The structured silhouette never sags, standing upright on solid brass studs while housing a padded laptop compartment and organized inner dividers.',
-      'image' => 'https://images.unsplash.com/photo-1590874103328-eac38a683ce7?auto=format&fit=crop&w=800&q=80',
+      'image' => '/images/products/prod-leather-tote.jpg',
       'gallery' => 
       array (
-        0 => 'https://images.unsplash.com/photo-1590874103328-eac38a683ce7?auto=format&fit=crop&w=800&q=80',
+        0 => '/images/products/prod-leather-tote.jpg',
         1 => 'https://images.unsplash.com/photo-1584917865442-de89df76afd3?auto=format&fit=crop&w=800&q=80',
         2 => 'https://images.unsplash.com/photo-1548036328-c9fa89d128fa?auto=format&fit=crop&w=800&q=80',
       ),
@@ -661,10 +659,10 @@ return array (
       'reviews_count' => 47,
       'short_description' => 'Curated flap silhouette with subtle antique gold lock, adjustable strap, and dual interior compartments.',
       'description' => 'Clean lines meet timeless ease. The Boulevard is crafted to hang comfortably on the shoulder or across the body, offering fluid motion and rapid magnetic access.',
-      'image' => 'https://images.unsplash.com/photo-1591561954557-26941169b49e?auto=format&fit=crop&w=800&q=80',
+      'image' => '/images/products/prod-flap-bag.jpg',
       'gallery' => 
       array (
-        0 => 'https://images.unsplash.com/photo-1591561954557-26941169b49e?auto=format&fit=crop&w=800&q=80',
+        0 => '/images/products/prod-flap-bag.jpg',
         1 => 'https://images.unsplash.com/photo-1575032617751-6ddec2089882?auto=format&fit=crop&w=800&q=80',
         2 => 'https://images.unsplash.com/photo-1594223274512-ad4803739b7c?auto=format&fit=crop&w=800&q=80',
       ),
@@ -843,10 +841,10 @@ return array (
       'reviews_count' => 53,
       'short_description' => 'Solid sand-cast brass trigger clasp combined with thick hand-stitched bridal leather loop.',
       'description' => 'A tactile everyday pleasure. Solid brass spring clasp connects securely to belt loops or bag D-rings, keeping vehicle and home keys always at hand.',
-      'image' => 'https://images.unsplash.com/photo-1614252235316-8c857d38b5f4?auto=format&fit=crop&w=800&q=80',
+      'image' => '/images/products/prod-key-fob.jpg',
       'gallery' => 
       array (
-        0 => 'https://images.unsplash.com/photo-1614252235316-8c857d38b5f4?auto=format&fit=crop&w=800&q=80',
+        0 => '/images/products/prod-key-fob.jpg',
         1 => 'https://images.unsplash.com/photo-1517445312882-bc9910d016b7?auto=format&fit=crop&w=800&q=80',
         2 => 'https://images.unsplash.com/photo-1589782182703-2aaa69037b5b?auto=format&fit=crop&w=800&q=80',
       ),

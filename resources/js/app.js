@@ -34,7 +34,9 @@ import {
     Clock,
     Award,
     CheckCircle2,
-    AlertCircle
+    AlertCircle,
+    Sun,
+    Moon
 } from 'lucide';
 
 const iconSet = {
@@ -69,7 +71,9 @@ const iconSet = {
     Clock,
     Award,
     CheckCircle2,
-    AlertCircle
+    AlertCircle,
+    Sun,
+    Moon
 };
 
 window.Alpine = Alpine;
@@ -168,6 +172,35 @@ window.ZunashAlert = {
         });
     }
 };
+
+// ========================================================
+// ALPINE THEME STORE (Light / Warm Dark Atelier)
+// ========================================================
+Alpine.store('theme', {
+    current: localStorage.getItem('byzunash_theme') || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'),
+
+    init() {
+        this.apply(this.current);
+    },
+
+    toggle() {
+        this.current = this.current === 'dark' ? 'light' : 'dark';
+        this.apply(this.current);
+        setTimeout(() => {
+            if (window.refreshLucideIcons) window.refreshLucideIcons();
+        }, 50);
+    },
+
+    apply(theme) {
+        this.current = theme;
+        localStorage.setItem('byzunash_theme', theme);
+        if (theme === 'dark') {
+            document.documentElement.classList.add('dark');
+        } else {
+            document.documentElement.classList.remove('dark');
+        }
+    }
+});
 
 // ========================================================
 // ALPINE CART STORE
