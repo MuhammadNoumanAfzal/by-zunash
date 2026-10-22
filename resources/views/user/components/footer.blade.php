@@ -46,6 +46,7 @@
                     <li><a href="{{ route('policy.returns') }}" class="text-ivory-300 hover:text-gold transition-colors">Returns & Exchanges</a></li>
                     <li><a href="{{ route('faq') }}" class="text-ivory-300 hover:text-gold transition-colors">Frequently Asked Questions</a></li>
                     <li><a href="{{ route('policy.privacy') }}" class="text-ivory-300 hover:text-gold transition-colors">Privacy & Data Policy</a></li>
+                    <li><a href="{{ route('reviews') }}" class="text-ivory-300 hover:text-gold transition-colors">Client Reviews (4.9★)</a></li>
                     <li><a href="{{ route('about') }}" class="text-ivory-300 hover:text-gold transition-colors">About Our Atelier</a></li>
                     <li><a href="{{ route('contact') }}" class="text-ivory-300 hover:text-gold transition-colors">Bespoke Inquiries</a></li>
                 </ul>

@@ -1046,8 +1046,15 @@
                 </div>
             </div>
 
-            <!-- Slider Navigation Buttons -->
-            <div class="flex items-center gap-2 mt-4 md:mt-0">
+            <!-- Slider Navigation Buttons & All Reviews Link -->
+            <div class="flex items-center gap-3 mt-4 md:mt-0">
+                <a 
+                    href="{{ route('reviews') }}" 
+                    class="text-xs uppercase tracking-widest text-gold hover:text-white transition-colors font-semibold flex items-center gap-1.5 mr-1"
+                >
+                    <span>All Reviews (4.9★)</span>
+                    <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
+                </a>
                 <button 
                     type="button" 
                     @click="scrollPrev()" 

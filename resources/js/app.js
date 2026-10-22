@@ -34,9 +34,22 @@ import {
     Clock,
     Award,
     CheckCircle2,
+    CheckCircle,
     AlertCircle,
     Sun,
-    Moon
+    Moon,
+    Feather,
+    Scissors,
+    GitCommit,
+    Banknote,
+    Gift,
+    Sparkles,
+    Layers,
+    Ruler,
+    Package,
+    MessageSquare,
+    Maximize2,
+    ZoomIn
 } from 'lucide';
 
 const iconSet = {
@@ -71,9 +84,22 @@ const iconSet = {
     Clock,
     Award,
     CheckCircle2,
+    CheckCircle,
     AlertCircle,
     Sun,
-    Moon
+    Moon,
+    Feather,
+    Scissors,
+    GitCommit,
+    Banknote,
+    Gift,
+    Sparkles,
+    Layers,
+    Ruler,
+    Package,
+    MessageSquare,
+    Maximize2,
+    ZoomIn
 };
 
 window.Alpine = Alpine;

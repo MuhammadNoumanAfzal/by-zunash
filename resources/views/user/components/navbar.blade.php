@@ -282,6 +282,13 @@
                 </a>
 
                 <a 
+                    href="{{ route('reviews') }}" 
+                    class="text-xs uppercase tracking-widest font-medium transition-colors duration-200 {{ request()->routeIs('reviews') ? 'text-gold-600 font-semibold' : 'text-espresso-800 hover:text-gold-600' }}"
+                >
+                    Reviews
+                </a>
+
+                <a 
                     href="{{ route('contact') }}" 
                     class="text-xs uppercase tracking-widest font-medium transition-colors duration-200 {{ request()->routeIs('contact') ? 'text-gold-600 font-semibold' : 'text-espresso-800 hover:text-gold-600' }}"
                 >
@@ -563,6 +570,13 @@
                         class="block text-sm font-medium tracking-wide uppercase py-1 text-espresso-900 hover:text-gold-600"
                     >
                         About By Zunash
+                    </a>
+                    <a 
+                        href="{{ route('reviews') }}" 
+                        @click="mobileMenuOpen = false"
+                        class="block text-sm font-medium tracking-wide uppercase py-1 {{ request()->routeIs('reviews') ? 'text-gold-600 font-semibold' : 'text-espresso-900 hover:text-gold-600' }}"
+                    >
+                        Client Reviews
                     </a>
                     <a 
                         href="{{ route('contact') }}" 

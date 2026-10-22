@@ -27,6 +27,8 @@ Route::get('/wishlist', [StoreController::class, 'wishlist'])->name('wishlist');
 
 // Brand Story & Information
 Route::get('/about', [StoreController::class, 'about'])->name('about');
+Route::get('/reviews', [StoreController::class, 'reviews'])->name('reviews');
+Route::post('/reviews', [StoreController::class, 'submitReview'])->name('reviews.submit');
 Route::get('/contact', [StoreController::class, 'contact'])->name('contact');
 Route::post('/contact', [StoreController::class, 'submitContact'])->name('contact.submit');
 Route::get('/faq', [StoreController::class, 'faq'])->name('faq');

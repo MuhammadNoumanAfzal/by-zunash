@@ -64,8 +64,9 @@
       'gallery' => 
       array (
         0 => '/images/products/prod-reversible-belt.jpg',
-        1 => 'https://images.unsplash.com/photo-1616401784845-180882ba9ba8?auto=format&fit=crop&w=800&q=80',
-        2 => 'https://images.unsplash.com/photo-1601924994987-69e26d50dc26?auto=format&fit=crop&w=800&q=80',
+        1 => '/images/hero/slide-belt.jpg',
+        2 => '/images/brand/stitch-detail.jpg',
+        3 => '/images/brand/artisan-craft.jpg',
       ),
       'features' => 
       array (
@@ -119,8 +120,8 @@
       'gallery' => 
       array (
         0 => '/images/products/prod-dress-belt.jpg',
-        1 => 'https://images.unsplash.com/photo-1549497538-303791108f95?auto=format&fit=crop&w=800&q=80',
-        2 => 'https://images.unsplash.com/photo-1616401784845-180882ba9ba8?auto=format&fit=crop&w=800&q=80',
+        1 => '/images/hero/slide-belt.jpg',
+        2 => '/images/brand/stitch-detail.jpg',
       ),
       'features' => 
       array (
@@ -168,12 +169,12 @@
       'reviews_count' => 14,
       'short_description' => 'Heavyweight pull-up leather crafted with thick contrast ivory thread for rugged, timeless denim wear.',
       'description' => 'Built from heavy 9-10 oz full-grain steer hide that develops a distinctive personal patina over years of wear. Highlights bold contrast saddle stitching and a heavyweight roller buckle.',
-      'image' => 'https://images.unsplash.com/photo-1601924994987-69e26d50dc26?auto=format&fit=crop&w=800&q=80',
+      'image' => '/images/hero/slide-belt.jpg',
       'gallery' => 
       array (
-        0 => 'https://images.unsplash.com/photo-1601924994987-69e26d50dc26?auto=format&fit=crop&w=800&q=80',
-        1 => 'https://images.unsplash.com/photo-1624222247344-550fb60583dc?auto=format&fit=crop&w=800&q=80',
-        2 => 'https://images.unsplash.com/photo-1553062407-98eeb64c6a62?auto=format&fit=crop&w=800&q=80',
+        0 => '/images/hero/slide-belt.jpg',
+        1 => '/images/brand/stitch-detail.jpg',
+        2 => '/images/brand/artisan-craft.jpg',
       ),
       'features' => 
       array (
@@ -215,12 +216,12 @@
       'reviews_count' => 26,
       'short_description' => 'Intricately hand-plaited leather strips offering hole-free micro-adjustability and flexible comfort.',
       'description' => 'Each belt requires over four hours of intricate hand-plaiting by master leather artisans. The interlocking weave provides infinite adjustability without standard belt holes, ensuring a custom fit through every season.',
-      'image' => 'https://images.unsplash.com/photo-1549497538-303791108f95?auto=format&fit=crop&w=800&q=80',
+      'image' => '/images/products/prod-dress-belt.jpg',
       'gallery' => 
       array (
-        0 => 'https://images.unsplash.com/photo-1549497538-303791108f95?auto=format&fit=crop&w=800&q=80',
-        1 => 'https://images.unsplash.com/photo-1601924994987-69e26d50dc26?auto=format&fit=crop&w=800&q=80',
-        2 => 'https://images.unsplash.com/photo-1517445312882-bc9910d016b7?auto=format&fit=crop&w=800&q=80',
+        0 => '/images/products/prod-dress-belt.jpg',
+        1 => '/images/hero/slide-belt.jpg',
+        2 => '/images/brand/stitch-detail.jpg',
       ),
       'features' => 
       array (
@@ -272,8 +273,9 @@
       'gallery' => 
       array (
         0 => '/images/products/prod-bifold-wallet.jpg',
-        1 => 'https://images.unsplash.com/photo-1559563458-527698bf5295?auto=format&fit=crop&w=800&q=80',
-        2 => 'https://images.unsplash.com/photo-1563903530908-afdd155d057a?auto=format&fit=crop&w=800&q=80',
+        1 => '/images/hero/slide-wallet.jpg',
+        2 => '/images/brand/stitch-detail.jpg',
+        3 => '/images/brand/artisan-craft.jpg',
       ),
       'features' => 
       array (
@@ -326,8 +328,8 @@
       'gallery' => 
       array (
         0 => '/images/products/prod-cardholder.jpg',
-        1 => 'https://images.unsplash.com/photo-1627123424574-724758594e93?auto=format&fit=crop&w=800&q=80',
-        2 => 'https://images.unsplash.com/photo-1559563458-527698bf5295?auto=format&fit=crop&w=800&q=80',
+        1 => '/images/hero/slide-wallet.jpg',
+        2 => '/images/brand/stitch-detail.jpg',
       ),
       'features' => 
       array (
@@ -374,12 +376,12 @@
       'reviews_count' => 22,
       'short_description' => 'All-in-one document and travel folio with smooth Japanese YKK antique brass perimeter zipper.',
       'description' => 'Carries your passport, international currency, boarding passes, 12 cards, and smartphone with seamless security. The smooth Japanese zip protects all contents from accidental slips while in transit.',
-      'image' => 'https://images.unsplash.com/photo-1512496015851-a90fb38ba796?auto=format&fit=crop&w=800&q=80',
+      'image' => '/images/hero/slide-wallet.jpg',
       'gallery' => 
       array (
-        0 => 'https://images.unsplash.com/photo-1512496015851-a90fb38ba796?auto=format&fit=crop&w=800&q=80',
-        1 => 'https://images.unsplash.com/photo-1544816155-12df9643f363?auto=format&fit=crop&w=800&q=80',
-        2 => 'https://images.unsplash.com/photo-1607604276583-eef5d076aa5f?auto=format&fit=crop&w=800&q=80',
+        0 => '/images/hero/slide-wallet.jpg',
+        1 => '/images/products/prod-bifold-wallet.jpg',
+        2 => '/images/brand/stitch-detail.jpg',
       ),
       'features' => 
       array (
