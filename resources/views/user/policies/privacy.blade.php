@@ -49,7 +49,7 @@
             
             <!-- Atelier Badge -->
             <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-gold/10 border border-gold/30 text-gold text-xs uppercase tracking-widest font-semibold mb-5 shadow-xs">
-                <svg class="w-3.5 h-3.5 text-gold" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+                <i data-lucide="shield" class="w-3.5 h-3.5 text-gold flex-shrink-0"></i>
                 <span>Atelier Client Care & Confidentiality</span>
             </div>
 
@@ -62,33 +62,33 @@
             </p>
 
             <!-- Policy Navigation Pill Tabs (Smooth Hub Navigation) -->
-            <div class="flex items-center justify-center gap-2 sm:gap-3 flex-wrap text-xs">
+            <div class="flex items-center justify-center gap-2.5 sm:gap-3 flex-wrap text-xs">
                 <a 
                     href="{{ route('policy.privacy') }}" 
-                    class="px-4.5 py-2.5 rounded-full bg-gold text-espresso-950 font-bold shadow-gold-glow flex items-center gap-2 transition-all active:scale-95"
+                    class="px-5 py-2.5 rounded-full bg-gold text-espresso-950 font-bold shadow-gold-glow flex items-center gap-2 transition-all active:scale-95"
                 >
-                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+                    <i data-lucide="lock" class="w-4 h-4 flex-shrink-0 text-espresso-950"></i>
                     <span>Privacy Policy</span>
                 </a>
                 <a 
                     href="{{ route('policy.shipping') }}" 
-                    class="px-4.5 py-2.5 rounded-full bg-espresso-900/80 hover:bg-espresso-800 text-ivory-200 border border-ivory-300/20 hover:border-gold/50 flex items-center gap-2 transition-all"
+                    class="px-5 py-2.5 rounded-full bg-espresso-900/80 hover:bg-espresso-800 text-ivory-200 border border-ivory-300/20 hover:border-gold/50 flex items-center gap-2 transition-all"
                 >
-                    <svg class="w-3.5 h-3.5 text-gold" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><rect x="1" y="3" width="15" height="13"></rect><polygon points="16 8 20 8 23 11 23 16 16 16 8"></polygon><circle cx="5.5" cy="18.5" r="2.5"></circle><circle cx="18.5" cy="18.5" r="2.5"></circle></svg>
+                    <i data-lucide="truck" class="w-4 h-4 flex-shrink-0 text-gold"></i>
                     <span>Shipping & Delivery</span>
                 </a>
                 <a 
                     href="{{ route('policy.returns') }}" 
-                    class="px-4.5 py-2.5 rounded-full bg-espresso-900/80 hover:bg-espresso-800 text-ivory-200 border border-ivory-300/20 hover:border-gold/50 flex items-center gap-2 transition-all"
+                    class="px-5 py-2.5 rounded-full bg-espresso-900/80 hover:bg-espresso-800 text-ivory-200 border border-ivory-300/20 hover:border-gold/50 flex items-center gap-2 transition-all"
                 >
-                    <svg class="w-3.5 h-3.5 text-gold" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"></path><path d="M21 3v5h-5"></path><path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"></path><path d="M3 21v-5h5"></path></svg>
+                    <i data-lucide="rotate-ccw" class="w-4 h-4 flex-shrink-0 text-gold"></i>
                     <span>Returns & 7-Day Exchange</span>
                 </a>
                 <a 
                     href="{{ route('faq') }}" 
-                    class="px-4.5 py-2.5 rounded-full bg-espresso-900/80 hover:bg-espresso-800 text-ivory-200 border border-ivory-300/20 hover:border-gold/50 flex items-center gap-2 transition-all"
+                    class="px-5 py-2.5 rounded-full bg-espresso-900/80 hover:bg-espresso-800 text-ivory-200 border border-ivory-300/20 hover:border-gold/50 flex items-center gap-2 transition-all"
                 >
-                    <svg class="w-3.5 h-3.5 text-gold" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
+                    <i data-lucide="help-circle" class="w-4 h-4 flex-shrink-0 text-gold"></i>
                     <span>Client FAQ</span>
                 </a>
             </div>
@@ -107,7 +107,7 @@
                 <!-- Notice Banner -->
                 <div class="p-4 sm:p-5 rounded-2xl bg-gold/10 border border-gold/30 flex items-start gap-3.5 shadow-2xs">
                     <div class="w-8 h-8 rounded-full bg-gold/20 text-gold-800 flex items-center justify-center flex-shrink-0 mt-0.5 border border-gold/40">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+                        <i data-lucide="shield-check" class="w-4 h-4 text-gold-800"></i>
                     </div>
                     <div>
                         <h4 class="font-serif text-sm font-bold text-espresso-950">Strict Zero-Monetization Pledge</h4>
@@ -163,7 +163,7 @@
                         
                         <div class="p-3.5 rounded-2xl bg-[#FAF7F2] border border-ivory-200/80 flex items-start gap-3">
                             <div class="w-7 h-7 rounded-lg bg-gold/15 text-gold-700 flex items-center justify-center flex-shrink-0 mt-0.5">
-                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+                                <i data-lucide="user" class="w-4 h-4 text-gold-700"></i>
                             </div>
                             <div>
                                 <h4 class="font-serif text-xs font-bold text-espresso-950">Identity & Name</h4>
@@ -173,7 +173,7 @@
 
                         <div class="p-3.5 rounded-2xl bg-[#FAF7F2] border border-ivory-200/80 flex items-start gap-3">
                             <div class="w-7 h-7 rounded-lg bg-gold/15 text-gold-700 flex items-center justify-center flex-shrink-0 mt-0.5">
-                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>
+                                <i data-lucide="phone" class="w-4 h-4 text-gold-700"></i>
                             </div>
                             <div>
                                 <h4 class="font-serif text-xs font-bold text-espresso-950">Mobile / WhatsApp</h4>
@@ -183,7 +183,7 @@
 
                         <div class="p-3.5 rounded-2xl bg-[#FAF7F2] border border-ivory-200/80 flex items-start gap-3">
                             <div class="w-7 h-7 rounded-lg bg-gold/15 text-gold-700 flex items-center justify-center flex-shrink-0 mt-0.5">
-                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
+                                <i data-lucide="map-pin" class="w-4 h-4 text-gold-700"></i>
                             </div>
                             <div>
                                 <h4 class="font-serif text-xs font-bold text-espresso-950">Delivery Destination</h4>
@@ -193,7 +193,7 @@
 
                         <div class="p-3.5 rounded-2xl bg-[#FAF7F2] border border-ivory-200/80 flex items-start gap-3">
                             <div class="w-7 h-7 rounded-lg bg-gold/15 text-gold-700 flex items-center justify-center flex-shrink-0 mt-0.5">
-                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
+                                <i data-lucide="mail" class="w-4 h-4 text-gold-700"></i>
                             </div>
                             <div>
                                 <h4 class="font-serif text-xs font-bold text-espresso-950">Email (Optional)</h4>
@@ -229,7 +229,10 @@
 
                     <div class="mt-5 pt-4 border-t border-ivory-200 flex items-center justify-between text-[11px] text-muted flex-wrap gap-2">
                         <span>• Data Retention: Maintained only for active warranty & exchange validity</span>
-                        <span class="text-emerald-700 font-semibold">✓ 256-Bit SSL Encryption Active</span>
+                        <span class="text-emerald-700 font-semibold flex items-center gap-1">
+                            <i data-lucide="shield-check" class="w-3.5 h-3.5 text-emerald-600"></i>
+                            <span>256-Bit SSL Encryption Active</span>
+                        </span>
                     </div>
                 </article>
 
@@ -271,7 +274,7 @@
                             href="tel:+923001234567" 
                             class="w-full py-3 px-4 bg-white/10 hover:bg-white/15 text-ivory text-xs uppercase tracking-widest font-semibold rounded-xl text-center block transition-all border border-ivory-300/30 flex items-center justify-center gap-2"
                         >
-                            <svg class="w-4 h-4 text-gold" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>
+                            <i data-lucide="phone" class="w-4 h-4 text-gold"></i>
                             <span>+92 (300) 123-4567</span>
                         </a>
                     </div>
@@ -285,15 +288,15 @@
                     
                     <ul class="space-y-3 text-xs text-espresso-900 font-light">
                         <li class="flex items-start gap-2.5">
-                            <svg class="w-4 h-4 text-gold flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+                            <i data-lucide="shield" class="w-4 h-4 text-gold flex-shrink-0 mt-0.5"></i>
                             <span>Zero Third-Party Marketing Distribution</span>
                         </li>
                         <li class="flex items-start gap-2.5">
-                            <svg class="w-4 h-4 text-gold flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+                            <i data-lucide="lock" class="w-4 h-4 text-gold flex-shrink-0 mt-0.5"></i>
                             <span>No Credit Card Numbers Ever Recorded</span>
                         </li>
                         <li class="flex items-start gap-2.5">
-                            <svg class="w-4 h-4 text-gold flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><rect x="1" y="3" width="15" height="13"></rect><polygon points="16 8 20 8 23 11 23 16 16 16 8"></polygon><circle cx="5.5" cy="18.5" r="2.5"></circle><circle cx="18.5" cy="18.5" r="2.5"></circle></svg>
+                            <i data-lucide="package" class="w-4 h-4 text-gold flex-shrink-0 mt-0.5"></i>
                             <span>Dispatched in Tamper-Proof Wax Sealed Parcels</span>
                         </li>
                     </ul>

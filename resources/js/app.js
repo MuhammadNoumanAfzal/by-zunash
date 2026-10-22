@@ -49,7 +49,10 @@ import {
     Package,
     MessageSquare,
     Maximize2,
-    ZoomIn
+    ZoomIn,
+    HelpCircle,
+    Shield,
+    FileText
 } from 'lucide';
 
 const iconSet = {
@@ -99,7 +102,10 @@ const iconSet = {
     Package,
     MessageSquare,
     Maximize2,
-    ZoomIn
+    ZoomIn,
+    HelpCircle,
+    Shield,
+    FileText
 };
 
 window.Alpine = Alpine;

@@ -108,7 +108,7 @@
             
             <!-- Atelier Badge -->
             <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-gold/10 border border-gold/30 text-gold text-xs uppercase tracking-widest font-semibold mb-5 shadow-xs">
-                <svg class="w-3.5 h-3.5 text-gold" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
+                <i data-lucide="help-circle" class="w-3.5 h-3.5 text-gold flex-shrink-0"></i>
                 <span>Client Knowledge Base & Assistance</span>
             </div>
 
@@ -121,33 +121,33 @@
             </p>
 
             <!-- Policy Navigation Pill Tabs (Smooth Hub Navigation) -->
-            <div class="flex items-center justify-center gap-2 sm:gap-3 flex-wrap text-xs">
+            <div class="flex items-center justify-center gap-2.5 sm:gap-3 flex-wrap text-xs">
                 <a 
                     href="{{ route('policy.privacy') }}" 
-                    class="px-4.5 py-2.5 rounded-full bg-espresso-900/80 hover:bg-espresso-800 text-ivory-200 border border-ivory-300/20 hover:border-gold/50 flex items-center gap-2 transition-all"
+                    class="px-5 py-2.5 rounded-full bg-espresso-900/80 hover:bg-espresso-800 text-ivory-200 border border-ivory-300/20 hover:border-gold/50 flex items-center gap-2 transition-all"
                 >
-                    <svg class="w-3.5 h-3.5 text-gold" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+                    <i data-lucide="lock" class="w-4 h-4 flex-shrink-0 text-gold"></i>
                     <span>Privacy Policy</span>
                 </a>
                 <a 
                     href="{{ route('policy.shipping') }}" 
-                    class="px-4.5 py-2.5 rounded-full bg-espresso-900/80 hover:bg-espresso-800 text-ivory-200 border border-ivory-300/20 hover:border-gold/50 flex items-center gap-2 transition-all"
+                    class="px-5 py-2.5 rounded-full bg-espresso-900/80 hover:bg-espresso-800 text-ivory-200 border border-ivory-300/20 hover:border-gold/50 flex items-center gap-2 transition-all"
                 >
-                    <svg class="w-3.5 h-3.5 text-gold" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><rect x="1" y="3" width="15" height="13"></rect><polygon points="16 8 20 8 23 11 23 16 16 16 8"></polygon><circle cx="5.5" cy="18.5" r="2.5"></circle><circle cx="18.5" cy="18.5" r="2.5"></circle></svg>
+                    <i data-lucide="truck" class="w-4 h-4 flex-shrink-0 text-gold"></i>
                     <span>Shipping & Delivery</span>
                 </a>
                 <a 
                     href="{{ route('policy.returns') }}" 
-                    class="px-4.5 py-2.5 rounded-full bg-espresso-900/80 hover:bg-espresso-800 text-ivory-200 border border-ivory-300/20 hover:border-gold/50 flex items-center gap-2 transition-all"
+                    class="px-5 py-2.5 rounded-full bg-espresso-900/80 hover:bg-espresso-800 text-ivory-200 border border-ivory-300/20 hover:border-gold/50 flex items-center gap-2 transition-all"
                 >
-                    <svg class="w-3.5 h-3.5 text-gold" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"></path><path d="M21 3v5h-5"></path><path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"></path><path d="M3 21v-5h5"></path></svg>
+                    <i data-lucide="rotate-ccw" class="w-4 h-4 flex-shrink-0 text-gold"></i>
                     <span>Returns & 7-Day Exchange</span>
                 </a>
                 <a 
                     href="{{ route('faq') }}" 
-                    class="px-4.5 py-2.5 rounded-full bg-gold text-espresso-950 font-bold shadow-gold-glow flex items-center gap-2 transition-all active:scale-95"
+                    class="px-5 py-2.5 rounded-full bg-gold text-espresso-950 font-bold shadow-gold-glow flex items-center gap-2 transition-all active:scale-95"
                 >
-                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5"><circle cx="12" cy="12" r="10"></circle><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
+                    <i data-lucide="help-circle" class="w-4 h-4 flex-shrink-0 text-espresso-950"></i>
                     <span>Client FAQ</span>
                 </a>
             </div>
@@ -168,7 +168,7 @@
                     <button 
                         type="button" 
                         @click="activeCategory = 'ordering'; openedIndex = 1;" 
-                        class="px-4.5 py-2 rounded-full text-xs uppercase tracking-wider font-semibold transition-all cursor-pointer whitespace-nowrap"
+                        class="px-5 py-2.5 rounded-full text-xs uppercase tracking-wider font-semibold transition-all cursor-pointer whitespace-nowrap"
                         :class="activeCategory === 'ordering' ? 'bg-espresso text-gold border border-gold/40 shadow-sm' : 'bg-white text-espresso-800 border border-ivory-300 hover:border-gold/60'"
                     >
                         Ordering & Payment
@@ -176,7 +176,7 @@
                     <button 
                         type="button" 
                         @click="activeCategory = 'sizing'; openedIndex = 4;" 
-                        class="px-4.5 py-2 rounded-full text-xs uppercase tracking-wider font-semibold transition-all cursor-pointer whitespace-nowrap"
+                        class="px-5 py-2.5 rounded-full text-xs uppercase tracking-wider font-semibold transition-all cursor-pointer whitespace-nowrap"
                         :class="activeCategory === 'sizing' ? 'bg-espresso text-gold border border-gold/40 shadow-sm' : 'bg-white text-espresso-800 border border-ivory-300 hover:border-gold/60'"
                     >
                         Sizing & Fit
@@ -184,7 +184,7 @@
                     <button 
                         type="button" 
                         @click="activeCategory = 'shipping'; openedIndex = 6;" 
-                        class="px-4.5 py-2 rounded-full text-xs uppercase tracking-wider font-semibold transition-all cursor-pointer whitespace-nowrap"
+                        class="px-5 py-2.5 rounded-full text-xs uppercase tracking-wider font-semibold transition-all cursor-pointer whitespace-nowrap"
                         :class="activeCategory === 'shipping' ? 'bg-espresso text-gold border border-gold/40 shadow-sm' : 'bg-white text-espresso-800 border border-ivory-300 hover:border-gold/60'"
                     >
                         Shipping & Handover
@@ -192,7 +192,7 @@
                     <button 
                         type="button" 
                         @click="activeCategory = 'leather'; openedIndex = 8;" 
-                        class="px-4.5 py-2 rounded-full text-xs uppercase tracking-wider font-semibold transition-all cursor-pointer whitespace-nowrap"
+                        class="px-5 py-2.5 rounded-full text-xs uppercase tracking-wider font-semibold transition-all cursor-pointer whitespace-nowrap"
                         :class="activeCategory === 'leather' ? 'bg-espresso text-gold border border-gold/40 shadow-sm' : 'bg-white text-espresso-800 border border-ivory-300 hover:border-gold/60'"
                     >
                         Leather Care & Patina
@@ -215,7 +215,7 @@
                                     <span class="w-6 h-6 rounded-full bg-gold/15 text-gold-700 text-xs flex items-center justify-center font-sans font-bold flex-shrink-0">1</span>
                                     <span>Is Cash on Delivery (COD) available across all of Pakistan?</span>
                                 </span>
-                                <svg class="w-4 h-4 text-gold flex-shrink-0 transition-transform duration-300" :class="openedIndex === 1 ? 'rotate-180' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                                <i data-lucide="chevron-down" class="w-4 h-4 text-gold flex-shrink-0 transition-transform duration-300" :class="openedIndex === 1 ? 'rotate-180' : ''"></i>
                             </button>
                             <div x-show="openedIndex === 1" x-collapse class="px-5 sm:px-6 pb-6 text-xs sm:text-sm text-espresso-800 leading-relaxed font-light border-t border-ivory-100 pt-4 bg-[#FAF7F2]/50">
                                 Yes. We provide nationwide Cash on Delivery service covering all major urban hubs (Karachi, Lahore, Islamabad, Rawalpindi, Faisalabad, Multan, Peshawar, Quetta, Sialkot) as well as over 250 regional towns. You pay in cash directly to the courier rider upon delivery without any advance deposit.
@@ -232,7 +232,7 @@
                                     <span class="w-6 h-6 rounded-full bg-gold/15 text-gold-700 text-xs flex items-center justify-center font-sans font-bold flex-shrink-0">2</span>
                                     <span>Can I pay via direct online bank transfer (IBFT)?</span>
                                 </span>
-                                <svg class="w-4 h-4 text-gold flex-shrink-0 transition-transform duration-300" :class="openedIndex === 2 ? 'rotate-180' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                                <i data-lucide="chevron-down" class="w-4 h-4 text-gold flex-shrink-0 transition-transform duration-300" :class="openedIndex === 2 ? 'rotate-180' : ''"></i>
                             </button>
                             <div x-show="openedIndex === 2" x-collapse class="px-5 sm:px-6 pb-6 text-xs sm:text-sm text-espresso-800 leading-relaxed font-light border-t border-ivory-100 pt-4 bg-[#FAF7F2]/50">
                                 Yes. Simply select "Direct Bank Transfer" during checkout. Our corporate account details (Meezan Bank Limited) will be displayed along with an instant one-click IBAN copy tool. Please share your payment screenshot via WhatsApp to expedite priority workshop dispatch.
@@ -249,7 +249,7 @@
                                     <span class="w-6 h-6 rounded-full bg-gold/15 text-gold-700 text-xs flex items-center justify-center font-sans font-bold flex-shrink-0">3</span>
                                     <span>Are prices inclusive of applicable taxes?</span>
                                 </span>
-                                <svg class="w-4 h-4 text-gold flex-shrink-0 transition-transform duration-300" :class="openedIndex === 3 ? 'rotate-180' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                                <i data-lucide="chevron-down" class="w-4 h-4 text-gold flex-shrink-0 transition-transform duration-300" :class="openedIndex === 3 ? 'rotate-180' : ''"></i>
                             </button>
                             <div x-show="openedIndex === 3" x-collapse class="px-5 sm:px-6 pb-6 text-xs sm:text-sm text-espresso-800 leading-relaxed font-light border-t border-ivory-100 pt-4 bg-[#FAF7F2]/50">
                                 All prices listed in PKR on By Zunash are all-inclusive product prices. Shipping is calculated transparently: orders of PKR 6,000 and above qualify for complimentary courier delivery nationwide.
@@ -271,7 +271,7 @@
                                     <span class="w-6 h-6 rounded-full bg-gold/15 text-gold-700 text-xs flex items-center justify-center font-sans font-bold flex-shrink-0">1</span>
                                     <span>How do I determine my correct belt size?</span>
                                 </span>
-                                <svg class="w-4 h-4 text-gold flex-shrink-0 transition-transform duration-300" :class="openedIndex === 4 ? 'rotate-180' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                                <i data-lucide="chevron-down" class="w-4 h-4 text-gold flex-shrink-0 transition-transform duration-300" :class="openedIndex === 4 ? 'rotate-180' : ''"></i>
                             </button>
                             <div x-show="openedIndex === 4" x-collapse class="px-5 sm:px-6 pb-6 text-xs sm:text-sm text-espresso-800 leading-relaxed font-light border-t border-ivory-100 pt-4 bg-[#FAF7F2]/50">
                                 The golden rule for leather belts: order exactly <strong>2 inches larger than your tailored trouser waist size</strong>. For example, if you wear a size 34 pant, order a size 36 belt. This allows the prong to sit comfortably in the middle hole, providing 2 inches of adjustment in either direction.
@@ -288,7 +288,7 @@
                                     <span class="w-6 h-6 rounded-full bg-gold/15 text-gold-700 text-xs flex items-center justify-center font-sans font-bold flex-shrink-0">2</span>
                                     <span>Can the belts be shortened at home?</span>
                                 </span>
-                                <svg class="w-4 h-4 text-gold flex-shrink-0 transition-transform duration-300" :class="openedIndex === 5 ? 'rotate-180' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                                <i data-lucide="chevron-down" class="w-4 h-4 text-gold flex-shrink-0 transition-transform duration-300" :class="openedIndex === 5 ? 'rotate-180' : ''"></i>
                             </button>
                             <div x-show="openedIndex === 5" x-collapse class="px-5 sm:px-6 pb-6 text-xs sm:text-sm text-espresso-800 leading-relaxed font-light border-t border-ivory-100 pt-4 bg-[#FAF7F2]/50">
                                 Our dress and casual belts feature a discreet screw-rivet buckle mount. With a simple flathead screwdriver, you can unscrew the buckle, trim the leather strap cleanly from the top end, punch a new hole, and re-tighten without damaging the hand-painted tip.
@@ -310,7 +310,7 @@
                                     <span class="w-6 h-6 rounded-full bg-gold/15 text-gold-700 text-xs flex items-center justify-center font-sans font-bold flex-shrink-0">1</span>
                                     <span>How many days does courier delivery take?</span>
                                 </span>
-                                <svg class="w-4 h-4 text-gold flex-shrink-0 transition-transform duration-300" :class="openedIndex === 6 ? 'rotate-180' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                                <i data-lucide="chevron-down" class="w-4 h-4 text-gold flex-shrink-0 transition-transform duration-300" :class="openedIndex === 6 ? 'rotate-180' : ''"></i>
                             </button>
                             <div x-show="openedIndex === 6" x-collapse class="px-5 sm:px-6 pb-6 text-xs sm:text-sm text-espresso-800 leading-relaxed font-light border-t border-ivory-100 pt-4 bg-[#FAF7F2]/50">
                                 Orders placed before 2:00 PM are processed and handed over to courier dispatch within 24 hours. Major metropolitan cities (Lahore, Karachi, Islamabad, Rawalpindi) typically receive deliveries in 2–3 business days. Regional destinations require 3–5 business days.
@@ -327,7 +327,7 @@
                                     <span class="w-6 h-6 rounded-full bg-gold/15 text-gold-700 text-xs flex items-center justify-center font-sans font-bold flex-shrink-0">2</span>
                                     <span>Can I inspect the parcel before paying the courier rider?</span>
                                 </span>
-                                <svg class="w-4 h-4 text-gold flex-shrink-0 transition-transform duration-300" :class="openedIndex === 7 ? 'rotate-180' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                                <i data-lucide="chevron-down" class="w-4 h-4 text-gold flex-shrink-0 transition-transform duration-300" :class="openedIndex === 7 ? 'rotate-180' : ''"></i>
                             </button>
                             <div x-show="openedIndex === 7" x-collapse class="px-5 sm:px-6 pb-6 text-xs sm:text-sm text-espresso-800 leading-relaxed font-light border-t border-ivory-100 pt-4 bg-[#FAF7F2]/50">
                                 Per standard courier operational regulations across Pakistan (TCS, Leopard, Trax), riders cannot allow flyers to be opened prior to payment handover. However, we back every shipment with an effortless 7-day direct exchange policy. If anything does not meet your standard, our concierge replaces it promptly.
@@ -349,7 +349,7 @@
                                     <span class="w-6 h-6 rounded-full bg-gold/15 text-gold-700 text-xs flex items-center justify-center font-sans font-bold flex-shrink-0">1</span>
                                     <span>How do I maintain and condition pure full-grain leather?</span>
                                 </span>
-                                <svg class="w-4 h-4 text-gold flex-shrink-0 transition-transform duration-300" :class="openedIndex === 8 ? 'rotate-180' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                                <i data-lucide="chevron-down" class="w-4 h-4 text-gold flex-shrink-0 transition-transform duration-300" :class="openedIndex === 8 ? 'rotate-180' : ''"></i>
                             </button>
                             <div x-show="openedIndex === 8" x-collapse class="px-5 sm:px-6 pb-6 text-xs sm:text-sm text-espresso-800 leading-relaxed font-light border-t border-ivory-100 pt-4 bg-[#FAF7F2]/50">
                                 Full-grain leather is a natural biological material that breathes. Keep it away from prolonged direct harsh sunlight or high humidity. If it gets wet from rain, pat gently with a dry microfibre towel and allow to air-dry naturally. Once every six months, apply a pea-sized dab of neutral beeswax leather balm.
@@ -399,7 +399,7 @@
                             class="w-full py-3 px-4 bg-white/10 hover:bg-white/15 text-ivory text-xs uppercase tracking-widest font-semibold rounded-xl text-center block transition-all border border-ivory-300/30 flex items-center justify-center gap-2"
                         >
                             <span>Visit Atelier Contact Desk</span>
-                            <svg class="w-4 h-4 text-gold" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+                            <i data-lucide="arrow-right" class="w-4 h-4 text-gold"></i>
                         </a>
                     </div>
                 </div>
@@ -412,15 +412,15 @@
                     
                     <ul class="space-y-3 text-xs text-espresso-900 font-light">
                         <li class="flex items-start gap-2.5">
-                            <svg class="w-4 h-4 text-gold flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+                            <i data-lucide="shield" class="w-4 h-4 text-gold flex-shrink-0 mt-0.5"></i>
                             <span>100% Full-Grain Drum-Dyed Leather</span>
                         </li>
                         <li class="flex items-start gap-2.5">
-                            <svg class="w-4 h-4 text-gold flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"></path><path d="M21 3v5h-5"></path><path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"></path><path d="M3 21v-5h5"></path></svg>
+                            <i data-lucide="rotate-ccw" class="w-4 h-4 text-gold flex-shrink-0 mt-0.5"></i>
                             <span>7-Day Direct Size & Model Exchange</span>
                         </li>
                         <li class="flex items-start gap-2.5">
-                            <svg class="w-4 h-4 text-gold flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><rect x="1" y="3" width="15" height="13"></rect><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"></polygon><circle cx="5.5" cy="18.5" r="2.5"></circle><circle cx="18.5" cy="18.5" r="2.5"></circle></svg>
+                            <i data-lucide="truck" class="w-4 h-4 text-gold flex-shrink-0 mt-0.5"></i>
                             <span>Free Priority Air Delivery on PKR 6,000+</span>
                         </li>
                     </ul>
