@@ -195,9 +195,15 @@
                                             Everyday Leather Accessories
                                         </a>
                                     </li>
+                                    <li>
+                                        <a href="{{ route('category', 'on-demand') }}" class="text-amber-900 font-semibold hover:text-gold-600 hover:bg-amber-50/60 px-2 py-1.5 rounded transition-all flex items-center justify-between">
+                                            <span>On Demand & Bespoke</span>
+                                            <span class="text-[9px] bg-amber-100 text-amber-900 border border-amber-300 px-1.5 py-0.2 rounded font-sans uppercase">Custom</span>
+                                        </a>
+                                    </li>
                                     <li class="pt-1.5">
                                         <a href="{{ route('shop') }}" class="text-xs font-bold text-gold-600 hover:text-gold-700 uppercase tracking-wider flex items-center gap-1.5 px-2">
-                                            <span>All Bags (8 Pieces)</span>
+                                            <span>All Creations (23 Pieces)</span>
                                             <i data-lucide="arrow-right" class="w-3 h-3"></i>
                                         </a>
                                     </li>
@@ -252,7 +258,7 @@
                                 </span>
                             </div>
                             <a href="{{ route('shop') }}" class="font-bold text-gold-600 hover:text-gold-700 uppercase tracking-widest text-xs flex items-center gap-1.5 group">
-                                <span>Explore Full Catalog (20 Pieces)</span>
+                                <span>Explore Full Catalog (23 Pieces)</span>
                                 <i data-lucide="arrow-right" class="w-3.5 h-3.5 transition-transform group-hover:translate-x-1"></i>
                             </a>
                         </div>
@@ -267,25 +273,10 @@
                 </a>
 
                 <a 
-                    href="{{ route('shop', ['sort' => 'latest']) }}" 
-                    class="text-xs uppercase tracking-widest font-medium text-espresso-800 hover:text-gold-600 transition-colors duration-200 flex items-center gap-1.5"
-                >
-                    <span>New Arrivals</span>
-                    <span class="inline-block w-1.5 h-1.5 rounded-full bg-gold"></span>
-                </a>
-
-                <a 
                     href="{{ route('about') }}" 
                     class="text-xs uppercase tracking-widest font-medium transition-colors duration-200 {{ request()->routeIs('about') ? 'text-gold-600 font-semibold' : 'text-espresso-800 hover:text-gold-600' }}"
                 >
                     Our Story
-                </a>
-
-                <a 
-                    href="{{ route('reviews') }}" 
-                    class="text-xs uppercase tracking-widest font-medium transition-colors duration-200 {{ request()->routeIs('reviews') ? 'text-gold-600 font-semibold' : 'text-espresso-800 hover:text-gold-600' }}"
-                >
-                    Reviews
                 </a>
 
                 <a 
@@ -547,6 +538,20 @@
                                     <li><a href="{{ route('category', 'accessories') }}" @click="mobileMenuOpen = false" class="hover:text-gold-600 block py-0.5">Bespoke Gift Sets</a></li>
                                 </ul>
                             </div>
+
+                            <!-- On Demand & Bespoke Subgroup -->
+                            <div>
+                                <div class="flex items-center justify-between text-xs font-bold text-amber-950 uppercase font-serif pb-1">
+                                    <a href="{{ route('category', 'on-demand') }}" @click="mobileMenuOpen = false" class="hover:text-gold-600 flex items-center gap-1.5">
+                                        <span>On Demand & Bespoke</span>
+                                        <span class="text-[9px] bg-amber-100 text-amber-900 border border-amber-300 px-1 py-0.2 rounded uppercase font-sans">Craft</span>
+                                    </a>
+                                </div>
+                                <ul class="pl-2 space-y-1.5 text-xs text-muted">
+                                    <li><a href="{{ route('category', 'on-demand') }}" @click="mobileMenuOpen = false" class="hover:text-gold-600 block py-0.5">Bespoke Attaches & Briefcases</a></li>
+                                    <li><a href="{{ route('category', 'on-demand') }}" @click="mobileMenuOpen = false" class="hover:text-gold-600 block py-0.5">Custom Monogrammed Pieces</a></li>
+                                </ul>
+                            </div>
                         </div>
                     </div>
 
@@ -558,25 +563,11 @@
                         Shop All Creations
                     </a>
                     <a 
-                        href="{{ route('shop', ['sort' => 'latest']) }}" 
-                        @click="mobileMenuOpen = false"
-                        class="block text-sm font-medium tracking-wide uppercase py-1 text-gold-600 font-semibold"
-                    >
-                        New Arrivals
-                    </a>
-                    <a 
                         href="{{ route('about') }}" 
                         @click="mobileMenuOpen = false"
                         class="block text-sm font-medium tracking-wide uppercase py-1 text-espresso-900 hover:text-gold-600"
                     >
                         About By Zunash
-                    </a>
-                    <a 
-                        href="{{ route('reviews') }}" 
-                        @click="mobileMenuOpen = false"
-                        class="block text-sm font-medium tracking-wide uppercase py-1 {{ request()->routeIs('reviews') ? 'text-gold-600 font-semibold' : 'text-espresso-900 hover:text-gold-600' }}"
-                    >
-                        Client Reviews
                     </a>
                     <a 
                         href="{{ route('contact') }}" 

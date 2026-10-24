@@ -85,6 +85,28 @@ class StoreController extends Controller
                 $products = $products->where('is_bestseller', true);
             } elseif ($tag === 'new') {
                 $products = $products->where('is_new', true);
+            } elseif ($tag === 'on_demand') {
+                $products = $products->where('availability', 'on_demand');
+            } elseif ($tag === 'out_of_stock') {
+                $products = $products->filter(function ($p) {
+                    return ($p['availability'] ?? '') === 'out_of_stock' || (isset($p['in_stock']) && !$p['in_stock']);
+                });
+            }
+        }
+
+        // Filter by stock availability
+        if ($request->filled('availability')) {
+            $avail = $request->input('availability');
+            if ($avail === 'in_stock') {
+                $products = $products->filter(function ($p) {
+                    return ($p['availability'] ?? 'in_stock') === 'in_stock' && ($p['in_stock'] ?? true);
+                });
+            } elseif ($avail === 'out_of_stock') {
+                $products = $products->filter(function ($p) {
+                    return ($p['availability'] ?? '') === 'out_of_stock' || (isset($p['in_stock']) && !$p['in_stock']);
+                });
+            } elseif ($avail === 'on_demand') {
+                $products = $products->where('availability', 'on_demand');
             }
         }
 
@@ -114,8 +136,8 @@ class StoreController extends Controller
                 $products = $products->sortByDesc('reviews_count')->values();
                 break;
             default:
-                // Featured order: Show our flagship creations with bespoke studio photography on Page 1
-                $featuredOrder = [1, 5, 9, 13, 2, 6, 10, 17, 14, 15, 18, 19, 3, 4, 7, 8, 11, 12, 16, 20];
+                // Featured order: Show flagship creations on Page 1
+                $featuredOrder = [1, 5, 9, 13, 2, 6, 10, 17, 22, 23, 14, 15, 18, 19, 3, 4, 7, 8, 11, 12, 16, 20, 21];
                 $products = $products->sortBy(function ($item) use ($featuredOrder) {
                     $pos = array_search($item['id'], $featuredOrder);
                     return $pos !== false ? $pos : 999;

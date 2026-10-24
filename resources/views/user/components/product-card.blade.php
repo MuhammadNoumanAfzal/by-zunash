@@ -1,6 +1,9 @@
 @props(['product'])
 
 @php
+    $isOutOfStock = ($product['availability'] ?? '') === 'out_of_stock' || (isset($product['in_stock']) && !$product['in_stock']);
+    $isOnDemand = ($product['availability'] ?? '') === 'on_demand';
+
     $productJson = json_encode([
         'id' => $product['id'],
         'name' => $product['name'],
@@ -10,7 +13,10 @@
         'category' => $product['category'],
         'category_name' => $product['category_name'] ?? '',
         'slug' => $product['slug'],
-        'colors' => $product['colors'] ?? []
+        'colors' => $product['colors'] ?? [],
+        'availability' => $product['availability'] ?? ($isOutOfStock ? 'out_of_stock' : ($isOnDemand ? 'on_demand' : 'in_stock')),
+        'in_stock' => !$isOutOfStock,
+        'lead_time' => $product['lead_time'] ?? null
     ]);
 @endphp
 
@@ -19,18 +25,28 @@
         product: {{ $productJson }},
         isHovered: false 
     }" 
-    class="group relative flex flex-col bg-white rounded-xl border border-ivory-300 hover:border-gold-500/50 overflow-hidden shadow-xs hover:shadow-xl hover:-translate-y-1 transition-all duration-300 h-full"
+    class="group relative flex flex-col bg-white rounded-xl border {{ $isOutOfStock ? 'border-ivory-300 opacity-95' : 'border-ivory-300 hover:border-gold-500/50' }} overflow-hidden shadow-xs hover:shadow-xl hover:-translate-y-1 transition-all duration-300 h-full"
     @mouseenter="isHovered = true"
     @mouseleave="isHovered = false"
 >
     <!-- Image & Badges Container -->
     <div class="relative w-full aspect-[4/5] bg-[#F7F5F0] overflow-hidden">
-        <!-- Badge -->
-        @if(!empty($product['badge']))
-            <div class="absolute top-3 left-3 z-10 pointer-events-none">
+        <!-- Badges -->
+        <div class="absolute top-3 left-3 z-10 pointer-events-none">
+            @if($isOutOfStock)
+                <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 text-[10px] uppercase tracking-wider font-bold border rounded-full backdrop-blur-md shadow-xs bg-rose-900/90 text-rose-100 border-rose-700/60">
+                    <span class="w-1.5 h-1.5 rounded-full bg-rose-400"></span>
+                    Sold Out
+                </span>
+            @elseif($isOnDemand)
+                <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 text-[10px] uppercase tracking-wider font-bold border rounded-full backdrop-blur-md shadow-xs bg-amber-950/90 text-amber-200 border-amber-600/50">
+                    <span class="w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse"></span>
+                    On Demand
+                </span>
+            @elseif(!empty($product['badge']))
                 <x-user.components.product-badge :badge="$product['badge']" />
-            </div>
-        @endif
+            @endif
+        </div>
 
         <!-- Wishlist Button -->
         <button 
@@ -47,15 +63,15 @@
         </button>
 
         <!-- Product Image Link -->
-        <a href="{{ route('product.details', $product['slug']) }}" class="block w-full h-full">
+        <a href="{{ route('product.details', $product['slug']) }}" class="block w-full h-full relative">
             <img 
                 src="{{ asset($product['image']) }}" 
                 alt="{{ $product['name'] }}" 
                 loading="lazy"
-                class="w-full h-full object-cover object-center transform transition-transform duration-700 ease-out group-hover:scale-105"
+                class="w-full h-full object-cover object-center transform transition-transform duration-700 ease-out group-hover:scale-105 {{ $isOutOfStock ? 'grayscale-[20%] opacity-85' : '' }}"
             >
             <!-- Secondary Image Hover Transition (if gallery has 2+ images) -->
-            @if(!empty($product['gallery']) && count($product['gallery']) > 1)
+            @if(!empty($product['gallery']) && count($product['gallery']) > 1 && !$isOutOfStock)
                 <img 
                     src="{{ asset($product['gallery'][1]) }}" 
                     alt="{{ $product['name'] }} Alternate Angle" 
@@ -63,18 +79,44 @@
                     class="absolute inset-0 w-full h-full object-cover object-center opacity-0 group-hover:opacity-100 transition-opacity duration-500 ease-in-out"
                 >
             @endif
+
+            @if($isOutOfStock)
+                <div class="absolute inset-0 bg-espresso-950/20 flex items-center justify-center pointer-events-none">
+                    <span class="px-3 py-1 rounded bg-espresso-950/90 text-ivory text-[10px] uppercase tracking-widest font-bold border border-white/20 shadow-md">
+                        Temporarily Sold Out
+                    </span>
+                </div>
+            @endif
         </a>
 
-        <!-- Quick Add Button Overlay (Slide Up on Hover) -->
+        <!-- Quick Action Button Overlay (Slide Up on Hover) -->
         <div class="absolute inset-x-3 bottom-3 z-10 translate-y-3 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-300 ease-out">
-            <button 
-                type="button" 
-                @click.stop="$store.cart.addItem(product)"
-                class="w-full py-2.5 px-4 bg-espresso-950/95 backdrop-blur-sm text-ivory text-xs uppercase tracking-widest font-semibold rounded-lg shadow-lg hover:bg-gold-500 hover:text-espresso-950 active:scale-95 transition-all flex items-center justify-center gap-2 border border-gold/40"
-            >
-                <i data-lucide="shopping-bag" class="w-3.5 h-3.5"></i>
-                <span>Quick Add to Bag</span>
-            </button>
+            @if($isOutOfStock)
+                <a 
+                    href="{{ route('product.details', $product['slug']) }}"
+                    class="w-full py-2.5 px-4 bg-zinc-900/95 backdrop-blur-sm text-ivory text-xs uppercase tracking-widest font-semibold rounded-lg shadow-lg hover:bg-gold-600 hover:text-espresso-950 transition-all flex items-center justify-center gap-2 border border-zinc-700"
+                >
+                    <i data-lucide="bell" class="w-3.5 h-3.5 text-gold-400"></i>
+                    <span>Notify When In Stock</span>
+                </a>
+            @elseif($isOnDemand)
+                <a 
+                    href="{{ route('product.details', $product['slug']) }}"
+                    class="w-full py-2.5 px-4 bg-amber-950/95 backdrop-blur-sm text-amber-200 text-xs uppercase tracking-widest font-semibold rounded-lg shadow-lg hover:bg-gold-500 hover:text-espresso-950 transition-all flex items-center justify-center gap-2 border border-gold/40"
+                >
+                    <i data-lucide="hammer" class="w-3.5 h-3.5 text-gold-400"></i>
+                    <span>Order On Demand</span>
+                </a>
+            @else
+                <button 
+                    type="button" 
+                    @click.stop="$store.cart.addItem(product)"
+                    class="w-full py-2.5 px-4 bg-espresso-950/95 backdrop-blur-sm text-ivory text-xs uppercase tracking-widest font-semibold rounded-lg shadow-lg hover:bg-gold-500 hover:text-espresso-950 active:scale-95 transition-all flex items-center justify-center gap-2 border border-gold/40"
+                >
+                    <i data-lucide="shopping-bag" class="w-3.5 h-3.5"></i>
+                    <span>Quick Add to Bag</span>
+                </button>
+            @endif
         </div>
     </div>
 
@@ -82,9 +124,20 @@
     <div class="p-4 sm:p-5 flex flex-col flex-grow justify-between bg-white">
         <div>
             <!-- Category Tag -->
-            <span class="text-[11px] uppercase tracking-[0.16em] text-gold-700 font-semibold font-sans block mb-1.5">
-                {{ $product['category_name'] ?? $product['category'] }}
-            </span>
+            <div class="flex items-center justify-between gap-1 mb-1.5">
+                <span class="text-[11px] uppercase tracking-[0.16em] text-gold-700 font-semibold font-sans block">
+                    {{ $product['category_name'] ?? $product['category'] }}
+                </span>
+                @if($isOutOfStock)
+                    <span class="text-[10px] font-bold text-rose-700 uppercase tracking-wider font-sans">
+                        Out of stock
+                    </span>
+                @elseif($isOnDemand)
+                    <span class="text-[10px] font-bold text-amber-800 uppercase tracking-wider font-sans">
+                        Bespoke
+                    </span>
+                @endif
+            </div>
 
             <!-- Title -->
             <h3 class="font-serif text-[16px] sm:text-[17px] font-bold text-espresso-950 group-hover:text-gold-600 transition-colors line-clamp-1 mb-2 leading-snug">

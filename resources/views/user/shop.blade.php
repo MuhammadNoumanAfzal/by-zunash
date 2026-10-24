@@ -176,7 +176,7 @@
 
             <!-- Active Filter Badges Bar (Visible when any filter is active) -->
             @php
-                $hasActiveFilters = ($activeCategory !== 'all') || request('min_price') || request('max_price') || request('tag') || request('q');
+                $hasActiveFilters = ($activeCategory !== 'all') || request('min_price') || request('max_price') || request('tag') || request('q') || request('availability');
             @endphp
             @if($hasActiveFilters)
                 <div class="flex items-center gap-2 flex-wrap pt-1 text-xs font-sans">
@@ -227,6 +227,23 @@
                             class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-ivory-200 text-espresso-900 text-xs font-medium border border-ivory-300 hover:bg-red-100 hover:text-red-700 transition-colors"
                         >
                             <span>Keyword: "{{ request('q') }}"</span>
+                            <i data-lucide="x" class="w-3 h-3"></i>
+                        </a>
+                    @endif
+
+                    @if(request('availability'))
+                        @php
+                            $availLabels = [
+                                'in_stock' => 'In Stock Only',
+                                'on_demand' => 'On Demand / Bespoke',
+                                'out_of_stock' => 'Out of Stock (Restock)',
+                            ];
+                        @endphp
+                        <a 
+                            href="{{ route('shop', array_filter(array_merge(request()->query(), ['availability' => null, 'page' => 1]))) }}" 
+                            class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-950 text-amber-100 text-xs font-semibold shadow-2xs hover:bg-espresso-950 transition-colors"
+                        >
+                            <span>Status: {{ $availLabels[request('availability')] ?? ucfirst(str_replace('_', ' ', request('availability'))) }}</span>
                             <i data-lucide="x" class="w-3 h-3"></i>
                         </a>
                     @endif
@@ -364,6 +381,9 @@
                             @if(request('q'))
                                 <input type="hidden" name="q" value="{{ request('q') }}">
                             @endif
+                            @if(request('availability'))
+                                <input type="hidden" name="availability" value="{{ request('availability') }}">
+                            @endif
 
                             <div class="grid grid-cols-2 gap-2">
                                 <div>
@@ -395,6 +415,61 @@
                                 Apply Price
                             </button>
                         </form>
+                    </div>
+
+                    <!-- Availability / Stock Status Filter -->
+                    <div class="p-5 space-y-3">
+                        <h3 class="text-xs uppercase tracking-wider font-sans font-bold text-espresso-950 flex items-center justify-between">
+                            <span>Stock Availability</span>
+                        </h3>
+                        <div class="flex flex-col gap-1.5 font-sans">
+                            @php
+                                $isAvailInStock = (request('availability') === 'in_stock');
+                                $isAvailOnDemand = (request('availability') === 'on_demand');
+                                $isAvailOutOfStock = (request('availability') === 'out_of_stock');
+                            @endphp
+                            <!-- In Stock -->
+                            <a 
+                                href="{{ route('shop', array_filter(array_merge(request()->query(), ['availability' => ($isAvailInStock ? null : 'in_stock'), 'page' => 1]))) }}"
+                                class="flex items-center justify-between px-3.5 py-2 rounded-xl text-xs font-medium border transition-all text-left {{ $isAvailInStock ? 'border-emerald-600 bg-emerald-50 font-bold text-emerald-950 shadow-2xs' : 'border-ivory-300 bg-ivory-50 text-espresso-800 hover:bg-ivory-100' }}"
+                            >
+                                <span class="flex items-center gap-2">
+                                    <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+                                    <span>In Stock (Ready to Ship)</span>
+                                </span>
+                                @if($isAvailInStock)
+                                    <span class="text-emerald-700 font-bold">✓</span>
+                                @endif
+                            </a>
+
+                            <!-- On Demand -->
+                            <a 
+                                href="{{ route('shop', array_filter(array_merge(request()->query(), ['availability' => ($isAvailOnDemand ? null : 'on_demand'), 'page' => 1]))) }}"
+                                class="flex items-center justify-between px-3.5 py-2 rounded-xl text-xs font-medium border transition-all text-left {{ $isAvailOnDemand ? 'border-amber-600 bg-amber-50 font-bold text-amber-950 shadow-2xs' : 'border-ivory-300 bg-ivory-50 text-espresso-800 hover:bg-ivory-100' }}"
+                            >
+                                <span class="flex items-center gap-2">
+                                    <span class="w-2 h-2 rounded-full bg-amber-500 animate-pulse"></span>
+                                    <span>On Demand (Bespoke)</span>
+                                </span>
+                                @if($isAvailOnDemand)
+                                    <span class="text-amber-800 font-bold">✓</span>
+                                @endif
+                            </a>
+
+                            <!-- Out of Stock -->
+                            <a 
+                                href="{{ route('shop', array_filter(array_merge(request()->query(), ['availability' => ($isAvailOutOfStock ? null : 'out_of_stock'), 'page' => 1]))) }}"
+                                class="flex items-center justify-between px-3.5 py-2 rounded-xl text-xs font-medium border transition-all text-left {{ $isAvailOutOfStock ? 'border-rose-600 bg-rose-50 font-bold text-rose-950 shadow-2xs' : 'border-ivory-300 bg-ivory-50 text-espresso-800 hover:bg-ivory-100' }}"
+                            >
+                                <span class="flex items-center gap-2">
+                                    <span class="w-2 h-2 rounded-full bg-rose-500"></span>
+                                    <span>Out of Stock (Restock)</span>
+                                </span>
+                                @if($isAvailOutOfStock)
+                                    <span class="text-rose-700 font-bold">✓</span>
+                                @endif
+                            </a>
+                        </div>
                     </div>
 
                     <!-- Curated Highlights / Tag Filter -->
@@ -613,6 +688,9 @@
                             @if(request('sort'))
                                 <input type="hidden" name="sort" value="{{ request('sort') }}">
                             @endif
+                            @if(request('availability'))
+                                <input type="hidden" name="availability" value="{{ request('availability') }}">
+                            @endif
                             <div class="grid grid-cols-2 gap-2">
                                 <div>
                                     <label class="text-[10px] text-muted block mb-1">Min (PKR)</label>
@@ -630,6 +708,49 @@
                                 Apply Price
                             </button>
                         </form>
+                    </div>
+
+                    <!-- Mobile Stock Availability -->
+                    <div>
+                        <h4 class="font-sans text-xs uppercase tracking-wider font-bold text-espresso-950 mb-3">Availability</h4>
+                        <div class="space-y-1.5 font-sans">
+                            <a 
+                                href="{{ route('shop', array_filter(array_merge(request()->query(), ['availability' => (request('availability') === 'in_stock' ? null : 'in_stock'), 'page' => 1]))) }}"
+                                class="w-full flex items-center justify-between px-3 py-2 rounded-lg text-xs border {{ request('availability') === 'in_stock' ? 'border-emerald-600 bg-emerald-50 text-emerald-950 font-bold' : 'border-ivory-300' }}"
+                            >
+                                <span class="flex items-center gap-2">
+                                    <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+                                    <span>In Stock (Ready to Ship)</span>
+                                </span>
+                                @if(request('availability') === 'in_stock')
+                                    <span>✓</span>
+                                @endif
+                            </a>
+                            <a 
+                                href="{{ route('shop', array_filter(array_merge(request()->query(), ['availability' => (request('availability') === 'on_demand' ? null : 'on_demand'), 'page' => 1]))) }}"
+                                class="w-full flex items-center justify-between px-3 py-2 rounded-lg text-xs border {{ request('availability') === 'on_demand' ? 'border-amber-600 bg-amber-50 text-amber-950 font-bold' : 'border-ivory-300' }}"
+                            >
+                                <span class="flex items-center gap-2">
+                                    <span class="w-2 h-2 rounded-full bg-amber-500 animate-pulse"></span>
+                                    <span>On Demand (Bespoke)</span>
+                                </span>
+                                @if(request('availability') === 'on_demand')
+                                    <span>✓</span>
+                                @endif
+                            </a>
+                            <a 
+                                href="{{ route('shop', array_filter(array_merge(request()->query(), ['availability' => (request('availability') === 'out_of_stock' ? null : 'out_of_stock'), 'page' => 1]))) }}"
+                                class="w-full flex items-center justify-between px-3 py-2 rounded-lg text-xs border {{ request('availability') === 'out_of_stock' ? 'border-rose-600 bg-rose-50 text-rose-950 font-bold' : 'border-ivory-300' }}"
+                            >
+                                <span class="flex items-center gap-2">
+                                    <span class="w-2 h-2 rounded-full bg-rose-500"></span>
+                                    <span>Out of Stock (Restock)</span>
+                                </span>
+                                @if(request('availability') === 'out_of_stock')
+                                    <span>✓</span>
+                                @endif
+                            </a>
+                        </div>
                     </div>
 
                     <!-- Tags -->
