@@ -39,7 +39,7 @@
                 "price": "{{ $product['price'] }}",
                 "priceValidUntil": "2027-12-31",
                 "itemCondition": "https://schema.org/NewCondition",
-                "availability": "https://schema.org/InStock",
+                "availability": "{{ (($product['availability'] ?? '') === 'out_of_stock' || (isset($product['in_stock']) && !$product['in_stock'])) ? 'https://schema.org/OutOfStock' : ((($product['availability'] ?? '') === 'on_demand') ? 'https://schema.org/PreOrder' : 'https://schema.org/InStock') }}",
                 "seller": {
                     "@type": "Organization",
                     "name": "By Zunash"
@@ -84,6 +84,9 @@
 
 @section('content')
 @php
+    $isOutOfStock = (($product['availability'] ?? '') === 'out_of_stock' || (isset($product['in_stock']) && !$product['in_stock']));
+    $isOnDemand = (($product['availability'] ?? '') === 'on_demand');
+
     $productJson = json_encode([
         'id' => $product['id'],
         'name' => $product['name'],
@@ -93,7 +96,10 @@
         'category' => $product['category'],
         'category_name' => $product['category_name'] ?? '',
         'slug' => $product['slug'],
-        'colors' => $product['colors'] ?? []
+        'colors' => $product['colors'] ?? [],
+        'availability' => $product['availability'] ?? ($isOutOfStock ? 'out_of_stock' : ($isOnDemand ? 'on_demand' : 'in_stock')),
+        'in_stock' => !$isOutOfStock,
+        'lead_time' => $product['lead_time'] ?? null
     ]);
 
     $beltSizes = ['30', '32', '34', '36', '38', '40', '42'];
@@ -263,11 +269,23 @@
                     <span class="text-ivory-400">•</span>
                     <a href="{{ route('reviews') }}" class="text-xs text-muted hover:text-gold-700 underline underline-offset-2 transition-colors">({{ $product['reviews_count'] ?? 35 }} client reviews)</a>
                     <span class="text-ivory-400">•</span>
-                    <!-- Stock Urgency Badge -->
-                    <span class="inline-flex items-center gap-1.5 text-xs font-semibold text-emerald-800 bg-emerald-50 px-2.5 py-0.5 rounded-full border border-emerald-200/70">
-                        <span class="w-1.5 h-1.5 rounded-full bg-emerald-600 animate-pulse"></span>
-                        In Stock — Dispatched in 24 Hours
-                    </span>
+                    <!-- Stock Status Badge -->
+                    @if($isOutOfStock)
+                        <span class="inline-flex items-center gap-1.5 text-xs font-semibold text-rose-800 bg-rose-50 px-2.5 py-0.5 rounded-full border border-rose-300">
+                            <span class="w-1.5 h-1.5 rounded-full bg-rose-600"></span>
+                            Out of Stock — Restock In Progress
+                        </span>
+                    @elseif($isOnDemand)
+                        <span class="inline-flex items-center gap-1.5 text-xs font-semibold text-amber-900 bg-amber-50 px-2.5 py-0.5 rounded-full border border-amber-300">
+                            <span class="w-1.5 h-1.5 rounded-full bg-amber-600 animate-pulse"></span>
+                            On Demand — Handcrafted Upon Order ({{ $product['lead_time'] ?? '7–10 Working Days' }})
+                        </span>
+                    @else
+                        <span class="inline-flex items-center gap-1.5 text-xs font-semibold text-emerald-800 bg-emerald-50 px-2.5 py-0.5 rounded-full border border-emerald-200/70">
+                            <span class="w-1.5 h-1.5 rounded-full bg-emerald-600 animate-pulse"></span>
+                            In Stock — Dispatched in 24 Hours
+                        </span>
+                    @endif
                 </div>
 
                 <!-- Price & Savings Card -->
@@ -289,10 +307,22 @@
                             </span>
                         @endif
                     </div>
-                    <p class="text-xs text-muted mt-2 flex items-center gap-1.5">
-                        <i data-lucide="shield-check" class="w-3.5 h-3.5 text-gold-600"></i>
-                        <span>Includes all duties & packaging. Cash on Delivery supported across Pakistan.</span>
-                    </p>
+                    @if($isOutOfStock)
+                        <p class="text-xs text-rose-800 mt-2 flex items-center gap-1.5">
+                            <i data-lucide="clock" class="w-3.5 h-3.5 text-rose-600"></i>
+                            <span>Temporarily sold out. Leave your inquiry below for VIP priority restock notification.</span>
+                        </p>
+                    @elseif($isOnDemand)
+                        <p class="text-xs text-amber-900 mt-2 flex items-center gap-1.5">
+                            <i data-lucide="gem" class="w-3.5 h-3.5 text-amber-600"></i>
+                            <span>Bespoke artisan production. Handcrafted upon client commission ({{ $product['lead_time'] ?? '7–10 working days' }}).</span>
+                        </p>
+                    @else
+                        <p class="text-xs text-muted mt-2 flex items-center gap-1.5">
+                            <i data-lucide="shield-check" class="w-3.5 h-3.5 text-gold-600"></i>
+                            <span>Includes all duties & packaging. Cash on Delivery supported across Pakistan.</span>
+                        </p>
+                    @endif
                 </div>
 
                 <!-- Short Narrative Summary -->
@@ -383,63 +413,175 @@
 
                 <!-- Quantity, Add to Bag, Buy Now Buttons -->
                 <div class="space-y-3.5 pt-2 border-t border-ivory-200">
-                    <div class="flex items-center gap-3 sm:gap-4">
-                        <!-- Tactile Quantity Stepper -->
-                        <div class="flex items-center border border-ivory-300 rounded-xl overflow-hidden bg-ivory-50 h-12 flex-shrink-0">
+                    @if($isOutOfStock)
+                        <!-- Out of Stock Controls -->
+                        <div class="flex items-center gap-3 sm:gap-4">
+                            <!-- Disabled Tactile Quantity Stepper -->
+                            <div class="flex items-center border border-ivory-200 rounded-xl overflow-hidden bg-ivory-100 h-12 flex-shrink-0 opacity-60 cursor-not-allowed">
+                                <span class="w-10 h-full flex items-center justify-center text-zinc-400">
+                                    <i data-lucide="minus" class="w-3.5 h-3.5"></i>
+                                </span>
+                                <span class="w-11 text-center font-bold text-sm text-zinc-400">0</span>
+                                <span class="w-10 h-full flex items-center justify-center text-zinc-400">
+                                    <i data-lucide="plus" class="w-3.5 h-3.5"></i>
+                                </span>
+                            </div>
+
+                            <!-- Sold Out Button -->
                             <button 
                                 type="button" 
-                                @click="if(quantity > 1) quantity--" 
-                                class="w-10 h-full flex items-center justify-center text-espresso-900 hover:bg-ivory-200 transition-colors focus:outline-none"
-                                aria-label="Decrease quantity"
+                                disabled 
+                                class="flex-1 h-12 px-5 sm:px-6 bg-zinc-200 text-zinc-500 text-xs uppercase tracking-widest font-semibold rounded-xl cursor-not-allowed flex items-center justify-center gap-2 border border-zinc-300 select-none"
                             >
-                                <i data-lucide="minus" class="w-3.5 h-3.5"></i>
+                                <i data-lucide="slash" class="w-4 h-4"></i>
+                                <span>Sold Out / Out of Stock</span>
                             </button>
-                            <span class="w-11 text-center font-bold text-sm text-espresso-900" x-text="quantity"></span>
+
+                            <!-- Wishlist Toggle Button (Still active so clients can save it!) -->
                             <button 
                                 type="button" 
-                                @click="quantity++" 
-                                class="w-10 h-full flex items-center justify-center text-espresso-900 hover:bg-ivory-200 transition-colors focus:outline-none"
-                                aria-label="Increase quantity"
+                                @click="$store.wishlist.toggle(product)" 
+                                class="w-12 h-12 rounded-xl border border-ivory-300 flex items-center justify-center text-espresso-900 hover:border-gold hover:bg-ivory-50 transition-all focus:outline-none flex-shrink-0"
+                                :class="$store.wishlist.has(product.id) ? 'border-chocolate-700 bg-ivory-100' : ''"
+                                aria-label="Toggle wishlist"
                             >
-                                <i data-lucide="plus" class="w-3.5 h-3.5"></i>
+                                <i 
+                                    data-lucide="heart" 
+                                    class="w-5 h-5 transition-all" 
+                                    :class="$store.wishlist.has(product.id) ? 'fill-chocolate-700 text-chocolate-700 scale-110' : 'text-espresso-800 hover:text-gold-600'"
+                                ></i>
                             </button>
                         </div>
 
-                        <!-- Add to Shopping Bag Button -->
+                        <!-- Notify Me When Back in Stock / Concierge -->
+                        <a 
+                            href="{{ route('contact', ['subject' => 'Restock Inquiry: ' . $product['name']]) }}" 
+                            class="w-full h-12 px-6 bg-espresso-950 hover:bg-gold-600 text-ivory hover:text-espresso-950 text-xs uppercase tracking-widest font-bold rounded-xl shadow-md transition-all active:scale-[0.98] flex items-center justify-center gap-2.5"
+                        >
+                            <i data-lucide="bell" class="w-4 h-4 text-gold"></i>
+                            <span>Notify Me When Back in Stock (Concierge)</span>
+                        </a>
+
+                    @elseif($isOnDemand)
+                        <!-- On Demand Controls -->
+                        <div class="flex items-center gap-3 sm:gap-4">
+                            <!-- Tactile Quantity Stepper -->
+                            <div class="flex items-center border border-ivory-300 rounded-xl overflow-hidden bg-ivory-50 h-12 flex-shrink-0">
+                                <button 
+                                    type="button" 
+                                    @click="if(quantity > 1) quantity--" 
+                                    class="w-10 h-full flex items-center justify-center text-espresso-900 hover:bg-ivory-200 transition-colors focus:outline-none"
+                                    aria-label="Decrease quantity"
+                                >
+                                    <i data-lucide="minus" class="w-3.5 h-3.5"></i>
+                                </button>
+                                <span class="w-11 text-center font-bold text-sm text-espresso-900" x-text="quantity"></span>
+                                <button 
+                                    type="button" 
+                                    @click="quantity++" 
+                                    class="w-10 h-full flex items-center justify-center text-espresso-900 hover:bg-ivory-200 transition-colors focus:outline-none"
+                                    aria-label="Increase quantity"
+                                >
+                                    <i data-lucide="plus" class="w-3.5 h-3.5"></i>
+                                </button>
+                            </div>
+
+                            <!-- Pre-Order on Demand Button -->
+                            <button 
+                                type="button" 
+                                @click="addToCart()" 
+                                class="flex-1 h-12 px-5 sm:px-6 bg-amber-950 hover:bg-chocolate-800 text-ivory text-xs uppercase tracking-widest font-semibold rounded-xl shadow-md transition-all flex items-center justify-center gap-2 border border-gold/40 active:scale-[0.98] group/btn"
+                            >
+                                <i data-lucide="hammer" class="w-4 h-4 text-gold group-hover/btn:scale-110 transition-transform"></i>
+                                <span>Pre-Order On Demand</span>
+                            </button>
+
+                            <!-- Wishlist Toggle Button -->
+                            <button 
+                                type="button" 
+                                @click="$store.wishlist.toggle(product)" 
+                                class="w-12 h-12 rounded-xl border border-ivory-300 flex items-center justify-center text-espresso-900 hover:border-gold hover:bg-ivory-50 transition-all focus:outline-none flex-shrink-0"
+                                :class="$store.wishlist.has(product.id) ? 'border-chocolate-700 bg-ivory-100' : ''"
+                                aria-label="Toggle wishlist"
+                            >
+                                <i 
+                                    data-lucide="heart" 
+                                    class="w-5 h-5 transition-all" 
+                                    :class="$store.wishlist.has(product.id) ? 'fill-chocolate-700 text-chocolate-700 scale-110' : 'text-espresso-800 hover:text-gold-600'"
+                                ></i>
+                            </button>
+                        </div>
+
+                        <!-- Bespoke Creation Standout Button -->
                         <button 
                             type="button" 
-                            @click="addToCart()" 
-                            class="flex-1 h-12 px-5 sm:px-6 bg-espresso hover:bg-chocolate-800 text-ivory text-xs uppercase tracking-widest font-semibold rounded-xl shadow-md transition-all flex items-center justify-center gap-2 border border-gold/30 active:scale-[0.98] group/btn"
+                            @click="buyNow()" 
+                            class="w-full h-12 px-6 bg-gold hover:bg-gold-light text-espresso-950 text-xs uppercase tracking-widest font-bold rounded-xl shadow-md hover:shadow-gold-glow transition-all active:scale-[0.98] flex items-center justify-center gap-2.5"
                         >
-                            <i data-lucide="shopping-bag" class="w-4 h-4 text-gold group-hover/btn:scale-110 transition-transform"></i>
-                            <span>Add to Shopping Bag</span>
+                            <i data-lucide="gem" class="w-4 h-4"></i>
+                            <span>Commission Bespoke Piece ({{ $product['lead_time'] ?? '7–10 Days' }})</span>
                         </button>
 
-                        <!-- Wishlist Toggle Button -->
+                    @else
+                        <!-- Regular In-Stock Controls -->
+                        <div class="flex items-center gap-3 sm:gap-4">
+                            <!-- Tactile Quantity Stepper -->
+                            <div class="flex items-center border border-ivory-300 rounded-xl overflow-hidden bg-ivory-50 h-12 flex-shrink-0">
+                                <button 
+                                    type="button" 
+                                    @click="if(quantity > 1) quantity--" 
+                                    class="w-10 h-full flex items-center justify-center text-espresso-900 hover:bg-ivory-200 transition-colors focus:outline-none"
+                                    aria-label="Decrease quantity"
+                                >
+                                    <i data-lucide="minus" class="w-3.5 h-3.5"></i>
+                                </button>
+                                <span class="w-11 text-center font-bold text-sm text-espresso-900" x-text="quantity"></span>
+                                <button 
+                                    type="button" 
+                                    @click="quantity++" 
+                                    class="w-10 h-full flex items-center justify-center text-espresso-900 hover:bg-ivory-200 transition-colors focus:outline-none"
+                                    aria-label="Increase quantity"
+                                >
+                                    <i data-lucide="plus" class="w-3.5 h-3.5"></i>
+                                </button>
+                            </div>
+
+                            <!-- Add to Shopping Bag Button -->
+                            <button 
+                                type="button" 
+                                @click="addToCart()" 
+                                class="flex-1 h-12 px-5 sm:px-6 bg-espresso hover:bg-chocolate-800 text-ivory text-xs uppercase tracking-widest font-semibold rounded-xl shadow-md transition-all flex items-center justify-center gap-2 border border-gold/30 active:scale-[0.98] group/btn"
+                            >
+                                <i data-lucide="shopping-bag" class="w-4 h-4 text-gold group-hover/btn:scale-110 transition-transform"></i>
+                                <span>Add to Shopping Bag</span>
+                            </button>
+
+                            <!-- Wishlist Toggle Button -->
+                            <button 
+                                type="button" 
+                                @click="$store.wishlist.toggle(product)" 
+                                class="w-12 h-12 rounded-xl border border-ivory-300 flex items-center justify-center text-espresso-900 hover:border-gold hover:bg-ivory-50 transition-all focus:outline-none flex-shrink-0"
+                                :class="$store.wishlist.has(product.id) ? 'border-chocolate-700 bg-ivory-100' : ''"
+                                aria-label="Toggle wishlist"
+                            >
+                                <i 
+                                    data-lucide="heart" 
+                                    class="w-5 h-5 transition-all" 
+                                    :class="$store.wishlist.has(product.id) ? 'fill-chocolate-700 text-chocolate-700 scale-110' : 'text-espresso-800 hover:text-gold-600'"
+                                ></i>
+                            </button>
+                        </div>
+
+                        <!-- Buy Now (Cash on Delivery) Standout Button -->
                         <button 
                             type="button" 
-                            @click="$store.wishlist.toggle(product)" 
-                            class="w-12 h-12 rounded-xl border border-ivory-300 flex items-center justify-center text-espresso-900 hover:border-gold hover:bg-ivory-50 transition-all focus:outline-none flex-shrink-0"
-                            :class="$store.wishlist.has(product.id) ? 'border-chocolate-700 bg-ivory-100' : ''"
-                            aria-label="Toggle wishlist"
+                            @click="buyNow()" 
+                            class="w-full h-12 px-6 bg-gold hover:bg-gold-light text-espresso-950 text-xs uppercase tracking-widest font-bold rounded-xl shadow-md hover:shadow-gold-glow transition-all active:scale-[0.98] flex items-center justify-center gap-2.5"
                         >
-                            <i 
-                                data-lucide="heart" 
-                                class="w-5 h-5 transition-all" 
-                                :class="$store.wishlist.has(product.id) ? 'fill-chocolate-700 text-chocolate-700 scale-110' : 'text-espresso-800 hover:text-gold-600'"
-                            ></i>
+                            <i data-lucide="truck" class="w-4 h-4"></i>
+                            <span>Buy Now (Doorstep Cash on Delivery)</span>
                         </button>
-                    </div>
-
-                    <!-- Buy Now (Cash on Delivery) Standout Button -->
-                    <button 
-                        type="button" 
-                        @click="buyNow()" 
-                        class="w-full h-12 px-6 bg-gold hover:bg-gold-light text-espresso-950 text-xs uppercase tracking-widest font-bold rounded-xl shadow-md hover:shadow-gold-glow transition-all active:scale-[0.98] flex items-center justify-center gap-2.5"
-                    >
-                        <i data-lucide="truck" class="w-4 h-4"></i>
-                        <span>Buy Now (Doorstep Cash on Delivery)</span>
-                    </button>
+                    @endif
                 </div>
 
                 <!-- Reassurance / Trust Highlights Card -->

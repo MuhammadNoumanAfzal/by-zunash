@@ -41,6 +41,14 @@
       'image' => '/images/categories/cat-accessories.jpg',
       'count' => 4,
     ),
+    'on-demand' => 
+    array (
+      'slug' => 'on-demand',
+      'name' => 'On Demand & Bespoke',
+      'tagline' => 'Handcrafted exclusively upon client commission. Custom dimensions, monogramming, and heirloom finishes.',
+      'image' => '/images/brand/artisan-craft.jpg',
+      'count' => 2,
+    ),
   ),
   'items' => 
   array (
@@ -209,9 +217,11 @@
       'category_name' => 'Leather Belts',
       'price' => 5200,
       'original_price' => 5800,
-      'badge' => 'Limited Edition',
+      'badge' => 'Sold Out',
       'is_bestseller' => false,
       'is_new' => false,
+      'in_stock' => false,
+      'availability' => 'out_of_stock',
       'rating' => 4.9,
       'reviews_count' => 26,
       'short_description' => 'Intricately hand-plaited leather strips offering hole-free micro-adjustability and flexible comfort.',
@@ -1005,6 +1015,167 @@
         array (
           'name' => 'Deep Espresso',
           'hex' => '#24160F',
+          'stock' => true,
+        ),
+      ),
+    ),
+    20 => 
+    array (
+      'id' => 21,
+      'slug' => 'the-artisan-heritage-travel-duffle',
+      'name' => 'The Artisan Heritage Travel Duffle',
+      'category' => 'shoulder-bags',
+      'category_name' => 'Shoulder Bags',
+      'price' => 28500,
+      'original_price' => 32000,
+      'badge' => 'Out of Stock',
+      'is_bestseller' => false,
+      'is_new' => false,
+      'in_stock' => false,
+      'availability' => 'out_of_stock',
+      'rating' => 5.0,
+      'reviews_count' => 28,
+      'short_description' => 'Heirloom travel duffle in wax-burnished full-grain hide with solid brass rivets and reinforced storm flap.',
+      'description' => 'Currently out of stock due to high atelier demand. Each Artisan Heritage Travel Duffle requires 36 hours of rigorous hand assembly from full-grain vegetable-tanned hides. Our workshop is preparing the next seasonal release. Click "Notify Me" to register for priority VIP allocation.',
+      'image' => 'https://images.unsplash.com/photo-1553062407-98eeb64c6a62?auto=format&fit=crop&w=800&q=80',
+      'gallery' => 
+      array (
+        0 => 'https://images.unsplash.com/photo-1553062407-98eeb64c6a62?auto=format&fit=crop&w=800&q=80',
+        1 => 'https://images.unsplash.com/photo-1548036328-c9fa89d128fa?auto=format&fit=crop&w=800&q=80',
+        2 => '/images/brand/stitch-detail.jpg',
+      ),
+      'features' => 
+      array (
+        0 => '45-liter carry-on compliant cabin duffle capacity',
+        1 => 'Cast antique brass two-way locking zipper teeth',
+        2 => 'Padded detachable calfskin ergonomic shoulder strap',
+        3 => 'Reinforced protective brass bottom studs and double floor welt',
+      ),
+      'specifications' => 
+      array (
+        'Material' => 'Grade-A Full-Grain Vegetable-Tanned Cowhide',
+        'Hardware' => 'Solid Cast Antique Brass',
+        'Dimensions' => '52 cm x 28 cm x 26 cm',
+        'Weight' => '2.1 kg',
+      ),
+      'colors' => 
+      array (
+        0 => 
+        array (
+          'name' => 'Antique Chestnut',
+          'hex' => '#4A2511',
+          'stock' => false,
+        ),
+      ),
+    ),
+    21 => 
+    array (
+      'id' => 22,
+      'slug' => 'bespoke-monogrammed-executive-briefcase',
+      'name' => 'Bespoke Monogrammed Executive Briefcase',
+      'category' => 'on-demand',
+      'category_name' => 'On Demand & Bespoke',
+      'price' => 34500,
+      'original_price' => 39000,
+      'badge' => 'On Demand',
+      'is_bestseller' => false,
+      'is_new' => true,
+      'in_stock' => true,
+      'availability' => 'on_demand',
+      'lead_time' => '7–10 Business Days',
+      'rating' => 5.0,
+      'reviews_count' => 14,
+      'short_description' => 'Bespoke structured briefcase with hand-carved initials, double gusset compartments, and Swiss lock hardware.',
+      'description' => 'Handcrafted entirely on demand by our master leather craftsmen in Lahore. Each briefcase is tailored to the client with custom monogram hot-stamping, suede-lined dual laptop sleeves, and hand-stitched rolled handles. Requires 7–10 working days of artisan crafting prior to dispatch.',
+      'image' => 'https://images.unsplash.com/photo-1548036328-c9fa89d128fa?auto=format&fit=crop&w=800&q=80',
+      'gallery' => 
+      array (
+        0 => 'https://images.unsplash.com/photo-1548036328-c9fa89d128fa?auto=format&fit=crop&w=800&q=80',
+        1 => 'https://images.unsplash.com/photo-1553062407-98eeb64c6a62?auto=format&fit=crop&w=800&q=80',
+        2 => '/images/brand/artisan-craft.jpg',
+      ),
+      'features' => 
+      array (
+        0 => 'Complimentary 24k gold or blind hot-stamped client monogram',
+        1 => 'Dual interior suede compartments fitting 16-inch laptops',
+        2 => 'Swiss-engineered key-lockable solid brass clasp',
+        3 => 'Made entirely to order by master leather craftsmen',
+      ),
+      'specifications' => 
+      array (
+        'Material' => 'Full-Grain Drum-Dyed English Saddle Leather',
+        'Hardware' => 'Solid Polished Brass with Precision Key Lock',
+        'Dimensions' => '41 cm x 30 cm x 9 cm',
+        'Production Time' => '7 to 10 Working Days',
+      ),
+      'colors' => 
+      array (
+        0 => 
+        array (
+          'name' => 'Saddle Tan',
+          'hex' => '#9B5A2B',
+          'stock' => true,
+        ),
+        1 => 
+        array (
+          'name' => 'Obsidian Black',
+          'hex' => '#1A1A1A',
+          'stock' => true,
+        ),
+      ),
+    ),
+    22 => 
+    array (
+      'id' => 23,
+      'slug' => 'the-sovereign-bespoke-alligator-weekender',
+      'name' => 'The Sovereign Bespoke Alligator Weekender',
+      'category' => 'on-demand',
+      'category_name' => 'On Demand & Bespoke',
+      'price' => 42000,
+      'original_price' => 48000,
+      'badge' => 'On Demand',
+      'is_bestseller' => false,
+      'is_new' => true,
+      'in_stock' => true,
+      'availability' => 'on_demand',
+      'lead_time' => '10–14 Business Days',
+      'rating' => 4.9,
+      'reviews_count' => 18,
+      'short_description' => 'Exotic embossed full-grain duffle bag with custom gold-plated hardware and bespoke interior layout.',
+      'description' => 'A statement travel piece crafted exclusively on demand. Features precision hand-buffed alligator-embossed full-grain calfskin, YKK Excella gold-finish zippers, and personalized suede interior lining. Delivered in a luxury wooden atelier presentation box.',
+      'image' => 'https://images.unsplash.com/photo-1553062407-98eeb64c6a62?auto=format&fit=crop&w=800&q=80',
+      'gallery' => 
+      array (
+        0 => 'https://images.unsplash.com/photo-1553062407-98eeb64c6a62?auto=format&fit=crop&w=800&q=80',
+        1 => '/images/hero/slide-bag.jpg',
+        2 => '/images/brand/artisan-craft.jpg',
+      ),
+      'features' => 
+      array (
+        0 => 'Hand-cut alligator-embossed full-grain Italian calfskin',
+        1 => 'Personalized client nameplate engraved in 18k gold tone',
+        2 => 'Silk-soft alcantara lining with dedicated shoe compartment',
+        3 => 'Includes luxury cedarwood atelier keepsake crate',
+      ),
+      'specifications' => 
+      array (
+        'Material' => 'Alligator-Embossed Full-Grain Calfskin & Alcantara',
+        'Hardware' => '18k Champagne Gold Electroplated Brass',
+        'Dimensions' => '54 cm x 30 cm x 28 cm',
+        'Production Time' => '10 to 14 Working Days',
+      ),
+      'colors' => 
+      array (
+        0 => 
+        array (
+          'name' => 'Espresso Noir',
+          'hex' => '#1F1713',
+          'stock' => true,
+        ),
+        1 => 
+        array (
+          'name' => 'Cognac Royal',
+          'hex' => '#874B26',
           'stock' => true,
         ),
       ),
