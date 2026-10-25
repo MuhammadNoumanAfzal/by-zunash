@@ -9,18 +9,65 @@ use Illuminate\Support\Collection;
 class StoreController extends Controller
 {
     /**
-     * Retrieve all products collection from config
+     * Retrieve all products collection from database with fallback to config
      */
     protected function getProducts(): Collection
     {
+        $dbProducts = \App\Models\Product::all();
+        if ($dbProducts->isNotEmpty()) {
+            return $dbProducts->map(function ($p) {
+                return [
+                    'id' => $p->id,
+                    'slug' => $p->slug,
+                    'name' => $p->name,
+                    'category' => $p->category_slug,
+                    'category_name' => $p->category_name,
+                    'price' => (float) $p->price,
+                    'original_price' => $p->original_price ? (float) $p->original_price : null,
+                    'badge' => $p->badge,
+                    'is_bestseller' => (bool) $p->is_bestseller,
+                    'is_new' => (bool) $p->is_new,
+                    'in_stock' => (bool) $p->in_stock,
+                    'availability' => $p->availability,
+                    'stock_quantity' => $p->stock_quantity,
+                    'sku' => $p->sku,
+                    'rating' => (float) $p->rating,
+                    'reviews_count' => (int) $p->reviews_count,
+                    'short_description' => $p->short_description,
+                    'description' => $p->description,
+                    'image' => $p->image,
+                    'gallery' => is_array($p->gallery) ? $p->gallery : [],
+                    'features' => is_array($p->features) ? $p->features : [],
+                    'specifications' => is_array($p->specifications) ? $p->specifications : [],
+                    'colors' => is_array($p->colors) ? $p->colors : [],
+                ];
+            });
+        }
+
         return collect(config('products.items', []));
     }
 
     /**
-     * Retrieve all categories from config
+     * Retrieve all categories from database with fallback to config
      */
     protected function getCategories(): array
     {
+        $dbCategories = \App\Models\Category::withCount('products')->orderBy('sort_order')->get();
+        if ($dbCategories->isNotEmpty()) {
+            $result = [];
+            foreach ($dbCategories as $cat) {
+                $result[$cat->slug] = [
+                    'id' => $cat->id,
+                    'slug' => $cat->slug,
+                    'name' => $cat->name,
+                    'tagline' => $cat->tagline,
+                    'image' => $cat->image,
+                    'count' => $cat->products_count,
+                ];
+            }
+            return $result;
+        }
+
         return config('products.categories', []);
     }
 
@@ -266,12 +313,22 @@ class StoreController extends Controller
      */
     public function submitContact(Request $request)
     {
-        $request->validate([
+        $validated = $request->validate([
             'name' => 'required|string|max:100',
             'email' => 'required|email',
             'phone' => 'nullable|string|max:20',
             'subject' => 'required|string|max:150',
             'message' => 'required|string|min:10|max:2000',
+        ]);
+
+        \App\Models\Inquiry::create([
+            'name' => $validated['name'],
+            'email' => $validated['email'],
+            'phone' => $validated['phone'] ?? null,
+            'subject' => $validated['subject'],
+            'message' => $validated['message'],
+            'status' => 'unread',
+            'is_read' => false,
         ]);
 
         return back()->with('success', 'Thank you for reaching out to By Zunash. Our client care team will respond within 24 business hours.');
@@ -282,136 +339,63 @@ class StoreController extends Controller
      */
     public function reviews()
     {
-        $reviews = [
-            [
-                'id' => 1,
-                'author' => 'Dr. Hamza Khan',
-                'city' => 'Lahore (DHA Phase 5)',
-                'initials' => 'HK',
-                'category' => 'belts',
-                'product_name' => 'The Royal Reversible Calfskin Belt',
-                'product_slug' => 'the-royal-reversible-calfskin-belt',
-                'rating' => 5,
-                'date' => 'October 14, 2026',
-                'verified' => true,
-                'title' => 'The swivel buckle mechanism is sheer mechanical perfection',
-                'comment' => 'Without question the finest leather belt I have purchased in Pakistan. The swivel mechanism has a solid, authoritative click that transitions between obsidian black and rich espresso calfskin effortlessly. The beveled wax-burnished edge does not crease under daily wear.',
-                'image' => '/images/products/prod-reversible-belt.jpg',
-                'helpful' => 48,
-            ],
-            [
-                'id' => 2,
-                'author' => 'Ayesha Tariq',
-                'city' => 'Islamabad (F-7/2)',
-                'initials' => 'AT',
-                'category' => 'handbags',
-                'product_name' => 'The Zunash Signature Satchel',
-                'product_slug' => 'the-zunash-signature-satchel',
-                'rating' => 5,
-                'date' => 'October 08, 2026',
-                'verified' => true,
-                'title' => 'Rivals European luxury fashion houses in every detail',
-                'comment' => 'I was initially hesitant to order fine leather online, but the doorstep Cash on Delivery made it risk-free. The packaging alone was regal—a magnetic rigid box with a linen dust pouch. The aroma of genuine vegetable-tanned hide and custom 24k gold hardware are exceptional.',
-                'image' => '/images/products/prod-signature-satchel.jpg',
-                'helpful' => 39,
-            ],
-            [
-                'id' => 3,
-                'author' => 'Bilal Mansoor',
-                'city' => 'Karachi (Clifton Block 4)',
-                'initials' => 'BM',
-                'category' => 'wallets',
-                'product_name' => 'The Heritage Bifold Leather Wallet',
-                'product_slug' => 'the-heritage-bifold-leather-wallet',
-                'rating' => 5,
-                'date' => 'September 29, 2026',
-                'verified' => true,
-                'title' => 'Calibrated perfectly for PKR 5000 banknotes',
-                'comment' => 'Most imported bifold wallets crush Pakistani currency notes or bulge awkwardly in tailored suit breast pockets. This wallet is sized with dual compartments for PKR 5000 notes and receipts while maintaining an ultra-slim profile. The RFID lining adds genuine peace of mind.',
-                'image' => '/images/products/prod-bifold-wallet.jpg',
-                'helpful' => 52,
-            ],
-            [
-                'id' => 4,
-                'author' => 'Barrister Daniyal Qureshi',
-                'city' => 'Rawalpindi (Cantt)',
-                'initials' => 'DQ',
-                'category' => 'belts',
-                'product_name' => 'Hand-Burnished Classic Dress Belt',
-                'product_slug' => 'hand-burnished-classic-dress-belt',
-                'rating' => 5,
-                'date' => 'September 22, 2026',
-                'verified' => true,
-                'title' => 'Subtle domed profile and gorgeous natural patina',
-                'comment' => 'Pairs impeccably with tailored bespoke suiting. The feather-edge craftsmanship and warm cognac patina look even richer in person than in the studio photos. Priority courier arrived in Rawalpindi within 28 hours.',
-                'image' => '/images/products/prod-dress-belt.jpg',
-                'helpful' => 31,
-            ],
-            [
-                'id' => 5,
-                'author' => 'Fatima Jahangir',
-                'city' => 'Lahore (Gulberg III)',
-                'initials' => 'FJ',
-                'category' => 'handbags',
-                'product_name' => 'The Empress Structured Leather Tote',
-                'product_slug' => 'the-empress-structured-leather-tote',
-                'rating' => 5,
-                'date' => 'September 15, 2026',
-                'verified' => true,
-                'title' => 'Carries my 14" laptop with seamless grace',
-                'comment' => 'As a corporate consultant, finding a work carryall that does not sag after months of heavy use is nearly impossible. The structured calfskin holds its silhouette upright on the solid brass base studs. Highly recommend.',
-                'image' => '/images/products/prod-leather-tote.jpg',
-                'helpful' => 27,
-            ],
-            [
-                'id' => 6,
-                'author' => 'Capt. Usman Raza',
-                'city' => 'Peshawar',
-                'initials' => 'UR',
-                'category' => 'accessories',
-                'product_name' => 'The Atelier Solid Brass Key Fob',
-                'product_slug' => 'the-atelier-solid-brass-key-fob',
-                'rating' => 5,
-                'date' => 'September 04, 2026',
-                'verified' => true,
-                'title' => 'Heavy antique brass hardware and thick steer hide',
-                'comment' => 'The solid brass hardware is reassuringly heavy and rugged. Ordered as a personal gift for my vehicle keys. Outstanding craftsmanship from the Lahore workshop.',
-                'image' => '/images/products/prod-key-fob.jpg',
-                'helpful' => 22,
-            ],
-            [
-                'id' => 7,
-                'author' => 'Zainab Malik',
-                'city' => 'Faisalabad',
-                'initials' => 'ZM',
-                'category' => 'shoulder-bags',
-                'product_name' => 'The Regent Saddle Crossbody',
-                'product_slug' => 'the-regent-saddle-crossbody',
-                'rating' => 5,
-                'date' => 'August 28, 2026',
-                'verified' => true,
-                'title' => 'Effortless crossbody drape and rich pull-up leather',
-                'comment' => 'The contrast ivory stitching against warm saddle tan is breathtaking. The strap length is versatile for casual evenings and travel.',
-                'image' => '/images/products/prod-flap-bag.jpg',
-                'helpful' => 19,
-            ],
-            [
-                'id' => 8,
-                'author' => 'Saadullah Sheikh',
-                'city' => 'Multan',
-                'initials' => 'SS',
-                'category' => 'wallets',
-                'product_name' => 'Minimalist Slim Cardholder',
-                'product_slug' => 'minimalist-slim-cardholder',
-                'rating' => 5,
-                'date' => 'August 19, 2026',
-                'verified' => true,
-                'title' => 'Front pocket perfection for daily cards',
-                'comment' => 'Holds 6 cards and folded cash in the center slip pocket without any pocket bulge. The leather has already darkened into a stunning vintage luster.',
-                'image' => '/images/products/prod-cardholder.jpg',
-                'helpful' => 24,
-            ],
-        ];
+        $dbReviews = \App\Models\Review::where('status', 'published')->latest()->get();
+
+        if ($dbReviews->isNotEmpty()) {
+            $reviews = $dbReviews->map(function ($r) {
+                return [
+                    'id' => $r->id,
+                    'author' => $r->author,
+                    'city' => $r->city,
+                    'initials' => $r->initials ?: strtoupper(substr($r->author, 0, 2)),
+                    'category' => $r->category ?: 'belts',
+                    'product_name' => $r->product_name,
+                    'product_slug' => $r->product_slug ?: \Illuminate\Support\Str::slug($r->product_name),
+                    'rating' => $r->rating,
+                    'date' => $r->created_at ? $r->created_at->format('F d, Y') : 'Recent',
+                    'verified' => (bool) $r->verified,
+                    'title' => $r->title,
+                    'comment' => $r->comment,
+                    'image' => $r->image ?: '/images/products/prod-reversible-belt.jpg',
+                    'helpful' => (int) $r->helpful,
+                ];
+            })->toArray();
+        } else {
+            $reviews = [
+                [
+                    'id' => 1,
+                    'author' => 'Dr. Hamza Khan',
+                    'city' => 'Lahore (DHA Phase 5)',
+                    'initials' => 'HK',
+                    'category' => 'belts',
+                    'product_name' => 'The Royal Reversible Calfskin Belt',
+                    'product_slug' => 'the-royal-reversible-calfskin-belt',
+                    'rating' => 5,
+                    'date' => 'October 14, 2026',
+                    'verified' => true,
+                    'title' => 'The swivel buckle mechanism is sheer mechanical perfection',
+                    'comment' => 'Without question the finest leather belt I have purchased in Pakistan. The swivel mechanism has a solid, authoritative click that transitions between obsidian black and rich espresso calfskin effortlessly. The beveled wax-burnished edge does not crease under daily wear.',
+                    'image' => '/images/products/prod-reversible-belt.jpg',
+                    'helpful' => 48,
+                ],
+                [
+                    'id' => 2,
+                    'author' => 'Ayesha Tariq',
+                    'city' => 'Islamabad (F-7/2)',
+                    'initials' => 'AT',
+                    'category' => 'handbags',
+                    'product_name' => 'The Zunash Signature Satchel',
+                    'product_slug' => 'the-zunash-signature-satchel',
+                    'rating' => 5,
+                    'date' => 'October 08, 2026',
+                    'verified' => true,
+                    'title' => 'Rivals European luxury fashion houses in every detail',
+                    'comment' => 'I was initially hesitant to order fine leather online, but the doorstep Cash on Delivery made it risk-free. The packaging alone was regal—a magnetic rigid box with a linen dust pouch. The aroma of genuine vegetable-tanned hide and custom 24k gold hardware are exceptional.',
+                    'image' => '/images/products/prod-signature-satchel.jpg',
+                    'helpful' => 39,
+                ],
+            ];
+        }
 
         return view('user.reviews', compact('reviews'));
     }
@@ -421,7 +405,7 @@ class StoreController extends Controller
      */
     public function submitReview(Request $request)
     {
-        $request->validate([
+        $validated = $request->validate([
             'author' => 'required|string|max:100',
             'city' => 'required|string|max:100',
             'product_name' => 'required|string|max:150',
@@ -430,7 +414,79 @@ class StoreController extends Controller
             'comment' => 'required|string|min:10|max:2000',
         ]);
 
+        \App\Models\Review::create([
+            'author' => $validated['author'],
+            'city' => $validated['city'],
+            'initials' => strtoupper(substr($validated['author'], 0, 2)),
+            'product_name' => $validated['product_name'],
+            'product_slug' => \Illuminate\Support\Str::slug($validated['product_name']),
+            'rating' => $validated['rating'],
+            'title' => $validated['title'],
+            'comment' => $validated['comment'],
+            'status' => 'published',
+            'verified' => true,
+        ]);
+
         return back()->with('review_success', 'Thank you for sharing your experience. Your client review has been verified and recorded.');
+    }
+
+    /**
+     * Process checkout submission via API or Form
+     */
+    public function processCheckout(Request $request)
+    {
+        $validated = $request->validate([
+            'first_name' => 'required|string|max:100',
+            'last_name' => 'required|string|max:100',
+            'email' => 'required|email',
+            'phone' => 'required|string|max:30',
+            'address' => 'required|string|max:255',
+            'city' => 'required|string|max:100',
+            'postal_code' => 'nullable|string|max:20',
+            'order_notes' => 'nullable|string|max:500',
+            'payment_method' => 'nullable|string|max:50',
+            'items' => 'required|array',
+            'subtotal' => 'required|numeric',
+            'total' => 'required|numeric',
+        ]);
+
+        $orderNumber = 'BZ-' . date('Ym') . '-' . rand(1000, 9999);
+        $fullName = trim($validated['first_name'] . ' ' . $validated['last_name']);
+
+        $order = \App\Models\Order::create([
+            'order_number' => $orderNumber,
+            'customer_name' => $fullName,
+            'customer_email' => $validated['email'],
+            'customer_phone' => $validated['phone'],
+            'shipping_address' => $validated['address'],
+            'city' => $validated['city'],
+            'postal_code' => $validated['postal_code'] ?? null,
+            'order_notes' => $validated['order_notes'] ?? null,
+            'payment_method' => strtoupper($validated['payment_method'] ?? 'COD'),
+            'payment_status' => 'pending',
+            'order_status' => 'pending',
+            'subtotal' => $validated['subtotal'],
+            'shipping_fee' => 0.00,
+            'discount' => 0.00,
+            'total' => $validated['total'],
+            'items' => $validated['items'],
+        ]);
+
+        // Customer auto sync
+        $customer = \App\Models\Customer::firstOrNew(['email' => $validated['email']]);
+        $customer->name = $fullName;
+        $customer->phone = $validated['phone'];
+        $customer->city = $validated['city'];
+        $customer->address = $validated['address'];
+        $customer->total_orders = ($customer->total_orders ?? 0) + 1;
+        $customer->total_spent = ($customer->total_spent ?? 0) + $validated['total'];
+        $customer->save();
+
+        return response()->json([
+            'success' => true,
+            'order_number' => $orderNumber,
+            'message' => 'Order successfully placed!',
+        ]);
     }
 
     /**
