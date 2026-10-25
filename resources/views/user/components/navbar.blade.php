@@ -23,8 +23,8 @@
         isScrolled: false 
     }" 
     @scroll.window="isScrolled = (window.pageYOffset > 20)"
-    class="sticky top-0 z-40 w-full transition-all duration-300"
-    :class="isScrolled ? 'bg-white/95 backdrop-blur-md shadow-xs border-b border-ivory-300' : 'bg-white border-b border-ivory-200'"
+    class="sticky top-0 z-40 w-full transition-all duration-300 bg-white dark:bg-[#161210] text-espresso-900 dark:text-[#F7F4EE]"
+    :class="isScrolled ? 'bg-white/95 dark:bg-[#161210]/95 backdrop-blur-md shadow-xs border-b border-ivory-300 dark:border-white/10' : 'bg-white dark:bg-[#161210] border-b border-ivory-200 dark:border-white/10'"
 >
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative" @click.outside="collectionsOpen = false">
         <div class="flex items-center justify-between h-20">
@@ -34,7 +34,7 @@
                 <button 
                     type="button" 
                     @click="mobileMenuOpen = !mobileMenuOpen" 
-                    class="p-2 -ml-2 rounded-md text-espresso-900 hover:text-gold-600 focus:outline-none"
+                    class="p-2 -ml-2 rounded-md text-espresso-900 dark:text-ivory-200 hover:text-gold-600 dark:hover:text-gold focus:outline-none"
                     aria-label="Toggle navigation menu"
                 >
                     <i data-lucide="menu" x-show="!mobileMenuOpen" class="w-6 h-6"></i>
@@ -51,7 +51,7 @@
             <nav class="hidden lg:flex items-center space-x-7">
                 <a 
                     href="{{ route('home') }}" 
-                    class="text-xs uppercase tracking-widest font-medium transition-colors duration-200 {{ request()->routeIs('home') ? 'text-gold-600 font-semibold' : 'text-espresso-800 hover:text-gold-600' }}"
+                    class="text-xs uppercase tracking-widest font-medium transition-colors duration-200 {{ request()->routeIs('home') ? 'text-gold-600 font-semibold' : 'text-espresso-800 dark:text-ivory-200 hover:text-gold-600 dark:hover:text-gold' }}"
                 >
                     Home
                 </a>
@@ -66,7 +66,7 @@
                         type="button" 
                         @click="toggleCollections()"
                         class="text-xs uppercase tracking-widest font-medium transition-colors duration-200 flex items-center gap-1.5 py-7 focus:outline-none"
-                        :class="collectionsOpen || {{ request()->is('category*') ? 'true' : 'false' }} ? 'text-gold-600 font-semibold' : 'text-espresso-800 hover:text-gold-600'"
+                        :class="collectionsOpen || {{ request()->is('category*') ? 'true' : 'false' }} ? 'text-gold-600 font-semibold' : 'text-espresso-800 dark:text-ivory-200 hover:text-gold-600 dark:hover:text-gold'"
                         aria-expanded="collectionsOpen"
                     >
                         <span>Collections</span>
@@ -83,8 +83,7 @@
                         x-transition:leave="transition ease-in duration-150"
                         x-transition:leave-start="opacity-100 translate-y-0"
                         x-transition:leave-end="opacity-0 translate-y-1"
-                        class="absolute top-full left-0 right-0 w-full bg-white border border-ivory-300 rounded-2xl shadow-2xl z-50 pt-7 pb-0 px-8 overflow-hidden before:absolute before:-top-6 before:left-0 before:right-0 before:h-6 before:content-['']"
-                        style="background-color: #ffffff !important;"
+                        class="absolute top-full left-0 right-0 w-full bg-white dark:bg-[#1A1411] border border-ivory-300 dark:border-white/10 rounded-2xl shadow-2xl z-50 pt-7 pb-0 px-8 overflow-hidden before:absolute before:-top-6 before:left-0 before:right-0 before:h-6 before:content-['']"
                         @mouseenter="openCollections()"
                         @mouseleave="closeCollections()"
                     >
@@ -92,8 +91,8 @@
                             
                             <!-- Column 1: Leather Belts -->
                             <div class="col-span-3 space-y-3">
-                                <a href="{{ route('category', 'belts') }}" class="group flex items-center justify-between pb-2.5 border-b border-ivory-200">
-                                    <h4 class="font-serif text-xs font-bold uppercase tracking-wider text-black group-hover:text-gold-600 transition-colors">
+                                <a href="{{ route('category', 'belts') }}" class="group flex items-center justify-between pb-2.5 border-b border-ivory-200 dark:border-white/10">
+                                    <h4 class="font-serif text-xs font-bold uppercase tracking-wider text-espresso-950 dark:text-ivory group-hover:text-gold-600 transition-colors">
                                         Leather Belts
                                     </h4>
                                     <i data-lucide="chevron-right" class="w-3.5 h-3.5 text-gold-600 transition-transform group-hover:translate-x-1"></i>
@@ -130,8 +129,8 @@
 
                             <!-- Column 2: Wallets & Cardholders -->
                             <div class="col-span-3 space-y-3">
-                                <a href="{{ route('category', 'wallets') }}" class="group flex items-center justify-between pb-2.5 border-b border-ivory-200">
-                                    <h4 class="font-serif text-xs font-bold uppercase tracking-wider text-black group-hover:text-gold-600 transition-colors">
+                                <a href="{{ route('category', 'wallets') }}" class="group flex items-center justify-between pb-2.5 border-b border-ivory-200 dark:border-white/10">
+                                    <h4 class="font-serif text-xs font-bold uppercase tracking-wider text-espresso-950 dark:text-ivory group-hover:text-gold-600 transition-colors">
                                         Wallets & Cardholders
                                     </h4>
                                     <i data-lucide="chevron-right" class="w-3.5 h-3.5 text-gold-600 transition-transform group-hover:translate-x-1"></i>
@@ -168,8 +167,8 @@
 
                             <!-- Column 3: Handbags & Shoulder Bags -->
                             <div class="col-span-3 space-y-3">
-                                <a href="{{ route('category', 'handbags') }}" class="group flex items-center justify-between pb-2.5 border-b border-ivory-200">
-                                    <h4 class="font-serif text-xs font-bold uppercase tracking-wider text-black group-hover:text-gold-600 transition-colors">
+                                <a href="{{ route('category', 'handbags') }}" class="group flex items-center justify-between pb-2.5 border-b border-ivory-200 dark:border-white/10">
+                                    <h4 class="font-serif text-xs font-bold uppercase tracking-wider text-espresso-950 dark:text-ivory group-hover:text-gold-600 transition-colors">
                                         Handbags & Bags
                                     </h4>
                                     <i data-lucide="chevron-right" class="w-3.5 h-3.5 text-gold-600 transition-transform group-hover:translate-x-1"></i>
@@ -211,23 +210,23 @@
                             </div>
 
                             <!-- Column 4: Atelier Spotlight Card -->
-                            <div class="col-span-3 bg-ivory-50 rounded-xl p-4 border border-ivory-200 flex flex-col justify-between shadow-xs">
+                            <div class="col-span-3 bg-ivory-50 dark:bg-[#241C18] rounded-xl p-4 border border-ivory-200 dark:border-white/10 flex flex-col justify-between shadow-xs">
                                 <div>
                                     <div class="flex items-center justify-between mb-2">
                                         <span class="text-[10px] uppercase tracking-widest text-gold-600 font-serif font-bold">
                                             Atelier Spotlight
                                         </span>
-                                        <span class="text-[10px] uppercase tracking-wider text-emerald-700 bg-emerald-50 px-1.5 py-0.5 rounded font-medium border border-emerald-200">
+                                        <span class="text-[10px] uppercase tracking-wider text-emerald-700 bg-emerald-50 dark:bg-emerald-950/60 dark:text-emerald-300 px-1.5 py-0.5 rounded font-medium border border-emerald-200 dark:border-emerald-800">
                                             Bestseller
                                         </span>
                                     </div>
-                                    <h5 class="font-serif text-sm font-bold text-espresso-950 mb-1">
+                                    <h5 class="font-serif text-sm font-bold text-espresso-950 dark:text-ivory mb-1">
                                         The Royal Reversible Belt
                                     </h5>
-                                    <p class="text-[11px] text-muted-dark leading-relaxed line-clamp-2 mb-3 font-light">
+                                    <p class="text-[11px] text-muted-dark dark:text-ivory-300 leading-relaxed line-clamp-2 mb-3 font-light">
                                         Two refined looks in one. Italian calfskin with 360° swivel brass buckle.
                                     </p>
-                                    <div class="aspect-[16/10] rounded-lg overflow-hidden bg-ivory-100 mb-3 border border-ivory-300">
+                                    <div class="aspect-[16/10] rounded-lg overflow-hidden bg-ivory-100 dark:bg-[#161210] mb-3 border border-ivory-300 dark:border-white/10">
                                         <img 
                                             src="https://images.unsplash.com/photo-1624222247344-550fb60583dc?auto=format&fit=crop&w=600&q=80" 
                                             alt="The Royal Reversible Belt" 
@@ -245,8 +244,8 @@
 
                         </div>
 
-                        <!-- Mega Menu Bottom Reassurance Bar (Solid Ivory with high-contrast text) -->
-                        <div class="-mx-8 py-3.5 px-8 bg-ivory-100 border-t border-ivory-200 flex items-center justify-between text-xs text-espresso-900">
+                        <!-- Mega Menu Bottom Reassurance Bar -->
+                        <div class="-mx-8 py-3.5 px-8 bg-ivory-100 dark:bg-[#140F0D] border-t border-ivory-200 dark:border-white/10 flex items-center justify-between text-xs text-espresso-900 dark:text-ivory-200">
                             <div class="flex items-center gap-6">
                                 <span class="flex items-center gap-2 font-medium">
                                     <i data-lucide="shield-check" class="w-4 h-4 text-gold-600"></i>
@@ -267,21 +266,21 @@
 
                 <a 
                     href="{{ route('shop') }}" 
-                    class="text-xs uppercase tracking-widest font-medium transition-colors duration-200 {{ request()->routeIs('shop') && !request()->has('sort') ? 'text-gold-600 font-semibold' : 'text-espresso-800 hover:text-gold-600' }}"
+                    class="text-xs uppercase tracking-widest font-medium transition-colors duration-200 {{ request()->routeIs('shop') && !request()->has('sort') ? 'text-gold-600 font-semibold' : 'text-espresso-800 dark:text-ivory-200 hover:text-gold-600 dark:hover:text-gold' }}"
                 >
                     Shop All
                 </a>
 
                 <a 
                     href="{{ route('about') }}" 
-                    class="text-xs uppercase tracking-widest font-medium transition-colors duration-200 {{ request()->routeIs('about') ? 'text-gold-600 font-semibold' : 'text-espresso-800 hover:text-gold-600' }}"
+                    class="text-xs uppercase tracking-widest font-medium transition-colors duration-200 {{ request()->routeIs('about') ? 'text-gold-600 font-semibold' : 'text-espresso-800 dark:text-ivory-200 hover:text-gold-600 dark:hover:text-gold' }}"
                 >
                     Our Story
                 </a>
 
                 <a 
                     href="{{ route('contact') }}" 
-                    class="text-xs uppercase tracking-widest font-medium transition-colors duration-200 {{ request()->routeIs('contact') ? 'text-gold-600 font-semibold' : 'text-espresso-800 hover:text-gold-600' }}"
+                    class="text-xs uppercase tracking-widest font-medium transition-colors duration-200 {{ request()->routeIs('contact') ? 'text-gold-600 font-semibold' : 'text-espresso-800 dark:text-ivory-200 hover:text-gold-600 dark:hover:text-gold' }}"
                 >
                     Contact
                 </a>
@@ -294,7 +293,7 @@
                 <button 
                     type="button" 
                     @click="searchOpen = !searchOpen" 
-                    class="p-2 text-espresso-900 hover:text-gold-600 transition-colors focus:outline-none"
+                    class="p-2 text-espresso-900 dark:text-ivory-200 hover:text-gold-600 dark:hover:text-gold transition-colors focus:outline-none"
                     aria-label="Search catalog"
                 >
                     <i data-lucide="search" class="w-5 h-5"></i>
@@ -303,7 +302,7 @@
                 <!-- Customer Account Link -->
                 <a 
                     href="{{ route('contact') }}" 
-                    class="p-2 text-espresso-900 hover:text-gold-600 transition-colors focus:outline-none hidden sm:inline-flex"
+                    class="p-2 text-espresso-900 dark:text-ivory-200 hover:text-gold-600 dark:hover:text-gold transition-colors focus:outline-none hidden sm:inline-flex"
                     aria-label="Client Services & Contact"
                     title="Client Services"
                 >
@@ -313,7 +312,7 @@
                 <!-- Wishlist Icon with Dynamic Badge -->
                 <a 
                     href="{{ route('wishlist') }}" 
-                    class="relative p-2 text-espresso-900 hover:text-gold-600 transition-colors focus:outline-none"
+                    class="relative p-2 text-espresso-900 dark:text-ivory-200 hover:text-gold-600 dark:hover:text-gold transition-colors focus:outline-none"
                     aria-label="Wishlist"
                 >
                     <i data-lucide="heart" class="w-5 h-5"></i>
@@ -329,7 +328,7 @@
                 <button 
                     type="button" 
                     @click="$store.cart.isOpen = true" 
-                    class="relative p-2 text-espresso-900 hover:text-gold-600 transition-colors focus:outline-none"
+                    class="relative p-2 text-espresso-900 dark:text-ivory-200 hover:text-gold-600 dark:hover:text-gold transition-colors focus:outline-none"
                     aria-label="Shopping Bag"
                 >
                     <i data-lucide="shopping-bag" class="w-5 h-5"></i>
@@ -371,7 +370,7 @@
         x-transition:leave="transition ease-in duration-150"
         x-transition:leave-start="opacity-100 translate-y-0"
         x-transition:leave-end="opacity-0 -translate-y-4"
-        class="bg-ivory-50 border-t border-b border-ivory-300 py-4 px-4 sm:px-6 shadow-md"
+        class="bg-ivory-50 dark:bg-[#1E1815] border-t border-b border-ivory-300 dark:border-white/10 py-4 px-4 sm:px-6 shadow-md"
     >
         <div class="max-w-3xl mx-auto">
             <form action="{{ route('search') }}" method="GET" class="relative flex items-center">
@@ -381,7 +380,7 @@
                     name="q" 
                     x-model="searchQuery" 
                     placeholder="Search fine leather belts, wallets, handbags, and accessories..." 
-                    class="w-full pl-12 pr-24 py-3 bg-white border border-ivory-300 rounded-lg text-sm text-espresso-900 placeholder-muted focus:outline-none focus:ring-2 focus:ring-gold/60 focus:border-gold"
+                    class="w-full pl-12 pr-24 py-3 bg-white dark:bg-[#161210] border border-ivory-300 dark:border-white/10 rounded-lg text-sm text-espresso-900 dark:text-ivory-100 placeholder-muted focus:outline-none focus:ring-2 focus:ring-gold/60 focus:border-gold"
                     autofocus
                 >
                 <div class="absolute right-2 flex items-center space-x-1">
@@ -441,11 +440,11 @@
             x-transition:leave="transition ease-in-out duration-300 transform"
             x-transition:leave-start="translate-x-0"
             x-transition:leave-end="-translate-x-full"
-            class="relative max-w-xs w-full bg-white h-full shadow-2xl flex flex-col justify-between py-6 px-6 z-10 overflow-y-auto"
+            class="relative max-w-xs w-full bg-white dark:bg-[#161210] h-full shadow-2xl flex flex-col justify-between py-6 px-6 z-10 overflow-y-auto"
         >
             <div>
                 <!-- Drawer Header -->
-                <div class="flex items-center justify-between pb-6 border-b border-ivory-200">
+                <div class="flex items-center justify-between pb-6 border-b border-ivory-200 dark:border-white/10">
                     <x-user.components.logo height="h-8" />
                     <div class="flex items-center gap-1">
                         <!-- Mobile Theme Toggle -->
@@ -465,7 +464,7 @@
                         <button 
                             type="button" 
                             @click="mobileMenuOpen = false" 
-                            class="p-2 -mr-2 text-espresso-800 hover:text-gold-600 focus:outline-none"
+                            class="p-2 -mr-2 text-espresso-800 dark:text-ivory-200 hover:text-gold-600 focus:outline-none"
                             aria-label="Close menu"
                         >
                             <i data-lucide="x" class="w-5 h-5"></i>
@@ -478,17 +477,17 @@
                     <a 
                         href="{{ route('home') }}" 
                         @click="mobileMenuOpen = false"
-                        class="block text-sm font-medium tracking-wide uppercase py-1 {{ request()->routeIs('home') ? 'text-gold-600 font-semibold' : 'text-espresso-900 hover:text-gold-600' }}"
+                        class="block text-sm font-medium tracking-wide uppercase py-1 {{ request()->routeIs('home') ? 'text-gold-600 font-semibold' : 'text-espresso-900 dark:text-ivory-100 hover:text-gold-600' }}"
                     >
                         Home
                     </a>
 
                     <!-- Mobile Collections Accordion -->
-                    <div class="py-1 border-t border-b border-ivory-200">
+                    <div class="py-1 border-t border-b border-ivory-200 dark:border-white/10">
                         <button 
                             type="button" 
                             @click="mobileCollectionsOpen = !mobileCollectionsOpen"
-                            class="w-full flex items-center justify-between py-2 text-sm font-bold tracking-wide uppercase text-espresso-950 focus:outline-none"
+                            class="w-full flex items-center justify-between py-2 text-sm font-bold tracking-wide uppercase text-espresso-950 dark:text-ivory-100 focus:outline-none"
                         >
                             <span>All Collections</span>
                             <i data-lucide="chevron-down" class="w-4 h-4 transition-transform duration-200" :class="mobileCollectionsOpen ? 'rotate-180 text-gold-600' : ''"></i>

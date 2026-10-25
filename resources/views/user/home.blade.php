@@ -560,19 +560,19 @@
 <!-- ========================================================
      E. BESTSELLERS SECTION (With Scroll-Reveal)
      ======================================================== -->
-<section class="pt-10 pb-16 lg:pt-12 lg:pb-20 bg-white border-t border-b border-ivory-200">
+<section class="pt-10 pb-16 lg:pt-12 lg:pb-20 bg-white dark:bg-[#161210] border-t border-b border-ivory-200 dark:border-white/10">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
         <div class="flex flex-col md:flex-row md:items-end justify-between mb-14 reveal">
             <div>
                 <span class="text-gold-600 text-xs uppercase tracking-widest font-serif font-bold">Client Favorites</span>
-                <h2 class="font-serif text-3xl sm:text-4xl font-bold text-espresso-900 mt-1">
+                <h2 class="font-serif text-3xl sm:text-4xl font-bold text-espresso-900 dark:text-ivory mt-1">
                     Bestselling Creations
                 </h2>
             </div>
             <a 
                 href="{{ route('shop') }}" 
-                class="mt-4 md:mt-0 inline-flex items-center gap-2 text-xs uppercase tracking-widest font-semibold text-espresso-800 hover:text-gold-600 transition-colors group"
+                class="mt-4 md:mt-0 inline-flex items-center gap-2 text-xs uppercase tracking-widest font-semibold text-espresso-800 dark:text-ivory-200 hover:text-gold-600 dark:hover:text-gold transition-colors group"
             >
                 <span>View Full Catalog</span>
                 <i data-lucide="arrow-right" class="w-4 h-4 transition-transform group-hover:translate-x-1"></i>
@@ -597,7 +597,7 @@
 <!-- ========================================================
      F. BRAND STORY (EDITORIAL ASYMMETRICAL ATELIER SECTION)
      ======================================================== -->
-<section class="py-20 lg:py-28 bg-[#FAF7F2] border-t border-ivory-200 relative overflow-hidden">
+<section class="py-20 lg:py-28 bg-[#FAF7F2] dark:bg-[#191411] border-t border-ivory-200 dark:border-white/10 relative overflow-hidden">
     <!-- Ambient subtle background glow -->
     <div class="absolute -top-32 -left-32 w-96 h-96 bg-gold/10 rounded-full blur-3xl pointer-events-none"></div>
     <div class="absolute -bottom-32 -right-32 w-96 h-96 bg-chocolate-900/5 rounded-full blur-3xl pointer-events-none"></div>
@@ -648,39 +648,39 @@
 
             <!-- Right Story Content -->
             <div class="lg:col-span-6 lg:pl-4 reveal-right">
-                <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-gold/15 border border-gold/40 text-gold-700 text-xs uppercase tracking-widest font-serif font-bold mb-4">
-                    <i data-lucide="sparkles" class="w-3.5 h-3.5 text-gold-600"></i>
+                <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-gold/15 border border-gold/40 text-gold-700 dark:text-gold-300 text-xs uppercase tracking-widest font-serif font-bold mb-4">
+                    <i data-lucide="sparkles" class="w-3.5 h-3.5 text-gold-600 dark:text-gold-400"></i>
                     <span>The Atelier Philosophy</span>
                 </div>
                 
-                <h2 class="font-serif text-3xl sm:text-4xl lg:text-[42px] font-bold text-espresso-950 leading-[1.18] mb-6">
-                    Pure Material. <br>Deliberate Details. <br><span class="italic font-light text-gold-600">Quiet Elegance.</span>
+                <h2 class="font-serif text-3xl sm:text-4xl lg:text-[42px] font-bold text-espresso-950 dark:text-ivory leading-[1.18] mb-6">
+                    Pure Material. <br>Deliberate Details. <br><span class="italic font-light text-gold-600 dark:text-gold-400">Quiet Elegance.</span>
                 </h2>
 
-                <p class="text-[15px] text-espresso-800 font-light leading-relaxed mb-5">
+                <p class="text-[15px] text-espresso-800 dark:text-ivory-300 font-light leading-relaxed mb-5">
                     By Zunash was founded to bring thoughtful craftsmanship back to daily leather goods in Pakistan. In an era of fleeting fast fashion and synthetic bonded shortcuts, we champion honest, vegetable-tanned hides and drum-dyed skins that tell a real story.
                 </p>
 
-                <p class="text-[14px] text-muted-dark leading-relaxed mb-8">
+                <p class="text-[14px] text-muted-dark dark:text-ivory-400 leading-relaxed mb-8">
                     Every edge is beveled and wax-burnished by hand. Every seam is locked with resilient waxed thread. Our pieces are tailored not merely to turn heads on day one, but to grow softer, richer, and distinctly yours across decades of use.
                 </p>
 
                 <!-- 3 Pillars Feature Highlights with Micro-Hover -->
                 <div class="grid grid-cols-3 gap-3 mb-9">
-                    <div class="p-3.5 rounded-xl bg-white border border-ivory-300 shadow-2xs hover:border-gold-500/50 hover:shadow-md transition-all duration-300 group">
-                        <div class="font-serif text-lg font-bold text-espresso-950 group-hover:text-gold-600 transition-colors">0%</div>
-                        <div class="text-[11px] font-semibold text-espresso-900 leading-tight mt-0.5">Faux Plastics</div>
-                        <div class="text-[10px] text-muted leading-tight mt-1">Full-grain hides only</div>
+                    <div class="p-3.5 rounded-xl bg-white dark:bg-[#241C18] border border-ivory-300 dark:border-white/10 shadow-2xs hover:border-gold-500/50 hover:shadow-md transition-all duration-300 group">
+                        <div class="font-serif text-lg font-bold text-espresso-950 dark:text-ivory group-hover:text-gold-600 transition-colors">0%</div>
+                        <div class="text-[11px] font-semibold text-espresso-900 dark:text-ivory-200 leading-tight mt-0.5">Faux Plastics</div>
+                        <div class="text-[10px] text-muted dark:text-ivory-400 leading-tight mt-1">Full-grain hides only</div>
                     </div>
-                    <div class="p-3.5 rounded-xl bg-white border border-ivory-300 shadow-2xs hover:border-gold-500/50 hover:shadow-md transition-all duration-300 group">
-                        <div class="font-serif text-lg font-bold text-espresso-950 group-hover:text-gold-600 transition-colors">100%</div>
-                        <div class="text-[11px] font-semibold text-espresso-900 leading-tight mt-0.5">Hand-Burnished</div>
-                        <div class="text-[10px] text-muted leading-tight mt-1">Natural beeswax sealed</div>
+                    <div class="p-3.5 rounded-xl bg-white dark:bg-[#241C18] border border-ivory-300 dark:border-white/10 shadow-2xs hover:border-gold-500/50 hover:shadow-md transition-all duration-300 group">
+                        <div class="font-serif text-lg font-bold text-espresso-950 dark:text-ivory group-hover:text-gold-600 transition-colors">100%</div>
+                        <div class="text-[11px] font-semibold text-espresso-900 dark:text-ivory-200 leading-tight mt-0.5">Hand-Burnished</div>
+                        <div class="text-[10px] text-muted dark:text-ivory-400 leading-tight mt-1">Natural beeswax sealed</div>
                     </div>
-                    <div class="p-3.5 rounded-xl bg-white border border-ivory-300 shadow-2xs hover:border-gold-500/50 hover:shadow-md transition-all duration-300 group">
-                        <div class="font-serif text-lg font-bold text-espresso-950 group-hover:text-gold-600 transition-colors">Decades</div>
-                        <div class="text-[11px] font-semibold text-espresso-900 leading-tight mt-0.5">Heirloom Wear</div>
-                        <div class="text-[10px] text-muted leading-tight mt-1">Gains rich patina</div>
+                    <div class="p-3.5 rounded-xl bg-white dark:bg-[#241C18] border border-ivory-300 dark:border-white/10 shadow-2xs hover:border-gold-500/50 hover:shadow-md transition-all duration-300 group">
+                        <div class="font-serif text-lg font-bold text-espresso-950 dark:text-ivory group-hover:text-gold-600 transition-colors">Decades</div>
+                        <div class="text-[11px] font-semibold text-espresso-900 dark:text-ivory-200 leading-tight mt-0.5">Heirloom Wear</div>
+                        <div class="text-[10px] text-muted dark:text-ivory-400 leading-tight mt-1">Gains rich patina</div>
                     </div>
                 </div>
 
@@ -693,13 +693,13 @@
                         <i data-lucide="arrow-right" class="w-4 h-4 transition-transform group-hover:translate-x-1"></i>
                     </a>
                     
-                    <div class="flex items-center gap-3 border-l border-ivory-300 pl-5">
-                        <div class="w-10 h-10 rounded-full bg-gold/15 border border-gold/30 flex items-center justify-center text-gold-700 font-serif font-bold text-xs">
+                    <div class="flex items-center gap-3 border-l border-ivory-300 dark:border-white/10 pl-5">
+                        <div class="w-10 h-10 rounded-full bg-gold/15 border border-gold/30 flex items-center justify-center text-gold-700 dark:text-gold-400 font-serif font-bold text-xs">
                             BZ
                         </div>
                         <div>
-                            <span class="font-serif text-sm font-bold text-espresso-950 block leading-tight">Atelier Pakistan</span>
-                            <span class="text-[11px] text-muted-dark">Original Leathercraft</span>
+                            <span class="font-serif text-sm font-bold text-espresso-950 dark:text-ivory block leading-tight">Atelier Pakistan</span>
+                            <span class="text-[11px] text-muted-dark dark:text-ivory-400">Original Leathercraft</span>
                         </div>
                     </div>
                 </div>
@@ -844,19 +844,19 @@
 <!-- ========================================================
      H. NEW ARRIVALS SECTION (With Scroll-Reveal)
      ======================================================== -->
-<section class="py-24 bg-white">
+<section class="py-24 bg-white dark:bg-[#161210]">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
         <div class="flex flex-col md:flex-row md:items-end justify-between mb-14 reveal">
             <div>
                 <span class="text-gold-600 text-xs uppercase tracking-widest font-serif font-bold">Fresh From The Bench</span>
-                <h2 class="font-serif text-3xl sm:text-4xl font-bold text-espresso-900 mt-1">
+                <h2 class="font-serif text-3xl sm:text-4xl font-bold text-espresso-900 dark:text-ivory mt-1">
                     New Arrivals
                 </h2>
             </div>
             <a 
                 href="{{ route('shop', ['sort' => 'latest']) }}" 
-                class="mt-4 md:mt-0 inline-flex items-center gap-2 text-xs uppercase tracking-widest font-semibold text-espresso-800 hover:text-gold-600 transition-colors group"
+                class="mt-4 md:mt-0 inline-flex items-center gap-2 text-xs uppercase tracking-widest font-semibold text-espresso-800 dark:text-ivory-200 hover:text-gold-600 dark:hover:text-gold transition-colors group"
             >
                 <span>View All New Releases</span>
                 <i data-lucide="arrow-right" class="w-4 h-4 transition-transform group-hover:translate-x-1"></i>
@@ -881,7 +881,7 @@
 <!-- ========================================================
      I. WHY CHOOSE BY ZUNASH? (MODERN INTERACTIVE BENEFIT CARDS)
      ======================================================== -->
-<section class="py-8 lg:py-10 bg-[#FAF7F2] border-t border-b border-ivory-300 relative overflow-hidden">
+<section class="py-8 lg:py-10 bg-[#FAF7F2] dark:bg-[#191411] border-t border-b border-ivory-300 dark:border-white/10 relative overflow-hidden">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         
         <div class="text-center max-w-2xl mx-auto mb-5 reveal">
@@ -889,10 +889,10 @@
                 <i data-lucide="shield-check" class="w-3.5 h-3.5"></i>
                 <span>The By Zunash Promise</span>
             </span>
-            <h2 class="font-serif text-2xl sm:text-3xl font-bold text-espresso-900 mt-1 mb-1">
+            <h2 class="font-serif text-2xl sm:text-3xl font-bold text-espresso-900 dark:text-ivory mt-1 mb-1">
                 Uncompromising Standards
             </h2>
-            <p class="text-xs text-muted-dark font-light">
+            <p class="text-xs text-muted-dark dark:text-ivory-400 font-light">
                 From our Lahore workbench directly to your doorstep with total peace of mind.
             </p>
         </div>
@@ -900,65 +900,77 @@
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
             
             <!-- Card 1 -->
-            <div class="cursor-pointer reveal delay-75 group relative flex flex-col items-center text-center p-5 bg-white rounded-2xl border border-ivory-300 hover:border-gold-500/60 shadow-xs hover:shadow-xl hover:-translate-y-1.5 transition-all duration-300 overflow-hidden">
+            <div class="cursor-pointer reveal delay-75 group relative flex flex-col items-center text-center p-5 bg-white dark:bg-[#241C18] rounded-2xl border border-ivory-300 dark:border-white/10 hover:border-gold-500/60 shadow-xs hover:shadow-xl hover:-translate-y-1.5 transition-all duration-300 overflow-hidden">
                 <div class="absolute top-0 inset-x-0 h-1 bg-gradient-to-r from-gold-400 to-gold-600 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                <div class="w-12 h-12 rounded-2xl bg-ivory-100 group-hover:bg-espresso-950 text-gold-700 group-hover:text-gold-300 flex items-center justify-center transition-all duration-300 shadow-inner group-hover:scale-110 mb-3">
+                <div class="w-12 h-12 rounded-2xl bg-ivory-100 dark:bg-[#1A1411] group-hover:bg-espresso-950 text-gold-700 dark:text-gold-400 group-hover:text-gold-300 flex items-center justify-center transition-all duration-300 shadow-inner group-hover:scale-110 mb-3">
                     <i data-lucide="truck" class="w-5 h-5"></i>
                 </div>
-                <h4 class="font-serif text-sm font-bold text-espresso-950 mb-1 group-hover:text-gold-600 transition-colors">Nationwide Delivery</h4>
-                <p class="text-[11px] text-muted-dark leading-relaxed font-light">
+                <h4 class="font-serif text-sm font-bold text-espresso-950 dark:text-ivory mb-1 group-hover:text-gold-600 transition-colors">Nationwide Delivery</h4>
+                <p class="text-[11px] text-muted-dark dark:text-ivory-400 leading-relaxed font-light">
                     Fast courier shipping across 150+ Pakistani cities with real-time SMS tracking updates.
                 </p>
             </div>
 
-            <!-- Card 2 (Cash on Delivery with guaranteed SVG icon) -->
-            <div class="cursor-pointer reveal delay-150 group relative flex flex-col items-center text-center p-5 bg-white rounded-2xl border border-ivory-300 hover:border-gold-500/60 shadow-xs hover:shadow-xl hover:-translate-y-1.5 transition-all duration-300 overflow-hidden">
+            <!-- Card 2 -->
+            <div class="cursor-pointer reveal delay-150 group relative flex flex-col items-center text-center p-5 bg-white dark:bg-[#241C18] rounded-2xl border border-ivory-300 dark:border-white/10 hover:border-gold-500/60 shadow-xs hover:shadow-xl hover:-translate-y-1.5 transition-all duration-300 overflow-hidden">
                 <div class="absolute top-0 inset-x-0 h-1 bg-gradient-to-r from-gold-400 to-gold-600 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                <div class="w-12 h-12 rounded-2xl bg-ivory-100 group-hover:bg-espresso-950 text-gold-700 group-hover:text-gold-300 flex items-center justify-center transition-all duration-300 shadow-inner group-hover:scale-110 mb-3">
+                <div class="w-12 h-12 rounded-2xl bg-ivory-100 dark:bg-[#1A1411] group-hover:bg-espresso-950 text-gold-700 dark:text-gold-400 group-hover:text-gold-300 flex items-center justify-center transition-all duration-300 shadow-inner group-hover:scale-110 mb-3">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
                         <rect x="2" y="6" width="20" height="12" rx="2"></rect>
                         <circle cx="12" cy="12" r="3"></circle>
                         <path d="M6 12h.01M18 12h.01"></path>
                     </svg>
                 </div>
-                <h4 class="font-serif text-sm font-bold text-espresso-950 mb-1 group-hover:text-gold-600 transition-colors">Cash on Delivery</h4>
-                <p class="text-[11px] text-muted-dark leading-relaxed font-light">
+                <h4 class="font-serif text-sm font-bold text-espresso-950 dark:text-ivory mb-1 group-hover:text-gold-600 transition-colors">Cash on Delivery</h4>
+                <p class="text-[11px] text-muted-dark dark:text-ivory-400 leading-relaxed font-light">
                     Zero risk. Inspect your parcel and pay securely with cash at your doorstep nationwide.
                 </p>
             </div>
 
             <!-- Card 3 -->
-            <div class="cursor-pointer reveal delay-225 group relative flex flex-col items-center text-center p-5 bg-white rounded-2xl border border-ivory-300 hover:border-gold-500/60 shadow-xs hover:shadow-xl hover:-translate-y-1.5 transition-all duration-300 overflow-hidden">
+            <div class="cursor-pointer reveal delay-225 group relative flex flex-col items-center text-center p-5 bg-white dark:bg-[#241C18] rounded-2xl border border-ivory-300 dark:border-white/10 hover:border-gold-500/60 shadow-xs hover:shadow-xl hover:-translate-y-1.5 transition-all duration-300 overflow-hidden">
                 <div class="absolute top-0 inset-x-0 h-1 bg-gradient-to-r from-gold-400 to-gold-600 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                <div class="w-12 h-12 rounded-2xl bg-ivory-100 group-hover:bg-espresso-950 text-gold-700 group-hover:text-gold-300 flex items-center justify-center transition-all duration-300 shadow-inner group-hover:scale-110 mb-3">
+                <div class="w-12 h-12 rounded-2xl bg-ivory-100 dark:bg-[#1A1411] group-hover:bg-espresso-950 text-gold-700 dark:text-gold-400 group-hover:text-gold-300 flex items-center justify-center transition-all duration-300 shadow-inner group-hover:scale-110 mb-3">
                     <i data-lucide="award" class="w-5 h-5"></i>
                 </div>
-                <h4 class="font-serif text-sm font-bold text-espresso-950 mb-1 group-hover:text-gold-600 transition-colors">100% Pure Leather</h4>
-                <p class="text-[11px] text-muted-dark leading-relaxed font-light">
+                <h4 class="font-serif text-sm font-bold text-espresso-950 dark:text-ivory mb-1 group-hover:text-gold-600 transition-colors">100% Pure Leather</h4>
+                <p class="text-[11px] text-muted-dark dark:text-ivory-400 leading-relaxed font-light">
                     Full-grain & top-grain Pakistani cowhide. Zero synthetic fillers, zero peel, zero bond.
                 </p>
             </div>
 
             <!-- Card 4 -->
-            <div class="cursor-pointer reveal delay-300 group relative flex flex-col items-center text-center p-5 bg-white rounded-2xl border border-ivory-300 hover:border-gold-500/60 shadow-xs hover:shadow-xl hover:-translate-y-1.5 transition-all duration-300 overflow-hidden">
+            <div class="cursor-pointer reveal delay-300 group relative flex flex-col items-center text-center p-5 bg-white dark:bg-[#241C18] rounded-2xl border border-ivory-300 dark:border-white/10 hover:border-gold-500/60 shadow-xs hover:shadow-xl hover:-translate-y-1.5 transition-all duration-300 overflow-hidden">
                 <div class="absolute top-0 inset-x-0 h-1 bg-gradient-to-r from-gold-400 to-gold-600 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                <div class="w-12 h-12 rounded-2xl bg-ivory-100 group-hover:bg-espresso-950 text-gold-700 group-hover:text-gold-300 flex items-center justify-center transition-all duration-300 shadow-inner group-hover:scale-110 mb-3">
+                <div class="w-12 h-12 rounded-2xl bg-ivory-100 dark:bg-[#1A1411] group-hover:bg-espresso-950 text-gold-700 dark:text-gold-400 group-hover:text-gold-300 flex items-center justify-center transition-all duration-300 shadow-inner group-hover:scale-110 mb-3">
                     <i data-lucide="rotate-ccw" class="w-5 h-5"></i>
                 </div>
-                <h4 class="font-serif text-sm font-bold text-espresso-950 mb-1 group-hover:text-gold-600 transition-colors">7-Day Exchanges</h4>
-                <p class="text-[11px] text-muted-dark leading-relaxed font-light">
+                <h4 class="font-serif text-sm font-bold text-espresso-950 dark:text-ivory mb-1 group-hover:text-gold-600 transition-colors">7-Day Exchanges</h4>
+                <p class="text-[11px] text-muted-dark dark:text-ivory-400 leading-relaxed font-light">
                     Effortless size swaps or returns with quick doorstep pickup and zero hassle.
                 </p>
             </div>
 
             <!-- Card 5 -->
-            <div class="cursor-pointer reveal delay-450 group relative flex flex-col items-center text-center p-5 bg-white rounded-2xl border border-ivory-300 hover:border-gold-500/60 shadow-xs hover:shadow-xl hover:-translate-y-1.5 transition-all duration-300 overflow-hidden">
+            <div class="cursor-pointer reveal delay-300 group relative flex flex-col items-center text-center p-5 bg-white dark:bg-[#241C18] rounded-2xl border border-ivory-300 dark:border-white/10 hover:border-gold-500/60 shadow-xs hover:shadow-xl hover:-translate-y-1.5 transition-all duration-300 overflow-hidden sm:col-span-1 lg:col-span-1">
                 <div class="absolute top-0 inset-x-0 h-1 bg-gradient-to-r from-gold-400 to-gold-600 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                <div class="w-12 h-12 rounded-2xl bg-ivory-100 group-hover:bg-espresso-950 text-gold-700 group-hover:text-gold-300 flex items-center justify-center transition-all duration-300 shadow-inner group-hover:scale-110 mb-3">
+                <div class="w-12 h-12 rounded-2xl bg-ivory-100 dark:bg-[#1A1411] group-hover:bg-espresso-950 text-gold-700 dark:text-gold-400 group-hover:text-gold-300 flex items-center justify-center transition-all duration-300 shadow-inner group-hover:scale-110 mb-3">
+                    <i data-lucide="phone-call" class="w-5 h-5"></i>
+                </div>
+                <h4 class="font-serif text-sm font-bold text-espresso-950 dark:text-ivory mb-1 group-hover:text-gold-600 transition-colors">Atelier Concierge</h4>
+                <p class="text-[11px] text-muted-dark dark:text-ivory-400 leading-relaxed font-light">
+                    Direct VIP support via WhatsApp & phone for sizing advice, gifting, or order inquiries.
+                </p>
+            </div>
+
+            <!-- Card 6 (Centered on Desktop Grid) -->
+            <div class="cursor-pointer reveal delay-300 group relative flex flex-col items-center text-center p-5 bg-white dark:bg-[#241C18] rounded-2xl border border-ivory-300 dark:border-white/10 hover:border-gold-500/60 shadow-xs hover:shadow-xl hover:-translate-y-1.5 transition-all duration-300 overflow-hidden sm:col-span-1 lg:col-span-1 lg:col-start-3">
+                <div class="absolute top-0 inset-x-0 h-1 bg-gradient-to-r from-gold-400 to-gold-600 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                <div class="w-12 h-12 rounded-2xl bg-ivory-100 dark:bg-[#1A1411] group-hover:bg-espresso-950 text-gold-700 dark:text-gold-400 group-hover:text-gold-300 flex items-center justify-center transition-all duration-300 shadow-inner group-hover:scale-110 mb-3">
                     <i data-lucide="headphones" class="w-5 h-5"></i>
                 </div>
-                <h4 class="font-serif text-sm font-bold text-espresso-950 mb-1 group-hover:text-gold-600 transition-colors">Personal Concierge</h4>
-                <p class="text-[11px] text-muted-dark leading-relaxed font-light">
+                <h4 class="font-serif text-sm font-bold text-espresso-950 dark:text-ivory mb-1 group-hover:text-gold-600 transition-colors">Personal Concierge</h4>
+                <p class="text-[11px] text-muted-dark dark:text-ivory-400 leading-relaxed font-light">
                     Direct VIP support on WhatsApp for belt sizing, gift selection, and styling recommendations.
                 </p>
             </div>
@@ -1173,7 +1185,7 @@
 <!-- ========================================================
      K. NEWSLETTER SIGNUP
      ======================================================== -->
-<section class="py-8 lg:py-10 bg-[#FAF7F2] border-t border-ivory-200">
+<section class="py-8 lg:py-10 bg-[#FAF7F2] dark:bg-[#191411] border-t border-ivory-200 dark:border-white/10">
     <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 reveal">
         <x-user.components.newsletter />
     </div>
@@ -1182,24 +1194,24 @@
 <!-- ========================================================
      L. INSTAGRAM-STYLE GALLERY
      ======================================================== -->
-<section class="py-12 lg:py-16 bg-white border-t border-ivory-200">
+<section class="py-12 lg:py-16 bg-white dark:bg-[#161210] border-t border-ivory-200 dark:border-white/10">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
         <div class="flex flex-col md:flex-row md:items-end justify-between mb-12 reveal">
             <div>
                 <span class="text-gold-600 text-xs uppercase tracking-widest font-serif font-bold">#ByZunashLeather</span>
-                <h2 class="font-serif text-3xl sm:text-4xl font-bold text-espresso-900 mt-1 mb-2">
+                <h2 class="font-serif text-3xl sm:text-4xl font-bold text-espresso-900 dark:text-ivory mt-1 mb-2">
                     Moments in Leather
                 </h2>
-                <p class="text-xs text-muted-dark">
-                    Follow our daily atelier craft journal on Instagram <span class="font-semibold text-espresso-900">@ByZunash</span>
+                <p class="text-xs text-muted-dark dark:text-ivory-400">
+                    Follow our daily atelier craft journal on Instagram <span class="font-semibold text-espresso-900 dark:text-gold-400">@ByZunash</span>
                 </p>
             </div>
             <a 
                 href="https://instagram.com" 
                 target="_blank" 
                 rel="noopener" 
-                class="mt-4 md:mt-0 inline-flex items-center gap-2 text-xs uppercase tracking-widest font-bold text-espresso-900 hover:text-gold-600 transition-colors group"
+                class="mt-4 md:mt-0 inline-flex items-center gap-2 text-xs uppercase tracking-widest font-bold text-espresso-900 dark:text-ivory-200 hover:text-gold-600 dark:hover:text-gold transition-colors group"
             >
                 <i data-lucide="instagram" class="w-4 h-4 text-gold-600"></i>
                 <span>Follow Our Feed</span>

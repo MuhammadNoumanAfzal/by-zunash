@@ -346,6 +346,38 @@ html.dark .bg-ivory-300 {
   background-color: #2F241F !important;
 }
 
+/* Light warm sections & canvas overrides */
+html.dark [class*="bg-[#FAF7F2]"],
+html.dark [class*="bg-[#FAF8F5]"],
+html.dark [class*="bg-[#FAF9F5]"],
+html.dark [class*="bg-[#F7F5F0]"],
+html.dark [class*="bg-[#FAF7F0]"],
+html.dark .bg-warm-canvas {
+  background-color: #191411 !important;
+  color: #F7F4EE !important;
+}
+
+/* Header & Sticky Navigation in Dark Mode */
+html.dark header,
+html.dark header.sticky,
+html.dark header > div {
+  background-color: #161210 !important;
+  color: #F7F4EE !important;
+}
+
+html.dark header nav a,
+html.dark header nav button,
+html.dark header .nav-link,
+html.dark header button:not(.bg-gold):not([class*="bg-gold"]) {
+  color: #E8E0D4 !important;
+}
+
+html.dark header nav a:hover,
+html.dark header nav button:hover,
+html.dark header button:not(.bg-gold):not([class*="bg-gold"]):hover {
+  color: #C5A16B !important;
+}
+
 /* Headings & Text Color */
 html.dark .text-espresso-900,
 html.dark .text-espresso-950,
@@ -367,7 +399,7 @@ html.dark .text-muted-dark {
 }
 
 html.dark .text-muted-light {
-  color: #7A7061 !important;
+  color: #8C8070 !important;
 }
 
 /* Borders & Dividers */
@@ -405,8 +437,20 @@ html.dark .shadow-xl {
 }
 
 /* Mega-Menu in Dark Mode */
-html.dark .byzunash-mega-menu {
+html.dark .byzunash-mega-menu,
+html.dark header div[x-show="collectionsOpen"] {
   background-color: #1A1411 !important;
-  border-color: rgba(197, 161, 107, 0.3) !important;
+  border-color: rgba(255, 255, 255, 0.1) !important;
 }
+
+html.dark .byzunash-mega-menu a,
+html.dark header div[x-show="collectionsOpen"] a {
+  color: #E8E0D4 !important;
+}
+
+html.dark .byzunash-mega-menu h4,
+html.dark header div[x-show="collectionsOpen"] h4 {
+  color: #F7F4EE !important;
+}
+
 

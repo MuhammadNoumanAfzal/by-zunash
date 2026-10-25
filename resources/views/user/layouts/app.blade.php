@@ -172,27 +172,27 @@
                 x-transition:leave="transform transition ease-in duration-250 sm:duration-300"
                 x-transition:leave-start="translate-x-0"
                 x-transition:leave-end="translate-x-full"
-                class="w-screen max-w-md bg-white shadow-2xl flex flex-col h-full border-l border-ivory-300"
+                class="w-screen max-w-md bg-white dark:bg-[#161210] shadow-2xl flex flex-col h-full border-l border-ivory-300 dark:border-white/10"
             >
                 <!-- Drawer Header -->
-                <div class="px-5 py-4 sm:px-6 sm:py-5 bg-[#FAF7F2] border-b border-ivory-300 flex items-center justify-between flex-shrink-0">
+                <div class="px-5 py-4 sm:px-6 sm:py-5 bg-[#FAF7F2] dark:bg-[#191411] border-b border-ivory-300 dark:border-white/10 flex items-center justify-between flex-shrink-0">
                     <div class="flex items-center gap-2.5">
-                        <div class="w-8 h-8 rounded-full bg-gold/15 text-gold-700 flex items-center justify-center border border-gold/30 shadow-xs">
+                        <div class="w-8 h-8 rounded-full bg-gold/15 text-gold-700 dark:text-gold-400 flex items-center justify-center border border-gold/30 shadow-xs">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path><line x1="3" y1="6" x2="21" y2="6"></line><path d="M16 10a4 4 0 0 1-8 0"></path></svg>
                         </div>
                         <div>
-                            <h2 id="cart-drawer-title" class="font-serif text-sm sm:text-base font-bold text-espresso-950 uppercase tracking-wider">
+                            <h2 id="cart-drawer-title" class="font-serif text-sm sm:text-base font-bold text-espresso-950 dark:text-ivory uppercase tracking-wider">
                                 Atelier Shopping Bag
                             </h2>
-                            <span class="text-[11px] text-muted font-light block -mt-0.5">
-                                <span x-text="$store.cart.count" class="font-bold text-espresso-950"></span> item(s) selected
+                            <span class="text-[11px] text-muted dark:text-ivory-400 font-light block -mt-0.5">
+                                <span x-text="$store.cart.count" class="font-bold text-espresso-950 dark:text-ivory"></span> item(s) selected
                             </span>
                         </div>
                     </div>
                     <button 
                         type="button" 
                         @click="$store.cart.isOpen = false" 
-                        class="w-8 h-8 rounded-full bg-white hover:bg-ivory-200 border border-ivory-300 text-espresso-800 flex items-center justify-center transition-all hover:rotate-90 focus:outline-none shadow-xs cursor-pointer"
+                        class="w-8 h-8 rounded-full bg-white dark:bg-[#241C18] hover:bg-ivory-200 dark:hover:bg-[#2F241F] border border-ivory-300 dark:border-white/15 text-espresso-800 dark:text-ivory-200 flex items-center justify-center transition-all hover:rotate-90 focus:outline-none shadow-xs cursor-pointer"
                         aria-label="Close cart"
                     >
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
@@ -200,7 +200,7 @@
                 </div>
 
                 <!-- Animated Free Shipping Progress Bar -->
-                <div class="px-5 py-3 bg-ivory-50 border-b border-ivory-200/90 text-xs flex-shrink-0">
+                <div class="px-5 py-3 bg-ivory-50 dark:bg-[#1A1411] border-b border-ivory-200/90 dark:border-white/10 text-xs flex-shrink-0">
                     <template x-if="$store.cart.subtotal >= 6000">
                         <div class="flex items-center gap-2 text-emerald-800 font-semibold bg-emerald-50/90 px-3 py-1.5 rounded-lg border border-emerald-200/70">
                             <svg class="w-4 h-4 text-emerald-600 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><rect x="1" y="3" width="15" height="13"></rect><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"></polygon><circle cx="5.5" cy="18.5" r="2.5"></circle><circle cx="18.5" cy="18.5" r="2.5"></circle></svg>
@@ -254,25 +254,25 @@
 
                     <!-- Item Cards -->
                     <template x-for="item in $store.cart.items" :key="item.key">
-                        <div class="p-3.5 rounded-2xl bg-[#FAF7F2] hover:bg-ivory-100/70 border border-ivory-200/90 transition-all flex items-start gap-3.5 group shadow-2xs">
+                        <div class="p-3.5 rounded-2xl bg-[#FAF7F2] dark:bg-[#1E1815] hover:bg-ivory-100/70 dark:hover:bg-[#251E1A] border border-ivory-200/90 dark:border-white/10 transition-all flex items-start gap-3.5 group shadow-2xs">
                             
                             <!-- Thumbnail -->
                             <img 
                                 :src="item.image" 
                                 :alt="item.name" 
-                                class="w-20 h-22 object-cover rounded-xl bg-white border border-ivory-300 shadow-xs flex-shrink-0 group-hover:scale-102 transition-transform"
+                                class="w-20 h-22 object-cover rounded-xl bg-white dark:bg-[#161210] border border-ivory-300 dark:border-white/10 shadow-xs flex-shrink-0 group-hover:scale-102 transition-transform"
                             >
 
                             <!-- Details -->
                             <div class="flex-1 min-w-0">
                                 
                                 <div class="flex items-start justify-between gap-1">
-                                    <h4 class="font-serif text-xs sm:text-sm font-bold text-espresso-950 truncate leading-snug" x-text="item.name"></h4>
+                                    <h4 class="font-serif text-xs sm:text-sm font-bold text-espresso-950 dark:text-ivory truncate leading-snug" x-text="item.name"></h4>
                                     <!-- Remove Button -->
                                     <button 
                                         type="button" 
                                         @click="$store.cart.removeItem(item.key)" 
-                                        class="w-6 h-6 rounded-full bg-white hover:bg-red-50 text-muted hover:text-red-500 border border-ivory-200 flex items-center justify-center transition-colors flex-shrink-0 shadow-2xs cursor-pointer"
+                                        class="w-6 h-6 rounded-full bg-white dark:bg-[#251E1A] hover:bg-red-50 dark:hover:bg-red-950/40 text-muted dark:text-ivory-400 hover:text-red-500 border border-ivory-200 dark:border-white/10 flex items-center justify-center transition-colors flex-shrink-0 shadow-2xs cursor-pointer"
                                         title="Remove item"
                                     >
                                         <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line></svg>
@@ -281,38 +281,38 @@
 
                                 <!-- Variant Pill -->
                                 <div class="mt-1" x-show="item.variant">
-                                    <span class="inline-block px-2 py-0.5 rounded text-[10px] font-semibold text-espresso-800 bg-white border border-ivory-200 shadow-2xs" x-text="item.variant"></span>
+                                    <span class="inline-block px-2 py-0.5 rounded text-[10px] font-semibold text-espresso-800 dark:text-ivory-200 bg-white dark:bg-[#161210] border border-ivory-200 dark:border-white/10 shadow-2xs" x-text="item.variant"></span>
                                 </div>
 
                                 <!-- Price -->
                                 <div class="mt-1.5 flex items-baseline gap-2">
-                                    <span class="font-serif text-sm font-bold text-espresso-950" x-text="'PKR ' + (item.price * item.quantity).toLocaleString()"></span>
-                                    <span class="text-[10px] text-muted font-light" x-show="item.quantity > 1" x-text="'(@ PKR ' + item.price.toLocaleString() + ')'"></span>
+                                    <span class="font-serif text-sm font-bold text-espresso-950 dark:text-ivory" x-text="'PKR ' + (item.price * item.quantity).toLocaleString()"></span>
+                                    <span class="text-[10px] text-muted dark:text-ivory-400 font-light" x-show="item.quantity > 1" x-text="'(@ PKR ' + item.price.toLocaleString() + ')'"></span>
                                 </div>
 
                                 <!-- Quantity Controls -->
                                 <div class="mt-2.5 flex items-center justify-between">
-                                    <div class="h-7 rounded-lg bg-white border border-ivory-300 shadow-xs flex items-center overflow-hidden">
+                                    <div class="h-7 rounded-lg bg-white dark:bg-[#161210] border border-ivory-300 dark:border-white/15 shadow-xs flex items-center overflow-hidden">
                                         <button 
                                             type="button" 
                                             @click="$store.cart.updateQuantity(item.key, item.quantity - 1)" 
-                                            class="w-7 h-full flex items-center justify-center hover:bg-ivory-100 text-espresso-800 transition-colors focus:outline-none cursor-pointer"
+                                            class="w-7 h-full flex items-center justify-center hover:bg-ivory-100 dark:hover:bg-white/5 text-espresso-800 dark:text-ivory-200 transition-colors focus:outline-none cursor-pointer"
                                             :disabled="item.quantity <= 1"
                                             aria-label="Decrease quantity"
                                         >
                                             <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"></line></svg>
                                         </button>
-                                        <span class="w-7 text-center text-xs font-bold text-espresso-950" x-text="item.quantity"></span>
+                                        <span class="w-7 text-center text-xs font-bold text-espresso-950 dark:text-ivory" x-text="item.quantity"></span>
                                         <button 
                                             type="button" 
                                             @click="$store.cart.updateQuantity(item.key, item.quantity + 1)" 
-                                            class="w-7 h-full flex items-center justify-center hover:bg-ivory-100 text-espresso-800 transition-colors focus:outline-none cursor-pointer"
+                                            class="w-7 h-full flex items-center justify-center hover:bg-ivory-100 dark:hover:bg-white/5 text-espresso-800 dark:text-ivory-200 transition-colors focus:outline-none cursor-pointer"
                                             aria-label="Increase quantity"
                                         >
                                             <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
                                         </button>
                                     </div>
-                                    <span class="text-[10px] text-muted">Doorstep COD</span>
+                                    <span class="text-[10px] text-muted dark:text-ivory-400">Doorstep COD</span>
                                 </div>
 
                             </div>
@@ -323,18 +323,18 @@
                 </div>
 
                 <!-- Drawer Footer (Subtotals & Checkout, with Generous Breathing Room) -->
-                <div x-show="$store.cart.items.length > 0" class="p-5 sm:p-6 pb-6 sm:pb-8 bg-white border-t border-ivory-200 space-y-3.5 shadow-2xl flex-shrink-0">
+                <div x-show="$store.cart.items.length > 0" class="p-5 sm:p-6 pb-6 sm:pb-8 bg-white dark:bg-[#161210] border-t border-ivory-200 dark:border-white/10 space-y-3.5 shadow-2xl flex-shrink-0">
                     
-                    <div class="space-y-1.5 text-xs text-espresso-800">
+                    <div class="space-y-1.5 text-xs text-espresso-800 dark:text-ivory-200">
                         <div class="flex justify-between">
-                            <span class="text-muted">Bag Subtotal</span>
-                            <span class="font-semibold text-espresso-950">PKR <span x-text="$store.cart.subtotal.toLocaleString()"></span></span>
+                            <span class="text-muted dark:text-ivory-400">Bag Subtotal</span>
+                            <span class="font-semibold text-espresso-950 dark:text-ivory">PKR <span x-text="$store.cart.subtotal.toLocaleString()"></span></span>
                         </div>
                         <div class="flex justify-between">
-                            <span class="text-muted">Estimated Shipping (Pakistan)</span>
-                            <span class="font-semibold" :class="$store.cart.shipping === 0 ? 'text-emerald-700 font-bold' : 'text-espresso-950'" x-text="$store.cart.shipping === 0 ? 'FREE' : 'PKR ' + $store.cart.shipping"></span>
+                            <span class="text-muted dark:text-ivory-400">Estimated Shipping (Pakistan)</span>
+                            <span class="font-semibold" :class="$store.cart.shipping === 0 ? 'text-emerald-700 dark:text-emerald-400 font-bold' : 'text-espresso-950 dark:text-ivory'" x-text="$store.cart.shipping === 0 ? 'FREE' : 'PKR ' + $store.cart.shipping"></span>
                         </div>
-                        <div class="pt-2 border-t border-ivory-200 flex justify-between text-base font-bold text-espresso-950 font-serif">
+                        <div class="pt-2 border-t border-ivory-200 dark:border-white/10 flex justify-between text-base font-bold text-espresso-950 dark:text-ivory font-serif">
                             <span>Estimated Total</span>
                             <span>PKR <span x-text="$store.cart.total.toLocaleString()"></span></span>
                         </div>
@@ -344,7 +344,7 @@
                     <div class="space-y-2 pt-1">
                         <a 
                             href="{{ route('checkout') }}" 
-                            @click="$store.cart.isOpen = false"
+                            @click="$store.cart.isOpen = false" 
                             class="w-full py-3.5 px-4 bg-espresso hover:bg-chocolate-800 text-ivory text-xs uppercase tracking-widest font-bold rounded-xl text-center block transition-all shadow-md hover:shadow-gold-glow border border-gold/40 flex items-center justify-center gap-2 active:scale-[0.98]"
                         >
                             <span>Proceed to Checkout</span>
@@ -353,15 +353,15 @@
 
                         <a 
                             href="{{ route('cart') }}" 
-                            @click="$store.cart.isOpen = false"
-                            class="w-full py-2.5 px-4 bg-ivory-100 hover:bg-ivory-200 text-espresso-900 text-xs uppercase tracking-widest font-semibold rounded-xl text-center block transition-colors border border-ivory-300"
+                            @click="$store.cart.isOpen = false" 
+                            class="w-full py-2.5 px-4 bg-ivory-100 dark:bg-[#251E1A] hover:bg-ivory-200 dark:hover:bg-[#2F2520] text-espresso-900 dark:text-ivory text-xs uppercase tracking-widest font-semibold rounded-xl text-center block transition-colors border border-ivory-300 dark:border-white/10"
                         >
                             View & Edit Full Bag
                         </a>
                     </div>
 
                     <!-- Reassurance Footer Note -->
-                    <div class="pt-1 text-center text-[10px] text-muted flex items-center justify-center gap-3">
+                    <div class="pt-1 text-center text-[10px] text-muted dark:text-ivory-400 flex items-center justify-center gap-3">
                         <span>• Doorstep COD</span>
                         <span>• 7-Day Size Exchange</span>
                         <span>• 100% Full-Grain</span>
