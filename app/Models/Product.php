@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class Product extends Model
 {
@@ -61,5 +62,23 @@ class Product extends Model
     public function subcategory(): BelongsTo
     {
         return $this->belongsTo(Subcategory::class, 'subcategory_id');
+    }
+
+    /**
+     * Deals / bundles that include this product
+     */
+    public function deals(): BelongsToMany
+    {
+        return $this->belongsToMany(Deal::class, 'deal_product')
+            ->withPivot('quantity')
+            ->withTimestamps();
+    }
+
+    /**
+     * Active deals for this product
+     */
+    public function activeDeals()
+    {
+        return $this->deals()->where('is_active', true);
     }
 }

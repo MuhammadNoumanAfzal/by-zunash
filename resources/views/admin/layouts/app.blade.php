@@ -173,6 +173,7 @@
         categoriesOpen: false,
         subcategoriesOpen: false,
         productsOpen: false,
+        dealsOpen: false,
         bulkOrdersOpen: false,
         toggleTheme() {
             this.theme = this.theme === 'light' ? 'dark' : 'light';
@@ -290,6 +291,28 @@
                         </a>
                         <a href="{{ route('admin.products.create') }}" class="block py-1.5 text-xs {{ request()->routeIs('admin.products.create') ? 'text-tan-700 font-bold' : 'text-[#7F746A] dark:text-[#9E9084] hover:text-tan-600' }}">
                             • Add Product
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Deals & Bundles Module -->
+                <div>
+                    <button 
+                        @click="dealsOpen = !dealsOpen" 
+                        class="w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-medium transition-colors {{ request()->routeIs('admin.deals*') ? 'bg-[#FAF4ED] dark:bg-[#251A14] text-tan-700 dark:text-gold font-bold' : 'text-[#6C635B] dark:text-[#B3A69C] hover:bg-[#FAF9F6] dark:hover:bg-[#1C1613]' }}"
+                    >
+                        <div class="flex items-center gap-3">
+                            <i data-lucide="tag" class="w-4 h-4 {{ request()->routeIs('admin.deals*') ? 'text-tan-600 dark:text-gold' : 'text-[#9C8F85]' }}"></i>
+                            <span>Deals & Bundles</span>
+                        </div>
+                        <i data-lucide="chevron-down" class="w-3.5 h-3.5 transition-transform duration-200" :class="{ 'rotate-180': dealsOpen }"></i>
+                    </button>
+                    <div x-show="dealsOpen || {{ request()->routeIs('admin.deals*') ? 'true' : 'false' }}" x-cloak class="pl-9 pr-2 py-1 space-y-1">
+                        <a href="{{ route('admin.deals.index') }}" class="block py-1.5 text-xs {{ request()->routeIs('admin.deals.index') ? 'text-tan-700 font-bold' : 'text-[#7F746A] dark:text-[#9E9084] hover:text-tan-600' }}">
+                            • View All Deals
+                        </a>
+                        <a href="{{ route('admin.deals.create') }}" class="block py-1.5 text-xs {{ request()->routeIs('admin.deals.create') ? 'text-tan-700 font-bold' : 'text-[#7F746A] dark:text-[#9E9084] hover:text-tan-600' }}">
+                            • Create New Deal
                         </a>
                     </div>
                 </div>

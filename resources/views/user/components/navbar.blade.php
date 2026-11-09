@@ -272,6 +272,16 @@
                 </a>
 
                 <a 
+                    href="{{ route('deals') }}" 
+                    class="inline-flex items-center gap-1.5 text-xs uppercase tracking-widest font-medium transition-colors duration-200 {{ request()->routeIs('deals*') ? 'text-gold-600 font-semibold' : 'text-espresso-800 dark:text-ivory-200 hover:text-gold-600 dark:hover:text-gold' }}"
+                >
+                    <span>Deals</span>
+                    <span class="px-1.5 py-0.5 text-[9px] font-bold uppercase rounded-full bg-gold/20 text-gold-700 dark:text-gold-300 border border-gold/40 leading-none">
+                        Sets
+                    </span>
+                </a>
+
+                <a 
                     href="{{ route('about') }}" 
                     class="text-xs uppercase tracking-widest font-medium transition-colors duration-200 {{ request()->routeIs('about') ? 'text-gold-600 font-semibold' : 'text-espresso-800 dark:text-ivory-200 hover:text-gold-600 dark:hover:text-gold' }}"
                 >
@@ -560,6 +570,14 @@
                         class="block text-sm font-medium tracking-wide uppercase py-1 {{ request()->routeIs('shop') ? 'text-gold-600 font-semibold' : 'text-espresso-900 hover:text-gold-600' }}"
                     >
                         Shop All Creations
+                    </a>
+                    <a 
+                        href="{{ route('deals') }}" 
+                        @click="mobileMenuOpen = false"
+                        class="flex items-center justify-between text-sm font-medium tracking-wide uppercase py-1 {{ request()->routeIs('deals*') ? 'text-gold-600 font-semibold' : 'text-espresso-900 hover:text-gold-600' }}"
+                    >
+                        <span>Curated Deals & Sets</span>
+                        <span class="px-2 py-0.5 text-[10px] font-bold rounded-full bg-gold/20 text-gold-700">Offers</span>
                     </a>
                     <a 
                         href="{{ route('about') }}" 

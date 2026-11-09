@@ -481,7 +481,23 @@
                             @php
                                 $isBestseller = (request('tag') === 'bestseller');
                                 $isNew = (request('tag') === 'new');
+                                $isDeal = (request('tag') === 'deal');
                             @endphp
+                            <a 
+                                href="{{ route('shop', array_filter(array_merge(request()->query(), ['tag' => ($isDeal ? null : 'deal'), 'page' => 1]))) }}"
+                                class="flex items-center justify-between px-3.5 py-2 rounded-xl text-xs font-medium border transition-all text-left {{ $isDeal ? 'border-gold-600 bg-gold/15 font-bold text-espresso-950 shadow-2xs' : 'border-gold-300 bg-gold/5 text-espresso-900 hover:bg-gold/10' }}"
+                            >
+                                <span class="flex items-center gap-2">
+                                    <i data-lucide="tag" class="w-3.5 h-3.5 text-gold-600"></i>
+                                    <span class="font-semibold">Deal Bundles</span>
+                                </span>
+                                @if($isDeal)
+                                    <span class="text-gold-700 font-bold">✓</span>
+                                @else
+                                    <span class="px-1.5 py-0.5 rounded text-[9px] font-bold bg-gold/20 text-gold-800">Save</span>
+                                @endif
+                            </a>
+
                             <a 
                                 href="{{ route('shop', array_filter(array_merge(request()->query(), ['tag' => ($isBestseller ? null : 'bestseller'), 'page' => 1]))) }}"
                                 class="flex items-center justify-between px-3.5 py-2 rounded-xl text-xs font-medium border transition-all text-left {{ $isBestseller ? 'border-gold-600 bg-gold/15 font-bold text-espresso-950 shadow-2xs' : 'border-ivory-300 bg-ivory-50 text-espresso-800 hover:bg-ivory-100' }}"
@@ -500,7 +516,7 @@
                                 class="flex items-center justify-between px-3.5 py-2 rounded-xl text-xs font-medium border transition-all text-left {{ $isNew ? 'border-gold-600 bg-gold/15 font-bold text-espresso-950 shadow-2xs' : 'border-ivory-300 bg-ivory-50 text-espresso-800 hover:bg-ivory-100' }}"
                             >
                                 <span class="flex items-center gap-2">
-                                    <i data-lucide="sparkles" class="w-3.5 h-3.5 text-gold-600"></i>
+                                    <i data-lucide="tag" class="w-3.5 h-3.5 text-gold-600"></i>
                                     <span>New Releases</span>
                                 </span>
                                 @if($isNew)
@@ -535,6 +551,23 @@
 
             <!-- Product Grid Column & Pagination -->
             <div class="flex-1 w-full min-w-0">
+                @if(request('tag') === 'deal')
+                    <div class="mb-6 p-4 rounded-2xl bg-gradient-to-r from-espresso-950 via-[#1C1410] to-espresso-900 text-white border border-gold/40 shadow-md flex flex-col sm:flex-row items-center justify-between gap-4">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 rounded-xl bg-gold/15 border border-gold/30 flex items-center justify-center text-gold shrink-0">
+                                <i data-lucide="tag" class="w-5 h-5"></i>
+                            </div>
+                            <div>
+                                <h3 class="font-serif text-sm font-bold text-white">Curated Deals & Bundles Filter Active</h3>
+                                <p class="text-xs text-gold-200/90 font-light">Showing handcrafted leather goods featured in our special promotional sets.</p>
+                            </div>
+                        </div>
+                        <a href="{{ route('deals') }}" class="shrink-0 px-4 py-2 rounded-full bg-gold hover:bg-gold-light text-espresso-950 text-xs uppercase font-bold tracking-wider transition-all">
+                            View All Sets & Deals →
+                        </a>
+                    </div>
+                @endif
+
                 @if(count($products) > 0)
                     <!-- Product Grid (Responsive: 1 col on mobile, 2 cols on tablet, 3 cols on desktop) -->
                     <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">

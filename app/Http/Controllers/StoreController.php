@@ -134,6 +134,9 @@ class StoreController extends Controller
                 $products = $products->where('is_new', true);
             } elseif ($tag === 'on_demand') {
                 $products = $products->where('availability', 'on_demand');
+            } elseif ($tag === 'deal') {
+                $dealProductIds = \App\Models\Deal::active()->with('products')->get()->pluck('products')->flatten()->pluck('id')->unique()->toArray();
+                $products = $products->whereIn('id', $dealProductIds);
             } elseif ($tag === 'out_of_stock') {
                 $products = $products->filter(function ($p) {
                     return ($p['availability'] ?? '') === 'out_of_stock' || (isset($p['in_stock']) && !$p['in_stock']);
@@ -221,6 +224,7 @@ class StoreController extends Controller
             'categoryCounts' => $categoryCounts,
             'totalAllCount' => $totalAllCount,
             'filteredTotal' => $totalItems,
+            'dealsCount' => \App\Models\Deal::active()->count(),
         ]);
     }
 
@@ -258,7 +262,37 @@ class StoreController extends Controller
             ->where('id', '!=', $product['id'])
             ->take(4);
 
-        return view('user.product-details', compact('product', 'relatedProducts'));
+        // Find active companion deals/bundles that include this product
+        $companionDeals = \App\Models\Deal::active()
+            ->whereHas('products', function ($q) use ($product) {
+                $q->where('products.id', $product['id']);
+            })
+            ->with('products')
+            ->get();
+
+        return view('user.product-details', compact('product', 'relatedProducts', 'companionDeals'));
+    }
+
+    /**
+     * Deals & Curated Bundles page
+     */
+    public function deals(Request $request)
+    {
+        $query = \App\Models\Deal::active()->with('products')->orderBy('is_featured', 'desc')->orderBy('sort_order', 'asc')->orderBy('created_at', 'desc');
+
+        if ($request->filled('q')) {
+            $search = strtolower(trim($request->q));
+            $query->where(function ($q) use ($search) {
+                $q->where('title', 'like', "%{$search}%")
+                  ->orWhere('tagline', 'like', "%{$search}%")
+                  ->orWhere('description', 'like', "%{$search}%");
+            });
+        }
+
+        $deals = $query->get();
+        $categories = $this->getCategories();
+
+        return view('user.deals', compact('deals', 'categories'));
     }
 
     /**

@@ -609,6 +609,71 @@
                     </div>
                 </div>
 
+                <!-- Curated Pair Deal / Bundle & Save Integration -->
+                @if(!empty($companionDeals) && count($companionDeals) > 0)
+                    @foreach($companionDeals as $compDeal)
+                        <div class="p-4 rounded-2xl bg-gradient-to-br from-espresso-950 via-[#1C1410] to-black text-ivory border border-gold/40 shadow-lg">
+                            <div class="flex items-center justify-between gap-2 mb-2">
+                                <span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-gold text-espresso-950">
+                                    {{ $compDeal->badge ?: 'Curated Bundle Deal' }}
+                                </span>
+                                @if($compDeal->savings_amount > 0)
+                                    <span class="text-[11px] font-bold text-gold-300">
+                                        Save PKR {{ number_format($compDeal->savings_amount) }}
+                                    </span>
+                                @endif
+                            </div>
+
+                            <h4 class="font-serif text-sm font-bold text-white mb-0.5">
+                                {{ $compDeal->title }}
+                            </h4>
+                            <p class="text-[11px] text-ivory-300 font-light line-clamp-1 mb-2.5">
+                                {{ $compDeal->tagline ?: 'Complementary leather pairing at special bundle rate.' }}
+                            </p>
+
+                            <!-- Mini Items Thumbnails -->
+                            <div class="flex items-center gap-2 mb-3 bg-white/5 p-2 rounded-xl border border-white/10">
+                                @foreach($compDeal->products as $cp)
+                                    <div class="flex items-center gap-1.5 min-w-0">
+                                        <div class="w-8 h-8 rounded-lg overflow-hidden bg-ivory-100 shrink-0 border border-white/20">
+                                            <img src="{{ asset($cp->image) }}" alt="{{ $cp->name }}" class="w-full h-full object-cover">
+                                        </div>
+                                        <span class="text-[10px] text-ivory-200 truncate max-w-[100px]">{{ $cp->name }}</span>
+                                    </div>
+                                    @if(!$loop->last)
+                                        <span class="text-gold font-bold text-xs">+</span>
+                                    @endif
+                                @endforeach
+                            </div>
+
+                            <!-- Bundle Pricing & 1-Click Action -->
+                            <div class="flex items-center justify-between pt-2 border-t border-white/10">
+                                <div>
+                                    <span class="text-[9px] uppercase tracking-wider text-gold-400 block">Bundle Deal Price</span>
+                                    <div class="flex items-baseline gap-1.5">
+                                        <span class="font-serif text-base font-bold text-white">
+                                            PKR {{ number_format($compDeal->deal_price) }}
+                                        </span>
+                                        @if($compDeal->effective_original_price > $compDeal->deal_price)
+                                            <span class="text-xs text-white/50 line-through">
+                                                PKR {{ number_format($compDeal->effective_original_price) }}
+                                            </span>
+                                        @endif
+                                    </div>
+                                </div>
+
+                                <a 
+                                    href="{{ route('deals') }}#{{ $compDeal->slug }}" 
+                                    class="px-3.5 py-1.5 rounded-full bg-gold hover:bg-gold-light text-espresso-950 text-[11px] uppercase font-bold tracking-wider transition-all shadow-xs flex items-center gap-1"
+                                >
+                                    <span>View Bundle Deal</span>
+                                    <i data-lucide="arrow-right" class="w-3 h-3"></i>
+                                </a>
+                            </div>
+                        </div>
+                    @endforeach
+                @endif
+
             </div>
 
         </div>

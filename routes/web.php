@@ -14,6 +14,7 @@ use App\Http\Controllers\Admin\InquiryController as AdminInquiryController;
 use App\Http\Controllers\Admin\ReviewController as AdminReviewController;
 use App\Http\Controllers\Admin\StaffController as AdminStaffController;
 use App\Http\Controllers\Admin\SettingController as AdminSettingController;
+use App\Http\Controllers\Admin\DealController as AdminDealController;
 
 /*
 |--------------------------------------------------------------------------
@@ -28,6 +29,7 @@ Route::get('/', [StoreController::class, 'home'])->name('home');
 // Shop & Catalog
 Route::get('/shop', [StoreController::class, 'shop'])->name('shop');
 Route::get('/category/{slug}', [StoreController::class, 'category'])->name('category');
+Route::get('/deals', [StoreController::class, 'deals'])->name('deals');
 Route::get('/product/{slug}', [StoreController::class, 'productDetails'])->name('product.details');
 
 // Cart & Checkout
@@ -84,6 +86,15 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::get('/products/{product}/edit', [AdminProductController::class, 'edit'])->name('products.edit');
         Route::put('/products/{product}', [AdminProductController::class, 'update'])->name('products.update');
         Route::delete('/products/{product}', [AdminProductController::class, 'destroy'])->name('products.destroy');
+
+        // Deals & Bundles Module
+        Route::get('/deals', [AdminDealController::class, 'index'])->name('deals.index');
+        Route::get('/deals/create', [AdminDealController::class, 'create'])->name('deals.create');
+        Route::post('/deals', [AdminDealController::class, 'store'])->name('deals.store');
+        Route::get('/deals/{deal}/edit', [AdminDealController::class, 'edit'])->name('deals.edit');
+        Route::put('/deals/{deal}', [AdminDealController::class, 'update'])->name('deals.update');
+        Route::delete('/deals/{deal}', [AdminDealController::class, 'destroy'])->name('deals.destroy');
+        Route::post('/deals/{deal}/toggle', [AdminDealController::class, 'toggleStatus'])->name('deals.toggle');
 
         // Categories
         Route::get('/categories', [AdminCategoryController::class, 'index'])->name('categories.index');
