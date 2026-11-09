@@ -106,3 +106,4 @@ class Deal extends Model
         return 0;
     }
 }
+

@@ -271,3 +271,4 @@ class DealController extends Controller
             ->with('toast_success', "Deal '{$deal->title}' is now {$statusText}.");
     }
 }
+

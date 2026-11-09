@@ -273,12 +273,9 @@
 
                 <a 
                     href="{{ route('deals') }}" 
-                    class="inline-flex items-center gap-1.5 text-xs uppercase tracking-widest font-medium transition-colors duration-200 {{ request()->routeIs('deals*') ? 'text-gold-600 font-semibold' : 'text-espresso-800 dark:text-ivory-200 hover:text-gold-600 dark:hover:text-gold' }}"
+                    class="text-xs uppercase tracking-widest font-medium transition-colors duration-200 {{ request()->routeIs('deals*') ? 'text-gold-600 font-semibold' : 'text-espresso-800 dark:text-ivory-200 hover:text-gold-600 dark:hover:text-gold' }}"
                 >
-                    <span>Deals</span>
-                    <span class="px-1.5 py-0.5 text-[9px] font-bold uppercase rounded-full bg-gold/20 text-gold-700 dark:text-gold-300 border border-gold/40 leading-none">
-                        Sets
-                    </span>
+                    Deals
                 </a>
 
                 <a 
