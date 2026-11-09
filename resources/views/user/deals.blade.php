@@ -37,12 +37,12 @@
                         id="{{ $deal->slug }}" 
                         class="group bg-white dark:bg-[#181310] rounded-xl border border-ivory-300 dark:border-white/10 shadow-xs hover:shadow-md transition-all duration-300 overflow-hidden flex flex-col scroll-mt-24"
                     >
-                        <!-- Image Container (Square / Compact Aspect Ratio) -->
-                        <div class="relative w-full aspect-square bg-[#F7F5F0] dark:bg-[#14100E] overflow-hidden">
+                        <!-- Image Container (Compact Landscape Height) -->
+                        <div class="relative w-full h-44 sm:h-48 md:h-52 bg-[#F7F5F0] dark:bg-[#14100E] overflow-hidden">
                             <img 
                                 src="{{ asset($deal->image ?: ($deal->products->first()->image ?? 'images/brand/artisan-craft.jpg')) }}" 
                                 alt="{{ $deal->title }}" 
-                                class="w-full h-full object-cover group-hover:scale-104 transition-transform duration-500 ease-out"
+                                class="w-full h-full object-cover object-center group-hover:scale-104 transition-transform duration-500 ease-out"
                             >
                             <div class="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent opacity-40 group-hover:opacity-20 transition-opacity"></div>
 
