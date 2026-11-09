@@ -503,12 +503,37 @@
         <div class="relative">
             <div 
                 x-ref="slider"
-                class="flex items-stretch gap-4 sm:gap-5 overflow-x-auto scroll-smooth snap-x snap-mandatory hide-scrollbar pb-1 pt-1 -mx-4 px-4 sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8"
+                class="flex items-stretch gap-4 sm:gap-5 overflow-x-auto scroll-smooth snap-x snap-mandatory hide-scrollbar pb-3 pt-3 -mx-4 px-4 sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8"
             >
                 @foreach($categories as $cat)
                     <a 
                         href="{{ route('category', $cat['slug']) }}" 
-                        class="snap-start flex-shrink-0 w-[210px] sm:w-[230px] md:w-[240px] lg:w-[calc(25%-15px)] h-[250px] sm:h-[270px] lg:h-[280px] rounded-xl overflow-hidden relative shadow-md hover:shadow-xl border border-espresso-950/10 group transition-all duration-300 bg-espresso-950 flex flex-col justify-end"
+                        x-data="{
+                            rotX: 0,
+                            rotY: 0,
+                            isHovering: false,
+                            onMove(e) {
+                                const rect = $el.getBoundingClientRect();
+                                const x = e.clientX - rect.left;
+                                const y = e.clientY - rect.top;
+                                const cx = rect.width / 2;
+                                const cy = rect.height / 2;
+                                this.rotX = ((y - cy) / cy) * -9;
+                                this.rotY = ((x - cx) / cx) * 9;
+                                this.isHovering = true;
+                            },
+                            onLeave() {
+                                this.rotX = 0;
+                                this.rotY = 0;
+                                this.isHovering = false;
+                            }
+                        }"
+                        @mousemove="onMove($event)"
+                        @mouseleave="onLeave()"
+                        :style="isHovering 
+                            ? `transform: perspective(800px) rotateX(${rotX}deg) rotateY(${rotY}deg) translateY(-8px) scale(1.025); transition: transform 0.12s ease-out, box-shadow 0.25s ease;` 
+                            : 'transform: perspective(800px) rotateX(0deg) rotateY(0deg) translateY(0px) scale(1); transition: transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.3s ease;'"
+                        class="snap-start flex-shrink-0 w-[210px] sm:w-[230px] md:w-[240px] lg:w-[calc(25%-15px)] h-[250px] sm:h-[270px] lg:h-[280px] rounded-2xl overflow-hidden relative shadow-lg hover:shadow-2xl border-0 ring-0 group bg-espresso-950 flex flex-col justify-end will-change-transform"
                     >
                         <!-- Background Product Image with Smooth Hover Zoom -->
                         <img 
@@ -544,7 +569,32 @@
                 <!-- 6th Slide: View Full Atelier Card -->
                 <a 
                     href="{{ route('shop') }}" 
-                    class="snap-start flex-shrink-0 w-[210px] sm:w-[230px] md:w-[240px] lg:w-[calc(25%-15px)] h-[250px] sm:h-[270px] lg:h-[280px] rounded-xl overflow-hidden relative shadow-md hover:shadow-xl border border-gold/40 group transition-all duration-300 bg-gradient-to-br from-espresso-950 via-[#1c120c] to-black flex flex-col justify-between p-5 text-white"
+                    x-data="{
+                        rotX: 0,
+                        rotY: 0,
+                        isHovering: false,
+                        onMove(e) {
+                            const rect = $el.getBoundingClientRect();
+                            const x = e.clientX - rect.left;
+                            const y = e.clientY - rect.top;
+                            const cx = rect.width / 2;
+                            const cy = rect.height / 2;
+                            this.rotX = ((y - cy) / cy) * -9;
+                            this.rotY = ((x - cx) / cx) * 9;
+                            this.isHovering = true;
+                        },
+                        onLeave() {
+                            this.rotX = 0;
+                            this.rotY = 0;
+                            this.isHovering = false;
+                        }
+                    }"
+                    @mousemove="onMove($event)"
+                    @mouseleave="onLeave()"
+                    :style="isHovering 
+                        ? `transform: perspective(800px) rotateX(${rotX}deg) rotateY(${rotY}deg) translateY(-8px) scale(1.025); transition: transform 0.12s ease-out, box-shadow 0.25s ease;` 
+                        : 'transform: perspective(800px) rotateX(0deg) rotateY(0deg) translateY(0px) scale(1); transition: transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.3s ease;'"
+                    class="snap-start flex-shrink-0 w-[210px] sm:w-[230px] md:w-[240px] lg:w-[calc(25%-15px)] h-[250px] sm:h-[270px] lg:h-[280px] rounded-2xl overflow-hidden relative shadow-lg hover:shadow-2xl border-0 ring-0 group bg-gradient-to-br from-espresso-950 via-[#1c120c] to-black flex flex-col justify-between p-5 text-white will-change-transform"
                 >
                     <div class="relative z-10">
                         <div class="w-9 h-9 rounded-lg bg-gold/15 border border-gold/30 flex items-center justify-center text-gold mb-3 group-hover:scale-110 transition-transform">
