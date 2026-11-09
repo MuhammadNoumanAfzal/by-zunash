@@ -278,30 +278,15 @@ class StoreController extends Controller
      */
     public function deals(Request $request)
     {
-        $query = \App\Models\Deal::active()->with('products')->orderBy('is_featured', 'desc')->orderBy('sort_order', 'asc')->orderBy('created_at', 'desc');
-
-        if ($request->filled('q')) {
-            $search = strtolower(trim($request->q));
-            $query->where(function ($q) use ($search) {
-                $q->where('title', 'like', "%{$search}%")
-                  ->orWhere('tagline', 'like', "%{$search}%")
-                  ->orWhere('description', 'like', "%{$search}%");
-            });
-        }
-
-        $deals = $query->get();
-        $spotlightDeal = $deals->first();
-        $allProducts = $this->getProducts();
-        
-        // In-stock products for Mix-and-Match Custom Bundle Builder
-        $builderProducts = $allProducts->where('in_stock', true)->values();
-
-        // Flash sale creations with stock urgency
-        $flashProducts = $allProducts->where('in_stock', true)->take(4)->values();
+        $deals = \App\Models\Deal::active()
+            ->with('products')
+            ->orderBy('sort_order', 'asc')
+            ->orderBy('created_at', 'desc')
+            ->get();
 
         $categories = $this->getCategories();
 
-        return view('user.deals', compact('deals', 'spotlightDeal', 'builderProducts', 'flashProducts', 'categories'));
+        return view('user.deals', compact('deals', 'categories'));
     }
 
     /**
