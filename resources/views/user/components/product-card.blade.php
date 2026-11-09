@@ -23,11 +23,34 @@
 <div 
     x-data="{ 
         product: {{ $productJson }},
-        isHovered: false 
+        isHovered: false,
+        rotX: 0,
+        rotY: 0,
+        isTilting: false,
+        onMove(e) {
+            const rect = $el.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+            const cx = rect.width / 2;
+            const cy = rect.height / 2;
+            this.rotX = ((y - cy) / cy) * -5;
+            this.rotY = ((x - cx) / cx) * 5;
+            this.isTilting = true;
+        },
+        onLeave() {
+            this.rotX = 0;
+            this.rotY = 0;
+            this.isTilting = false;
+            this.isHovered = false;
+        }
     }" 
-    class="group relative flex flex-col bg-white rounded-xl border {{ $isOutOfStock ? 'border-ivory-300 opacity-95' : 'border-ivory-300 hover:border-gold-500/50' }} overflow-hidden shadow-xs hover:shadow-xl hover:-translate-y-1 transition-all duration-300 h-full"
+    @mousemove="onMove($event)"
     @mouseenter="isHovered = true"
-    @mouseleave="isHovered = false"
+    @mouseleave="onLeave()"
+    :style="isTilting 
+        ? `transform: perspective(1000px) rotateX(${rotX.toFixed(2)}deg) rotateY(${rotY.toFixed(2)}deg) translateY(-6px) scale(1.015); transition: transform 0.18s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.35s ease;` 
+        : 'transform: perspective(1000px) rotateX(0deg) rotateY(0deg) translateY(0px) scale(1); transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.4s ease;'"
+    class="group relative flex flex-col bg-white rounded-xl border {{ $isOutOfStock ? 'border-ivory-300 opacity-95' : 'border-ivory-300 hover:border-gold-500/50' }} overflow-hidden shadow-xs hover:shadow-2xl hover:z-20 h-full will-change-transform"
 >
     <!-- Image & Badges Container -->
     <div class="relative w-full aspect-square bg-[#F7F5F0] overflow-hidden">
