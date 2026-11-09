@@ -98,7 +98,7 @@
     @mouseleave="startAutoplay()"
     @touchstart.passive="handleTouchStart($event)"
     @touchend.passive="handleTouchEnd($event)"
-    class="relative w-full h-[460px] sm:h-[480px] lg:h-[500px] overflow-hidden bg-espresso-950 text-ivory select-none"
+    class="relative w-full h-[500px] sm:h-[550px] md:h-[600px] lg:h-[640px] overflow-hidden bg-espresso-950 text-ivory select-none"
 >
     <!-- ================= SLIDE 1: SIGNATURE HANDBAGS ================= -->
     <div 
