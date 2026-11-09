@@ -342,7 +342,7 @@
                         </span>
                         <span class="w-1.5 h-1.5 rounded-full bg-gold/50"></span>
                         <span class="flex items-center gap-2">
-                            <i data-lucide="sparkles" class="w-3.5 h-3.5 text-gold"></i>
+                            <i data-lucide="feather" class="w-3.5 h-3.5 text-gold"></i>
                             <span>Wax-Burnished Edges</span>
                         </span>
                     </div>
@@ -598,7 +598,7 @@
                 >
                     <div class="relative z-10">
                         <div class="w-9 h-9 rounded-lg bg-gold/15 border border-gold/30 flex items-center justify-center text-gold mb-3 group-hover:scale-110 transition-transform">
-                            <i data-lucide="sparkles" class="w-4 h-4"></i>
+                            <i data-lucide="layers" class="w-4 h-4"></i>
                         </div>
                         <span class="text-gold-300 text-[10px] uppercase tracking-widest font-mono">Complete Archive</span>
                         <h3 class="font-serif text-lg sm:text-xl font-bold text-white mt-1 mb-1 group-hover:text-gold transition-colors">
@@ -664,13 +664,13 @@
 <!-- ========================================================
      F. BRAND STORY (EDITORIAL ASYMMETRICAL ATELIER SECTION)
      ======================================================== -->
-<section class="py-20 lg:py-28 bg-[#FAF7F2] dark:bg-[#191411] border-t border-ivory-200 dark:border-white/10 relative overflow-hidden">
+<section class="py-10 sm:py-12 lg:py-14 bg-[#FAF7F2] dark:bg-[#191411] border-t border-ivory-200 dark:border-white/10 relative overflow-hidden">
     <!-- Ambient subtle background glow -->
     <div class="absolute -top-32 -left-32 w-96 h-96 bg-gold/10 rounded-full blur-3xl pointer-events-none"></div>
     <div class="absolute -bottom-32 -right-32 w-96 h-96 bg-chocolate-900/5 rounded-full blur-3xl pointer-events-none"></div>
 
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-        <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-14 items-center">
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-14 items-center">
             
             <!-- Left Editorial Imagery (Interactive Overlapping Composition) -->
             <div class="lg:col-span-6 relative reveal-left">
@@ -715,38 +715,47 @@
 
             <!-- Right Story Content -->
             <div class="lg:col-span-6 lg:pl-4 reveal-right">
-                <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-gold/15 border border-gold/40 text-gold-700 dark:text-gold-300 text-xs uppercase tracking-widest font-serif font-bold mb-4">
-                    <i data-lucide="sparkles" class="w-3.5 h-3.5 text-gold-600 dark:text-gold-400"></i>
+                <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-gold/15 border border-gold/40 text-gold-700 dark:text-gold-300 text-xs uppercase tracking-widest font-serif font-bold mb-3.5">
+                    <i data-lucide="award" class="w-3.5 h-3.5 text-gold-600 dark:text-gold-400"></i>
                     <span>The Atelier Philosophy</span>
                 </div>
                 
-                <h2 class="font-serif text-3xl sm:text-4xl lg:text-[42px] font-bold text-espresso-950 dark:text-ivory leading-[1.18] mb-6">
+                <h2 class="font-serif text-3xl sm:text-4xl lg:text-[40px] font-bold text-espresso-950 dark:text-ivory leading-[1.18] mb-3.5">
                     Pure Material. <br>Deliberate Details. <br><span class="italic font-light text-gold-600 dark:text-gold-400">Quiet Elegance.</span>
                 </h2>
 
-                <p class="text-[15px] text-espresso-800 dark:text-ivory-300 font-light leading-relaxed mb-5">
+                <p class="text-[15px] text-espresso-800 dark:text-ivory-300 font-light leading-relaxed mb-3">
                     By Zunash was founded to bring thoughtful craftsmanship back to daily leather goods in Pakistan. In an era of fleeting fast fashion and synthetic bonded shortcuts, we champion honest, vegetable-tanned hides and drum-dyed skins that tell a real story.
                 </p>
 
-                <p class="text-[14px] text-muted-dark dark:text-ivory-400 leading-relaxed mb-8">
+                <p class="text-[14px] text-muted-dark dark:text-ivory-400 leading-relaxed mb-5">
                     Every edge is beveled and wax-burnished by hand. Every seam is locked with resilient waxed thread. Our pieces are tailored not merely to turn heads on day one, but to grow softer, richer, and distinctly yours across decades of use.
                 </p>
 
-                <!-- 3 Pillars Feature Highlights with Micro-Hover -->
-                <div class="grid grid-cols-3 gap-3 mb-9">
+                <!-- 3 Pillars Feature Highlights with Micro-Hover & Authentic Craft Icons -->
+                <div class="grid grid-cols-3 gap-3 mb-6">
                     <div class="p-3.5 rounded-xl bg-white dark:bg-[#241C18] border border-ivory-300 dark:border-white/10 shadow-2xs hover:border-gold-500/50 hover:shadow-md transition-all duration-300 group">
-                        <div class="font-serif text-lg font-bold text-espresso-950 dark:text-ivory group-hover:text-gold-600 transition-colors">0%</div>
-                        <div class="text-[11px] font-semibold text-espresso-900 dark:text-ivory-200 leading-tight mt-0.5">Faux Plastics</div>
+                        <div class="flex items-center justify-between mb-1">
+                            <span class="font-serif text-lg font-bold text-espresso-950 dark:text-ivory group-hover:text-gold-600 transition-colors">0%</span>
+                            <i data-lucide="shield-check" class="w-4 h-4 text-gold-600 dark:text-gold-400"></i>
+                        </div>
+                        <div class="text-[11px] font-semibold text-espresso-900 dark:text-ivory-200 leading-tight">Faux Plastics</div>
                         <div class="text-[10px] text-muted dark:text-ivory-400 leading-tight mt-1">Full-grain hides only</div>
                     </div>
                     <div class="p-3.5 rounded-xl bg-white dark:bg-[#241C18] border border-ivory-300 dark:border-white/10 shadow-2xs hover:border-gold-500/50 hover:shadow-md transition-all duration-300 group">
-                        <div class="font-serif text-lg font-bold text-espresso-950 dark:text-ivory group-hover:text-gold-600 transition-colors">100%</div>
-                        <div class="text-[11px] font-semibold text-espresso-900 dark:text-ivory-200 leading-tight mt-0.5">Hand-Burnished</div>
+                        <div class="flex items-center justify-between mb-1">
+                            <span class="font-serif text-lg font-bold text-espresso-950 dark:text-ivory group-hover:text-gold-600 transition-colors">100%</span>
+                            <i data-lucide="scissors" class="w-4 h-4 text-gold-600 dark:text-gold-400"></i>
+                        </div>
+                        <div class="text-[11px] font-semibold text-espresso-900 dark:text-ivory-200 leading-tight">Hand-Burnished</div>
                         <div class="text-[10px] text-muted dark:text-ivory-400 leading-tight mt-1">Natural beeswax sealed</div>
                     </div>
                     <div class="p-3.5 rounded-xl bg-white dark:bg-[#241C18] border border-ivory-300 dark:border-white/10 shadow-2xs hover:border-gold-500/50 hover:shadow-md transition-all duration-300 group">
-                        <div class="font-serif text-lg font-bold text-espresso-950 dark:text-ivory group-hover:text-gold-600 transition-colors">Decades</div>
-                        <div class="text-[11px] font-semibold text-espresso-900 dark:text-ivory-200 leading-tight mt-0.5">Heirloom Wear</div>
+                        <div class="flex items-center justify-between mb-1">
+                            <span class="font-serif text-lg font-bold text-espresso-950 dark:text-ivory group-hover:text-gold-600 transition-colors">Decades</span>
+                            <i data-lucide="clock" class="w-4 h-4 text-gold-600 dark:text-gold-400"></i>
+                        </div>
+                        <div class="text-[11px] font-semibold text-espresso-900 dark:text-ivory-200 leading-tight">Heirloom Wear</div>
                         <div class="text-[10px] text-muted dark:text-ivory-400 leading-tight mt-1">Gains rich patina</div>
                     </div>
                 </div>
@@ -862,7 +871,7 @@
                 <div class="relative bg-espresso-900/60 backdrop-blur-md rounded-2xl p-5 border border-gold/40 shadow-2xl group hover:border-gold transition-all duration-500">
                     <!-- Gold Ribbon Pill -->
                     <div class="absolute -top-3.5 right-6 z-20 bg-gradient-to-r from-gold-500 to-gold-400 text-espresso-950 text-[10px] uppercase font-bold tracking-widest px-3.5 py-1 rounded-full shadow-lg flex items-center gap-1.5">
-                        <i data-lucide="sparkles" class="w-3 h-3"></i>
+                        <i data-lucide="gift" class="w-3 h-3"></i>
                         <span>Gift Box Included</span>
                     </div>
 

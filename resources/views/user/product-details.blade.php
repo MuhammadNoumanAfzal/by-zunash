@@ -785,7 +785,7 @@
                 <div x-show="activeTab === 'specifications'" class="grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-12">
                     <div class="bg-ivory-50/60 p-6 rounded-2xl border border-ivory-300">
                         <h3 class="font-serif text-base font-bold text-espresso-950 mb-4 flex items-center gap-2">
-                            <i data-lucide="sparkles" class="w-4 h-4 text-gold-600"></i>
+                            <i data-lucide="award" class="w-4 h-4 text-gold-600"></i>
                             <span>Artisanal Highlights</span>
                         </h3>
                         <ul class="space-y-3 text-xs text-espresso-800 leading-relaxed">

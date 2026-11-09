@@ -310,7 +310,7 @@
                                 </label>
                                 <div class="relative">
                                     <span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gold-700">
-                                        <i data-lucide="sparkles" class="w-4 h-4"></i>
+                                        <i data-lucide="message-square" class="w-4 h-4"></i>
                                     </span>
                                     <input 
                                         type="text" 

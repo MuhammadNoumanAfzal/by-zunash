@@ -225,7 +225,7 @@
                         <div>
                             <div class="text-[10px] uppercase font-bold text-[#8F8379]">Patron Advantage</div>
                             <div class="text-xs font-bold text-emerald-600 flex items-center gap-1 mt-0.5">
-                                <i data-lucide="sparkle" class="w-3.5 h-3.5 text-gold-500"></i>
+                                <i data-lucide="tag" class="w-3.5 h-3.5 text-gold-500"></i>
                                 <span>Save PKR <span x-text="computedSavings.toLocaleString()"></span> (<span x-text="computedPercent"></span>% OFF)</span>
                             </div>
                         </div>
