@@ -79,6 +79,14 @@
                 <div class="h-0.5 w-16 bg-gradient-to-r from-transparent via-gold-400 to-transparent mx-auto mt-3"></div>
             </div>
 
+            <!-- Session Flash Alerts -->
+            @if(session('error'))
+                <div class="mb-5 p-3.5 rounded-2xl bg-amber-50 border border-amber-200 text-xs text-amber-900 flex items-start gap-2.5">
+                    <i data-lucide="alert-triangle" class="w-4 h-4 text-amber-600 shrink-0 mt-0.5"></i>
+                    <div>{{ session('error') }}</div>
+                </div>
+            @endif
+
             <!-- Validation Errors -->
             @if($errors->any())
                 <div class="mb-5 p-3.5 rounded-2xl bg-rose-50 border border-rose-200 text-xs text-rose-800 flex items-start gap-2.5">

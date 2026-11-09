@@ -30,7 +30,7 @@
     @mouseleave="isHovered = false"
 >
     <!-- Image & Badges Container -->
-    <div class="relative w-full aspect-[4/5] bg-[#F7F5F0] overflow-hidden">
+    <div class="relative w-full aspect-square bg-[#F7F5F0] overflow-hidden">
         <!-- Badges -->
         <div class="absolute top-3 left-3 z-10 pointer-events-none">
             @if($isOutOfStock)
@@ -94,7 +94,7 @@
             @if($isOutOfStock)
                 <a 
                     href="{{ route('product.details', $product['slug']) }}"
-                    class="w-full py-2.5 px-4 bg-zinc-900/95 backdrop-blur-sm text-ivory text-xs uppercase tracking-widest font-semibold rounded-lg shadow-lg hover:bg-gold-600 hover:text-espresso-950 transition-all flex items-center justify-center gap-2 border border-zinc-700"
+                    class="w-full py-2 px-3 bg-zinc-900/95 backdrop-blur-sm text-ivory text-[11px] uppercase tracking-widest font-semibold rounded-lg shadow-lg hover:bg-gold-600 hover:text-espresso-950 transition-all flex items-center justify-center gap-1.5 border border-zinc-700"
                 >
                     <i data-lucide="bell" class="w-3.5 h-3.5 text-gold-400"></i>
                     <span>Notify When In Stock</span>
@@ -102,7 +102,7 @@
             @elseif($isOnDemand)
                 <a 
                     href="{{ route('product.details', $product['slug']) }}"
-                    class="w-full py-2.5 px-4 bg-amber-950/95 backdrop-blur-sm text-amber-200 text-xs uppercase tracking-widest font-semibold rounded-lg shadow-lg hover:bg-gold-500 hover:text-espresso-950 transition-all flex items-center justify-center gap-2 border border-gold/40"
+                    class="w-full py-2 px-3 bg-amber-950/95 backdrop-blur-sm text-amber-200 text-[11px] uppercase tracking-widest font-semibold rounded-lg shadow-lg hover:bg-gold-500 hover:text-espresso-950 transition-all flex items-center justify-center gap-1.5 border border-gold/40"
                 >
                     <i data-lucide="hammer" class="w-3.5 h-3.5 text-gold-400"></i>
                     <span>Order On Demand</span>
@@ -111,7 +111,7 @@
                 <button 
                     type="button" 
                     @click.stop="$store.cart.addItem(product)"
-                    class="w-full py-2.5 px-4 bg-espresso-950/95 backdrop-blur-sm text-ivory text-xs uppercase tracking-widest font-semibold rounded-lg shadow-lg hover:bg-gold-500 hover:text-espresso-950 active:scale-95 transition-all flex items-center justify-center gap-2 border border-gold/40"
+                    class="w-full py-2 px-3 bg-espresso-950/95 backdrop-blur-sm text-ivory text-[11px] uppercase tracking-widest font-semibold rounded-lg shadow-lg hover:bg-gold-500 hover:text-espresso-950 active:scale-95 transition-all flex items-center justify-center gap-1.5 border border-gold/40"
                 >
                     <i data-lucide="shopping-bag" class="w-3.5 h-3.5"></i>
                     <span>Quick Add to Bag</span>
@@ -121,11 +121,11 @@
     </div>
 
     <!-- Product Details -->
-    <div class="p-4 sm:p-5 flex flex-col flex-grow justify-between bg-white">
+    <div class="p-3 sm:p-3.5 flex flex-col flex-grow justify-between bg-white">
         <div>
             <!-- Category Tag -->
-            <div class="flex items-center justify-between gap-1 mb-1.5">
-                <span class="text-[11px] uppercase tracking-[0.16em] text-gold-700 font-semibold font-sans block">
+            <div class="flex items-center justify-between gap-1 mb-1">
+                <span class="text-[10px] uppercase tracking-[0.16em] text-gold-700 font-semibold font-sans block">
                     {{ $product['category_name'] ?? $product['category'] }}
                 </span>
                 @if($isOutOfStock)
@@ -140,7 +140,7 @@
             </div>
 
             <!-- Title -->
-            <h3 class="font-serif text-[16px] sm:text-[17px] font-bold text-espresso-950 group-hover:text-gold-600 transition-colors line-clamp-1 mb-2 leading-snug">
+            <h3 class="font-serif text-[14px] sm:text-[15px] font-bold text-espresso-950 group-hover:text-gold-600 transition-colors line-clamp-1 mb-1.5 leading-snug">
                 <a href="{{ route('product.details', $product['slug']) }}">
                     {{ $product['name'] }}
                 </a>
@@ -148,29 +148,29 @@
 
             <!-- Color Swatches preview if available -->
             @if(!empty($product['colors']))
-                <div class="flex items-center gap-1.5 mb-3">
+                <div class="flex items-center gap-1.5 mb-2">
                     @foreach($product['colors'] as $c)
                         <span 
-                            class="w-3 h-3 rounded-full border border-black/20 shadow-xs inline-block" 
+                            class="w-2.5 h-2.5 rounded-full border border-black/20 shadow-xs inline-block" 
                             style="background-color: {{ $c['hex'] }};" 
                             title="{{ $c['name'] }}"
                         ></span>
                     @endforeach
-                    <span class="text-[11px] text-muted-dark font-sans">({{ count($product['colors']) }} colors)</span>
+                    <span class="text-[10px] text-muted-dark font-sans">({{ count($product['colors']) }} colors)</span>
                 </div>
             @endif
         </div>
 
         <!-- Price & Details Button Section -->
-        <div class="pt-3 border-t border-ivory-200 flex items-center justify-between gap-2 mt-auto">
+        <div class="pt-2 border-t border-ivory-200 flex items-center justify-between gap-2 mt-auto">
             <div class="flex flex-col">
-                <span class="text-[10px] uppercase tracking-wider text-muted-dark font-medium leading-none mb-1">Price</span>
-                <div class="flex items-baseline gap-1.5">
-                    <span class="font-sans text-base sm:text-[17px] font-bold text-espresso-950 tracking-tight">
-                        <span class="text-[11px] font-semibold text-gold-700 mr-0.5">PKR</span>{{ number_format($product['price']) }}
+                <span class="text-[9px] uppercase tracking-wider text-muted-dark font-medium leading-none mb-0.5">Price</span>
+                <div class="flex items-baseline gap-1">
+                    <span class="font-sans text-[15px] sm:text-[16px] font-bold text-espresso-950 tracking-tight">
+                        <span class="text-[10px] font-semibold text-gold-700 mr-0.5">PKR</span>{{ number_format($product['price']) }}
                     </span>
                     @if(!empty($product['original_price']))
-                        <span class="text-xs text-muted-light line-through font-sans">
+                        <span class="text-[11px] text-muted-light line-through font-sans">
                             {{ number_format($product['original_price']) }}
                         </span>
                     @endif
@@ -180,10 +180,10 @@
             <!-- Details Button -->
             <a 
                 href="{{ route('product.details', $product['slug']) }}" 
-                class="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-ivory-100 hover:bg-espresso-950 text-espresso-950 hover:text-white border border-ivory-300 hover:border-espresso-950 text-xs font-semibold tracking-wider uppercase transition-all duration-200 group/btn shadow-2xs"
+                class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-ivory-100 hover:bg-espresso-950 text-espresso-950 hover:text-white border border-ivory-300 hover:border-espresso-950 text-[11px] font-semibold tracking-wider uppercase transition-all duration-200 group/btn shadow-2xs"
             >
                 <span>Details</span>
-                <i data-lucide="arrow-right" class="w-3.5 h-3.5 text-gold-600 group-hover/btn:text-gold-300 transition-transform group-hover/btn:translate-x-0.5"></i>
+                <i data-lucide="arrow-right" class="w-3 h-3 text-gold-600 group-hover/btn:text-gold-300 transition-transform group-hover/btn:translate-x-0.5"></i>
             </a>
         </div>
     </div>

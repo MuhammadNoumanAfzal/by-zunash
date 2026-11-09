@@ -26,5 +26,10 @@ class Handler extends ExceptionHandler
         $this->reportable(function (Throwable $e) {
             //
         });
+
+        // Handle expired CSRF sessions smoothly by redirecting back with notice
+        $this->renderable(function (\Illuminate\Session\TokenMismatchException $e, $request) {
+            return redirect()->back()->withInput()->with('error', 'Your session expired. Please try again.');
+        });
     }
 }
