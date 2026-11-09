@@ -31,33 +31,65 @@
     <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
 
         @if($deals->count() > 0)
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
                 @foreach($deals as $deal)
                     <div 
                         id="{{ $deal->slug }}" 
                         class="group bg-white dark:bg-[#181310] rounded-xl border border-ivory-300 dark:border-white/10 shadow-xs hover:shadow-md transition-all duration-300 overflow-hidden flex flex-col scroll-mt-24"
                     >
-                        <!-- Image Container (Compact Landscape Height) -->
-                        <div class="relative w-full h-44 sm:h-48 md:h-52 bg-[#F7F5F0] dark:bg-[#14100E] overflow-hidden">
-                            <img 
-                                src="{{ asset($deal->image ?: ($deal->products->first()->image ?? 'images/brand/artisan-craft.jpg')) }}" 
-                                alt="{{ $deal->title }}" 
-                                class="w-full h-full object-cover object-center group-hover:scale-104 transition-transform duration-500 ease-out"
-                            >
-                            <div class="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent opacity-40 group-hover:opacity-20 transition-opacity"></div>
+                        <!-- Compact Multi-Product Showcase Visual (Height: h-32 sm:h-36) -->
+                        <div class="relative w-full h-32 sm:h-36 bg-[#F7F5F0] dark:bg-[#14100E] overflow-hidden border-b border-ivory-200 dark:border-white/10">
+                            @if($deal->products && $deal->products->count() > 1)
+                                <div class="grid h-full {{ $deal->products->count() >= 3 ? 'grid-cols-3' : 'grid-cols-2' }} divide-x divide-white/80 dark:divide-white/10">
+                                    @foreach($deal->products->take(3) as $dp)
+                                        <div class="relative h-full overflow-hidden bg-white dark:bg-[#181310] group/item">
+                                            <img 
+                                                src="{{ asset($dp->image) }}" 
+                                                alt="{{ $dp->name }}" 
+                                                class="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-500 ease-out"
+                                            >
+                                            <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-60"></div>
+                                            <div class="absolute bottom-1 inset-x-1 px-1 py-0.5 rounded bg-black/65 backdrop-blur-2xs text-[9px] text-white font-medium truncate text-center leading-tight">
+                                                {{ Str::limit($dp->name, 16) }}
+                                            </div>
+                                        </div>
+                                    @endforeach
+                                </div>
+
+                                @if($deal->products->count() == 2)
+                                    <!-- Centered "+" indicator connecting the 2 paired items -->
+                                    <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-10 pointer-events-none">
+                                        <span class="w-6 h-6 rounded-full bg-espresso-950 text-gold-300 border border-gold/40 flex items-center justify-center text-xs font-serif font-bold shadow-md">
+                                            +
+                                        </span>
+                                    </div>
+                                @endif
+                            @else
+                                <img 
+                                    src="{{ asset($deal->image ?: ($deal->products->first()->image ?? 'images/brand/artisan-craft.jpg')) }}" 
+                                    alt="{{ $deal->title }}" 
+                                    class="w-full h-full object-cover object-center group-hover:scale-104 transition-transform duration-500 ease-out"
+                                >
+                                <div class="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent opacity-40"></div>
+                            @endif
 
                             <!-- Top-Left Badge (Discount) -->
-                            <div class="absolute top-2.5 left-2.5 z-10">
-                                <span class="px-2.5 py-1 rounded bg-espresso-950/90 text-gold-300 text-[10px] font-bold uppercase tracking-wider backdrop-blur-xs shadow-xs border border-gold/30">
+                            <div class="absolute top-2 left-2 z-10">
+                                <span class="px-2 py-0.5 rounded bg-espresso-950/90 text-gold-300 text-[9px] font-bold uppercase tracking-wider backdrop-blur-xs shadow-2xs border border-gold/30">
                                     {{ $deal->badge ?: 'Curated Set' }}
                                 </span>
                             </div>
 
-                            <!-- Top-Right Gift Box Indicator -->
-                            <div class="absolute top-2.5 right-2.5 z-10">
-                                <span class="px-2 py-0.5 rounded bg-black/60 backdrop-blur-xs text-white text-[9px] font-medium flex items-center gap-1">
-                                    <i data-lucide="gift" class="w-3 h-3 text-gold"></i>
-                                    <span>Gift Box Included</span>
+                            <!-- Top-Right Savings & Gift Box Indicator -->
+                            <div class="absolute top-2 right-2 z-10 flex items-center gap-1">
+                                @if($deal->savings_amount > 0)
+                                    <span class="px-2 py-0.5 rounded bg-emerald-700/90 backdrop-blur-xs text-white text-[9px] font-bold shadow-2xs">
+                                        Save {{ $deal->discount_percentage }}%
+                                    </span>
+                                @endif
+                                <span class="px-1.5 py-0.5 rounded bg-black/60 backdrop-blur-xs text-white text-[9px] font-medium hidden sm:inline-flex items-center gap-0.5">
+                                    <i data-lucide="gift" class="w-2.5 h-2.5 text-gold"></i>
+                                    <span>Gift Box</span>
                                 </span>
                             </div>
                         </div>
