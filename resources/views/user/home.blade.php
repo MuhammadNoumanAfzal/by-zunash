@@ -81,7 +81,7 @@
     x-init="startAutoplay()"
     @mouseenter="stopAutoplay()"
     @mouseleave="startAutoplay()"
-    class="relative w-full h-[500px] sm:h-[560px] lg:h-[620px] overflow-hidden bg-espresso-950 text-ivory select-none"
+    class="relative w-full h-[380px] sm:h-[440px] lg:h-[490px] overflow-hidden bg-espresso-950 text-ivory select-none"
 >
     <!-- ================= SLIDE 1: SIGNATURE HANDBAGS ================= -->
     <div 
@@ -110,32 +110,32 @@
         <!-- Overlaid Animated Content -->
         <div class="relative z-10 w-full h-full flex items-center">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
-                <div class="max-w-2xl py-6">
+                <div class="max-w-2xl py-3">
                     
                     <!-- Tag / Badge -->
-                    <div class="inline-flex items-center gap-2 mb-3.5 animate-hero-tag">
-                        <span class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-black/60 backdrop-blur-md border border-gold/50 text-gold-300 text-xs uppercase tracking-widest font-serif shadow-md">
-                            <span class="w-2 h-2 rounded-full bg-gold animate-pulse"></span>
+                    <div class="inline-flex items-center gap-2 mb-2 animate-hero-tag">
+                        <span class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-black/60 backdrop-blur-md border border-gold/50 text-gold-300 text-[11px] uppercase tracking-widest font-serif shadow-md">
+                            <span class="w-1.5 h-1.5 rounded-full bg-gold animate-pulse"></span>
                             Handcrafted Luxury
                         </span>
                     </div>
 
                     <!-- Clean Headline -->
-                    <h1 class="font-serif text-3xl sm:text-5xl lg:text-6xl font-normal tracking-tight text-white leading-[1.12] mb-4 drop-shadow-[0_4px_16px_rgba(0,0,0,0.95)] animate-hero-title">
+                    <h1 class="font-serif text-2xl sm:text-4xl lg:text-[42px] font-normal tracking-tight text-white leading-[1.15] mb-2.5 drop-shadow-[0_4px_16px_rgba(0,0,0,0.95)] animate-hero-title">
                         Crafted for a Lifetime of 
                         <span class="italic font-light text-gold-300 drop-shadow-[0_4px_16px_rgba(0,0,0,0.95)] block sm:inline">Elegance.</span>
                     </h1>
 
                     <!-- Clear Description -->
-                    <p class="text-sm sm:text-base text-white/95 font-normal leading-relaxed max-w-xl mb-6 drop-shadow-[0_2px_8px_rgba(0,0,0,0.9)] animate-hero-desc">
+                    <p class="text-xs sm:text-sm text-white/95 font-normal leading-relaxed max-w-xl mb-4 drop-shadow-[0_2px_8px_rgba(0,0,0,0.9)] animate-hero-desc">
                         Artisanal full-grain leather handbags sculpted by master craftsmen. Designed with quiet sophistication to endure with you every day.
                     </p>
 
                     <!-- CTAs -->
-                    <div class="flex flex-wrap items-center gap-3.5 animate-hero-actions">
+                    <div class="flex flex-wrap items-center gap-3 animate-hero-actions">
                         <a 
                             href="{{ route('category', 'handbags') }}" 
-                            class="px-7 py-3.5 bg-gold hover:bg-gold-light text-espresso-950 text-xs uppercase tracking-widest font-bold rounded-lg shadow-luxury hover:shadow-gold-glow hover:-translate-y-0.5 transition-all duration-300 flex items-center gap-2 group active:scale-95"
+                            class="px-5 py-2.5 bg-gold hover:bg-gold-light text-espresso-950 text-xs uppercase tracking-widest font-bold rounded-lg shadow-luxury hover:shadow-gold-glow hover:-translate-y-0.5 transition-all duration-300 flex items-center gap-2 group active:scale-95"
                         >
                             <span>Shop Handbags</span>
                             <i data-lucide="arrow-right" class="w-4 h-4 transition-transform group-hover:translate-x-1"></i>
@@ -143,21 +143,21 @@
                         
                         <a 
                             href="{{ route('shop') }}" 
-                            class="px-6 py-3.5 bg-white/10 hover:bg-white/20 text-white text-xs uppercase tracking-widest font-semibold rounded-lg border border-white/30 hover:border-gold/60 backdrop-blur-md hover:-translate-y-0.5 transition-all duration-300 text-center"
+                            class="px-5 py-2.5 bg-white/10 hover:bg-white/20 text-white text-xs uppercase tracking-widest font-semibold rounded-lg border border-white/30 hover:border-gold/60 backdrop-blur-md hover:-translate-y-0.5 transition-all duration-300 text-center"
                         >
                             Explore Collection
                         </a>
                     </div>
 
                     <!-- Feature Row (Protected Pill) -->
-                    <div class="mt-6 inline-flex flex-wrap items-center gap-4 px-4 py-2 rounded-full bg-black/55 backdrop-blur-md border border-white/20 text-xs text-white shadow-md animate-hero-specs">
+                    <div class="mt-3.5 inline-flex flex-wrap items-center gap-3.5 px-3.5 py-1.5 rounded-full bg-black/55 backdrop-blur-md border border-white/20 text-[11px] text-white shadow-md animate-hero-specs">
                         <span class="flex items-center gap-2">
-                            <i data-lucide="award" class="w-4 h-4 text-gold"></i>
+                            <i data-lucide="award" class="w-3.5 h-3.5 text-gold"></i>
                             <span>100% Full-Grain Leather</span>
                         </span>
                         <span class="w-1.5 h-1.5 rounded-full bg-gold/50"></span>
                         <span class="flex items-center gap-2">
-                            <i data-lucide="truck" class="w-4 h-4 text-gold"></i>
+                            <i data-lucide="truck" class="w-3.5 h-3.5 text-gold"></i>
                             <span>Nationwide Delivery</span>
                         </span>
                     </div>
@@ -194,32 +194,32 @@
         <!-- Overlaid Animated Content -->
         <div class="relative z-10 w-full h-full flex items-center">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
-                <div class="max-w-2xl py-6">
+                <div class="max-w-2xl py-3">
                     
                     <!-- Tag / Badge -->
-                    <div class="inline-flex items-center gap-2 mb-3.5 animate-hero-tag">
-                        <span class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-black/60 backdrop-blur-md border border-gold/50 text-gold-300 text-xs uppercase tracking-widest font-serif shadow-md">
-                            <span class="w-2 h-2 rounded-full bg-gold animate-pulse"></span>
+                    <div class="inline-flex items-center gap-2 mb-2 animate-hero-tag">
+                        <span class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-black/60 backdrop-blur-md border border-gold/50 text-gold-300 text-[11px] uppercase tracking-widest font-serif shadow-md">
+                            <span class="w-1.5 h-1.5 rounded-full bg-gold animate-pulse"></span>
                             The Reversible Belt
                         </span>
                     </div>
 
                     <!-- Clean Headline -->
-                    <h1 class="font-serif text-3xl sm:text-5xl lg:text-6xl font-normal tracking-tight text-white leading-[1.12] mb-4 drop-shadow-[0_4px_16px_rgba(0,0,0,0.95)] animate-hero-title">
+                    <h1 class="font-serif text-2xl sm:text-4xl lg:text-[42px] font-normal tracking-tight text-white leading-[1.15] mb-2.5 drop-shadow-[0_4px_16px_rgba(0,0,0,0.95)] animate-hero-title">
                         Two Refined Looks. 
                         <span class="italic font-light text-gold-300 drop-shadow-[0_4px_16px_rgba(0,0,0,0.95)] block sm:inline">One Smooth Twist.</span>
                     </h1>
 
                     <!-- Clear Description -->
-                    <p class="text-sm sm:text-base text-white/95 font-normal leading-relaxed max-w-xl mb-6 drop-shadow-[0_2px_8px_rgba(0,0,0,0.9)] animate-hero-desc">
+                    <p class="text-xs sm:text-sm text-white/95 font-normal leading-relaxed max-w-xl mb-4 drop-shadow-[0_2px_8px_rgba(0,0,0,0.9)] animate-hero-desc">
                         Handcrafted calfskin with a 360° swivel antique brass buckle. Effortlessly switches between rich cognac brown and obsidian black.
                     </p>
 
                     <!-- CTAs -->
-                    <div class="flex flex-wrap items-center gap-3.5 animate-hero-actions">
+                    <div class="flex flex-wrap items-center gap-3 animate-hero-actions">
                         <a 
                             href="{{ route('category', 'belts') }}" 
-                            class="px-7 py-3.5 bg-gold hover:bg-gold-light text-espresso-950 text-xs uppercase tracking-widest font-bold rounded-lg shadow-luxury hover:shadow-gold-glow hover:-translate-y-0.5 transition-all duration-300 flex items-center gap-2 group active:scale-95"
+                            class="px-5 py-2.5 bg-gold hover:bg-gold-light text-espresso-950 text-xs uppercase tracking-widest font-bold rounded-lg shadow-luxury hover:shadow-gold-glow hover:-translate-y-0.5 transition-all duration-300 flex items-center gap-2 group active:scale-95"
                         >
                             <span>Shop Belts</span>
                             <i data-lucide="arrow-right" class="w-4 h-4 transition-transform group-hover:translate-x-1"></i>
@@ -227,21 +227,21 @@
                         
                         <a 
                             href="{{ route('shop') }}" 
-                            class="px-6 py-3.5 bg-white/10 hover:bg-white/20 text-white text-xs uppercase tracking-widest font-semibold rounded-lg border border-white/30 hover:border-gold/60 backdrop-blur-md hover:-translate-y-0.5 transition-all duration-300 text-center"
+                            class="px-5 py-2.5 bg-white/10 hover:bg-white/20 text-white text-xs uppercase tracking-widest font-semibold rounded-lg border border-white/30 hover:border-gold/60 backdrop-blur-md hover:-translate-y-0.5 transition-all duration-300 text-center"
                         >
                             View Bestsellers
                         </a>
                     </div>
 
                     <!-- Feature Row (Protected Pill) -->
-                    <div class="mt-6 inline-flex flex-wrap items-center gap-4 px-4 py-2 rounded-full bg-black/55 backdrop-blur-md border border-white/20 text-xs text-white shadow-md animate-hero-specs">
+                    <div class="mt-3.5 inline-flex flex-wrap items-center gap-3.5 px-3.5 py-1.5 rounded-full bg-black/55 backdrop-blur-md border border-white/20 text-[11px] text-white shadow-md animate-hero-specs">
                         <span class="flex items-center gap-2">
-                            <i data-lucide="refresh-cw" class="w-4 h-4 text-gold"></i>
+                            <i data-lucide="refresh-cw" class="w-3.5 h-3.5 text-gold"></i>
                             <span>360° Swivel Buckle</span>
                         </span>
                         <span class="w-1.5 h-1.5 rounded-full bg-gold/50"></span>
                         <span class="flex items-center gap-2">
-                            <i data-lucide="shield-check" class="w-4 h-4 text-gold"></i>
+                            <i data-lucide="shield-check" class="w-3.5 h-3.5 text-gold"></i>
                             <span>Solid Antique Brass Hardware</span>
                         </span>
                     </div>
@@ -278,32 +278,32 @@
         <!-- Overlaid Animated Content -->
         <div class="relative z-10 w-full h-full flex items-center">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
-                <div class="max-w-2xl py-6">
+                <div class="max-w-2xl py-3">
                     
                     <!-- Tag / Badge -->
-                    <div class="inline-flex items-center gap-2 mb-3.5 animate-hero-tag">
-                        <span class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-black/60 backdrop-blur-md border border-gold/50 text-gold-300 text-xs uppercase tracking-widest font-serif shadow-md">
-                            <span class="w-2 h-2 rounded-full bg-gold animate-pulse"></span>
+                    <div class="inline-flex items-center gap-2 mb-2 animate-hero-tag">
+                        <span class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-black/60 backdrop-blur-md border border-gold/50 text-gold-300 text-[11px] uppercase tracking-widest font-serif shadow-md">
+                            <span class="w-1.5 h-1.5 rounded-full bg-gold animate-pulse"></span>
                             Minimalist Essentials
                         </span>
                     </div>
 
                     <!-- Clean Headline -->
-                    <h1 class="font-serif text-3xl sm:text-5xl lg:text-6xl font-normal tracking-tight text-white leading-[1.12] mb-4 drop-shadow-[0_4px_16px_rgba(0,0,0,0.95)] animate-hero-title">
+                    <h1 class="font-serif text-2xl sm:text-4xl lg:text-[42px] font-normal tracking-tight text-white leading-[1.15] mb-2.5 drop-shadow-[0_4px_16px_rgba(0,0,0,0.95)] animate-hero-title">
                         Slim in Pocket. 
                         <span class="italic font-light text-gold-300 drop-shadow-[0_4px_16px_rgba(0,0,0,0.95)] block sm:inline">Timeless in Hand.</span>
                     </h1>
 
                     <!-- Clear Description -->
-                    <p class="text-sm sm:text-base text-white/95 font-normal leading-relaxed max-w-xl mb-6 drop-shadow-[0_2px_8px_rgba(0,0,0,0.9)] animate-hero-desc">
+                    <p class="text-xs sm:text-sm text-white/95 font-normal leading-relaxed max-w-xl mb-4 drop-shadow-[0_2px_8px_rgba(0,0,0,0.9)] animate-hero-desc">
                         Hand-burnished bifold wallets and slim cardholders with certified RFID protection. Tailored for everyday carry without the bulk.
                     </p>
 
                     <!-- CTAs -->
-                    <div class="flex flex-wrap items-center gap-3.5 animate-hero-actions">
+                    <div class="flex flex-wrap items-center gap-3 animate-hero-actions">
                         <a 
                             href="{{ route('category', 'wallets') }}" 
-                            class="px-7 py-3.5 bg-gold hover:bg-gold-light text-espresso-950 text-xs uppercase tracking-widest font-bold rounded-lg shadow-luxury hover:shadow-gold-glow hover:-translate-y-0.5 transition-all duration-300 flex items-center gap-2 group active:scale-95"
+                            class="px-5 py-2.5 bg-gold hover:bg-gold-light text-espresso-950 text-xs uppercase tracking-widest font-bold rounded-lg shadow-luxury hover:shadow-gold-glow hover:-translate-y-0.5 transition-all duration-300 flex items-center gap-2 group active:scale-95"
                         >
                             <span>Shop Wallets</span>
                             <i data-lucide="arrow-right" class="w-4 h-4 transition-transform group-hover:translate-x-1"></i>
@@ -311,21 +311,21 @@
                         
                         <a 
                             href="{{ route('shop') }}" 
-                            class="px-6 py-3.5 bg-white/10 hover:bg-white/20 text-white text-xs uppercase tracking-widest font-semibold rounded-lg border border-white/30 hover:border-gold/60 backdrop-blur-md hover:-translate-y-0.5 transition-all duration-300 text-center"
+                            class="px-5 py-2.5 bg-white/10 hover:bg-white/20 text-white text-xs uppercase tracking-widest font-semibold rounded-lg border border-white/30 hover:border-gold/60 backdrop-blur-md hover:-translate-y-0.5 transition-all duration-300 text-center"
                         >
                             View New Releases
                         </a>
                     </div>
 
                     <!-- Feature Row (Protected Pill) -->
-                    <div class="mt-6 inline-flex flex-wrap items-center gap-4 px-4 py-2 rounded-full bg-black/55 backdrop-blur-md border border-white/20 text-xs text-white shadow-md animate-hero-specs">
+                    <div class="mt-3.5 inline-flex flex-wrap items-center gap-3.5 px-3.5 py-1.5 rounded-full bg-black/55 backdrop-blur-md border border-white/20 text-[11px] text-white shadow-md animate-hero-specs">
                         <span class="flex items-center gap-2">
-                            <i data-lucide="shield-check" class="w-4 h-4 text-gold"></i>
+                            <i data-lucide="shield-check" class="w-3.5 h-3.5 text-gold"></i>
                             <span>Certified RFID Protection</span>
                         </span>
                         <span class="w-1.5 h-1.5 rounded-full bg-gold/50"></span>
                         <span class="flex items-center gap-2">
-                            <i data-lucide="sparkles" class="w-4 h-4 text-gold"></i>
+                            <i data-lucide="sparkles" class="w-3.5 h-3.5 text-gold"></i>
                             <span>Wax-Burnished Edges</span>
                         </span>
                     </div>
@@ -336,7 +336,7 @@
     </div>
 
     <!-- ================= BOTTOM CONTROLS & PROGRESS ================= -->
-    <div class="absolute bottom-5 left-0 right-0 z-20 pointer-events-auto">
+    <div class="absolute bottom-4 left-0 right-0 z-20 pointer-events-auto">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between">
             
             <!-- Animated Slide Progress Indicators -->
