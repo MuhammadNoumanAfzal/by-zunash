@@ -319,13 +319,79 @@ Alpine.store('cart', {
         return this.items.reduce((total, item) => total + (item.price * item.quantity), 0);
     },
 
+    appliedCoupon: JSON.parse(localStorage.getItem('byzunash_coupon') || 'null'),
+
+    applyCoupon(code, percent, label = 'Promotional Discount') {
+        this.appliedCoupon = { code: code.toUpperCase(), percent: Number(percent), label: label };
+        localStorage.setItem('byzunash_coupon', JSON.stringify(this.appliedCoupon));
+        window.ZunashAlert.toast(`Voucher "${code.toUpperCase()}" applied (${percent}% Off)!`, 'success');
+        this.isOpen = true;
+    },
+
+    removeCoupon() {
+        this.appliedCoupon = null;
+        localStorage.removeItem('byzunash_coupon');
+        window.ZunashAlert.toast('Voucher removed.', 'info');
+    },
+
+    get discount() {
+        if (!this.appliedCoupon || !this.appliedCoupon.percent) return 0;
+        return Math.round(this.subtotal * (this.appliedCoupon.percent / 100));
+    },
+
     get shipping() {
         if (this.subtotal === 0) return 0;
         return this.subtotal >= 6000 ? 0 : 250;
     },
 
     get total() {
-        return this.subtotal + this.shipping;
+        return Math.max(0, this.subtotal - this.discount + this.shipping);
+    },
+
+    addCustomBundle(name, items, bundlePrice, originalPrice, image = null) {
+        const bundleKey = 'custom-bundle-' + Date.now();
+        const itemsSummary = items.map(i => i.name).join(' + ');
+        this.items.push({
+            key: bundleKey,
+            id: bundleKey,
+            name: name,
+            price: Number(bundlePrice),
+            originalPrice: Number(originalPrice),
+            image: image || (items[0] ? items[0].image : '/images/brand/artisan-craft.jpg'),
+            category: 'Custom Atelier Bundle',
+            variant: itemsSummary,
+            quantity: 1
+        });
+        this.save();
+        this.refreshIcons();
+        window.ZunashAlert.toast(`Custom Pair "${name}" added to shopping bag!`, 'success');
+        this.isOpen = true;
+    },
+
+    addVolumeItem(product, quantity, discountPercent) {
+        const discountedPrice = Math.round(product.price * (1 - (discountPercent / 100)));
+        const itemKey = `${product.id}-tier-${quantity}`;
+        const existing = this.items.find(item => item.key === itemKey);
+
+        if (existing) {
+            existing.quantity += quantity;
+        } else {
+            this.items.push({
+                key: itemKey,
+                id: product.id,
+                name: `${product.name} (Tier Save ${discountPercent}%)`,
+                price: discountedPrice,
+                originalPrice: Number(product.price),
+                image: product.image,
+                category: product.category_name || product.category,
+                variant: `Pack of ${quantity} (${discountPercent}% Off)`,
+                quantity: quantity
+            });
+        }
+        this.save();
+        this.refreshIcons();
+        window.ZunashAlert.toast(`Added ${quantity}x "${product.name}" with ${discountPercent}% Volume Savings!`, 'success');
+        this.isOpen = true;
     },
 
     refreshIcons() {

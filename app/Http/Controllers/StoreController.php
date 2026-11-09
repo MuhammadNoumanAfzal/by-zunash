@@ -290,9 +290,18 @@ class StoreController extends Controller
         }
 
         $deals = $query->get();
+        $spotlightDeal = $deals->first();
+        $allProducts = $this->getProducts();
+        
+        // In-stock products for Mix-and-Match Custom Bundle Builder
+        $builderProducts = $allProducts->where('in_stock', true)->values();
+
+        // Flash sale creations with stock urgency
+        $flashProducts = $allProducts->where('in_stock', true)->take(4)->values();
+
         $categories = $this->getCategories();
 
-        return view('user.deals', compact('deals', 'categories'));
+        return view('user.deals', compact('deals', 'spotlightDeal', 'builderProducts', 'flashProducts', 'categories'));
     }
 
     /**
