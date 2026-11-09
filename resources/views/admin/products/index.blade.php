@@ -108,30 +108,129 @@
         </div>
 
         <!-- Submit & Reset Buttons -->
-        <div class="lg:col-span-1 flex items-center gap-1.5">
+        <div class="sm:col-span-2 lg:col-span-1 flex items-center gap-2">
             <button 
                 type="submit" 
-                class="w-full py-2 px-3 rounded-xl bg-espresso-900 hover:bg-tan-600 text-white font-semibold text-xs transition-colors flex items-center justify-center"
+                class="flex-1 lg:flex-none w-full py-2 px-3 rounded-xl bg-espresso-900 hover:bg-tan-600 text-white font-semibold text-xs transition-colors flex items-center justify-center gap-1.5"
                 title="Apply Filter"
             >
                 <i data-lucide="filter" class="w-3.5 h-3.5"></i>
+                <span class="sm:hidden lg:hidden">Filter</span>
             </button>
             <a 
                 href="{{ route('admin.products.index') }}" 
-                class="py-2 px-2.5 rounded-xl border border-[#DFD6CB] text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors flex items-center justify-center"
+                class="py-2 px-3 rounded-xl border border-[#DFD6CB] dark:border-[#382D27] text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors flex items-center justify-center gap-1.5 shrink-0"
                 title="Reset Filters"
             >
                 <i data-lucide="rotate-ccw" class="w-3.5 h-3.5"></i>
+                <span class="sm:hidden lg:hidden text-xs">Reset</span>
             </a>
         </div>
 
     </form>
 </div>
 
-<!-- Products Table Card -->
+<!-- Products Table Card & Mobile Cards -->
 <div class="rounded-3xl bg-white dark:bg-[#1A1513] border border-[#ECE6DE] dark:border-[#2C2420] shadow-card overflow-hidden">
     
-    <div class="overflow-x-auto">
+    <!-- Mobile Clean Product Cards (< 640px) -->
+    <div class="block sm:hidden divide-y divide-[#F0EAE1] dark:divide-[#28201C]">
+        @forelse($products as $product)
+            <div class="p-3.5 hover:bg-[#FAF8F5]/80 dark:hover:bg-[#221B18] transition-colors space-y-2.5">
+                <div class="flex items-start gap-3">
+                    <img 
+                        src="{{ $product->image ?: '/images/products/prod-reversible-belt.jpg' }}" 
+                        alt="{{ $product->name }}"
+                        class="w-14 h-14 rounded-xl object-cover border border-[#ECE6DE] dark:border-[#2C2420] shadow-2xs shrink-0"
+                    >
+                    <div class="min-w-0 flex-1">
+                        <div class="flex items-start justify-between gap-1.5">
+                            <h3 class="font-bold text-xs text-espresso-950 dark:text-white truncate">
+                                {{ $product->name }}
+                            </h3>
+                            <div class="font-cinzel font-bold text-xs text-espresso-950 dark:text-white shrink-0">
+                                Rs. {{ number_format($product->price) }}
+                            </div>
+                        </div>
+
+                        <div class="flex items-center gap-1.5 mt-1 flex-wrap">
+                            <span class="font-mono text-[10px] text-gray-400">
+                                {{ $product->sku }}
+                            </span>
+                            <span class="text-gray-300">•</span>
+                            <span class="px-2 py-0.2 rounded-full text-[9px] font-semibold bg-[#F5F1EA] dark:bg-[#2A221E] text-espresso-800 dark:text-[#E8D0BE]">
+                                {{ $product->category_name ?: ucfirst($product->category_slug) }}
+                            </span>
+                            @if($product->badge)
+                                <span class="px-1.5 py-0.2 rounded text-[9px] font-bold bg-[#FAF3F0] text-tan-700 border border-[#F3E3DC]">
+                                    {{ $product->badge }}
+                                </span>
+                            @endif
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flex items-center justify-between text-xs pt-1 border-t border-[#F0EAE1] dark:border-[#28201C]">
+                    <div>
+                        @if($product->availability === 'on_demand')
+                            <span class="px-2 py-0.5 rounded-full text-[9px] font-bold bg-amber-500/15 text-amber-800 dark:text-amber-400 border border-amber-500/30">
+                                On Demand
+                            </span>
+                        @elseif($product->stock_quantity <= 0)
+                            <span class="px-2 py-0.5 rounded-full text-[9px] font-bold bg-rose-50 text-rose-700 border border-rose-200">
+                                Out of Stock
+                            </span>
+                        @elseif($product->stock_quantity <= 5)
+                            <span class="px-2 py-0.5 rounded-full text-[9px] font-bold bg-amber-50 text-amber-800 border border-amber-200">
+                                Low: {{ $product->stock_quantity }}
+                            </span>
+                        @else
+                            <span class="px-2 py-0.5 rounded-full text-[9px] font-bold bg-emerald-50 text-emerald-800 border border-emerald-200">
+                                In Stock ({{ $product->stock_quantity }})
+                            </span>
+                        @endif
+                    </div>
+
+                    <div class="flex items-center gap-1.5">
+                        <a 
+                            href="{{ route('product.details', $product->slug) }}" 
+                            target="_blank"
+                            class="p-1.5 rounded-lg text-gray-400 hover:text-tan-600 border border-[#DFD6CB] dark:border-[#382D27]"
+                            title="View Live Product"
+                        >
+                            <i data-lucide="external-link" class="w-3.5 h-3.5"></i>
+                        </a>
+
+                        <a 
+                            href="{{ route('admin.products.edit', $product) }}" 
+                            class="px-2.5 py-1 rounded-lg text-xs font-semibold bg-espresso-900 hover:bg-tan-600 text-white transition-colors"
+                        >
+                            Edit
+                        </a>
+
+                        <form action="{{ route('admin.products.destroy', $product) }}" method="POST" onsubmit="return confirm('Are you sure you want to remove this product?')" class="inline">
+                            @csrf
+                            @method('DELETE')
+                            <button 
+                                type="submit" 
+                                class="p-1.5 text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/30 rounded-lg border border-rose-200"
+                                title="Delete Product"
+                            >
+                                <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        @empty
+            <div class="py-8 text-center text-xs text-gray-400">
+                No creations found matching the selected filters.
+            </div>
+        @endforelse
+    </div>
+
+    <!-- Desktop / Tablet Table View (>= 640px) -->
+    <div class="hidden sm:block overflow-x-auto w-full max-w-full">
         <table class="w-full text-left text-xs">
             <thead>
                 <tr class="text-[10px] font-bold uppercase tracking-wider text-[#8F8379] bg-[#FAF8F5] dark:bg-[#201A18] border-b border-[#ECE6DE] dark:border-[#2C2420]">

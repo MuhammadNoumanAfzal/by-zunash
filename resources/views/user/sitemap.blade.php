@@ -16,6 +16,14 @@
         <priority>0.9</priority>
     </url>
 
+    <!-- Curated Deals & Bundles Hub -->
+    <url>
+        <loc>{{ route('deals') }}</loc>
+        <lastmod>{{ date('Y-m-d') }}</lastmod>
+        <changefreq>daily</changefreq>
+        <priority>0.9</priority>
+    </url>
+
     <!-- Brand Story & Support -->
     <url>
         <loc>{{ route('about') }}</loc>
@@ -28,6 +36,12 @@
         <lastmod>{{ date('Y-m-d') }}</lastmod>
         <changefreq>monthly</changefreq>
         <priority>0.7</priority>
+    </url>
+    <url>
+        <loc>{{ route('reviews') }}</loc>
+        <lastmod>{{ date('Y-m-d') }}</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.8</priority>
     </url>
     <url>
         <loc>{{ route('faq') }}</loc>
@@ -45,7 +59,7 @@
         <priority>0.85</priority>
         @if(!empty($cat['image']))
         <image:image>
-            <image:loc>{{ $cat['image'] }}</image:loc>
+            <image:loc>{{ str_starts_with($cat['image'], 'http') ? $cat['image'] : asset($cat['image']) }}</image:loc>
             <image:title>{{ $cat['name'] }} - By Zunash Luxury Leather</image:title>
             <image:caption>{{ $cat['tagline'] }}</image:caption>
         </image:image>
@@ -62,13 +76,32 @@
         <priority>0.8</priority>
         @if(!empty($product['image']))
         <image:image>
-            <image:loc>{{ $product['image'] }}</image:loc>
+            <image:loc>{{ str_starts_with($product['image'], 'http') ? $product['image'] : asset($product['image']) }}</image:loc>
             <image:title>{{ $product['name'] }}</image:title>
             <image:caption>{{ $product['short_description'] ?? $product['name'] }}</image:caption>
         </image:image>
         @endif
     </url>
     @endforeach
+
+    <!-- Curated Deals & Exclusive Sets -->
+    @if(isset($deals))
+        @foreach($deals as $deal)
+        <url>
+            <loc>{{ route('deal.details', $deal->slug) }}</loc>
+            <lastmod>{{ $deal->updated_at ? $deal->updated_at->format('Y-m-d') : date('Y-m-d') }}</lastmod>
+            <changefreq>weekly</changefreq>
+            <priority>0.85</priority>
+            @if(!empty($deal->image))
+            <image:image>
+                <image:loc>{{ str_starts_with($deal->image, 'http') ? $deal->image : asset($deal->image) }}</image:loc>
+                <image:title>{{ $deal->title }} - By Zunash Curated Set</image:title>
+                <image:caption>{{ $deal->tagline ?: $deal->title }}</image:caption>
+            </image:image>
+            @endif
+        </url>
+        @endforeach
+    @endif
 
     <!-- Policies -->
     <url>

@@ -23,19 +23,99 @@
         </div>
     </div>
 
-    <!-- Customers Table -->
+    <!-- Customers Table & Mobile Cards -->
     <div class="rounded-3xl bg-white dark:bg-[#1A1513] border border-[#ECE6DE] dark:border-[#2C2420] shadow-card overflow-hidden">
-        <div class="overflow-x-auto">
+        
+        <!-- Mobile Clean Card View (Visible on screens < 640px) -->
+        <div class="block sm:hidden divide-y divide-[#F0EAE1] dark:divide-[#28201C]">
+            @forelse($customers as $client)
+                @php
+                    $cleanPhone = preg_replace('/[^0-9]/', '', $client->phone ?? '');
+                    if (str_starts_with($cleanPhone, '03')) {
+                        $cleanPhone = '92' . substr($cleanPhone, 1);
+                    }
+                @endphp
+                <div class="p-4 hover:bg-[#FAF8F5] dark:hover:bg-[#221B18] transition-colors space-y-2.5">
+                    <div class="flex items-start justify-between gap-2">
+                        <div class="min-w-0 flex-1">
+                            <h3 class="font-bold text-sm text-espresso-950 dark:text-white truncate">
+                                {{ $client->name }}
+                            </h3>
+                            <div class="text-[11px] text-gray-400 mt-0.5 truncate">
+                                {{ $client->email }} @if($client->phone) • {{ $client->phone }} @endif
+                            </div>
+                        </div>
+                        @if($client->is_vip)
+                            <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-[#FAF6F2] dark:bg-[#2A1D1A] text-tan-700 dark:text-gold-300 border border-tan-200 dark:border-[#3E2A24] shrink-0">
+                                <span class="w-1.5 h-1.5 rounded-full bg-tan-500"></span>
+                                VIP
+                            </span>
+                        @else
+                            <span class="text-[10px] text-gray-400 shrink-0">Standard</span>
+                        @endif
+                    </div>
+
+                    <div class="flex items-center justify-between text-xs pt-1">
+                        <div class="flex items-center gap-2 text-[11px] text-[#6E6359] dark:text-[#C5B8AC]">
+                            <span>{{ $client->city ?: 'Lahore' }}</span>
+                            <span>•</span>
+                            <span class="font-bold font-mono">{{ $client->total_orders }} orders</span>
+                        </div>
+                        <div class="font-cinzel font-bold text-sm text-tan-600 dark:text-gold-400">
+                            Rs. {{ number_format($client->total_spent) }}
+                        </div>
+                    </div>
+
+                    <div class="pt-2 border-t border-[#F0EAE1] dark:border-[#28201C] flex items-center justify-end gap-2 flex-wrap">
+                        @if($cleanPhone)
+                            <a 
+                                href="https://wa.me/{{ $cleanPhone }}?text={{ urlencode('Assalam o Alaikum ' . $client->name . ', from By Zunash Luxury Leather Atelier.') }}" 
+                                target="_blank"
+                                class="px-2.5 py-1 text-xs font-semibold rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white transition-colors flex items-center gap-1"
+                            >
+                                <i data-lucide="message-circle" class="w-3.5 h-3.5"></i>
+                                <span>WhatsApp</span>
+                            </a>
+                        @endif
+
+                        <form action="{{ route('admin.customers.vip', $client) }}" method="POST" class="inline">
+                            @csrf
+                            <button 
+                                type="submit" 
+                                class="px-2.5 py-1 rounded-lg text-xs font-semibold border transition-colors {{ $client->is_vip ? 'border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-300' : 'border-tan-300 bg-tan-50 text-tan-800' }}"
+                            >
+                                {{ $client->is_vip ? 'Revoke VIP' : 'Make VIP' }}
+                            </button>
+                        </form>
+
+                        <button 
+                            type="button" 
+                            onclick="openEditCustomerModal({{ json_encode($client) }})"
+                            class="px-2.5 py-1 rounded-lg text-xs font-semibold bg-[#FAF8F5] dark:bg-[#241D1A] border border-[#DFD6CB] dark:border-[#382D27] text-espresso-900 dark:text-white"
+                        >
+                            Edit
+                        </button>
+                    </div>
+                </div>
+            @empty
+                <div class="py-8 text-center text-xs text-gray-400">
+                    No patron dossiers found.
+                </div>
+            @endforelse
+        </div>
+
+        <!-- Desktop / Tablet Table View (Visible on >= 640px) -->
+        <div class="hidden sm:block overflow-x-auto w-full max-w-full">
             <table class="w-full text-left text-xs">
                 <thead>
                     <tr class="text-[10px] font-bold uppercase tracking-wider text-[#8F8379] bg-[#FAF8F5] dark:bg-[#201A18] border-b border-[#ECE6DE] dark:border-[#2C2420]">
-                        <th class="py-3 px-4">PATRON NAME</th>
-                        <th class="py-3 px-3">EMAIL & PHONE</th>
-                        <th class="py-3 px-3">PRIMARY CITY</th>
-                        <th class="py-3 px-3">ORDERS</th>
-                        <th class="py-3 px-3">LIFETIME SPEND</th>
-                        <th class="py-3 px-3">VIP STATUS</th>
-                        <th class="py-3 px-4 text-right">ACTIONS</th>
+                        <th class="py-3 px-4 whitespace-nowrap">PATRON NAME</th>
+                        <th class="py-3 px-3 whitespace-nowrap">EMAIL & PHONE</th>
+                        <th class="py-3 px-3 whitespace-nowrap">PRIMARY CITY</th>
+                        <th class="py-3 px-3 whitespace-nowrap">ORDERS</th>
+                        <th class="py-3 px-3 whitespace-nowrap">LIFETIME SPEND</th>
+                        <th class="py-3 px-3 whitespace-nowrap">VIP STATUS</th>
+                        <th class="py-3 px-4 text-right whitespace-nowrap">ACTIONS</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-[#F0EAE1] dark:divide-[#28201C]">

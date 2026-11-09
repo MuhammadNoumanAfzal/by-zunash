@@ -29,22 +29,33 @@
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative" @click.outside="collectionsOpen = false">
         <div class="flex items-center justify-between h-16">
             
-            <!-- Mobile Menu Toggle Button (Left on Mobile) -->
-            <div class="flex items-center lg:hidden">
+            <!-- Mobile Left Controls: Back Button on inner pages + Menu Toggle -->
+            <div class="flex items-center gap-0.5 lg:hidden">
+                @if(!request()->routeIs('home'))
+                    <button 
+                        type="button" 
+                        onclick="window.history.length > 1 ? window.history.back() : window.location.href='{{ route('home') }}'"
+                        class="p-2 -ml-2 rounded-full text-espresso-900 dark:text-ivory-200 hover:text-gold-600 hover:bg-ivory-100 dark:hover:bg-white/5 transition-colors focus:outline-none flex items-center justify-center"
+                        aria-label="Go back to previous page"
+                        title="Back"
+                    >
+                        <i data-lucide="arrow-left" class="w-5 h-5"></i>
+                    </button>
+                @endif
                 <button 
                     type="button" 
                     @click="mobileMenuOpen = !mobileMenuOpen" 
-                    class="p-2 -ml-2 rounded-md text-espresso-900 dark:text-ivory-200 hover:text-gold-600 dark:hover:text-gold focus:outline-none"
+                    class="p-2 {{ request()->routeIs('home') ? '-ml-2' : '' }} rounded-md text-espresso-900 dark:text-ivory-200 hover:text-gold-600 dark:hover:text-gold focus:outline-none"
                     aria-label="Toggle navigation menu"
                 >
-                    <i data-lucide="menu" x-show="!mobileMenuOpen" class="w-6 h-6"></i>
-                    <i data-lucide="x" x-show="mobileMenuOpen" x-cloak class="w-6 h-6"></i>
+                    <i data-lucide="menu" x-show="!mobileMenuOpen" class="w-5 h-5 sm:w-6 sm:h-6"></i>
+                    <i data-lucide="x" x-show="mobileMenuOpen" x-cloak class="w-5 h-5 sm:w-6 sm:h-6"></i>
                 </button>
             </div>
 
             <!-- Brand Logo (Center on Mobile, Left on Desktop) -->
             <div class="flex-shrink-0 flex items-center">
-                <x-user.components.logo height="h-9" />
+                <x-user.components.logo height="h-8 sm:h-9" />
             </div>
 
             <!-- Desktop Navigation Links (Scalable Curated Top-Level) -->
@@ -293,8 +304,8 @@
                 </a>
             </nav>
 
-            <!-- Right Action Icons (Search, Account, Wishlist, Cart) -->
-            <div class="flex items-center space-x-3 sm:space-x-5">
+            <!-- Right Action Icons (De-cluttered on mobile: Search + Bag; Wishlist/Theme in drawer) -->
+            <div class="flex items-center gap-1 sm:gap-3">
                 
                 <!-- Search Button -->
                 <button 
@@ -316,10 +327,10 @@
                     <i data-lucide="user" class="w-5 h-5"></i>
                 </a>
 
-                <!-- Wishlist Icon with Dynamic Badge -->
+                <!-- Wishlist Icon with Dynamic Badge (Desktop & Tablet only; in mobile drawer) -->
                 <a 
                     href="{{ route('wishlist') }}" 
-                    class="relative p-2 text-espresso-900 dark:text-ivory-200 hover:text-gold-600 dark:hover:text-gold transition-colors focus:outline-none"
+                    class="relative p-2 text-espresso-900 dark:text-ivory-200 hover:text-gold-600 dark:hover:text-gold transition-colors focus:outline-none hidden md:inline-flex"
                     aria-label="Wishlist"
                 >
                     <i data-lucide="heart" class="w-5 h-5"></i>
@@ -331,7 +342,7 @@
                     ></span>
                 </a>
 
-                <!-- Shopping Bag Button with Dynamic Badge -->
+                <!-- Shopping Bag Button with Dynamic Badge (Mobile & Desktop Core Conversion) -->
                 <button 
                     type="button" 
                     @click="$store.cart.isOpen = true" 
@@ -347,11 +358,11 @@
                     ></span>
                 </button>
 
-                <!-- Theme Switcher Button (Light / Warm Dark Atelier) -->
+                <!-- Theme Switcher Button (Desktop & Tablet only; mobile has it inside drawer header) -->
                 <button 
                     type="button" 
                     @click="$store.theme.toggle()" 
-                    class="p-2 text-espresso-900 dark:text-ivory-200 hover:text-gold dark:hover:text-gold transition-colors focus:outline-none rounded-full"
+                    class="p-2 text-espresso-900 dark:text-ivory-200 hover:text-gold dark:hover:text-gold transition-colors focus:outline-none rounded-full hidden md:inline-flex"
                     :aria-label="$store.theme.current === 'dark' ? 'Switch to Light Theme' : 'Switch to Dark Atelier Theme'"
                     :title="$store.theme.current === 'dark' ? 'Switch to Light Theme' : 'Switch to Dark Atelier Theme'"
                 >
@@ -560,6 +571,18 @@
                             </div>
                         </div>
                     </div>
+
+                    <a 
+                        href="{{ route('wishlist') }}" 
+                        @click="mobileMenuOpen = false"
+                        class="flex items-center justify-between text-sm font-medium tracking-wide uppercase py-1 text-espresso-900 dark:text-ivory-100 hover:text-gold-600"
+                    >
+                        <span class="flex items-center gap-2">
+                            <i data-lucide="heart" class="w-4 h-4 text-gold"></i>
+                            <span>Saved Pieces (Wishlist)</span>
+                        </span>
+                        <span x-show="$store.wishlist.count > 0" x-text="$store.wishlist.count" class="px-2 py-0.5 text-[10px] font-bold rounded-full bg-gold/20 text-gold-700"></span>
+                    </a>
 
                     <a 
                         href="{{ route('shop') }}" 

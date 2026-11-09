@@ -650,8 +650,9 @@ class StoreController extends Controller
     {
         $products = $this->getProducts();
         $categories = $this->getCategories();
+        $deals = \App\Models\Deal::active()->with('products')->get();
 
-        $xml = view('user.sitemap', compact('products', 'categories'))->render();
+        $xml = view('user.sitemap', compact('products', 'categories', 'deals'))->render();
 
         return response($xml, 200)
             ->header('Content-Type', 'application/xml; charset=utf-8');

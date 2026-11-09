@@ -51,7 +51,7 @@
             <div class="text-[10px] text-amber-700/80 mt-1">Action advised</div>
         </a>
 
-        <a href="{{ route('admin.inventory.index', ['status' => 'out']) }}" class="p-4 rounded-2xl bg-white dark:bg-[#1A1513] border border-[#ECE6DE] dark:border-[#2C2420] shadow-2xs hover:border-rose-500 transition-colors">
+        <a href="{{ route('admin.inventory.index', ['status' => 'out']) }}" class="col-span-2 sm:col-span-1 p-4 rounded-2xl bg-white dark:bg-[#1A1513] border border-[#ECE6DE] dark:border-[#2C2420] shadow-2xs hover:border-rose-500 transition-colors">
             <div class="text-[10px] font-bold uppercase tracking-wider text-rose-600">SOLD OUT / ARCHIVAL</div>
             <div class="font-cinzel text-2xl font-bold text-rose-600 mt-1">{{ $outOfStockCount }}</div>
             <div class="text-[10px] text-rose-700/80 mt-1">Concierge alerts</div>
@@ -99,18 +99,88 @@
                 </select>
             </div>
 
-            <button type="submit" class="px-4 py-2 rounded-xl bg-espresso-900 hover:bg-tan-600 text-white font-semibold text-xs shrink-0 transition-colors border border-gold-400/20">
-                Filter
-            </button>
-            <a href="{{ route('admin.inventory.index') }}" class="px-3 py-2 rounded-xl border border-[#DFD6CB] dark:border-[#382D27] text-gray-500 hover:bg-gray-100 dark:hover:bg-[#201A18] text-xs font-semibold">
-                Reset
-            </a>
+            <div class="flex items-center gap-2 w-full sm:w-auto">
+                <button type="submit" class="flex-1 sm:flex-initial px-4 py-2 rounded-xl bg-espresso-900 hover:bg-tan-600 text-white font-semibold text-xs shrink-0 transition-colors border border-gold-400/20 text-center">
+                    Filter
+                </button>
+                <a href="{{ route('admin.inventory.index') }}" class="flex-1 sm:flex-initial px-3 py-2 rounded-xl border border-[#DFD6CB] dark:border-[#382D27] text-gray-500 hover:bg-gray-100 dark:hover:bg-[#201A18] text-xs font-semibold text-center">
+                    Reset
+                </a>
+            </div>
         </form>
     </div>
 
     <!-- Inventory Table with Fast Stock & Availability Replenishment -->
     <div class="rounded-3xl bg-white dark:bg-[#1A1513] border border-[#ECE6DE] dark:border-[#2C2420] shadow-card overflow-hidden">
-        <div class="overflow-x-auto">
+        
+        <!-- Mobile Inventory Cards (< 640px) -->
+        <div class="block sm:hidden divide-y divide-[#F0EAE1] dark:divide-[#28201C]">
+            @forelse($products as $product)
+                <div class="p-4 hover:bg-[#FAF8F5] dark:hover:bg-[#221B18] transition-colors space-y-3">
+                    <div class="flex items-start gap-3">
+                        <img 
+                            src="{{ $product->image ?: '/images/products/prod-reversible-belt.jpg' }}" 
+                            alt="{{ $product->name }}"
+                            class="w-12 h-12 rounded-xl object-cover border border-[#ECE6DE] dark:border-[#2C2420] shrink-0"
+                        >
+                        <div class="min-w-0 flex-1">
+                            <h3 class="font-bold text-xs text-espresso-950 dark:text-white truncate">
+                                {{ $product->name }}
+                            </h3>
+                            <div class="flex items-center gap-2 mt-0.5 text-[10px] text-gray-400 font-mono">
+                                <span>{{ $product->sku }}</span>
+                                <span>•</span>
+                                <span>{{ $product->category_name ?: ucfirst($product->category_slug) }}</span>
+                            </div>
+                            <div class="mt-1 flex items-center gap-2">
+                                <span class="font-bold text-xs {{ $product->stock_quantity <= 5 ? ($product->stock_quantity == 0 ? 'text-rose-600' : 'text-amber-600') : 'text-emerald-700 dark:text-emerald-400' }}">
+                                    {{ $product->stock_quantity }} in stock
+                                </span>
+                                <span class="text-gray-300">•</span>
+                                <span class="text-[10px] text-gray-400 font-mono">PKR {{ number_format($product->price) }}</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Fast Quick-Replenish Form for Mobile -->
+                    <form action="{{ route('admin.inventory.update', $product) }}" method="POST" class="p-2.5 rounded-xl bg-[#FAF8F5] dark:bg-[#201815] border border-[#E8E1D7] dark:border-[#332620] flex items-center gap-2">
+                        @csrf
+                        <div class="flex items-center gap-1 min-w-0 flex-1">
+                            <input 
+                                type="number" 
+                                name="stock_quantity" 
+                                value="{{ $product->stock_quantity }}" 
+                                min="0"
+                                title="Units"
+                                class="w-16 px-2 py-1.5 text-xs rounded-lg border border-[#DFD6CB] dark:border-[#382D27] bg-white dark:bg-[#2A201C] text-center font-mono font-bold text-espresso-900 dark:text-white"
+                            >
+                            <select 
+                                name="availability" 
+                                class="flex-1 min-w-0 px-2 py-1.5 text-xs rounded-lg border border-[#DFD6CB] dark:border-[#382D27] bg-white dark:bg-[#2A201C] text-espresso-900 dark:text-white"
+                            >
+                                <option value="in_stock" {{ $product->availability === 'in_stock' ? 'selected' : '' }}>In Stock</option>
+                                <option value="on_demand" {{ $product->availability === 'on_demand' ? 'selected' : '' }}>On Demand</option>
+                                <option value="out_of_stock" {{ $product->availability === 'out_of_stock' ? 'selected' : '' }}>Out of Stock</option>
+                            </select>
+                        </div>
+
+                        <button 
+                            type="submit" 
+                            class="px-3 py-1.5 rounded-lg text-xs font-semibold bg-espresso-900 hover:bg-tan-600 text-white shrink-0 shadow-xs transition-colors"
+                        >
+                            Save
+                        </button>
+                    </form>
+                </div>
+            @empty
+                <div class="py-8 text-center text-xs text-gray-400">
+                    No inventory records match current filter.
+                </div>
+            @endforelse
+        </div>
+
+        <!-- Desktop / Tablet Table (>= 640px) -->
+        <div class="hidden sm:block overflow-x-auto w-full max-w-full">
             <table class="w-full text-left text-xs">
                 <thead>
                     <tr class="text-[10px] font-bold uppercase tracking-wider text-[#8F8379] bg-[#FAF8F5] dark:bg-[#201A18] border-b border-[#ECE6DE] dark:border-[#2C2420]">

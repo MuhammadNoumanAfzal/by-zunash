@@ -22,11 +22,11 @@
             </p>
         </div>
 
-        <div class="flex items-center gap-2">
+        <div class="flex items-center flex-wrap gap-2">
             <a 
                 href="{{ route('admin.orders.invoice', $order) }}" 
                 target="_blank"
-                class="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-white dark:bg-[#1A1513] border border-[#DFD6CB] dark:border-[#3A2F29] text-xs font-semibold text-espresso-900 dark:text-white hover:border-tan-500 shadow-2xs transition-colors"
+                class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-white dark:bg-[#1A1513] border border-[#DFD6CB] dark:border-[#3A2F29] text-xs font-semibold text-espresso-900 dark:text-white hover:border-tan-500 shadow-2xs transition-colors"
             >
                 <i data-lucide="printer" class="w-3.5 h-3.5 text-tan-600"></i>
                 <span>Print Invoice</span>
@@ -37,7 +37,7 @@
                 @method('DELETE')
                 <button 
                     type="submit" 
-                    class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl border border-rose-200 text-xs font-semibold text-rose-600 hover:bg-rose-50 transition-colors"
+                    class="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl border border-rose-200 text-xs font-semibold text-rose-600 hover:bg-rose-50 transition-colors"
                     title="Delete Order"
                 >
                     <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
@@ -47,7 +47,7 @@
 
             <a 
                 href="{{ route('admin.orders.index') }}" 
-                class="px-4 py-2 rounded-xl border border-[#DFD6CB] text-xs font-semibold text-gray-600 dark:text-gray-300 hover:bg-gray-50 transition-colors"
+                class="px-3.5 py-2 rounded-xl border border-[#DFD6CB] text-xs font-semibold text-gray-600 dark:text-gray-300 hover:bg-gray-50 transition-colors"
             >
                 Back to Orders
             </a>
@@ -55,14 +55,14 @@
     </div>
 
     <!-- Status Update Banner Card -->
-    <div class="p-5 rounded-3xl bg-white dark:bg-[#1A1513] border border-[#ECE6DE] dark:border-[#2C2420] shadow-card">
-        <form action="{{ route('admin.orders.update-status', $order) }}" method="POST" class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+    <div class="p-4 sm:p-5 rounded-3xl bg-white dark:bg-[#1A1513] border border-[#ECE6DE] dark:border-[#2C2420] shadow-card">
+        <form action="{{ route('admin.orders.update-status', $order) }}" method="POST" class="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
             @csrf
             
-            <div class="flex items-center gap-4">
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 flex-1">
                 <div>
                     <label class="block text-[10px] font-bold uppercase tracking-wider text-[#8F8379] mb-1">Order Fulfillment Status</label>
-                    <select name="order_status" class="px-3 py-1.5 text-xs rounded-xl bg-[#FAF8F5] dark:bg-[#241D1A] border border-[#DFD6CB] text-espresso-900 dark:text-white font-semibold">
+                    <select name="order_status" class="w-full px-3 py-2 text-xs rounded-xl bg-[#FAF8F5] dark:bg-[#241D1A] border border-[#DFD6CB] text-espresso-900 dark:text-white font-semibold">
                         <option value="pending" {{ $order->order_status === 'pending' ? 'selected' : '' }}>● Pending</option>
                         <option value="processing" {{ $order->order_status === 'processing' ? 'selected' : '' }}>● In Crafting / Processing</option>
                         <option value="completed" {{ $order->order_status === 'completed' ? 'selected' : '' }}>● Delivered & Closed</option>
@@ -72,7 +72,7 @@
 
                 <div>
                     <label class="block text-[10px] font-bold uppercase tracking-wider text-[#8F8379] mb-1">Payment Status</label>
-                    <select name="payment_status" class="px-3 py-1.5 text-xs rounded-xl bg-[#FAF8F5] dark:bg-[#241D1A] border border-[#DFD6CB] text-espresso-900 dark:text-white font-semibold">
+                    <select name="payment_status" class="w-full px-3 py-2 text-xs rounded-xl bg-[#FAF8F5] dark:bg-[#241D1A] border border-[#DFD6CB] text-espresso-900 dark:text-white font-semibold">
                         <option value="pending" {{ $order->payment_status === 'pending' ? 'selected' : '' }}>Pending Clearance</option>
                         <option value="paid" {{ $order->payment_status === 'paid' ? 'selected' : '' }}>Paid / Cleared</option>
                         <option value="failed" {{ $order->payment_status === 'failed' ? 'selected' : '' }}>Payment Failed</option>
@@ -80,7 +80,7 @@
                 </div>
             </div>
 
-            <button type="submit" class="px-5 py-2 rounded-xl bg-espresso-900 hover:bg-tan-600 text-white font-semibold text-xs shadow-md transition-colors self-start sm:self-end">
+            <button type="submit" class="w-full sm:w-auto px-5 py-2.5 rounded-xl bg-espresso-900 hover:bg-tan-600 text-white font-semibold text-xs shadow-md transition-colors text-center shrink-0">
                 Update Order Status
             </button>
         </form>

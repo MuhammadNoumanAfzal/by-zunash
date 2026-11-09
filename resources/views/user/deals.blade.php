@@ -1,9 +1,59 @@
 @extends('user.layouts.app')
 
-@section('title', 'Curated Leather Sets & Deals | By Zunash Pakistan')
-@section('meta_description', 'Discover curated sets and exclusive handcrafted leather deals by Atelier By Zunash. Pair complementary belts, wallets, and bags at exceptional bespoke rates.')
-@section('meta_keywords', 'leather deals Pakistan, buy leather belt and wallet combo, luxury leather sets Pakistan, By Zunash')
+@section('title', 'Curated Leather Sets & Deals | Luxury Bundles Pakistan | By Zunash')
+@section('meta_description', 'Discover handcrafted luxury leather deals by Atelier By Zunash Pakistan. Pair complementary reversible belts, wallets, and bags at exclusive bundle rates.')
+@section('meta_keywords', 'leather deals Pakistan, buy leather belt and wallet combo, luxury leather sets Pakistan, By Zunash bundle, cash on delivery leather sets')
 @section('canonical', route('deals'))
+@section('og_type', 'website')
+@section('og_image', asset('images/brand/artisan-craft.jpg'))
+
+@push('schema')
+<script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@graph": [
+        {
+            "@type": "CollectionPage",
+            "@id": "{{ route('deals') }}/#deals",
+            "name": "Curated Leather Sets & Exclusive Atelier Deals",
+            "description": "Discover curated sets and exclusive handcrafted leather deals by Atelier By Zunash. Pair complementary belts, wallets, and bags at exceptional bespoke rates.",
+            "url": "{{ route('deals') }}",
+            "mainEntity": {
+                "@type": "ItemList",
+                "itemListElement": [
+                    @foreach($deals as $idx => $d)
+                    {
+                        "@type": "ListItem",
+                        "position": {{ $loop->iteration }},
+                        "url": "{{ route('deal.details', $d->slug) }}",
+                        "name": "{{ addslashes($d->title) }}"
+                    }{{ !$loop->last ? ',' : '' }}
+                    @endforeach
+                ]
+            }
+        },
+        {
+            "@type": "BreadcrumbList",
+            "@id": "{{ route('deals') }}/#breadcrumb",
+            "itemListElement": [
+                {
+                    "@type": "ListItem",
+                    "position": 1,
+                    "name": "Home",
+                    "item": "{{ route('home') }}"
+                },
+                {
+                    "@type": "ListItem",
+                    "position": 2,
+                    "name": "Curated Sets & Deals",
+                    "item": "{{ route('deals') }}"
+                }
+            ]
+        }
+    ]
+}
+</script>
+@endpush
 
 @section('content')
 
@@ -45,14 +95,15 @@
             </span>
         </div>
 
-        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+        <!-- Robust Flex Layout (Sidebar + Main Content) -->
+        <div class="flex flex-col lg:flex-row gap-8 items-start">
 
             <!-- ========================================================
-                 LEFT SIDEBAR FILTER (Desktop & Mobile Drawer)
+                 LEFT SIDEBAR FILTER (Desktop & Mobile Toggle)
                  ======================================================== -->
             <aside 
                 :class="mobileFilterOpen ? 'block' : 'hidden lg:block'"
-                class="lg:col-span-3 space-y-6 bg-[#FAF8F5] dark:bg-[#14100E] p-5 sm:p-6 rounded-2xl border border-ivory-300 dark:border-white/10"
+                class="w-full lg:w-72 flex-shrink-0 space-y-6 bg-[#FAF8F5] dark:bg-[#14100E] p-5 sm:p-6 rounded-2xl border border-ivory-300 dark:border-white/10"
             >
                 <div class="flex items-center justify-between border-b border-ivory-200 dark:border-white/10 pb-3">
                     <div class="flex items-center gap-2">
@@ -174,9 +225,9 @@
             </aside>
 
             <!-- ========================================================
-                 RIGHT DEALS SHOWCASE GRID (9 Cols)
+                 RIGHT DEALS SHOWCASE GRID (Flex-1)
                  ======================================================== -->
-            <main class="lg:col-span-9 space-y-6">
+            <main class="flex-1 w-full min-w-0 space-y-6">
 
                 <!-- Results Count & Active Category Badge -->
                 <div class="flex items-center justify-between pb-3 border-b border-ivory-200 dark:border-white/10">
@@ -202,7 +253,7 @@
                                 id="{{ $deal->slug }}" 
                                 class="group bg-white dark:bg-[#181310] rounded-2xl border border-ivory-300 dark:border-white/10 shadow-xs hover:shadow-md transition-all duration-300 overflow-hidden flex flex-col scroll-mt-24"
                             >
-                                <!-- Top: Single High-Class Combination Image (Refined Height: h-44 sm:h-48) -->
+                                <!-- Top: Single High-Class Combination Image -->
                                 <div class="relative w-full h-44 sm:h-48 bg-[#F7F5F0] dark:bg-[#14100E] overflow-hidden border-b border-ivory-200 dark:border-white/10">
                                     <a href="{{ route('deal.details', $deal->slug) }}" class="block w-full h-full">
                                         <img 

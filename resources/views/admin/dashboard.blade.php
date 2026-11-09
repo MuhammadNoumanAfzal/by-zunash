@@ -4,46 +4,46 @@
 
 @section('content')
 
-<div class="space-y-3.5" x-data="{ activeChartTab: 'revenue', trajectoryPeriod: '12m' }">
+<div class="space-y-3.5 w-full min-w-0 max-w-full" x-data="{ activeChartTab: 'revenue', trajectoryPeriod: '12m' }">
 
     <!-- ======================= 1. COMPACT EXECUTIVE RIBBON ======================= -->
-    <div class="relative overflow-hidden rounded-2xl bg-gradient-to-r from-espresso-950 via-[#1C1512] to-tan-800 text-white py-2.5 px-4 sm:px-5 shadow-xs border border-gold/30 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+    <div class="relative overflow-hidden rounded-2xl bg-gradient-to-r from-espresso-950 via-[#1C1512] to-tan-800 text-white py-2.5 px-3.5 sm:px-5 shadow-xs border border-gold/30 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 w-full min-w-0">
         <!-- Subtle luxury ambient gold ornament -->
         <div class="absolute -right-10 -top-10 w-44 h-44 rounded-full bg-gold/10 blur-2xl pointer-events-none"></div>
 
         <!-- Left: Brand Title & Live Status -->
-        <div class="flex items-center gap-3 relative z-10">
+        <div class="flex items-center gap-2.5 sm:gap-3 relative z-10 min-w-0">
             <div class="w-8 h-8 rounded-xl bg-gradient-to-br from-espresso-900 to-tan-700 text-gold font-cinzel font-bold text-xs flex items-center justify-center shrink-0 border border-gold/40 shadow-xs">
                 BZ
             </div>
-            <div>
-                <div class="flex items-center gap-2">
-                    <h1 class="font-cinzel text-base sm:text-lg font-bold text-white tracking-wide leading-none">
+            <div class="min-w-0 flex-1">
+                <div class="flex items-center gap-2 flex-wrap">
+                    <h1 class="font-cinzel text-sm sm:text-base font-bold text-white tracking-wide leading-none truncate">
                         BY ZUNASH ATELIER
                     </h1>
-                    <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 text-[9px] font-bold border border-emerald-500/40">
+                    <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 text-[9px] font-bold border border-emerald-500/40 shrink-0">
                         <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
                         LIVE
                     </span>
                 </div>
-                <p class="text-[10px] text-tan-200/80 mt-0.5">
+                <p class="text-[10px] text-tan-200/80 mt-0.5 line-clamp-1 sm:line-clamp-none">
                     Executive Leathercraft Control Center • Real-time sales velocity & orders across Pakistan
                 </p>
             </div>
         </div>
 
         <!-- Right: Compact Revenue & Action Button -->
-        <div class="flex items-center gap-2.5 shrink-0 relative z-10 self-end sm:self-auto">
-            <div class="px-3 py-1 rounded-xl bg-black/40 border border-gold/30 text-right">
-                <span class="text-[8px] font-bold tracking-wider uppercase text-gold-300">TOTAL REVENUE (PKR)</span>
-                <div class="font-cinzel text-sm sm:text-base font-bold text-white leading-none">
+        <div class="flex items-center justify-between sm:justify-end gap-2.5 w-full sm:w-auto shrink-0 relative z-10 pt-1.5 sm:pt-0 border-t border-white/10 sm:border-0">
+            <div class="px-2.5 sm:px-3 py-1 rounded-xl bg-black/40 border border-gold/30 text-left sm:text-right min-w-0">
+                <span class="text-[8px] font-bold tracking-wider uppercase text-gold-300 block truncate">TOTAL REVENUE (PKR)</span>
+                <div class="font-cinzel text-xs sm:text-base font-bold text-white leading-none mt-0.5 truncate">
                     Rs. {{ number_format($totalRevenue, 0) }}
                 </div>
             </div>
 
             <a 
                 href="{{ route('admin.products.create') }}" 
-                class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-gradient-to-r from-gold-400 via-gold to-tan-600 hover:from-gold hover:to-tan-700 text-espresso-950 font-bold text-xs shadow-xs transition-all active:scale-95 border border-gold-300/40"
+                class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-gradient-to-r from-gold-400 via-gold to-tan-600 hover:from-gold hover:to-tan-700 text-espresso-950 font-bold text-xs shadow-xs transition-all active:scale-95 border border-gold-300/40 shrink-0"
             >
                 <i data-lucide="plus" class="w-3.5 h-3.5"></i>
                 <span>New Creation</span>
@@ -53,81 +53,81 @@
 
 
     <!-- ======================= 2. COMPACT 4 KPI STAT CARDS (REDUCED HEIGHT) ======================= -->
-    <div class="grid grid-cols-2 lg:grid-cols-4 gap-2.5 sm:gap-3">
+    <div class="grid grid-cols-2 lg:grid-cols-4 gap-2.5 sm:gap-3 w-full min-w-0">
         
         <!-- KPI 1: TOTAL PRODUCTS -->
-        <a href="{{ route('admin.products.index') }}" class="p-3 sm:p-3.5 rounded-xl bg-white dark:bg-[#161210] border border-[#ECE6DE] dark:border-[#261E1A] shadow-2xs hover:border-tan-500 transition-colors group flex items-center justify-between">
-            <div class="min-w-0">
+        <a href="{{ route('admin.products.index') }}" class="p-2.5 sm:p-3.5 rounded-xl bg-white dark:bg-[#161210] border border-[#ECE6DE] dark:border-[#261E1A] shadow-2xs hover:border-tan-500 transition-colors group flex items-center justify-between min-w-0 overflow-hidden">
+            <div class="min-w-0 flex-1">
                 <div class="text-[9px] font-bold uppercase tracking-wider text-[#8F8379] truncate">
                     TOTAL CREATIONS
                 </div>
-                <div class="font-cinzel text-xl sm:text-2xl font-bold text-espresso-950 dark:text-white leading-tight mt-0.5">
+                <div class="font-cinzel text-lg sm:text-2xl font-bold text-espresso-950 dark:text-white leading-tight mt-0.5">
                     {{ $totalProducts }}
                 </div>
-                <div class="flex items-center gap-1 text-[10px] text-tan-600 dark:text-gold-400 mt-0.5 font-medium">
-                    <span class="w-1.5 h-1.5 rounded-full bg-tan-500"></span>
-                    <span>{{ $activeProducts }} Active in Store</span>
+                <div class="flex items-center gap-1 text-[10px] text-tan-600 dark:text-gold-400 mt-0.5 font-medium truncate">
+                    <span class="w-1.5 h-1.5 rounded-full bg-tan-500 shrink-0"></span>
+                    <span class="truncate">{{ $activeProducts }} Active</span>
                 </div>
             </div>
-            <div class="w-8 h-8 rounded-lg bg-[#FAF6F2] dark:bg-[#251A14] text-tan-700 dark:text-gold-400 flex items-center justify-center shrink-0 border border-tan-200 dark:border-[#38261E] group-hover:scale-105 transition-transform">
-                <i data-lucide="shopping-bag" class="w-4 h-4"></i>
+            <div class="w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-[#FAF6F2] dark:bg-[#251A14] text-tan-700 dark:text-gold-400 flex items-center justify-center shrink-0 border border-tan-200 dark:border-[#38261E] group-hover:scale-105 transition-transform ml-1">
+                <i data-lucide="shopping-bag" class="w-3.5 h-3.5 sm:w-4 sm:h-4"></i>
             </div>
         </a>
 
         <!-- KPI 2: STORE ORDERS -->
-        <a href="{{ route('admin.orders.index') }}" class="p-3 sm:p-3.5 rounded-xl bg-white dark:bg-[#161210] border border-[#ECE6DE] dark:border-[#261E1A] shadow-2xs hover:border-gold-400 transition-colors group flex items-center justify-between">
-            <div class="min-w-0">
+        <a href="{{ route('admin.orders.index') }}" class="p-2.5 sm:p-3.5 rounded-xl bg-white dark:bg-[#161210] border border-[#ECE6DE] dark:border-[#261E1A] shadow-2xs hover:border-gold-400 transition-colors group flex items-center justify-between min-w-0 overflow-hidden">
+            <div class="min-w-0 flex-1">
                 <div class="text-[9px] font-bold uppercase tracking-wider text-[#8F8379] truncate">
                     STORE ORDERS
                 </div>
-                <div class="font-cinzel text-xl sm:text-2xl font-bold text-espresso-950 dark:text-white leading-tight mt-0.5">
+                <div class="font-cinzel text-lg sm:text-2xl font-bold text-espresso-950 dark:text-white leading-tight mt-0.5">
                     {{ $totalOrders }}
                 </div>
-                <div class="flex items-center gap-1 text-[10px] text-emerald-600 dark:text-emerald-400 mt-0.5 font-medium">
-                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
-                    <span>{{ $ordersThisMonth }} Processed This Month</span>
+                <div class="flex items-center gap-1 text-[10px] text-emerald-600 dark:text-emerald-400 mt-0.5 font-medium truncate">
+                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 shrink-0"></span>
+                    <span class="truncate">{{ $ordersThisMonth }} This Month</span>
                 </div>
             </div>
-            <div class="w-8 h-8 rounded-lg bg-[#FDF9F2] dark:bg-[#261F15] text-gold-700 dark:text-gold-400 flex items-center justify-center shrink-0 border border-gold-300/40 group-hover:scale-105 transition-transform">
-                <i data-lucide="clipboard-check" class="w-4 h-4"></i>
+            <div class="w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-[#FDF9F2] dark:bg-[#261F15] text-gold-700 dark:text-gold-400 flex items-center justify-center shrink-0 border border-gold-300/40 group-hover:scale-105 transition-transform ml-1">
+                <i data-lucide="clipboard-check" class="w-3.5 h-3.5 sm:w-4 sm:h-4"></i>
             </div>
         </a>
 
         <!-- KPI 3: CLIENT INQUIRIES -->
-        <a href="{{ route('admin.messages.index') }}" class="p-3 sm:p-3.5 rounded-xl bg-white dark:bg-[#161210] border border-[#ECE6DE] dark:border-[#261E1A] shadow-2xs hover:border-amber-400 transition-colors group flex items-center justify-between">
-            <div class="min-w-0">
+        <a href="{{ route('admin.messages.index') }}" class="p-2.5 sm:p-3.5 rounded-xl bg-white dark:bg-[#161210] border border-[#ECE6DE] dark:border-[#261E1A] shadow-2xs hover:border-amber-400 transition-colors group flex items-center justify-between min-w-0 overflow-hidden">
+            <div class="min-w-0 flex-1">
                 <div class="text-[9px] font-bold uppercase tracking-wider text-[#8F8379] truncate">
                     CLIENT INQUIRIES
                 </div>
-                <div class="font-cinzel text-xl sm:text-2xl font-bold text-espresso-950 dark:text-white leading-tight mt-0.5">
+                <div class="font-cinzel text-lg sm:text-2xl font-bold text-espresso-950 dark:text-white leading-tight mt-0.5">
                     {{ $activeInquiries }}
                 </div>
-                <div class="flex items-center gap-1 text-[10px] text-[#8F8379] mt-0.5 font-medium">
-                    <span class="w-1.5 h-1.5 rounded-full {{ $activeInquiries > 0 ? 'bg-amber-500' : 'bg-emerald-500' }}"></span>
-                    <span>{{ $activeInquiries > 0 ? $activeInquiries . ' Pending Reply' : 'All Inquiries Handled' }}</span>
+                <div class="flex items-center gap-1 text-[10px] text-[#8F8379] mt-0.5 font-medium truncate">
+                    <span class="w-1.5 h-1.5 rounded-full {{ $activeInquiries > 0 ? 'bg-amber-500' : 'bg-emerald-500' }} shrink-0"></span>
+                    <span class="truncate">{{ $activeInquiries > 0 ? $activeInquiries . ' Pending' : 'All Handled' }}</span>
                 </div>
             </div>
-            <div class="w-8 h-8 rounded-lg bg-[#FAF8F5] dark:bg-[#201815] text-tan-700 dark:text-gold flex items-center justify-center shrink-0 border border-[#E8E1D7] dark:border-[#38261E] group-hover:scale-105 transition-transform">
-                <i data-lucide="message-square" class="w-4 h-4"></i>
+            <div class="w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-[#FAF8F5] dark:bg-[#201815] text-tan-700 dark:text-gold flex items-center justify-center shrink-0 border border-[#E8E1D7] dark:border-[#38261E] group-hover:scale-105 transition-transform ml-1">
+                <i data-lucide="message-square" class="w-3.5 h-3.5 sm:w-4 sm:h-4"></i>
             </div>
         </a>
 
         <!-- KPI 4: VIP PATRONS -->
-        <a href="{{ route('admin.customers.index') }}" class="p-3 sm:p-3.5 rounded-xl bg-white dark:bg-[#161210] border border-[#ECE6DE] dark:border-[#261E1A] shadow-2xs hover:border-emerald-500 transition-colors group flex items-center justify-between">
-            <div class="min-w-0">
+        <a href="{{ route('admin.customers.index') }}" class="p-2.5 sm:p-3.5 rounded-xl bg-white dark:bg-[#161210] border border-[#ECE6DE] dark:border-[#261E1A] shadow-2xs hover:border-emerald-500 transition-colors group flex items-center justify-between min-w-0 overflow-hidden">
+            <div class="min-w-0 flex-1">
                 <div class="text-[9px] font-bold uppercase tracking-wider text-[#8F8379] truncate">
                     VIP PATRONS
                 </div>
-                <div class="font-cinzel text-xl sm:text-2xl font-bold text-espresso-950 dark:text-white leading-tight mt-0.5">
+                <div class="font-cinzel text-lg sm:text-2xl font-bold text-espresso-950 dark:text-white leading-tight mt-0.5">
                     {{ $vipClients }}
                 </div>
-                <div class="flex items-center gap-1 text-[10px] text-emerald-600 dark:text-emerald-400 mt-0.5 font-medium">
-                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
-                    <span>Avg Ticket: Rs. {{ number_format($averageOrderValue) }}</span>
+                <div class="flex items-center gap-1 text-[10px] text-emerald-600 dark:text-emerald-400 mt-0.5 font-medium truncate">
+                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 shrink-0"></span>
+                    <span class="truncate">Ticket: Rs. {{ number_format($averageOrderValue) }}</span>
                 </div>
             </div>
-            <div class="w-8 h-8 rounded-lg bg-[#F0FAF5] dark:bg-[#162720] text-emerald-600 flex items-center justify-center shrink-0 border border-[#D5EFE2] dark:border-[#223E32] group-hover:scale-105 transition-transform">
-                <i data-lucide="crown" class="w-4 h-4"></i>
+            <div class="w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-[#F0FAF5] dark:bg-[#162720] text-emerald-600 flex items-center justify-center shrink-0 border border-[#D5EFE2] dark:border-[#223E32] group-hover:scale-105 transition-transform ml-1">
+                <i data-lucide="crown" class="w-3.5 h-3.5 sm:w-4 sm:h-4"></i>
             </div>
         </a>
 
@@ -135,10 +135,10 @@
 
 
     <!-- ======================= 3. MULTI-GRAPH ANALYTICS HUB (VISIBLE IN FIRST VIEW) ======================= -->
-    <div class="grid grid-cols-1 lg:grid-cols-12 gap-3.5">
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-3.5 w-full min-w-0">
 
         <!-- Left Column: Multi-Tab Interactive Charts Hub (8 Cols / ~67%) -->
-        <div class="lg:col-span-8 p-4 sm:p-5 rounded-2xl bg-white dark:bg-[#161210] border border-[#ECE6DE] dark:border-[#261E1A] shadow-card flex flex-col justify-between">
+        <div class="lg:col-span-8 p-3.5 sm:p-5 rounded-2xl bg-white dark:bg-[#161210] border border-[#ECE6DE] dark:border-[#261E1A] shadow-card flex flex-col justify-between w-full min-w-0 overflow-hidden">
             
             <div>
                 <!-- Header with Clean Tab Selectors -->
@@ -157,12 +157,12 @@
                     </div>
 
                     <!-- Clean Graph Navigation Tabs -->
-                    <div class="flex items-center flex-wrap gap-1 p-1 rounded-xl bg-[#FAF8F5] dark:bg-[#201815] border border-[#EFE8DF] dark:border-[#2E241F]">
+                    <div class="flex items-center gap-1 p-1 rounded-xl bg-[#FAF8F5] dark:bg-[#201815] border border-[#EFE8DF] dark:border-[#2E241F] overflow-x-auto max-w-full flex-nowrap">
                         <button 
                             type="button" 
                             @click="activeChartTab = 'revenue'; switchChart('revenue')"
                             :class="activeChartTab === 'revenue' ? 'bg-white dark:bg-[#2D221D] text-tan-700 dark:text-gold shadow-2xs font-bold' : 'text-gray-500 hover:text-espresso-900 dark:hover:text-white'"
-                            class="px-2.5 py-1 rounded-lg text-[11px] transition-all flex items-center gap-1.5"
+                            class="px-2.5 py-1 rounded-lg text-[11px] transition-all flex items-center gap-1.5 shrink-0"
                         >
                             <i data-lucide="trending-up" class="w-3 h-3"></i>
                             <span>Revenue</span>
@@ -172,7 +172,7 @@
                             type="button" 
                             @click="activeChartTab = 'orders'; switchChart('orders')"
                             :class="activeChartTab === 'orders' ? 'bg-white dark:bg-[#2D221D] text-tan-700 dark:text-gold shadow-2xs font-bold' : 'text-gray-500 hover:text-espresso-900 dark:hover:text-white'"
-                            class="px-2.5 py-1 rounded-lg text-[11px] transition-all flex items-center gap-1.5"
+                            class="px-2.5 py-1 rounded-lg text-[11px] transition-all flex items-center gap-1.5 shrink-0"
                         >
                             <i data-lucide="package-check" class="w-3 h-3"></i>
                             <span>Orders</span>
@@ -182,7 +182,7 @@
                             type="button" 
                             @click="activeChartTab = 'payments'; switchChart('payments')"
                             :class="activeChartTab === 'payments' ? 'bg-white dark:bg-[#2D221D] text-tan-700 dark:text-gold shadow-2xs font-bold' : 'text-gray-500 hover:text-espresso-900 dark:hover:text-white'"
-                            class="px-2.5 py-1 rounded-lg text-[11px] transition-all flex items-center gap-1.5"
+                            class="px-2.5 py-1 rounded-lg text-[11px] transition-all flex items-center gap-1.5 shrink-0"
                         >
                             <i data-lucide="credit-card" class="w-3 h-3"></i>
                             <span>Payments</span>
@@ -192,7 +192,7 @@
                             type="button" 
                             @click="activeChartTab = 'collections'; switchChart('collections')"
                             :class="activeChartTab === 'collections' ? 'bg-white dark:bg-[#2D221D] text-tan-700 dark:text-gold shadow-2xs font-bold' : 'text-gray-500 hover:text-espresso-900 dark:hover:text-white'"
-                            class="px-2.5 py-1 rounded-lg text-[11px] transition-all flex items-center gap-1.5"
+                            class="px-2.5 py-1 rounded-lg text-[11px] transition-all flex items-center gap-1.5 shrink-0"
                         >
                             <i data-lucide="layers" class="w-3 h-3"></i>
                             <span>Collections</span>
@@ -202,7 +202,7 @@
                             type="button" 
                             @click="activeChartTab = 'regions'; switchChart('regions')"
                             :class="activeChartTab === 'regions' ? 'bg-white dark:bg-[#2D221D] text-tan-700 dark:text-gold shadow-2xs font-bold' : 'text-gray-500 hover:text-espresso-900 dark:hover:text-white'"
-                            class="px-2.5 py-1 rounded-lg text-[11px] transition-all flex items-center gap-1.5"
+                            class="px-2.5 py-1 rounded-lg text-[11px] transition-all flex items-center gap-1.5 shrink-0"
                         >
                             <i data-lucide="map-pin" class="w-3 h-3"></i>
                             <span>Cities</span>
@@ -212,7 +212,7 @@
                 </div>
 
                 <!-- Interactive Chart Canvas Area -->
-                <div class="relative w-full h-[250px] sm:h-[270px] mt-3">
+                <div class="relative w-full h-[240px] sm:h-[270px] mt-3 min-w-0 overflow-hidden">
                     
                     <!-- Graph 1: Revenue Trajectory -->
                     <div x-show="activeChartTab === 'revenue'" class="w-full h-full">
@@ -267,7 +267,7 @@
 
 
         <!-- Right Column: Atelier Performance Dossier (4 Cols / ~33%) -->
-        <div class="lg:col-span-4 p-4 sm:p-5 rounded-2xl bg-white dark:bg-[#161210] border border-[#ECE6DE] dark:border-[#261E1A] shadow-card flex flex-col justify-between">
+        <div class="lg:col-span-4 p-3.5 sm:p-5 rounded-2xl bg-white dark:bg-[#161210] border border-[#ECE6DE] dark:border-[#261E1A] shadow-card flex flex-col justify-between w-full min-w-0 overflow-hidden">
             
             <div>
                 <!-- Header -->
@@ -369,7 +369,7 @@
 
 
     <!-- ======================= 4. RECENT STORE ORDERS & DISPATCH ======================= -->
-    <div class="rounded-2xl bg-white dark:bg-[#161210] border border-[#ECE6DE] dark:border-[#261E1A] shadow-card overflow-hidden">
+    <div class="rounded-2xl bg-white dark:bg-[#161210] border border-[#ECE6DE] dark:border-[#261E1A] shadow-card overflow-hidden w-full min-w-0">
         
         <div class="p-3.5 sm:p-4 border-b border-[#ECE6DE] dark:border-[#261E1A] flex items-center justify-between">
             <div class="flex items-center gap-2">
@@ -385,14 +385,75 @@
             </a>
         </div>
 
-        <div class="overflow-x-auto">
+        <!-- Mobile Order Cards (Visible on screens < 640px) -->
+        <div class="block sm:hidden divide-y divide-[#F0EAE1] dark:divide-[#261E1A]">
+            @forelse($recentOrders as $order)
+                <div class="p-3.5 hover:bg-[#FAF8F5]/80 dark:hover:bg-[#221B18] transition-colors space-y-2">
+                    <div class="flex items-center justify-between gap-2">
+                        <div class="flex items-center gap-2 min-w-0">
+                            <span class="font-mono font-bold text-xs text-tan-600 dark:text-gold-400 truncate">
+                                {{ $order->order_number }}
+                            </span>
+                            @if($order->order_status === 'completed')
+                                <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-50 text-emerald-700 dark:bg-emerald-950/40 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800 shrink-0">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                                    Delivered
+                                </span>
+                            @elseif($order->order_status === 'pending')
+                                <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-50 text-amber-800 dark:bg-amber-950/40 dark:text-amber-300 border border-amber-200 dark:border-amber-800 shrink-0">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-amber-500"></span>
+                                    Pending
+                                </span>
+                            @else
+                                <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-blue-50 text-blue-800 dark:bg-blue-950/40 dark:text-blue-300 border border-blue-200 dark:border-blue-800 shrink-0">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-blue-500"></span>
+                                    In Crafting
+                                </span>
+                            @endif
+                        </div>
+                        <div class="font-cinzel font-bold text-xs text-espresso-950 dark:text-white shrink-0">
+                            Rs. {{ number_format($order->total) }}
+                        </div>
+                    </div>
+
+                    <div class="flex items-center justify-between text-xs text-[#6E6359] dark:text-[#C5B8AC]">
+                        <div class="min-w-0 flex-1 pr-2">
+                            <div class="font-bold text-espresso-950 dark:text-white truncate">
+                                {{ $order->customer_name }}
+                            </div>
+                            <div class="text-[10px] text-gray-400 truncate">
+                                {{ $order->city }} • {{ $order->customer_email }}
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-2 shrink-0">
+                            <span class="px-2 py-0.5 rounded text-[9px] font-bold bg-[#FAF6F2] dark:bg-[#221812] text-tan-700 dark:text-gold border border-tan-200 dark:border-[#38261E]">
+                                {{ $order->payment_method }}
+                            </span>
+                            <a 
+                                href="{{ route('admin.orders.show', $order) }}" 
+                                class="px-2.5 py-1 rounded-lg text-[10px] font-semibold bg-espresso-900 hover:bg-tan-600 text-white transition-colors"
+                            >
+                                Details
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            @empty
+                <div class="py-8 text-center text-xs text-gray-400">
+                    No recent orders recorded yet.
+                </div>
+            @endforelse
+        </div>
+
+        <!-- Desktop / Tablet Table View (Visible on screens >= 640px) -->
+        <div class="hidden sm:block overflow-x-auto w-full max-w-full">
             <table class="w-full text-left text-xs">
                 <thead>
                     <tr class="text-[9px] font-bold uppercase tracking-wider text-[#8F8379] bg-[#FAF8F5] dark:bg-[#201A18] border-b border-[#ECE6DE] dark:border-[#261E1A]">
-                        <th class="py-2.5 px-4">ORDER #</th>
+                        <th class="py-2.5 px-4 whitespace-nowrap">ORDER #</th>
                         <th class="py-2.5 px-3">PATRON</th>
                         <th class="py-2.5 px-3">DESTINATION</th>
-                        <th class="py-2.5 px-3">AMOUNT (PKR)</th>
+                        <th class="py-2.5 px-3 whitespace-nowrap">AMOUNT (PKR)</th>
                         <th class="py-2.5 px-3">METHOD</th>
                         <th class="py-2.5 px-3">STATUS</th>
                         <th class="py-2.5 px-4 text-right">ACTION</th>
@@ -401,7 +462,7 @@
                 <tbody class="divide-y divide-[#F0EAE1] dark:divide-[#261E1A]">
                     @forelse($recentOrders as $order)
                         <tr class="hover:bg-[#FAF8F5]/80 dark:hover:bg-[#221B18] transition-colors">
-                            <td class="py-2.5 px-4 font-mono font-bold text-tan-600 dark:text-gold-400">
+                            <td class="py-2.5 px-4 font-mono font-bold text-tan-600 dark:text-gold-400 whitespace-nowrap">
                                 {{ $order->order_number }}
                             </td>
                             <td class="py-2.5 px-3">
@@ -415,7 +476,7 @@
                             <td class="py-2.5 px-3 text-gray-600 dark:text-gray-300">
                                 {{ $order->city }}
                             </td>
-                            <td class="py-2.5 px-3 font-cinzel font-bold text-espresso-950 dark:text-white">
+                            <td class="py-2.5 px-3 font-cinzel font-bold text-espresso-950 dark:text-white whitespace-nowrap">
                                 Rs. {{ number_format($order->total) }}
                             </td>
                             <td class="py-2.5 px-3">

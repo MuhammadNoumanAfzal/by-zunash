@@ -57,7 +57,7 @@
 
         <!-- Product Grid or Empty State -->
         @if(count($products) > 0)
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div class="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6">
                 @foreach($products as $product)
                     <x-user.components.product-card :product="$product" />
                 @endforeach

@@ -63,10 +63,10 @@
         </button>
 
         <!-- Product Image Link -->
-        <a href="{{ route('product.details', $product['slug']) }}" class="block w-full h-full relative">
+        <a href="{{ route('product.details', $product['slug']) }}" class="block w-full h-full relative" aria-label="View {{ $product['name'] }} details">
             <img 
                 src="{{ asset($product['image']) }}" 
-                alt="{{ $product['name'] }}" 
+                alt="{{ $product['name'] }} - Handcrafted Full-Grain Leather by Zunash Pakistan" 
                 loading="lazy"
                 class="w-full h-full object-cover object-center transform transition-transform duration-700 ease-out group-hover:scale-105 {{ $isOutOfStock ? 'grayscale-[20%] opacity-85' : '' }}"
             >
@@ -74,7 +74,7 @@
             @if(!empty($product['gallery']) && count($product['gallery']) > 1 && !$isOutOfStock)
                 <img 
                     src="{{ asset($product['gallery'][1]) }}" 
-                    alt="{{ $product['name'] }} Alternate Angle" 
+                    alt="{{ $product['name'] }} - Atelier Craftsmanship Detail Angle" 
                     loading="lazy"
                     class="absolute inset-0 w-full h-full object-cover object-center opacity-0 group-hover:opacity-100 transition-opacity duration-500 ease-in-out"
                 >
@@ -162,27 +162,29 @@
         </div>
 
         <!-- Price & Details Button Section -->
-        <div class="pt-2 border-t border-ivory-200 flex items-center justify-between gap-2 mt-auto">
-            <div class="flex flex-col">
-                <span class="text-[9px] uppercase tracking-wider text-muted-dark font-medium leading-none mb-0.5">Price</span>
-                <div class="flex items-baseline gap-1">
-                    <span class="font-sans text-[15px] sm:text-[16px] font-bold text-espresso-950 tracking-tight">
-                        <span class="text-[10px] font-semibold text-gold-700 mr-0.5">PKR</span>{{ number_format($product['price']) }}
-                    </span>
-                    @if(!empty($product['original_price']))
-                        <span class="text-[11px] text-muted-light line-through font-sans">
-                            {{ number_format($product['original_price']) }}
+        <div class="pt-2 border-t border-ivory-200 flex flex-col gap-2 mt-auto">
+            <div class="flex items-baseline justify-between gap-1">
+                <div class="flex flex-col">
+                    <span class="text-[9px] uppercase tracking-wider text-muted-dark font-medium leading-none mb-0.5">Price</span>
+                    <div class="flex items-baseline gap-1.5 flex-wrap">
+                        <span class="font-sans text-[14px] sm:text-[15px] font-bold text-espresso-950 tracking-tight">
+                            <span class="text-[10px] font-semibold text-gold-700 mr-0.5">PKR</span>{{ number_format($product['price']) }}
                         </span>
-                    @endif
+                        @if(!empty($product['original_price']))
+                            <span class="text-[10px] sm:text-[11px] text-muted-light line-through font-sans">
+                                {{ number_format($product['original_price']) }}
+                            </span>
+                        @endif
+                    </div>
                 </div>
             </div>
 
-            <!-- Details Button -->
+            <!-- Details Button - Full Width Touch Target -->
             <a 
                 href="{{ route('product.details', $product['slug']) }}" 
-                class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-ivory-100 hover:bg-espresso-950 text-espresso-950 hover:text-white border border-ivory-300 hover:border-espresso-950 text-[11px] font-semibold tracking-wider uppercase transition-all duration-200 group/btn shadow-2xs"
+                class="w-full py-1.5 px-2 rounded-lg bg-ivory-100 hover:bg-espresso-950 text-espresso-950 hover:text-white border border-ivory-300 hover:border-espresso-950 text-[10px] sm:text-[11px] font-semibold tracking-wider uppercase transition-all duration-200 flex items-center justify-center gap-1.5 group/btn shadow-2xs active:scale-[0.98]"
             >
-                <span>Details</span>
+                <span>View Details</span>
                 <i data-lucide="arrow-right" class="w-3 h-3 text-gold-600 group-hover/btn:text-gold-300 transition-transform group-hover/btn:translate-x-0.5"></i>
             </a>
         </div>

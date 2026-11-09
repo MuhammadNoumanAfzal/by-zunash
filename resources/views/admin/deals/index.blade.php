@@ -69,7 +69,7 @@
             <div class="flex items-center gap-2 w-full sm:w-auto">
                 <select 
                     name="status" 
-                    class="py-2 px-3 text-xs rounded-xl bg-[#FAF8F5] dark:bg-[#120E0C] border border-[#E0D7CB] dark:border-[#2C2420] text-espresso-900 dark:text-ivory focus:outline-hidden focus:border-tan-500"
+                    class="flex-1 sm:w-auto py-2 px-3 text-xs rounded-xl bg-[#FAF8F5] dark:bg-[#120E0C] border border-[#E0D7CB] dark:border-[#2C2420] text-espresso-900 dark:text-ivory focus:outline-hidden focus:border-tan-500"
                 >
                     <option value="">All Statuses</option>
                     <option value="active" {{ request('status') === 'active' ? 'selected' : '' }}>Active Only</option>
@@ -78,7 +78,7 @@
 
                 <button 
                     type="submit" 
-                    class="px-4 py-2 text-xs font-semibold rounded-xl bg-tan-600 hover:bg-tan-700 text-white transition-colors"
+                    class="px-4 py-2 text-xs font-semibold rounded-xl bg-tan-600 hover:bg-tan-700 text-white transition-colors shrink-0"
                 >
                     Filter
                 </button>
@@ -96,10 +96,97 @@
         </form>
     </div>
 
-    <!-- Deals Listing Table -->
+    <!-- Deals Listing Table & Mobile Cards -->
     <div class="bg-white dark:bg-[#1A1513] rounded-2xl border border-[#ECE6DE] dark:border-[#2C2420] shadow-2xs overflow-hidden">
         @if($deals->count() > 0)
-            <div class="overflow-x-auto">
+            
+            <!-- Mobile Deal Cards (< 640px) -->
+            <div class="block sm:hidden divide-y divide-[#ECE6DE] dark:divide-[#2C2420]">
+                @foreach($deals as $deal)
+                    <div class="p-4 hover:bg-[#FAF9F7] dark:hover:bg-[#201A17] transition-colors space-y-3">
+                        <div class="flex items-start gap-3">
+                            <div class="w-16 h-16 rounded-xl overflow-hidden bg-ivory-100 dark:bg-black/30 border border-[#ECE6DE] dark:border-white/10 shrink-0 relative">
+                                <img src="{{ asset($deal->image ?: 'images/brand/artisan-craft.jpg') }}" alt="{{ $deal->title }}" class="w-full h-full object-cover">
+                                @if($deal->is_featured)
+                                    <span class="absolute top-1 left-1 w-2.5 h-2.5 rounded-full bg-gold border border-black/30" title="Featured Deal"></span>
+                                @endif
+                            </div>
+
+                            <div class="min-w-0 flex-1">
+                                <div class="flex items-start justify-between gap-1.5">
+                                    <h3 class="font-serif text-sm font-bold text-espresso-950 dark:text-white truncate">
+                                        {{ $deal->title }}
+                                    </h3>
+                                    <form action="{{ route('admin.deals.toggle', $deal) }}" method="POST">
+                                        @csrf
+                                        <button type="submit" class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[9px] font-bold uppercase shrink-0 {{ $deal->is_active ? 'bg-emerald-50 text-emerald-700 dark:bg-emerald-950/40 dark:text-emerald-300 border border-emerald-300' : 'bg-zinc-100 text-zinc-500 border border-zinc-200' }}">
+                                            <span class="w-1.5 h-1.5 rounded-full {{ $deal->is_active ? 'bg-emerald-500' : 'bg-zinc-400' }}"></span>
+                                            {{ $deal->is_active ? 'Active' : 'Inactive' }}
+                                        </button>
+                                    </form>
+                                </div>
+
+                                @if($deal->tagline)
+                                    <p class="text-[11px] text-[#8F8379] dark:text-[#A09387] truncate mt-0.5">
+                                        {{ $deal->tagline }}
+                                    </p>
+                                @endif
+
+                                <div class="flex items-center gap-2 mt-1">
+                                    <span class="font-cinzel text-xs font-bold text-espresso-950 dark:text-white">
+                                        PKR {{ number_format($deal->deal_price) }}
+                                    </span>
+                                    @if($deal->effective_original_price > $deal->deal_price)
+                                        <span class="text-[10px] text-gray-400 line-through">
+                                            {{ number_format($deal->effective_original_price) }}
+                                        </span>
+                                    @endif
+                                    @if($deal->savings_amount > 0)
+                                        <span class="text-[9px] font-bold text-emerald-600 bg-emerald-50 dark:bg-emerald-950/40 px-1.5 py-0.2 rounded">
+                                            {{ $deal->savings_percentage }}% OFF
+                                        </span>
+                                    @endif
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="pt-2 border-t border-[#F0EAE1] dark:border-[#28201C] flex items-center justify-between text-xs">
+                            <span class="text-[11px] text-[#8F8379]">
+                                {{ $deal->products->count() }} Handcrafted Items
+                            </span>
+
+                            <div class="flex items-center gap-2">
+                                <a 
+                                    href="{{ route('deal.details', $deal->slug) }}" 
+                                    target="_blank"
+                                    class="p-1.5 rounded-lg border border-[#DFD6CB] dark:border-[#382D27] text-gray-400 hover:text-tan-600"
+                                    title="View Deal"
+                                >
+                                    <i data-lucide="external-link" class="w-3.5 h-3.5"></i>
+                                </a>
+
+                                <a 
+                                    href="{{ route('admin.deals.edit', $deal) }}" 
+                                    class="px-2.5 py-1 rounded-lg text-xs font-semibold bg-espresso-900 hover:bg-tan-600 text-white transition-colors"
+                                >
+                                    Edit
+                                </a>
+
+                                <form action="{{ route('admin.deals.destroy', $deal) }}" method="POST" onsubmit="return confirm('Remove Atelier Deal?');" class="inline">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="p-1.5 rounded-lg border border-rose-200 text-rose-600 hover:bg-rose-50" title="Delete Deal">
+                                        <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                @endforeach
+            </div>
+
+            <!-- Desktop / Tablet Table View (>= 640px) -->
+            <div class="hidden sm:block overflow-x-auto w-full max-w-full">
                 <table class="w-full text-left border-collapse">
                     <thead>
                         <tr class="border-b border-[#ECE6DE] dark:border-[#2C2420] bg-[#FAF8F5] dark:bg-[#120E0C] text-[10px] uppercase font-bold tracking-wider text-[#8F8379] dark:text-[#A09387]">

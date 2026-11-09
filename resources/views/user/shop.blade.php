@@ -569,8 +569,8 @@
                 @endif
 
                 @if(count($products) > 0)
-                    <!-- Product Grid (Responsive: 1 col on mobile, 2 cols on tablet, 3 cols on desktop) -->
-                    <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
+                    <!-- Product Grid (Responsive: 2 cols on mobile, 2 cols on tablet, 3 cols on desktop) -->
+                    <div class="grid grid-cols-2 sm:grid-cols-2 xl:grid-cols-3 gap-3 sm:gap-6">
                         @foreach($products as $product)
                             <x-user.components.product-card :product="$product" />
                         @endforeach

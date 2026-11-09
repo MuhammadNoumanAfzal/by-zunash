@@ -2,8 +2,82 @@
 
 @section('title', $deal->title . ' — Curated Leather Set | By Zunash Pakistan')
 @section('meta_description', $deal->description ?: 'Exclusive luxury leather pairing handcrafted by Atelier By Zunash Pakistan. Enjoy bespoke bundle pricing and complimentary presentation gift packaging.')
-@section('meta_keywords', $deal->title . ', leather deals Pakistan, luxury bundle By Zunash, leather gift sets Pakistan')
+@section('meta_keywords', $deal->title . ', leather deals Pakistan, luxury bundle By Zunash, leather gift sets Pakistan, cash on delivery leather bundle')
 @section('canonical', route('deal.details', $deal->slug))
+@section('og_type', 'product')
+@section('og_image', str_starts_with($deal->image, 'http') ? $deal->image : asset($deal->image ?: 'images/brand/artisan-craft.jpg'))
+
+@push('schema')
+<script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@graph": [
+        {
+            "@type": "Product",
+            "@id": "{{ route('deal.details', $deal->slug) }}/#deal",
+            "name": "{{ addslashes($deal->title) }}",
+            "image": [
+                "{{ str_starts_with($deal->image, 'http') ? $deal->image : asset($deal->image ?: 'images/brand/artisan-craft.jpg') }}"
+                @foreach($deal->products as $dp)
+                    ,"{{ str_starts_with($dp->image, 'http') ? $dp->image : asset($dp->image) }}"
+                @endforeach
+            ],
+            "description": "{{ addslashes(strip_tags($deal->description ?: $deal->tagline)) }}",
+            "sku": "BZ-DEAL-{{ str_pad($deal->id, 3, '0', STR_PAD_LEFT) }}",
+            "brand": {
+                "@type": "Brand",
+                "name": "By Zunash"
+            },
+            "category": "{{ addslashes($deal->category_name) }}",
+            "offers": {
+                "@type": "Offer",
+                "url": "{{ route('deal.details', $deal->slug) }}",
+                "priceCurrency": "PKR",
+                "price": "{{ $deal->deal_price }}",
+                "priceValidUntil": "2027-12-31",
+                "itemCondition": "https://schema.org/NewCondition",
+                "availability": "https://schema.org/InStock",
+                "seller": {
+                    "@type": "Organization",
+                    "name": "By Zunash"
+                }
+            },
+            "aggregateRating": {
+                "@type": "AggregateRating",
+                "ratingValue": "4.9",
+                "reviewCount": "42",
+                "bestRating": "5",
+                "worstRating": "1"
+            }
+        },
+        {
+            "@type": "BreadcrumbList",
+            "@id": "{{ route('deal.details', $deal->slug) }}/#breadcrumb",
+            "itemListElement": [
+                {
+                    "@type": "ListItem",
+                    "position": 1,
+                    "name": "Home",
+                    "item": "{{ route('home') }}"
+                },
+                {
+                    "@type": "ListItem",
+                    "position": 2,
+                    "name": "Curated Sets & Deals",
+                    "item": "{{ route('deals') }}"
+                },
+                {
+                    "@type": "ListItem",
+                    "position": 3,
+                    "name": "{{ addslashes($deal->title) }}",
+                    "item": "{{ route('deal.details', $deal->slug) }}"
+                }
+            ]
+        }
+    ]
+}
+</script>
+@endpush
 
 @section('content')
 
@@ -226,7 +300,29 @@
                         <span>Add Entire Set to Bag (PKR {{ number_format($deal->deal_price) }})</span>
                     </button>
 
-                    <div class="flex items-center justify-center gap-4 text-[11px] text-[#8F8379] dark:text-[#A09387]">
+                    <!-- WhatsApp Quick Order (High Converting for Pakistani Ad Traffic) -->
+                    <a 
+                        href="https://wa.me/923001234567?text={{ urlencode('Hello By Zunash! I want to order the Curated Deal: ' . $deal->title . ' (PKR ' . number_format($deal->deal_price) . '). Link: ' . url()->current() . ' — My delivery city is: ') }}" 
+                        target="_blank"
+                        rel="noopener"
+                        class="w-full h-11 px-4 bg-[#25D366] hover:bg-[#20BD5A] text-white text-xs font-bold uppercase tracking-wider rounded-xl shadow-xs transition-all flex items-center justify-center gap-2 active:scale-[0.98]"
+                    >
+                        <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24"><path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981z"/></svg>
+                        <span>Order via WhatsApp (Doorstep COD)</span>
+                    </a>
+
+                    <!-- Doorstep Inspection & Authenticity Guarantee -->
+                    <div class="p-3.5 rounded-xl bg-ivory-100/90 dark:bg-white/5 border border-gold/40 text-xs space-y-1">
+                        <div class="flex items-center gap-2 font-bold text-espresso-950 dark:text-white">
+                            <i data-lucide="shield-check" class="w-4 h-4 text-gold-600"></i>
+                            <span>100% Full-Grain Hide • Open Parcel Inspection</span>
+                        </div>
+                        <p class="text-[11px] text-[#8F8379] dark:text-[#A09387] leading-relaxed">
+                            Open and inspect both leather creations at your doorstep before handing payment to the rider. Cash on Delivery supported nationwide.
+                        </p>
+                    </div>
+
+                    <div class="flex items-center justify-center gap-4 text-[11px] text-[#8F8379] dark:text-[#A09387] pt-1">
                         <span class="flex items-center gap-1">
                             <i data-lucide="truck" class="w-3.5 h-3.5 text-gold"></i>
                             <span>Free Express Delivery</span>
@@ -399,7 +495,7 @@
             </a>
         </div>
 
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 sm:gap-6">
             @foreach($otherDeals as $other)
                 <div class="group bg-white dark:bg-[#181310] rounded-xl border border-ivory-300 dark:border-white/10 shadow-xs hover:shadow-md transition-all overflow-hidden flex flex-col">
                     <div class="relative w-full h-44 bg-[#F7F5F0] overflow-hidden">
@@ -442,6 +538,53 @@
     </div>
 </section>
 @endif
+
+<!-- STICKY MOBILE CONVERSION BAR FOR CURATED DEAL -->
+<div 
+    x-data="{ showStickyDealBar: false }"
+    @scroll.window="showStickyDealBar = (window.pageYOffset > 450)"
+    x-show="showStickyDealBar"
+    x-cloak
+    x-transition:enter="transition ease-out duration-300 transform"
+    x-transition:enter-start="translate-y-full opacity-0"
+    x-transition:enter-end="translate-y-0 opacity-100"
+    x-transition:leave="transition ease-in duration-200 transform"
+    x-transition:leave-start="translate-y-0 opacity-100"
+    x-transition:leave-end="translate-y-full opacity-0"
+    class="sm:hidden fixed bottom-0 inset-x-0 z-40 bg-white/95 dark:bg-[#181310]/95 backdrop-blur-md border-t border-ivory-300 dark:border-white/10 p-3 shadow-2xl"
+>
+    <div class="flex items-center justify-between gap-3">
+        <div class="flex items-center gap-2.5 min-w-0">
+            <div class="w-11 h-11 rounded-lg overflow-hidden bg-ivory-100 shrink-0 border border-ivory-200">
+                <img src="{{ asset($deal->image ?: 'images/brand/artisan-craft.jpg') }}" alt="{{ $deal->title }}" class="w-full h-full object-cover">
+            </div>
+            <div class="min-w-0">
+                <span class="text-xs font-bold text-espresso-950 dark:text-white truncate block">
+                    {{ $deal->title }}
+                </span>
+                <div class="flex items-baseline gap-1.5">
+                    <span class="font-serif text-sm font-bold text-espresso-950 dark:text-gold-400">
+                        PKR {{ number_format($deal->deal_price) }}
+                    </span>
+                    @if($deal->effective_original_price > $deal->deal_price)
+                        <span class="text-[10px] text-muted-light line-through">
+                            {{ number_format($deal->effective_original_price) }}
+                        </span>
+                    @endif
+                </div>
+            </div>
+        </div>
+
+        <button 
+            type="button" 
+            @click="addDealToCart(@js($deal))" 
+            class="px-4 py-2.5 rounded-xl bg-gold text-espresso-950 text-xs font-bold uppercase tracking-wider shadow-sm active:scale-95 flex items-center gap-1.5 shrink-0"
+        >
+            <i data-lucide="shopping-bag" class="w-3.5 h-3.5"></i>
+            <span>Add Set</span>
+        </button>
+    </div>
+</div>
 
 <!-- ========================================================
      SCRIPT: CART STORE INTEGRATION

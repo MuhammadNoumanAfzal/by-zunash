@@ -128,6 +128,8 @@
             transform: translate(-50%, -50%) !important;
             margin: 0 !important;
             max-height: 90vh !important;
+            max-width: calc(100vw - 2rem) !important;
+            box-sizing: border-box !important;
             overflow-y: auto !important;
             border: none !important;
             outline: none !important;
@@ -186,10 +188,10 @@
             window.dispatchEvent(new CustomEvent('themechanged', { detail: this.theme }));
         }
     }"
-    class="bg-[#FAF9F6] dark:bg-[#0D0A09] text-espresso-900 dark:text-[#F7F4EE] antialiased selection:bg-gold selection:text-espresso-950 min-h-screen flex flex-col transition-colors duration-200"
+    class="bg-[#FAF9F6] dark:bg-[#0D0A09] text-espresso-900 dark:text-[#F7F4EE] antialiased selection:bg-gold selection:text-espresso-950 min-h-screen flex flex-col transition-colors duration-200 w-full max-w-full overflow-x-hidden"
 >
 
-    <div class="min-h-screen flex flex-1">
+    <div class="min-h-screen flex flex-1 w-full min-w-0 max-w-full overflow-x-hidden">
 
         <!-- ======================= LEFT SIDEBAR ======================= -->
         <aside 
@@ -467,51 +469,52 @@
         ></div>
 
         <!-- ======================= MAIN CONTENT WRAPPER ======================= -->
-        <div class="flex-1 lg:pl-64 flex flex-col min-h-screen bg-[#FAF9F6] dark:bg-[#0D0A09] transition-colors duration-200">
+        <div class="flex-1 lg:pl-64 flex flex-col min-h-screen w-full min-w-0 max-w-full overflow-x-hidden bg-[#FAF9F6] dark:bg-[#0D0A09] transition-colors duration-200">
 
             <!-- Top Header Bar (Compact Sleek h-14) -->
-            <header class="sticky top-0 z-30 h-14 bg-white/95 dark:bg-[#161210]/95 backdrop-blur-md border-b border-[#ECE6DE] dark:border-[#261E1A] px-4 sm:px-6 flex items-center justify-between gap-4">
+            <header class="sticky top-0 z-30 h-14 bg-white/95 dark:bg-[#161210]/95 backdrop-blur-md border-b border-[#ECE6DE] dark:border-[#261E1A] px-3 sm:px-6 flex items-center justify-between gap-2 sm:gap-4 w-full min-w-0">
                 
                 <!-- Left: Hamburger (mobile) + Global Search -->
-                <div class="flex items-center gap-3 flex-1 max-w-xl">
-                    <button @click="sidebarOpen = true" class="lg:hidden text-gray-600 dark:text-gray-300 p-1.5 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800">
+                <div class="flex items-center gap-2 sm:gap-3 flex-1 min-w-0 max-w-xl">
+                    <button @click="sidebarOpen = true" class="lg:hidden text-gray-600 dark:text-gray-300 p-1.5 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 shrink-0">
                         <i data-lucide="menu" class="w-5 h-5"></i>
                     </button>
 
                     <!-- Global Search Input -->
-                    <form action="{{ route('admin.products.index') }}" method="GET" class="relative w-full">
-                        <i data-lucide="search" class="w-4 h-4 text-[#A89C91] absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none"></i>
+                    <form action="{{ route('admin.products.index') }}" method="GET" class="relative w-full min-w-0">
+                        <i data-lucide="search" class="w-4 h-4 text-[#A89C91] absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none"></i>
                         <input 
                             type="text" 
                             name="q" 
-                            placeholder="Search creations, orders, VIP patrons..." 
+                            placeholder="Search creations, orders..." 
                             value="{{ request('q') }}"
-                            class="w-full pl-10 pr-4 py-1.5 text-xs rounded-full bg-[#FAF9F6] dark:bg-[#201815] border border-[#E8E1D7] dark:border-[#332620] text-espresso-900 dark:text-white placeholder-[#A89C91] focus:outline-hidden focus:border-gold focus:bg-white transition-all shadow-2xs"
+                            class="w-full pl-9 pr-3 sm:pr-4 py-1.5 text-xs rounded-full bg-[#FAF9F6] dark:bg-[#201815] border border-[#E8E1D7] dark:border-[#332620] text-espresso-900 dark:text-white placeholder-[#A89C91] focus:outline-hidden focus:border-gold focus:bg-white transition-all shadow-2xs"
                         >
                     </form>
                 </div>
 
                 <!-- Right Header Actions -->
-                <div class="flex items-center gap-2.5 sm:gap-3">
+                <div class="flex items-center gap-1.5 sm:gap-3 shrink-0">
                     
                     <!-- + Add Creation Button (Rich Cognac Leather & Gold) -->
                     <a 
                         href="{{ route('admin.products.create') }}" 
-                        class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold bg-gradient-to-r from-tan-700 to-tan-600 hover:from-tan-800 hover:to-tan-700 text-white shadow-xs transition-transform active:scale-95 border border-tan-600"
+                        class="inline-flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-full text-xs font-semibold bg-gradient-to-r from-tan-700 to-tan-600 hover:from-tan-800 hover:to-tan-700 text-white shadow-xs transition-transform active:scale-95 border border-tan-600"
+                        title="Add New Creation"
                     >
                         <i data-lucide="plus" class="w-3.5 h-3.5 text-gold-light"></i>
                         <span class="hidden sm:inline">Add Creation</span>
                     </a>
 
-                    <!-- View Live Store Link Button -->
+                    <!-- View Live Store Link Button (Desktop/Tablet) -->
                     <a 
                         href="{{ route('home') }}" 
                         target="_blank" 
-                        class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium text-espresso-800 dark:text-[#E8D0BE] border border-[#E0D7CB] dark:border-[#3A2F29] hover:bg-[#FAF9F6] dark:hover:bg-[#201815] transition-colors"
+                        class="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium text-espresso-800 dark:text-[#E8D0BE] border border-[#E0D7CB] dark:border-[#3A2F29] hover:bg-[#FAF9F6] dark:hover:bg-[#201815] transition-colors"
                         title="Open customer storefront in new tab"
                     >
                         <i data-lucide="external-link" class="w-3.5 h-3.5 text-gold-600"></i>
-                        <span class="hidden sm:inline">Live Store</span>
+                        <span>Live Store</span>
                     </a>
 
                     <!-- Dark / Light Theme Toggle -->
@@ -545,7 +548,7 @@
             </header>
 
             <!-- Main Page View Content (Compact Padding & Tighter Gaps) -->
-            <main class="flex-1 p-3 sm:p-5 space-y-3.5 bg-[#FAF9F6] dark:bg-[#0D0A09] transition-colors duration-200">
+            <main class="flex-1 p-3 sm:p-5 space-y-3.5 w-full min-w-0 max-w-full overflow-x-hidden bg-[#FAF9F6] dark:bg-[#0D0A09] transition-colors duration-200">
                 @yield('content')
             </main>
 

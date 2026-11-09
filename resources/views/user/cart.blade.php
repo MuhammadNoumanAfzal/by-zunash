@@ -49,18 +49,21 @@
                 </div>
 
                 <template x-for="item in $store.cart.items" :key="item.key">
-                    <div class="p-6 sm:grid sm:grid-cols-12 sm:items-center gap-4 flex flex-col">
+                    <div class="p-4 sm:p-6 sm:grid sm:grid-cols-12 sm:items-center gap-3 sm:gap-4 flex flex-col">
                         <!-- Product Info (6 cols) -->
-                        <div class="sm:col-span-6 flex items-center gap-4">
+                        <div class="sm:col-span-6 flex items-start gap-3 sm:gap-4 w-full">
                             <img 
                                 :src="item.image" 
                                 :alt="item.name" 
-                                class="w-20 h-24 object-cover rounded bg-ivory-100 border border-ivory-300 flex-shrink-0"
+                                class="w-16 h-20 sm:w-20 sm:h-24 object-cover rounded-lg bg-ivory-100 border border-ivory-300 shrink-0"
                             >
-                            <div>
-                                <span class="text-[10px] uppercase tracking-wider text-muted font-medium block" x-text="item.category"></span>
-                                <h3 class="font-serif text-base font-semibold text-espresso-900" x-text="item.name"></h3>
-                                <p class="text-xs text-muted-dark mt-0.5" x-show="item.variant" x-text="'Tone: ' + item.variant"></p>
+                            <div class="flex-1 min-w-0">
+                                <span class="text-[9px] sm:text-[10px] uppercase tracking-wider text-muted font-medium block" x-text="item.category"></span>
+                                <h3 class="font-serif text-sm sm:text-base font-semibold text-espresso-900 truncate" x-text="item.name"></h3>
+                                <p class="text-[11px] sm:text-xs text-muted-dark mt-0.5" x-show="item.variant" x-text="'Tone: ' + item.variant"></p>
+                                <div class="sm:hidden font-mono text-xs text-muted-dark mt-1">
+                                    PKR <span x-text="item.price.toLocaleString()"></span> each
+                                </div>
                                 <button 
                                     type="button" 
                                     @click="$store.cart.removeItem(item.key)" 
@@ -72,36 +75,42 @@
                             </div>
                         </div>
 
-                        <!-- Price (2 cols) -->
-                        <div class="sm:col-span-2 text-left sm:text-center text-xs font-semibold text-espresso-900">
+                        <!-- Price (2 cols) - Desktop only -->
+                        <div class="hidden sm:block sm:col-span-2 text-center text-xs font-semibold text-espresso-900">
                             PKR <span x-text="item.price.toLocaleString()"></span>
                         </div>
 
-                        <!-- Quantity Selector (2 cols) -->
-                        <div class="sm:col-span-2 flex items-center sm:justify-center">
-                            <div class="flex items-center border border-ivory-300 rounded overflow-hidden">
-                                <button 
-                                    type="button" 
-                                    @click="$store.cart.updateQuantity(item.key, item.quantity - 1)" 
-                                    class="w-7 h-8 flex items-center justify-center bg-ivory-50 hover:bg-ivory-200 text-espresso-900"
-                                    :disabled="item.quantity <= 1"
-                                >
-                                    <i data-lucide="minus" class="w-3 h-3"></i>
-                                </button>
-                                <span class="w-8 text-center text-xs font-bold text-espresso-900" x-text="item.quantity"></span>
-                                <button 
-                                    type="button" 
-                                    @click="$store.cart.updateQuantity(item.key, item.quantity + 1)" 
-                                    class="w-7 h-8 flex items-center justify-center bg-ivory-50 hover:bg-ivory-200 text-espresso-900"
-                                >
-                                    <i data-lucide="plus" class="w-3 h-3"></i>
-                                </button>
+                        <!-- Mobile Bottom Action Row (Stepper + Subtotal) -->
+                        <div class="w-full flex sm:contents items-center justify-between pt-2 border-t sm:border-t-0 border-ivory-100">
+                            <!-- Quantity Selector (2 cols) -->
+                            <div class="sm:col-span-2 flex items-center sm:justify-center">
+                                <div class="flex items-center border border-ivory-300 rounded-lg overflow-hidden bg-ivory-50">
+                                    <button 
+                                        type="button" 
+                                        @click="$store.cart.updateQuantity(item.key, item.quantity - 1)" 
+                                        class="w-7 h-8 flex items-center justify-center hover:bg-ivory-200 text-espresso-900 transition-colors"
+                                        :disabled="item.quantity <= 1"
+                                    >
+                                        <i data-lucide="minus" class="w-3 h-3"></i>
+                                    </button>
+                                    <span class="w-8 text-center text-xs font-bold text-espresso-900" x-text="item.quantity"></span>
+                                    <button 
+                                        type="button" 
+                                        @click="$store.cart.updateQuantity(item.key, item.quantity + 1)" 
+                                        class="w-7 h-8 flex items-center justify-center hover:bg-ivory-200 text-espresso-900 transition-colors"
+                                    >
+                                        <i data-lucide="plus" class="w-3 h-3"></i>
+                                    </button>
+                                </div>
                             </div>
-                        </div>
 
-                        <!-- Subtotal (2 cols) -->
-                        <div class="sm:col-span-2 text-right font-serif text-sm font-bold text-espresso-950">
-                            PKR <span x-text="(item.price * item.quantity).toLocaleString()"></span>
+                            <!-- Subtotal (2 cols) -->
+                            <div class="sm:col-span-2 text-right">
+                                <span class="sm:hidden text-[10px] text-muted-dark block">Subtotal</span>
+                                <span class="font-serif text-sm font-bold text-espresso-950">
+                                    PKR <span x-text="(item.price * item.quantity).toLocaleString()"></span>
+                                </span>
+                            </div>
                         </div>
                     </div>
                 </template>

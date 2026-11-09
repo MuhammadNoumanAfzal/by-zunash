@@ -503,46 +503,46 @@
                 </h2>
             </div>
 
-            <!-- 4 Guarantees with Verified Icons -->
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 text-center">
+            <!-- 4 Guarantees with Verified Icons (2-col on mobile, 4-col on desktop) -->
+            <div class="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 text-center">
                 
-                <div class="p-5 rounded-xl bg-white border border-ivory-300 hover:border-gold transition-colors shadow-xs">
-                    <div class="w-10 h-10 rounded-full bg-ivory-100 text-gold-700 mx-auto flex items-center justify-center mb-3">
-                        <i data-lucide="truck" class="w-5 h-5"></i>
+                <div class="p-3.5 sm:p-5 rounded-xl bg-white border border-ivory-300 hover:border-gold transition-colors shadow-xs">
+                    <div class="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-ivory-100 text-gold-700 mx-auto flex items-center justify-center mb-2 sm:mb-3">
+                        <i data-lucide="truck" class="w-4 h-4 sm:w-5 sm:h-5"></i>
                     </div>
-                    <h4 class="font-serif text-sm font-bold text-espresso-950 mb-1">Express Delivery</h4>
-                    <p class="text-[11px] text-muted leading-relaxed">
-                        24–48h to Karachi, Lahore, Islamabad & Rawalpindi. 2–3 days nationwide.
+                    <h4 class="font-serif text-xs sm:text-sm font-bold text-espresso-950 mb-1">Express Delivery</h4>
+                    <p class="text-[10px] sm:text-[11px] text-muted leading-relaxed">
+                        24–48h to major cities. 2–3 days nationwide.
                     </p>
                 </div>
 
-                <div class="p-5 rounded-xl bg-white border border-ivory-300 hover:border-gold transition-colors shadow-xs">
-                    <div class="w-10 h-10 rounded-full bg-ivory-100 text-gold-700 mx-auto flex items-center justify-center mb-3">
-                        <i data-lucide="banknote" class="w-5 h-5"></i>
+                <div class="p-3.5 sm:p-5 rounded-xl bg-white border border-ivory-300 hover:border-gold transition-colors shadow-xs">
+                    <div class="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-ivory-100 text-gold-700 mx-auto flex items-center justify-center mb-2 sm:mb-3">
+                        <i data-lucide="banknote" class="w-4 h-4 sm:w-5 sm:h-5"></i>
                     </div>
-                    <h4 class="font-serif text-sm font-bold text-espresso-950 mb-1">Cash on Delivery</h4>
-                    <p class="text-[11px] text-muted leading-relaxed">
-                        Doorstep parcel inspection before paying via cash or direct bank transfer.
+                    <h4 class="font-serif text-xs sm:text-sm font-bold text-espresso-950 mb-1">Cash on Delivery</h4>
+                    <p class="text-[10px] sm:text-[11px] text-muted leading-relaxed">
+                        Doorstep parcel inspection before paying.
                     </p>
                 </div>
 
-                <div class="p-5 rounded-xl bg-white border border-ivory-300 hover:border-gold transition-colors shadow-xs">
-                    <div class="w-10 h-10 rounded-full bg-ivory-100 text-gold-700 mx-auto flex items-center justify-center mb-3">
-                        <i data-lucide="rotate-ccw" class="w-5 h-5"></i>
+                <div class="p-3.5 sm:p-5 rounded-xl bg-white border border-ivory-300 hover:border-gold transition-colors shadow-xs">
+                    <div class="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-ivory-100 text-gold-700 mx-auto flex items-center justify-center mb-2 sm:mb-3">
+                        <i data-lucide="rotate-ccw" class="w-4 h-4 sm:w-5 sm:h-5"></i>
                     </div>
-                    <h4 class="font-serif text-sm font-bold text-espresso-950 mb-1">7-Day Exchange</h4>
-                    <p class="text-[11px] text-muted leading-relaxed">
-                        Need another belt size or color? Concierge doorstep replacement arranged easily.
+                    <h4 class="font-serif text-xs sm:text-sm font-bold text-espresso-950 mb-1">7-Day Exchange</h4>
+                    <p class="text-[10px] sm:text-[11px] text-muted leading-relaxed">
+                        Doorstep size or color replacement arranged easily.
                     </p>
                 </div>
 
-                <div class="p-5 rounded-xl bg-white border border-ivory-300 hover:border-gold transition-colors shadow-xs">
-                    <div class="w-10 h-10 rounded-full bg-ivory-100 text-gold-700 mx-auto flex items-center justify-center mb-3">
-                        <i data-lucide="gift" class="w-5 h-5"></i>
+                <div class="p-3.5 sm:p-5 rounded-xl bg-white border border-ivory-300 hover:border-gold transition-colors shadow-xs">
+                    <div class="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-ivory-100 text-gold-700 mx-auto flex items-center justify-center mb-2 sm:mb-3">
+                        <i data-lucide="gift" class="w-4 h-4 sm:w-5 sm:h-5"></i>
                     </div>
-                    <h4 class="font-serif text-sm font-bold text-espresso-950 mb-1">Rigid Presentation Box</h4>
-                    <p class="text-[11px] text-muted leading-relaxed">
-                        Presented in an embossed magnetic gift box with a breathable linen dust pouch.
+                    <h4 class="font-serif text-xs sm:text-sm font-bold text-espresso-950 mb-1">Rigid Presentation Box</h4>
+                    <p class="text-[10px] sm:text-[11px] text-muted leading-relaxed">
+                        Embossed magnetic gift box with dust pouch.
                     </p>
                 </div>
 

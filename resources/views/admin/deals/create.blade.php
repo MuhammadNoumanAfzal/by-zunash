@@ -211,7 +211,7 @@
                     </div>
 
                     <!-- Live Calculation Badge -->
-                    <div class="p-3.5 rounded-xl bg-[#FAF8F5] dark:bg-[#120E0C] border border-[#E0D7CB] dark:border-[#2C2420] flex items-center justify-between">
+                    <div class="p-3.5 rounded-xl bg-[#FAF8F5] dark:bg-[#120E0C] border border-[#E0D7CB] dark:border-[#2C2420] flex flex-col sm:flex-row sm:items-center justify-between gap-2.5">
                         <div>
                             <div class="text-[10px] uppercase font-bold text-[#8F8379]">Patron Advantage</div>
                             <div class="text-xs font-bold text-emerald-600 flex items-center gap-1 mt-0.5">
@@ -219,20 +219,22 @@
                                 <span>Save PKR <span x-text="computedSavings.toLocaleString()"></span> (<span x-text="computedPercent"></span>% OFF)</span>
                             </div>
                         </div>
-                        <button 
-                            type="button" 
-                            @click="applySuggestedDiscount(15)" 
-                            class="px-2.5 py-1 text-[10px] font-bold rounded-lg bg-gold/15 text-gold-800 dark:text-gold-300 hover:bg-gold/25 transition-colors"
-                        >
-                            Apply 15% Off
-                        </button>
-                        <button 
-                            type="button" 
-                            @click="applySuggestedDiscount(20)" 
-                            class="px-2.5 py-1 text-[10px] font-bold rounded-lg bg-gold/15 text-gold-800 dark:text-gold-300 hover:bg-gold/25 transition-colors"
-                        >
-                            Apply 20% Off
-                        </button>
+                        <div class="flex items-center gap-1.5 self-start sm:self-auto flex-wrap">
+                            <button 
+                                type="button" 
+                                @click="applySuggestedDiscount(15)" 
+                                class="px-2.5 py-1 text-[10px] font-bold rounded-lg bg-gold/15 text-gold-800 dark:text-gold-300 hover:bg-gold/25 transition-colors"
+                            >
+                                Apply 15% Off
+                            </button>
+                            <button 
+                                type="button" 
+                                @click="applySuggestedDiscount(20)" 
+                                class="px-2.5 py-1 text-[10px] font-bold rounded-lg bg-gold/15 text-gold-800 dark:text-gold-300 hover:bg-gold/25 transition-colors"
+                            >
+                                Apply 20% Off
+                            </button>
+                        </div>
                     </div>
                 </div>
 

@@ -298,13 +298,13 @@
 
                 <!-- Add Custom Swatch Input Row -->
                 <div class="p-3.5 rounded-2xl bg-[#FAF8F5] dark:bg-[#201A18] border border-[#E0D7CB] dark:border-[#342823] flex flex-wrap items-center gap-3">
-                    <div class="flex items-center gap-2">
-                        <input type="color" x-model="customColorHex" class="w-8 h-8 rounded-lg cursor-pointer border border-gray-300 dark:border-gray-700 p-0.5 bg-transparent">
+                    <div class="flex items-center gap-2 flex-1 min-w-[200px]">
+                        <input type="color" x-model="customColorHex" class="w-8 h-8 rounded-lg cursor-pointer border border-gray-300 dark:border-gray-700 p-0.5 bg-transparent shrink-0">
                         <input 
                             type="text" 
                             x-model="customColorName" 
                             placeholder="Add custom leather tone (e.g. Havana Chestnut)" 
-                            class="px-3 py-1.5 text-xs rounded-xl bg-white dark:bg-[#2A201C] border border-[#DFD6CB] dark:border-[#42322C] text-espresso-900 dark:text-white focus:outline-hidden w-64"
+                            class="px-3 py-1.5 text-xs rounded-xl bg-white dark:bg-[#2A201C] border border-[#DFD6CB] dark:border-[#42322C] text-espresso-900 dark:text-white focus:outline-hidden w-full sm:w-64"
                             @keydown.enter.prevent="addCustomColor()"
                         >
                     </div>
@@ -498,17 +498,17 @@ Presented in an embossed By Zunash magnetic presentation box"
         </div>
 
         <!-- Submit Button Bar -->
-        <div class="pt-4 border-t border-[#F0EAE1] dark:border-[#2C2420] flex items-center justify-end gap-3">
+        <div class="pt-4 border-t border-[#F0EAE1] dark:border-[#2C2420] flex flex-col-reverse sm:flex-row sm:items-center justify-end gap-2.5">
             <a 
                 href="{{ route('admin.products.index') }}" 
-                class="px-5 py-2.5 rounded-xl border border-[#DFD6CB] text-xs font-semibold text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+                class="w-full sm:w-auto px-5 py-2.5 rounded-xl border border-[#DFD6CB] text-xs font-semibold text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors text-center"
             >
                 Cancel
             </a>
 
             <button 
                 type="submit" 
-                class="px-6 py-2.5 rounded-xl bg-espresso-900 hover:bg-tan-600 text-white font-semibold text-xs shadow-md transition-all active:scale-95 flex items-center gap-2 border border-gold-400/20"
+                class="w-full sm:w-auto px-6 py-2.5 rounded-xl bg-espresso-900 hover:bg-tan-600 text-white font-semibold text-xs shadow-md transition-all active:scale-95 flex items-center justify-center gap-2 border border-gold-400/20"
             >
                 <i data-lucide="check" class="w-4 h-4 text-gold-400"></i>
                 <span>Publish Product to Atelier Catalogue</span>

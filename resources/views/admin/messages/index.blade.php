@@ -56,12 +56,14 @@
                 </select>
             </div>
 
-            <button type="submit" class="px-4 py-2 rounded-xl bg-espresso-900 hover:bg-tan-600 text-white font-semibold text-xs shrink-0 transition-colors border border-gold-400/20">
-                Filter
-            </button>
-            <a href="{{ route('admin.messages.index') }}" class="px-3 py-2 rounded-xl border border-[#DFD6CB] dark:border-[#382D27] text-gray-500 hover:bg-gray-100 dark:hover:bg-[#201A18] text-xs font-semibold">
-                Reset
-            </a>
+            <div class="flex items-center gap-2 w-full sm:w-auto">
+                <button type="submit" class="flex-1 sm:flex-initial px-4 py-2 rounded-xl bg-espresso-900 hover:bg-tan-600 text-white font-semibold text-xs shrink-0 transition-colors border border-gold-400/20 text-center">
+                    Filter
+                </button>
+                <a href="{{ route('admin.messages.index') }}" class="flex-1 sm:flex-initial px-3 py-2 rounded-xl border border-[#DFD6CB] dark:border-[#382D27] text-gray-500 hover:bg-gray-100 dark:hover:bg-[#201A18] text-xs font-semibold text-center">
+                    Reset
+                </a>
+            </div>
         </form>
     </div>
 

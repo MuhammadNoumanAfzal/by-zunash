@@ -80,14 +80,14 @@
         </div>
 
         <!-- Bottom Bar: Payments & Copyright -->
-        <div class="pt-8 flex flex-col md:flex-row items-center justify-between gap-4 text-xs text-ivory-400">
+        <div class="pt-8 flex flex-col md:flex-row items-center justify-between gap-4 text-xs text-ivory-400 text-center md:text-left">
             <div>
                 <p>&copy; {{ date('Y') }} By Zunash. All Rights Reserved. Timeless Leather Goods.</p>
             </div>
 
             <!-- Supported Payment Badges -->
-            <div class="flex items-center gap-3">
-                <span class="text-[11px] uppercase tracking-wider text-gold-300 font-medium">Accepted In Pakistan:</span>
+            <div class="flex flex-wrap items-center justify-center md:justify-end gap-2 sm:gap-3">
+                <span class="text-[11px] uppercase tracking-wider text-gold-300 font-medium w-full sm:w-auto text-center sm:text-left">Accepted In Pakistan:</span>
                 <span class="px-2 py-1 bg-espresso-900 border border-gold/30 rounded text-[10px] text-ivory font-mono">
                     Cash on Delivery
                 </span>

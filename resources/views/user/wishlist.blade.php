@@ -37,49 +37,49 @@
         </template>
 
         <!-- Wishlist Items Grid -->
-        <div x-show="$store.wishlist.items.length > 0" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div x-show="$store.wishlist.items.length > 0" class="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6">
             <template x-for="item in $store.wishlist.items" :key="item.id">
-                <div class="bg-white rounded-lg border border-ivory-300 overflow-hidden shadow-xs hover:shadow-luxury transition-all flex flex-col justify-between">
+                <div class="bg-white rounded-xl border border-ivory-300 overflow-hidden shadow-xs hover:shadow-luxury transition-all flex flex-col justify-between">
                     <!-- Image -->
-                    <div class="relative aspect-[4/5] bg-ivory-100 overflow-hidden">
+                    <div class="relative aspect-square sm:aspect-[4/5] bg-ivory-100 overflow-hidden">
                         <img :src="item.image" :alt="item.name" class="w-full h-full object-cover">
                         <!-- Remove button -->
                         <button 
                             type="button" 
                             @click="$store.wishlist.remove(item.id)" 
-                            class="absolute top-3 right-3 w-8 h-8 rounded-full bg-white/90 text-espresso-900 hover:text-red-500 shadow-xs flex items-center justify-center transition-colors"
+                            class="absolute top-2 right-2 sm:top-3 sm:right-3 w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-white/90 text-espresso-900 hover:text-red-500 shadow-xs flex items-center justify-center transition-colors"
                             title="Remove from wishlist"
                         >
-                            <i data-lucide="trash-2" class="w-4 h-4"></i>
+                            <i data-lucide="trash-2" class="w-3.5 h-3.5 sm:w-4 sm:h-4"></i>
                         </button>
                     </div>
 
                     <!-- Details & Actions -->
-                    <div class="p-4 flex flex-col flex-1 justify-between">
+                    <div class="p-3 sm:p-4 flex flex-col flex-1 justify-between">
                         <div>
-                            <span class="text-[10px] uppercase tracking-wider text-muted font-medium block mb-1" x-text="item.category"></span>
-                            <h3 class="font-serif text-base font-semibold text-espresso-900 line-clamp-1 mb-2">
+                            <span class="text-[9px] sm:text-[10px] uppercase tracking-wider text-muted font-medium block mb-1" x-text="item.category"></span>
+                            <h3 class="font-serif text-xs sm:text-base font-semibold text-espresso-900 line-clamp-1 mb-1.5 sm:mb-2">
                                 <a :href="'/product/' + item.slug" x-text="item.name" class="hover:text-gold-600"></a>
                             </h3>
-                            <div class="font-serif text-sm font-bold text-espresso-900 mb-4">
+                            <div class="font-serif text-xs sm:text-sm font-bold text-espresso-900 mb-2 sm:mb-4">
                                 PKR <span x-text="item.price.toLocaleString()"></span>
                             </div>
                         </div>
 
-                        <div class="space-y-2 pt-2 border-t border-ivory-200">
+                        <div class="space-y-1.5 sm:space-y-2 pt-2 border-t border-ivory-200">
                             <button 
                                 type="button" 
                                 @click="$store.cart.addItem(item); $store.wishlist.remove(item.id);" 
-                                class="w-full py-2.5 px-4 bg-espresso hover:bg-chocolate-700 text-ivory text-xs uppercase tracking-widest font-semibold rounded flex items-center justify-center gap-2 transition-all shadow-xs"
+                                class="w-full py-2 px-2 sm:px-4 bg-espresso hover:bg-chocolate-700 text-ivory text-[10px] sm:text-xs uppercase tracking-wider font-semibold rounded-lg flex items-center justify-center gap-1.5 transition-all shadow-xs"
                             >
-                                <i data-lucide="shopping-bag" class="w-3.5 h-3.5 text-gold"></i>
+                                <i data-lucide="shopping-bag" class="w-3 h-3 sm:w-3.5 sm:h-3.5 text-gold"></i>
                                 <span>Move to Bag</span>
                             </button>
                             <a 
                                 :href="'/product/' + item.slug" 
-                                class="w-full py-2 px-4 bg-ivory-50 hover:bg-ivory-100 text-espresso-800 text-xs uppercase tracking-wider font-medium rounded text-center block transition-colors border border-ivory-300"
+                                class="w-full py-1.5 px-2 sm:px-4 bg-ivory-50 hover:bg-ivory-100 text-espresso-800 text-[10px] sm:text-xs uppercase tracking-wider font-medium rounded-lg text-center block transition-colors border border-ivory-300"
                             >
-                                View Product
+                                View Piece
                             </a>
                         </div>
                     </div>

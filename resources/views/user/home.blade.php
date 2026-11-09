@@ -56,6 +56,21 @@
         currentSlide: 0,
         autoplayTimer: null,
         totalSlides: 3,
+        touchStartX: 0,
+        touchEndX: 0,
+        handleTouchStart(e) {
+            this.touchStartX = e.changedTouches[0].screenX;
+            this.stopAutoplay();
+        },
+        handleTouchEnd(e) {
+            this.touchEndX = e.changedTouches[0].screenX;
+            if (this.touchStartX - this.touchEndX > 40) {
+                this.next();
+            } else if (this.touchEndX - this.touchStartX > 40) {
+                this.prev();
+            }
+            this.startAutoplay();
+        },
         next() {
             this.currentSlide = (this.currentSlide + 1) % this.totalSlides;
         },
@@ -81,7 +96,9 @@
     x-init="startAutoplay()"
     @mouseenter="stopAutoplay()"
     @mouseleave="startAutoplay()"
-    class="relative w-full h-[380px] sm:h-[440px] lg:h-[490px] overflow-hidden bg-espresso-950 text-ivory select-none"
+    @touchstart.passive="handleTouchStart($event)"
+    @touchend.passive="handleTouchEnd($event)"
+    class="relative w-full h-[460px] sm:h-[480px] lg:h-[500px] overflow-hidden bg-espresso-950 text-ivory select-none"
 >
     <!-- ================= SLIDE 1: SIGNATURE HANDBAGS ================= -->
     <div 
@@ -110,7 +127,7 @@
         <!-- Overlaid Animated Content -->
         <div class="relative z-10 w-full h-full flex items-center">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
-                <div class="max-w-2xl py-3">
+                <div class="max-w-2xl py-3 pb-16 sm:pb-3">
                     
                     <!-- Tag / Badge -->
                     <div class="inline-flex items-center gap-2 mb-2 animate-hero-tag">
@@ -132,25 +149,25 @@
                     </p>
 
                     <!-- CTAs -->
-                    <div class="flex flex-wrap items-center gap-3 animate-hero-actions">
+                    <div class="flex flex-wrap items-center gap-2.5 sm:gap-3 animate-hero-actions">
                         <a 
                             href="{{ route('category', 'handbags') }}" 
-                            class="px-5 py-2.5 bg-gold hover:bg-gold-light text-espresso-950 text-xs uppercase tracking-widest font-bold rounded-lg shadow-luxury hover:shadow-gold-glow hover:-translate-y-0.5 transition-all duration-300 flex items-center gap-2 group active:scale-95"
+                            class="px-4 py-2 sm:px-5 sm:py-2.5 bg-gold hover:bg-gold-light text-espresso-950 text-[11px] sm:text-xs uppercase tracking-widest font-bold rounded-lg shadow-luxury hover:shadow-gold-glow hover:-translate-y-0.5 transition-all duration-300 flex items-center gap-1.5 sm:gap-2 group active:scale-95"
                         >
                             <span>Shop Handbags</span>
-                            <i data-lucide="arrow-right" class="w-4 h-4 transition-transform group-hover:translate-x-1"></i>
+                            <i data-lucide="arrow-right" class="w-3.5 h-3.5 sm:w-4 sm:h-4 transition-transform group-hover:translate-x-1"></i>
                         </a>
                         
                         <a 
                             href="{{ route('shop') }}" 
-                            class="px-5 py-2.5 bg-white/10 hover:bg-white/20 text-white text-xs uppercase tracking-widest font-semibold rounded-lg border border-white/30 hover:border-gold/60 backdrop-blur-md hover:-translate-y-0.5 transition-all duration-300 text-center"
+                            class="px-4 py-2 sm:px-5 sm:py-2.5 bg-white/10 hover:bg-white/20 text-white text-[11px] sm:text-xs uppercase tracking-widest font-semibold rounded-lg border border-white/30 hover:border-gold/60 backdrop-blur-md hover:-translate-y-0.5 transition-all duration-300 text-center"
                         >
                             Explore Collection
                         </a>
                     </div>
 
-                    <!-- Feature Row (Protected Pill) -->
-                    <div class="mt-3.5 inline-flex flex-wrap items-center gap-3.5 px-3.5 py-1.5 rounded-full bg-black/55 backdrop-blur-md border border-white/20 text-[11px] text-white shadow-md animate-hero-specs">
+                    <!-- Feature Row (Protected Pill - Hidden on mobile to prevent overlapping controls) -->
+                    <div class="mt-3.5 hidden sm:inline-flex flex-wrap items-center gap-3.5 px-3.5 py-1.5 rounded-full bg-black/55 backdrop-blur-md border border-white/20 text-[11px] text-white shadow-md animate-hero-specs">
                         <span class="flex items-center gap-2">
                             <i data-lucide="award" class="w-3.5 h-3.5 text-gold"></i>
                             <span>100% Full-Grain Leather</span>
@@ -194,7 +211,7 @@
         <!-- Overlaid Animated Content -->
         <div class="relative z-10 w-full h-full flex items-center">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
-                <div class="max-w-2xl py-3">
+                <div class="max-w-2xl py-3 pb-16 sm:pb-3">
                     
                     <!-- Tag / Badge -->
                     <div class="inline-flex items-center gap-2 mb-2 animate-hero-tag">
@@ -205,10 +222,10 @@
                     </div>
 
                     <!-- Clean Headline -->
-                    <h1 class="font-serif text-2xl sm:text-4xl lg:text-[42px] font-normal tracking-tight text-white leading-[1.15] mb-2.5 drop-shadow-[0_4px_16px_rgba(0,0,0,0.95)] animate-hero-title">
+                    <h2 class="font-serif text-2xl sm:text-4xl lg:text-[42px] font-normal tracking-tight text-white leading-[1.15] mb-2.5 drop-shadow-[0_4px_16px_rgba(0,0,0,0.95)] animate-hero-title">
                         Two Refined Looks. 
                         <span class="italic font-light text-gold-300 drop-shadow-[0_4px_16px_rgba(0,0,0,0.95)] block sm:inline">One Smooth Twist.</span>
-                    </h1>
+                    </h2>
 
                     <!-- Clear Description -->
                     <p class="text-xs sm:text-sm text-white/95 font-normal leading-relaxed max-w-xl mb-4 drop-shadow-[0_2px_8px_rgba(0,0,0,0.9)] animate-hero-desc">
@@ -216,25 +233,25 @@
                     </p>
 
                     <!-- CTAs -->
-                    <div class="flex flex-wrap items-center gap-3 animate-hero-actions">
+                    <div class="flex flex-wrap items-center gap-2.5 sm:gap-3 animate-hero-actions">
                         <a 
                             href="{{ route('category', 'belts') }}" 
-                            class="px-5 py-2.5 bg-gold hover:bg-gold-light text-espresso-950 text-xs uppercase tracking-widest font-bold rounded-lg shadow-luxury hover:shadow-gold-glow hover:-translate-y-0.5 transition-all duration-300 flex items-center gap-2 group active:scale-95"
+                            class="px-4 py-2 sm:px-5 sm:py-2.5 bg-gold hover:bg-gold-light text-espresso-950 text-[11px] sm:text-xs uppercase tracking-widest font-bold rounded-lg shadow-luxury hover:shadow-gold-glow hover:-translate-y-0.5 transition-all duration-300 flex items-center gap-1.5 sm:gap-2 group active:scale-95"
                         >
                             <span>Shop Belts</span>
-                            <i data-lucide="arrow-right" class="w-4 h-4 transition-transform group-hover:translate-x-1"></i>
+                            <i data-lucide="arrow-right" class="w-3.5 h-3.5 sm:w-4 sm:h-4 transition-transform group-hover:translate-x-1"></i>
                         </a>
                         
                         <a 
                             href="{{ route('shop') }}" 
-                            class="px-5 py-2.5 bg-white/10 hover:bg-white/20 text-white text-xs uppercase tracking-widest font-semibold rounded-lg border border-white/30 hover:border-gold/60 backdrop-blur-md hover:-translate-y-0.5 transition-all duration-300 text-center"
+                            class="px-4 py-2 sm:px-5 sm:py-2.5 bg-white/10 hover:bg-white/20 text-white text-[11px] sm:text-xs uppercase tracking-widest font-semibold rounded-lg border border-white/30 hover:border-gold/60 backdrop-blur-md hover:-translate-y-0.5 transition-all duration-300 text-center"
                         >
                             View Bestsellers
                         </a>
                     </div>
 
-                    <!-- Feature Row (Protected Pill) -->
-                    <div class="mt-3.5 inline-flex flex-wrap items-center gap-3.5 px-3.5 py-1.5 rounded-full bg-black/55 backdrop-blur-md border border-white/20 text-[11px] text-white shadow-md animate-hero-specs">
+                    <!-- Feature Row (Protected Pill - Hidden on mobile to prevent overlapping controls) -->
+                    <div class="mt-3.5 hidden sm:inline-flex flex-wrap items-center gap-3.5 px-3.5 py-1.5 rounded-full bg-black/55 backdrop-blur-md border border-white/20 text-[11px] text-white shadow-md animate-hero-specs">
                         <span class="flex items-center gap-2">
                             <i data-lucide="refresh-cw" class="w-3.5 h-3.5 text-gold"></i>
                             <span>360° Swivel Buckle</span>
@@ -278,7 +295,7 @@
         <!-- Overlaid Animated Content -->
         <div class="relative z-10 w-full h-full flex items-center">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
-                <div class="max-w-2xl py-3">
+                <div class="max-w-2xl py-3 pb-16 sm:pb-3">
                     
                     <!-- Tag / Badge -->
                     <div class="inline-flex items-center gap-2 mb-2 animate-hero-tag">
@@ -289,10 +306,10 @@
                     </div>
 
                     <!-- Clean Headline -->
-                    <h1 class="font-serif text-2xl sm:text-4xl lg:text-[42px] font-normal tracking-tight text-white leading-[1.15] mb-2.5 drop-shadow-[0_4px_16px_rgba(0,0,0,0.95)] animate-hero-title">
+                    <h2 class="font-serif text-2xl sm:text-4xl lg:text-[42px] font-normal tracking-tight text-white leading-[1.15] mb-2.5 drop-shadow-[0_4px_16px_rgba(0,0,0,0.95)] animate-hero-title">
                         Slim in Pocket. 
                         <span class="italic font-light text-gold-300 drop-shadow-[0_4px_16px_rgba(0,0,0,0.95)] block sm:inline">Timeless in Hand.</span>
-                    </h1>
+                    </h2>
 
                     <!-- Clear Description -->
                     <p class="text-xs sm:text-sm text-white/95 font-normal leading-relaxed max-w-xl mb-4 drop-shadow-[0_2px_8px_rgba(0,0,0,0.9)] animate-hero-desc">
@@ -300,25 +317,25 @@
                     </p>
 
                     <!-- CTAs -->
-                    <div class="flex flex-wrap items-center gap-3 animate-hero-actions">
+                    <div class="flex flex-wrap items-center gap-2.5 sm:gap-3 animate-hero-actions">
                         <a 
                             href="{{ route('category', 'wallets') }}" 
-                            class="px-5 py-2.5 bg-gold hover:bg-gold-light text-espresso-950 text-xs uppercase tracking-widest font-bold rounded-lg shadow-luxury hover:shadow-gold-glow hover:-translate-y-0.5 transition-all duration-300 flex items-center gap-2 group active:scale-95"
+                            class="px-4 py-2 sm:px-5 sm:py-2.5 bg-gold hover:bg-gold-light text-espresso-950 text-[11px] sm:text-xs uppercase tracking-widest font-bold rounded-lg shadow-luxury hover:shadow-gold-glow hover:-translate-y-0.5 transition-all duration-300 flex items-center gap-1.5 sm:gap-2 group active:scale-95"
                         >
                             <span>Shop Wallets</span>
-                            <i data-lucide="arrow-right" class="w-4 h-4 transition-transform group-hover:translate-x-1"></i>
+                            <i data-lucide="arrow-right" class="w-3.5 h-3.5 sm:w-4 sm:h-4 transition-transform group-hover:translate-x-1"></i>
                         </a>
                         
                         <a 
                             href="{{ route('shop') }}" 
-                            class="px-5 py-2.5 bg-white/10 hover:bg-white/20 text-white text-xs uppercase tracking-widest font-semibold rounded-lg border border-white/30 hover:border-gold/60 backdrop-blur-md hover:-translate-y-0.5 transition-all duration-300 text-center"
+                            class="px-4 py-2 sm:px-5 sm:py-2.5 bg-white/10 hover:bg-white/20 text-white text-[11px] sm:text-xs uppercase tracking-widest font-semibold rounded-lg border border-white/30 hover:border-gold/60 backdrop-blur-md hover:-translate-y-0.5 transition-all duration-300 text-center"
                         >
                             View New Releases
                         </a>
                     </div>
 
-                    <!-- Feature Row (Protected Pill) -->
-                    <div class="mt-3.5 inline-flex flex-wrap items-center gap-3.5 px-3.5 py-1.5 rounded-full bg-black/55 backdrop-blur-md border border-white/20 text-[11px] text-white shadow-md animate-hero-specs">
+                    <!-- Feature Row (Protected Pill - Hidden on mobile to prevent overlapping controls) -->
+                    <div class="mt-3.5 hidden sm:inline-flex flex-wrap items-center gap-3.5 px-3.5 py-1.5 rounded-full bg-black/55 backdrop-blur-md border border-white/20 text-[11px] text-white shadow-md animate-hero-specs">
                         <span class="flex items-center gap-2">
                             <i data-lucide="shield-check" class="w-3.5 h-3.5 text-gold"></i>
                             <span>Certified RFID Protection</span>
@@ -336,20 +353,20 @@
     </div>
 
     <!-- ================= BOTTOM CONTROLS & PROGRESS ================= -->
-    <div class="absolute bottom-4 left-0 right-0 z-20 pointer-events-auto">
+    <div class="absolute bottom-3 sm:bottom-4 left-0 right-0 z-20 pointer-events-auto">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between">
             
             <!-- Animated Slide Progress Indicators -->
-            <div class="flex items-center gap-2.5">
+            <div class="flex items-center gap-2 sm:gap-2.5">
                 <template x-for="idx in [0, 1, 2]" :key="idx">
                     <button 
                         type="button" 
                         @click="goTo(idx)" 
-                        class="group py-2 px-1 focus:outline-none"
+                        class="group py-2 px-0.5 sm:px-1 focus:outline-none"
                         :aria-label="'Go to slide ' + (idx + 1)"
                     >
                         <div class="h-1 rounded-full overflow-hidden transition-all duration-300"
-                             :class="currentSlide === idx ? 'w-12 sm:w-16 bg-white/25' : 'w-5 sm:w-7 bg-white/20 group-hover:bg-white/40'">
+                             :class="currentSlide === idx ? 'w-8 sm:w-16 bg-white/25' : 'w-4 sm:w-7 bg-white/20 group-hover:bg-white/40'">
                             <div 
                                 class="h-full bg-gold rounded-full"
                                 :class="currentSlide === idx ? 'animate-hero-progress' : 'w-0'"
@@ -360,22 +377,22 @@
             </div>
 
             <!-- Prev / Next Sleek Arrow Buttons -->
-            <div class="flex items-center gap-2.5">
+            <div class="flex items-center gap-2 sm:gap-2.5">
                 <button 
                     type="button" 
                     @click="prev()" 
-                    class="w-10 h-10 rounded-full border border-white/20 bg-black/35 hover:bg-gold hover:text-espresso-950 hover:border-gold flex items-center justify-center text-white transition-all active:scale-95 shadow-md backdrop-blur-md"
+                    class="w-8 h-8 sm:w-10 sm:h-10 rounded-full border border-white/20 bg-black/40 hover:bg-gold hover:text-espresso-950 hover:border-gold flex items-center justify-center text-white transition-all active:scale-95 shadow-md backdrop-blur-md"
                     aria-label="Previous Slide"
                 >
-                    <i data-lucide="chevron-left" class="w-4 h-4"></i>
+                    <i data-lucide="chevron-left" class="w-3.5 h-3.5 sm:w-4 sm:h-4"></i>
                 </button>
                 <button 
                     type="button" 
                     @click="next()" 
-                    class="w-10 h-10 rounded-full border border-white/20 bg-black/35 hover:bg-gold hover:text-espresso-950 hover:border-gold flex items-center justify-center text-white transition-all active:scale-95 shadow-md backdrop-blur-md"
+                    class="w-8 h-8 sm:w-10 sm:h-10 rounded-full border border-white/20 bg-black/40 hover:bg-gold hover:text-espresso-950 hover:border-gold flex items-center justify-center text-white transition-all active:scale-95 shadow-md backdrop-blur-md"
                     aria-label="Next Slide"
                 >
-                    <i data-lucide="chevron-right" class="w-4 h-4"></i>
+                    <i data-lucide="chevron-right" class="w-3.5 h-3.5 sm:w-4 sm:h-4"></i>
                 </button>
             </div>
 
@@ -414,7 +431,7 @@
                 } else {
                     this.scrollNext();
                 }
-            }, 1200);
+            }, 4500);
         },
         stopAutoPlay() {
             if (this.autoPlayTimer) {
@@ -579,8 +596,8 @@
             </a>
         </div>
 
-        <!-- Product Grid with staggered animation -->
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        <!-- Product Grid with staggered animation (2-cols on mobile for seamless browsing) -->
+        <div class="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6">
             @foreach($bestsellers as $index => $product)
                 @php
                     $delayClass = ['delay-75', 'delay-150', 'delay-225', 'delay-300'][$loop->index % 4];
@@ -781,10 +798,10 @@
                     </div>
 
                     <a 
-                        href="{{ route('shop') }}" 
-                        class="inline-flex items-center gap-2.5 px-8 py-4 bg-gold hover:bg-gold-light text-espresso-950 text-xs uppercase tracking-widest font-bold rounded-full shadow-luxury hover:shadow-gold-glow transition-all active:scale-95 group"
+                        href="{{ route('deals') }}" 
+                        class="w-full sm:w-auto inline-flex items-center justify-center gap-2.5 px-8 py-3.5 sm:py-4 bg-gold hover:bg-gold-light text-espresso-950 text-xs uppercase tracking-widest font-bold rounded-full shadow-luxury hover:shadow-gold-glow transition-all active:scale-95 group text-center"
                     >
-                        <span>Explore Gift Sets</span>
+                        <span>Explore Curated Deals</span>
                         <i data-lucide="arrow-right" class="w-4 h-4 transition-transform group-hover:translate-x-1"></i>
                     </a>
                 </div>
@@ -863,8 +880,8 @@
             </a>
         </div>
 
-        <!-- Product Grid with staggered reveal -->
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        <!-- Product Grid with staggered reveal (2-cols on mobile) -->
+        <div class="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6">
             @foreach($newArrivals as $index => $product)
                 @php
                     $delayClass = ['delay-75', 'delay-150', 'delay-225', 'delay-300'][$loop->index % 4];
@@ -897,62 +914,62 @@
             </p>
         </div>
 
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
+        <div class="grid grid-cols-2 lg:grid-cols-5 gap-3 sm:gap-4">
             
             <!-- Card 1 -->
-            <div class="cursor-pointer reveal delay-75 group relative flex flex-col items-center text-center p-5 bg-white dark:bg-[#241C18] rounded-2xl border border-ivory-300 dark:border-white/10 hover:border-gold-500/60 shadow-xs hover:shadow-xl hover:-translate-y-1.5 transition-all duration-300 overflow-hidden">
+            <div class="cursor-pointer reveal delay-75 group relative flex flex-col items-center text-center p-3.5 sm:p-5 bg-white dark:bg-[#241C18] rounded-2xl border border-ivory-300 dark:border-white/10 hover:border-gold-500/60 shadow-xs hover:shadow-xl hover:-translate-y-1.5 transition-all duration-300 overflow-hidden">
                 <div class="absolute top-0 inset-x-0 h-1 bg-gradient-to-r from-gold-400 to-gold-600 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                <div class="w-12 h-12 rounded-2xl bg-ivory-100 dark:bg-[#1A1411] group-hover:bg-espresso-950 text-gold-700 dark:text-gold-400 group-hover:text-gold-300 flex items-center justify-center transition-all duration-300 shadow-inner group-hover:scale-110 mb-3">
-                    <i data-lucide="truck" class="w-5 h-5"></i>
+                <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-2xl bg-ivory-100 dark:bg-[#1A1411] group-hover:bg-espresso-950 text-gold-700 dark:text-gold-400 group-hover:text-gold-300 flex items-center justify-center transition-all duration-300 shadow-inner group-hover:scale-110 mb-2 sm:mb-3">
+                    <i data-lucide="truck" class="w-4 h-4 sm:w-5 sm:h-5"></i>
                 </div>
-                <h4 class="font-serif text-sm font-bold text-espresso-950 dark:text-ivory mb-1 group-hover:text-gold-600 transition-colors">Nationwide Delivery</h4>
-                <p class="text-[11px] text-muted-dark dark:text-ivory-400 leading-relaxed font-light">
-                    Fast courier shipping across 150+ Pakistani cities with real-time SMS tracking updates.
+                <h4 class="font-serif text-xs sm:text-sm font-bold text-espresso-950 dark:text-ivory mb-1 group-hover:text-gold-600 transition-colors">Nationwide Delivery</h4>
+                <p class="text-[10px] sm:text-[11px] text-muted-dark dark:text-ivory-400 leading-relaxed font-light">
+                    Fast courier shipping across 150+ Pakistani cities with real-time SMS updates.
                 </p>
             </div>
 
             <!-- Card 2 -->
-            <div class="cursor-pointer reveal delay-150 group relative flex flex-col items-center text-center p-5 bg-white dark:bg-[#241C18] rounded-2xl border border-ivory-300 dark:border-white/10 hover:border-gold-500/60 shadow-xs hover:shadow-xl hover:-translate-y-1.5 transition-all duration-300 overflow-hidden">
+            <div class="cursor-pointer reveal delay-150 group relative flex flex-col items-center text-center p-3.5 sm:p-5 bg-white dark:bg-[#241C18] rounded-2xl border border-ivory-300 dark:border-white/10 hover:border-gold-500/60 shadow-xs hover:shadow-xl hover:-translate-y-1.5 transition-all duration-300 overflow-hidden">
                 <div class="absolute top-0 inset-x-0 h-1 bg-gradient-to-r from-gold-400 to-gold-600 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                <div class="w-12 h-12 rounded-2xl bg-ivory-100 dark:bg-[#1A1411] group-hover:bg-espresso-950 text-gold-700 dark:text-gold-400 group-hover:text-gold-300 flex items-center justify-center transition-all duration-300 shadow-inner group-hover:scale-110 mb-3">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+                <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-2xl bg-ivory-100 dark:bg-[#1A1411] group-hover:bg-espresso-950 text-gold-700 dark:text-gold-400 group-hover:text-gold-300 flex items-center justify-center transition-all duration-300 shadow-inner group-hover:scale-110 mb-2 sm:mb-3">
+                    <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
                         <rect x="2" y="6" width="20" height="12" rx="2"></rect>
                         <circle cx="12" cy="12" r="3"></circle>
                         <path d="M6 12h.01M18 12h.01"></path>
                     </svg>
                 </div>
-                <h4 class="font-serif text-sm font-bold text-espresso-950 dark:text-ivory mb-1 group-hover:text-gold-600 transition-colors">Cash on Delivery</h4>
-                <p class="text-[11px] text-muted-dark dark:text-ivory-400 leading-relaxed font-light">
+                <h4 class="font-serif text-xs sm:text-sm font-bold text-espresso-950 dark:text-ivory mb-1 group-hover:text-gold-600 transition-colors">Cash on Delivery</h4>
+                <p class="text-[10px] sm:text-[11px] text-muted-dark dark:text-ivory-400 leading-relaxed font-light">
                     Zero risk. Inspect your parcel and pay securely with cash at your doorstep nationwide.
                 </p>
             </div>
 
             <!-- Card 3 -->
-            <div class="cursor-pointer reveal delay-225 group relative flex flex-col items-center text-center p-5 bg-white dark:bg-[#241C18] rounded-2xl border border-ivory-300 dark:border-white/10 hover:border-gold-500/60 shadow-xs hover:shadow-xl hover:-translate-y-1.5 transition-all duration-300 overflow-hidden">
+            <div class="cursor-pointer reveal delay-225 group relative flex flex-col items-center text-center p-3.5 sm:p-5 bg-white dark:bg-[#241C18] rounded-2xl border border-ivory-300 dark:border-white/10 hover:border-gold-500/60 shadow-xs hover:shadow-xl hover:-translate-y-1.5 transition-all duration-300 overflow-hidden">
                 <div class="absolute top-0 inset-x-0 h-1 bg-gradient-to-r from-gold-400 to-gold-600 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                <div class="w-12 h-12 rounded-2xl bg-ivory-100 dark:bg-[#1A1411] group-hover:bg-espresso-950 text-gold-700 dark:text-gold-400 group-hover:text-gold-300 flex items-center justify-center transition-all duration-300 shadow-inner group-hover:scale-110 mb-3">
-                    <i data-lucide="award" class="w-5 h-5"></i>
+                <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-2xl bg-ivory-100 dark:bg-[#1A1411] group-hover:bg-espresso-950 text-gold-700 dark:text-gold-400 group-hover:text-gold-300 flex items-center justify-center transition-all duration-300 shadow-inner group-hover:scale-110 mb-2 sm:mb-3">
+                    <i data-lucide="award" class="w-4 h-4 sm:w-5 sm:h-5"></i>
                 </div>
-                <h4 class="font-serif text-sm font-bold text-espresso-950 dark:text-ivory mb-1 group-hover:text-gold-600 transition-colors">100% Pure Leather</h4>
-                <p class="text-[11px] text-muted-dark dark:text-ivory-400 leading-relaxed font-light">
-                    Full-grain & top-grain Pakistani cowhide. Zero synthetic fillers, zero peel, zero bond.
+                <h4 class="font-serif text-xs sm:text-sm font-bold text-espresso-950 dark:text-ivory mb-1 group-hover:text-gold-600 transition-colors">100% Pure Leather</h4>
+                <p class="text-[10px] sm:text-[11px] text-muted-dark dark:text-ivory-400 leading-relaxed font-light">
+                    Full-grain & top-grain Pakistani cowhide. Zero synthetic fillers, zero peel.
                 </p>
             </div>
 
             <!-- Card 4 -->
-            <div class="cursor-pointer reveal delay-300 group relative flex flex-col items-center text-center p-5 bg-white dark:bg-[#241C18] rounded-2xl border border-ivory-300 dark:border-white/10 hover:border-gold-500/60 shadow-xs hover:shadow-xl hover:-translate-y-1.5 transition-all duration-300 overflow-hidden">
+            <div class="cursor-pointer reveal delay-300 group relative flex flex-col items-center text-center p-3.5 sm:p-5 bg-white dark:bg-[#241C18] rounded-2xl border border-ivory-300 dark:border-white/10 hover:border-gold-500/60 shadow-xs hover:shadow-xl hover:-translate-y-1.5 transition-all duration-300 overflow-hidden">
                 <div class="absolute top-0 inset-x-0 h-1 bg-gradient-to-r from-gold-400 to-gold-600 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                <div class="w-12 h-12 rounded-2xl bg-ivory-100 dark:bg-[#1A1411] group-hover:bg-espresso-950 text-gold-700 dark:text-gold-400 group-hover:text-gold-300 flex items-center justify-center transition-all duration-300 shadow-inner group-hover:scale-110 mb-3">
-                    <i data-lucide="rotate-ccw" class="w-5 h-5"></i>
+                <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-2xl bg-ivory-100 dark:bg-[#1A1411] group-hover:bg-espresso-950 text-gold-700 dark:text-gold-400 group-hover:text-gold-300 flex items-center justify-center transition-all duration-300 shadow-inner group-hover:scale-110 mb-2 sm:mb-3">
+                    <i data-lucide="rotate-ccw" class="w-4 h-4 sm:w-5 sm:h-5"></i>
                 </div>
-                <h4 class="font-serif text-sm font-bold text-espresso-950 dark:text-ivory mb-1 group-hover:text-gold-600 transition-colors">7-Day Exchanges</h4>
-                <p class="text-[11px] text-muted-dark dark:text-ivory-400 leading-relaxed font-light">
+                <h4 class="font-serif text-xs sm:text-sm font-bold text-espresso-950 dark:text-ivory mb-1 group-hover:text-gold-600 transition-colors">7-Day Exchanges</h4>
+                <p class="text-[10px] sm:text-[11px] text-muted-dark dark:text-ivory-400 leading-relaxed font-light">
                     Effortless size swaps or returns with quick doorstep pickup and zero hassle.
                 </p>
             </div>
 
-            <!-- Card 5 -->
-            <div class="cursor-pointer reveal delay-300 group relative flex flex-col items-center text-center p-5 bg-white dark:bg-[#241C18] rounded-2xl border border-ivory-300 dark:border-white/10 hover:border-gold-500/60 shadow-xs hover:shadow-xl hover:-translate-y-1.5 transition-all duration-300 overflow-hidden sm:col-span-1 lg:col-span-1">
+            <!-- Card 5 (Full width on mobile 2-col layout) -->
+            <div class="col-span-2 sm:col-span-2 lg:col-span-1 cursor-pointer reveal delay-300 group relative flex flex-col items-center text-center p-3.5 sm:p-5 bg-white dark:bg-[#241C18] rounded-2xl border border-ivory-300 dark:border-white/10 hover:border-gold-500/60 shadow-xs hover:shadow-xl hover:-translate-y-1.5 transition-all duration-300 overflow-hidden">
                 <div class="absolute top-0 inset-x-0 h-1 bg-gradient-to-r from-gold-400 to-gold-600 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                 <div class="w-12 h-12 rounded-2xl bg-ivory-100 dark:bg-[#1A1411] group-hover:bg-espresso-950 text-gold-700 dark:text-gold-400 group-hover:text-gold-300 flex items-center justify-center transition-all duration-300 shadow-inner group-hover:scale-110 mb-3">
                     <i data-lucide="phone-call" class="w-5 h-5"></i>
@@ -1132,7 +1149,7 @@
             @endphp
 
             @foreach($testimonials as $t)
-                <div class="snap-start flex-shrink-0 w-[300px] sm:w-[340px] lg:w-[calc(33.333%-14px)] rounded-2xl bg-white/[0.05] hover:bg-white/[0.08] backdrop-blur-md border border-white/10 hover:border-gold/50 p-6 flex flex-col justify-between shadow-xl transition-all duration-300 hover:-translate-y-1.5 group">
+                <div class="snap-start flex-shrink-0 w-[84vw] max-w-[310px] sm:max-w-none sm:w-[340px] lg:w-[calc(33.333%-14px)] rounded-2xl bg-white/[0.05] hover:bg-white/[0.08] backdrop-blur-md border border-white/10 hover:border-gold/50 p-5 sm:p-6 flex flex-col justify-between shadow-xl transition-all duration-300 hover:-translate-y-1.5 group">
                     <div>
                         <!-- Rating & Product -->
                         <div class="flex items-center justify-between gap-2 mb-4">

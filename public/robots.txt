@@ -1,19 +1,27 @@
 User-agent: *
 Allow: /
 Allow: /shop
+Allow: /deals
+Allow: /deals/
 Allow: /category/
 Allow: /product/
 Allow: /about
 Allow: /contact
 Allow: /faq
+Allow: /reviews
 Allow: /policies/
+Allow: /images/
 
-# Disallow cart, checkout, private wishlist and internal search crawl
+# Disallow admin control panel, cart, checkout, customer private states, API & search
+Disallow: /admin
+Disallow: /admin/
 Disallow: /cart
 Disallow: /checkout
 Disallow: /wishlist
 Disallow: /search
+Disallow: /api/
 
-# Dynamic XML Sitemaps
-Sitemap: http://127.0.0.1:8000/sitemap.xml
+# Host & Dynamic Sitemaps
+Host: byzunash.com
 Sitemap: https://byzunash.com/sitemap.xml
+Sitemap: http://127.0.0.1:8000/sitemap.xml

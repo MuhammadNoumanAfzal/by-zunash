@@ -26,37 +26,93 @@
         </button>
     </div>
 
-    <!-- Subcategories Table -->
+    <!-- Subcategories Table & Mobile Cards -->
     <div class="rounded-3xl bg-white dark:bg-[#1A1513] border border-[#ECE6DE] dark:border-[#2C2420] shadow-card overflow-hidden">
-        <div class="overflow-x-auto">
+        
+        <!-- Mobile Clean Card View (Visible on screens < 640px) -->
+        <div class="block sm:hidden divide-y divide-[#F0EAE1] dark:divide-[#28201C]">
+            @forelse($subcategories as $subcat)
+                <div class="p-4 hover:bg-[#FAF8F5] dark:hover:bg-[#221B18] transition-colors space-y-2.5">
+                    <div class="flex items-start justify-between gap-2">
+                        <div class="min-w-0 flex-1">
+                            <h3 class="font-bold text-sm text-espresso-950 dark:text-white truncate">
+                                {{ $subcat->name }}
+                            </h3>
+                            <div class="font-mono text-[10px] text-gray-400 mt-0.5 truncate">
+                                /{{ $subcat->slug }}
+                            </div>
+                        </div>
+                        <span class="px-2.5 py-0.5 rounded-full text-[10px] font-semibold bg-[#FAF6F2] dark:bg-[#2A1D1A] text-tan-700 dark:text-gold-300 border border-tan-200 dark:border-[#3E2A24] shrink-0">
+                            {{ $subcat->category?->name ?? 'None' }}
+                        </span>
+                    </div>
+
+                    @if($subcat->description)
+                        <p class="text-xs text-[#7A6E64] dark:text-[#A89C91] line-clamp-2 leading-relaxed">
+                            {{ $subcat->description }}
+                        </p>
+                    @endif
+
+                    <div class="pt-2 border-t border-[#F0EAE1] dark:border-[#28201C] flex items-center justify-end gap-2">
+                        <button 
+                            type="button" 
+                            onclick="openEditSubcatModal({{ json_encode($subcat) }})"
+                            class="px-3 py-1.5 rounded-lg text-xs font-semibold bg-[#FAF8F5] dark:bg-[#241D1A] border border-[#DFD6CB] dark:border-[#382D27] text-espresso-900 dark:text-white hover:border-tan-500 transition-colors flex items-center gap-1.5"
+                        >
+                            <i data-lucide="edit-3" class="w-3.5 h-3.5 text-tan-600"></i>
+                            <span>Edit</span>
+                        </button>
+
+                        <form action="{{ route('admin.subcategories.destroy', $subcat) }}" method="POST" onsubmit="return confirm('Delete this subcategory?')" class="inline">
+                            @csrf
+                            @method('DELETE')
+                            <button 
+                                type="submit" 
+                                class="px-3 py-1.5 rounded-lg text-xs font-semibold border border-rose-200 text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/30 transition-colors flex items-center gap-1.5"
+                            >
+                                <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+                                <span>Delete</span>
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            @empty
+                <div class="py-8 text-center text-xs text-gray-400">
+                    No subcategories registered.
+                </div>
+            @endforelse
+        </div>
+
+        <!-- Desktop / Tablet Table View (Visible on >= 640px) -->
+        <div class="hidden sm:block overflow-x-auto w-full max-w-full">
             <table class="w-full text-left text-xs">
                 <thead>
                     <tr class="text-[10px] font-bold uppercase tracking-wider text-[#8F8379] bg-[#FAF8F5] dark:bg-[#201A18] border-b border-[#ECE6DE] dark:border-[#2C2420]">
-                        <th class="py-3 px-4">NAME</th>
-                        <th class="py-3 px-4">PARENT COLLECTION</th>
-                        <th class="py-3 px-4">SLUG</th>
+                        <th class="py-3 px-4 whitespace-nowrap">NAME</th>
+                        <th class="py-3 px-4 whitespace-nowrap">PARENT COLLECTION</th>
+                        <th class="py-3 px-4 whitespace-nowrap">SLUG</th>
                         <th class="py-3 px-4">DESCRIPTION</th>
-                        <th class="py-3 px-4 text-right">ACTIONS</th>
+                        <th class="py-3 px-4 text-right whitespace-nowrap">ACTIONS</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-[#F0EAE1] dark:divide-[#28201C]">
                     @forelse($subcategories as $subcat)
                         <tr class="hover:bg-[#FAF8F5] dark:hover:bg-[#221B18] transition-colors">
-                            <td class="py-3.5 px-4 font-bold text-espresso-950 dark:text-white">
+                            <td class="py-3.5 px-4 font-bold text-espresso-950 dark:text-white whitespace-nowrap">
                                 {{ $subcat->name }}
                             </td>
-                            <td class="py-3.5 px-4">
+                            <td class="py-3.5 px-4 whitespace-nowrap">
                                 <span class="px-2.5 py-0.5 rounded-full text-[10px] font-semibold bg-[#FAF6F2] text-tan-700 border border-tan-200">
                                     {{ $subcat->category?->name ?? 'None' }}
                                 </span>
                             </td>
-                            <td class="py-3.5 px-4 font-mono text-[11px] text-gray-500">
+                            <td class="py-3.5 px-4 font-mono text-[11px] text-gray-500 whitespace-nowrap">
                                 {{ $subcat->slug }}
                             </td>
                             <td class="py-3.5 px-4 text-gray-500 max-w-sm truncate">
                                 {{ $subcat->description ?: '—' }}
                             </td>
-                            <td class="py-3.5 px-4 text-right">
+                            <td class="py-3.5 px-4 text-right whitespace-nowrap">
                                 <div class="inline-flex items-center gap-1.5 justify-end">
                                     <button 
                                         type="button" 

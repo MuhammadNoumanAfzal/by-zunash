@@ -78,28 +78,112 @@
                 </select>
             </div>
 
-            <div class="lg:col-span-1">
-                <button type="submit" class="w-full py-2 rounded-xl bg-espresso-900 hover:bg-tan-600 text-white font-semibold text-xs flex items-center justify-center transition-colors">
+            <div class="sm:col-span-2 lg:col-span-1">
+                <button type="submit" class="w-full py-2 px-3 rounded-xl bg-espresso-900 hover:bg-tan-600 text-white font-semibold text-xs flex items-center justify-center gap-1.5 transition-colors">
                     <i data-lucide="filter" class="w-3.5 h-3.5"></i>
+                    <span class="sm:hidden lg:hidden">Filter</span>
                 </button>
             </div>
 
         </form>
     </div>
 
-    <!-- Orders Table -->
+    <!-- Orders Table & Mobile Cards -->
     <div class="rounded-3xl bg-white dark:bg-[#1A1513] border border-[#ECE6DE] dark:border-[#2C2420] shadow-card overflow-hidden">
-        <div class="overflow-x-auto">
+        
+        <!-- Mobile Card List (Visible on < 640px) -->
+        <div class="block sm:hidden divide-y divide-[#F0EAE1] dark:divide-[#28201C]">
+            @forelse($orders as $order)
+                <div class="p-4 hover:bg-[#FAF8F5] dark:hover:bg-[#221B18] transition-colors space-y-2.5">
+                    <div class="flex items-center justify-between gap-2">
+                        <div class="flex items-center gap-2 min-w-0">
+                            <span class="font-mono font-bold text-xs text-tan-600 dark:text-gold-400 truncate">
+                                {{ $order->order_number }}
+                            </span>
+                            @if($order->order_status === 'completed')
+                                <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-50 text-emerald-700 dark:bg-emerald-950/40 dark:text-emerald-300 border border-emerald-200 shrink-0">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                                    Delivered
+                                </span>
+                            @elseif($order->order_status === 'pending')
+                                <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-50 text-amber-800 dark:bg-amber-950/40 dark:text-amber-300 border border-amber-200 shrink-0">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-amber-500"></span>
+                                    Pending
+                                </span>
+                            @elseif($order->order_status === 'processing')
+                                <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-blue-50 text-blue-800 dark:bg-blue-950/40 dark:text-blue-300 border border-blue-200 shrink-0">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-blue-500"></span>
+                                    In Crafting
+                                </span>
+                            @else
+                                <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-gray-50 text-gray-700 dark:bg-gray-800 dark:text-gray-300 border border-gray-200 shrink-0">
+                                    {{ ucfirst($order->order_status) }}
+                                </span>
+                            @endif
+                        </div>
+
+                        <div class="font-cinzel font-bold text-sm text-espresso-950 dark:text-white shrink-0">
+                            Rs. {{ number_format($order->total) }}
+                        </div>
+                    </div>
+
+                    <div class="flex items-center justify-between text-xs text-[#6E6359] dark:text-[#C5B8AC]">
+                        <div class="min-w-0 flex-1 pr-2">
+                            <div class="font-bold text-espresso-950 dark:text-white truncate">
+                                {{ $order->customer_name }}
+                            </div>
+                            <div class="text-[11px] text-gray-400 truncate">
+                                {{ $order->city }} • {{ $order->created_at ? $order->created_at->format('M d, Y') : '—' }}
+                            </div>
+                        </div>
+
+                        <div class="flex items-center gap-2 shrink-0">
+                            @if($order->payment_method === 'COD')
+                                <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-[#FFF7E8] text-tan-700 border border-[#FDE68A]">
+                                    COD
+                                </span>
+                            @elseif($order->payment_method === 'BANK_TRANSFER')
+                                <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-[#EFF6FF] text-[#2563EB] border border-[#BFDBFE]">
+                                    IBFT
+                                </span>
+                            @elseif($order->payment_method === 'CREDIT_CARD')
+                                <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-[#F3F4F6] text-[#4B5563] border border-[#E5E7EB]">
+                                    CARD
+                                </span>
+                            @else
+                                <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-[#FDF9F5] text-tan-700 border border-tan-200">
+                                    {{ $order->payment_method }}
+                                </span>
+                            @endif
+
+                            <a 
+                                href="{{ route('admin.orders.show', $order) }}" 
+                                class="px-2.5 py-1 rounded-lg text-xs font-semibold bg-espresso-900 hover:bg-tan-600 text-white transition-colors"
+                            >
+                                Details →
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            @empty
+                <div class="py-8 text-center text-xs text-gray-400">
+                    No orders match the selected criteria.
+                </div>
+            @endforelse
+        </div>
+
+        <!-- Desktop / Tablet Table (Visible on >= 640px) -->
+        <div class="hidden sm:block overflow-x-auto w-full max-w-full">
             <table class="w-full text-left text-xs">
                 <thead>
                     <tr class="text-[10px] font-bold uppercase tracking-wider text-[#8F8379] bg-[#FAF8F5] dark:bg-[#201A18] border-b border-[#ECE6DE] dark:border-[#2C2420]">
-                        <th class="py-3 px-4">ORDER #</th>
+                        <th class="py-3 px-4 whitespace-nowrap">ORDER #</th>
                         <th class="py-3 px-3">CUSTOMER</th>
                         <th class="py-3 px-3">CITY</th>
-                        <th class="py-3 px-3">AMOUNT</th>
+                        <th class="py-3 px-3 whitespace-nowrap">AMOUNT</th>
                         <th class="py-3 px-3">PAYMENT</th>
                         <th class="py-3 px-3">STATUS</th>
-                        <th class="py-3 px-3">DATE</th>
+                        <th class="py-3 px-3 whitespace-nowrap">DATE</th>
                         <th class="py-3 px-4 text-right">ACTION</th>
                     </tr>
                 </thead>

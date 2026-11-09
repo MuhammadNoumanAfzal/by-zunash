@@ -94,18 +94,18 @@
     </div>
 
     <!-- Category Filter Tabs -->
-    <div class="bg-ivory-50 border-b border-ivory-200 py-4">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-center gap-2 sm:gap-4 overflow-x-auto hide-scrollbar">
+    <div class="bg-ivory-50 border-b border-ivory-200 py-3 sm:py-4">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-start sm:justify-center gap-2 sm:gap-4 overflow-x-auto hide-scrollbar">
             <a 
                 href="{{ route('shop') }}" 
-                class="px-4 py-2 rounded-full text-xs uppercase tracking-wider font-medium text-espresso-800 bg-white border border-ivory-300 hover:border-gold transition-colors whitespace-nowrap"
+                class="px-3.5 py-1.5 sm:px-4 sm:py-2 rounded-full text-xs uppercase tracking-wider font-medium text-espresso-800 bg-white border border-ivory-300 hover:border-gold transition-colors whitespace-nowrap shrink-0"
             >
                 All Collections
             </a>
             @foreach($categories as $slug => $cat)
                 <a 
                     href="{{ route('category', $slug) }}" 
-                    class="px-4 py-2 rounded-full text-xs uppercase tracking-wider font-medium transition-colors whitespace-nowrap {{ $category['slug'] === $slug ? 'bg-espresso text-gold border border-gold/40 font-semibold shadow-xs' : 'bg-white text-espresso-800 border border-ivory-300 hover:border-gold' }}"
+                    class="px-3.5 py-1.5 sm:px-4 sm:py-2 rounded-full text-xs uppercase tracking-wider font-medium transition-colors whitespace-nowrap shrink-0 {{ $category['slug'] === $slug ? 'bg-espresso text-gold border border-gold/40 font-semibold shadow-xs' : 'bg-white text-espresso-800 border border-ivory-300 hover:border-gold' }}"
                 >
                     {{ $cat['name'] }}
                 </a>
@@ -114,9 +114,9 @@
     </div>
 
     <!-- Products Grid -->
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-14">
-        <div class="mb-8 flex items-center justify-between">
-            <h2 class="font-serif text-xl font-bold text-espresso-900">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-14">
+        <div class="mb-6 sm:mb-8 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+            <h2 class="font-serif text-lg sm:text-xl font-bold text-espresso-900">
                 Available In {{ $category['name'] }} ({{ count($products) }})
             </h2>
             <a href="{{ route('shop') }}" class="text-xs uppercase tracking-wider text-muted hover:text-gold-600 flex items-center gap-1">
@@ -126,7 +126,7 @@
         </div>
 
         @if(count($products) > 0)
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div class="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6">
                 @foreach($products as $product)
                     <x-user.components.product-card :product="$product" />
                 @endforeach
