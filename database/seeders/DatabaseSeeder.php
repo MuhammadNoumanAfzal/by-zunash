@@ -29,16 +29,6 @@ class DatabaseSeeder extends Seeder
             ]
         );
 
-        Admin::updateOrCreate(
-            ['email' => 'admin@mehaaj.de'],
-            [
-                'name' => 'Zunash Executive',
-                'password' => Hash::make('password'),
-                'role' => 'super_admin',
-                'avatar' => null,
-            ]
-        );
-
         // 2. Categories & Subcategories
         $categoriesConfig = config('products.categories', []);
         $categoryModelMap = [];

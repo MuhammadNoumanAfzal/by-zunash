@@ -475,15 +475,31 @@ document.addEventListener('DOMContentLoaded', function() {
     initCharts();
 });
 
+window.addEventListener('themechanged', function() {
+    Object.values(charts).forEach(chart => {
+        if (chart && typeof chart.destroy === 'function') {
+            chart.destroy();
+        }
+    });
+    charts = {};
+    initCharts();
+});
+
 function initCharts() {
+    const isDark = document.documentElement.classList.contains('dark');
+    const gridColor = isDark ? 'rgba(255, 255, 255, 0.07)' : 'rgba(236, 230, 222, 0.45)';
+    const tickColor = isDark ? '#A09387' : '#8F8379';
+    const doughnutBorder = isDark ? '#161210' : '#FFFFFF';
+    const legendColor = isDark ? '#C5B8AC' : '#6E6359';
+
     // -------------------------------------------------------------
     // CHART 1: REVENUE TRAJECTORY (Spline Area)
     // -------------------------------------------------------------
     const trajectoryCtx = document.getElementById('trajectoryChart')?.getContext('2d');
     if (trajectoryCtx) {
         const revenueGradient = trajectoryCtx.createLinearGradient(0, 0, 0, 260);
-        revenueGradient.addColorStop(0, 'rgba(176, 125, 78, 0.40)');
-        revenueGradient.addColorStop(0.7, 'rgba(176, 125, 78, 0.08)');
+        revenueGradient.addColorStop(0, isDark ? 'rgba(197, 161, 107, 0.35)' : 'rgba(176, 125, 78, 0.40)');
+        revenueGradient.addColorStop(0.7, isDark ? 'rgba(197, 161, 107, 0.08)' : 'rgba(176, 125, 78, 0.08)');
         revenueGradient.addColorStop(1, 'rgba(176, 125, 78, 0.0)');
 
         const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
@@ -498,13 +514,13 @@ function initCharts() {
                     {
                         label: 'Gross Revenue (PKR)',
                         data: revenueData,
-                        borderColor: '#976239',
+                        borderColor: isDark ? '#C5A16B' : '#976239',
                         borderWidth: 2.5,
                         backgroundColor: revenueGradient,
                         fill: true,
                         tension: 0.38,
                         pointBackgroundColor: '#C5A16B',
-                        pointBorderColor: '#120E0C',
+                        pointBorderColor: isDark ? '#0D0A09' : '#120E0C',
                         pointBorderWidth: 2,
                         pointRadius: 4,
                         pointHoverRadius: 6,
@@ -513,7 +529,7 @@ function initCharts() {
                     {
                         label: 'Order Volume',
                         data: volumeData,
-                        borderColor: '#C5A16B',
+                        borderColor: isDark ? '#EED9C5' : '#C5A16B',
                         borderWidth: 1.5,
                         borderDash: [4, 4],
                         backgroundColor: 'transparent',
@@ -531,6 +547,8 @@ function initCharts() {
                     legend: { display: false },
                     tooltip: {
                         backgroundColor: '#120E0C',
+                        borderColor: 'rgba(197, 161, 107, 0.3)',
+                        borderWidth: 1,
                         titleFont: { family: 'Plus Jakarta Sans', size: 12, weight: 'bold' },
                         bodyFont: { family: 'Plus Jakarta Sans', size: 11 },
                         padding: 8,
@@ -547,15 +565,15 @@ function initCharts() {
                     }
                 },
                 scales: {
-                    x: { grid: { display: false }, ticks: { font: { family: 'Plus Jakarta Sans', size: 10 }, color: '#8F8379' } },
+                    x: { grid: { display: false }, ticks: { font: { family: 'Plus Jakarta Sans', size: 10 }, color: tickColor } },
                     y: {
                         type: 'linear',
                         display: true,
                         position: 'left',
-                        grid: { color: 'rgba(236, 230, 222, 0.45)' },
+                        grid: { color: gridColor },
                         ticks: {
                             font: { family: 'Plus Jakarta Sans', size: 9 },
-                            color: '#8F8379',
+                            color: tickColor,
                             callback: function(v) { return 'Rs. ' + (v / 1000) + 'k'; }
                         }
                     },
@@ -566,7 +584,7 @@ function initCharts() {
                         grid: { drawOnChartArea: false },
                         ticks: {
                             font: { family: 'Plus Jakarta Sans', size: 9 },
-                            color: '#B07D4E',
+                            color: isDark ? '#C5A16B' : '#B07D4E',
                             callback: function(v) { return v + ' pcs'; }
                         }
                     }
@@ -587,7 +605,7 @@ function initCharts() {
                 datasets: [{
                     label: 'Orders Count',
                     data: [{{ $orderStatusBreakdown['Delivered'] ?? 4 }}, {{ $orderStatusBreakdown['In Crafting'] ?? 4 }}, {{ $orderStatusBreakdown['Pending Dispatch'] ?? 3 }}, {{ $orderStatusBreakdown['Cancelled'] ?? 0 }}],
-                    backgroundColor: ['#16A34A', '#2563EB', '#D97706', '#E11D48'],
+                    backgroundColor: ['#16A34A', '#3B82F6', '#F59E0B', '#EF4444'],
                     borderRadius: 8,
                     barThickness: 28,
                 }]
@@ -606,8 +624,8 @@ function initCharts() {
                     }
                 },
                 scales: {
-                    x: { grid: { display: false }, ticks: { font: { family: 'Plus Jakarta Sans', size: 10 }, color: '#8F8379' } },
-                    y: { beginAtZero: true, grid: { color: 'rgba(236, 230, 222, 0.4)' }, ticks: { font: { family: 'Plus Jakarta Sans', size: 10 }, stepSize: 1, color: '#8F8379' } }
+                    x: { grid: { display: false }, ticks: { font: { family: 'Plus Jakarta Sans', size: 10 }, color: tickColor } },
+                    y: { beginAtZero: true, grid: { color: gridColor }, ticks: { font: { family: 'Plus Jakarta Sans', size: 10 }, stepSize: 1, color: tickColor } }
                 }
             }
         });
@@ -629,9 +647,9 @@ function initCharts() {
                         {{ $paymentMethodsBreakdown['Online Card']['count'] ?? 1 }},
                         {{ $paymentMethodsBreakdown['VIP Concierge']['count'] ?? 1 }}
                     ],
-                    backgroundColor: ['#976239', '#C5A16B', '#120E0C', '#B07D4E'],
+                    backgroundColor: isDark ? ['#C5A16B', '#976239', '#5E361A', '#DFC0A1'] : ['#976239', '#C5A16B', '#120E0C', '#B07D4E'],
                     borderWidth: 2,
-                    borderColor: '#FFFFFF',
+                    borderColor: doughnutBorder,
                 }]
             },
             options: {
@@ -641,7 +659,7 @@ function initCharts() {
                 plugins: {
                     legend: {
                         position: 'right',
-                        labels: { font: { family: 'Plus Jakarta Sans', size: 11 }, color: '#6E6359' }
+                        labels: { font: { family: 'Plus Jakarta Sans', size: 11 }, color: legendColor }
                     },
                     tooltip: {
                         backgroundColor: '#120E0C',
@@ -667,9 +685,9 @@ function initCharts() {
                 labels: catData.map(c => c.name),
                 datasets: [{
                     data: catData.map(c => c.count),
-                    backgroundColor: ['#120E0C', '#976239', '#C5A16B', '#7A4B27', '#B07D4E', '#4A3428'],
+                    backgroundColor: isDark ? ['#C5A16B', '#976239', '#EED9C5', '#7A4B27', '#B07D4E', '#8F8379'] : ['#120E0C', '#976239', '#C5A16B', '#7A4B27', '#B07D4E', '#4A3428'],
                     borderWidth: 2,
-                    borderColor: '#FFFFFF',
+                    borderColor: doughnutBorder,
                 }]
             },
             options: {
@@ -679,7 +697,7 @@ function initCharts() {
                 plugins: {
                     legend: {
                         position: 'right',
-                        labels: { font: { family: 'Plus Jakarta Sans', size: 11 }, color: '#6E6359' }
+                        labels: { font: { family: 'Plus Jakarta Sans', size: 11 }, color: legendColor }
                     },
                     tooltip: {
                         backgroundColor: '#120E0C',
@@ -706,7 +724,7 @@ function initCharts() {
                 datasets: [{
                     label: 'Gross Revenue (PKR)',
                     data: regData.map(r => r.revenue),
-                    backgroundColor: '#B07D4E',
+                    backgroundColor: isDark ? '#C5A16B' : '#B07D4E',
                     borderRadius: 6,
                     barThickness: 18,
                 }]
@@ -727,16 +745,16 @@ function initCharts() {
                 },
                 scales: {
                     x: {
-                        grid: { color: 'rgba(236, 230, 222, 0.4)' },
+                        grid: { color: gridColor },
                         ticks: {
                             font: { family: 'Plus Jakarta Sans', size: 9 },
-                            color: '#8F8379',
+                            color: tickColor,
                             callback: function(v) { return 'Rs. ' + (v / 1000) + 'k'; }
                         }
                     },
                     y: {
                         grid: { display: false },
-                        ticks: { font: { family: 'Plus Jakarta Sans', size: 10, weight: '500' }, color: '#6E6359' }
+                        ticks: { font: { family: 'Plus Jakarta Sans', size: 10, weight: '500' }, color: isDark ? '#E8D0BE' : '#6E6359' }
                     }
                 }
             }

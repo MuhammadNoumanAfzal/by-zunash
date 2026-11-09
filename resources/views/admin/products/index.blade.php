@@ -170,6 +170,22 @@
                                             </span>
                                         @endif
                                     </div>
+
+                                    <!-- Variation Leather Swatches Preview -->
+                                    @if(is_array($product->colors) && count($product->colors) > 0)
+                                        <div class="flex items-center gap-1 mt-1.5" title="Available Leather Tones">
+                                            @foreach(array_slice($product->colors, 0, 5) as $col)
+                                                <span 
+                                                    class="w-3 h-3 rounded-full border border-black/20 shadow-2xs inline-block" 
+                                                    style="background-color: {{ $col['hex'] ?? '#8B4513' }};"
+                                                    title="{{ $col['name'] ?? '' }}"
+                                                ></span>
+                                            @endforeach
+                                            @if(count($product->colors) > 5)
+                                                <span class="text-[9px] text-[#8F8379] font-semibold font-mono">+{{ count($product->colors) - 5 }}</span>
+                                            @endif
+                                        </div>
+                                    @endif
                                 </div>
                             </div>
                         </td>
@@ -179,6 +195,11 @@
                             <span class="px-2.5 py-1 rounded-full text-[10px] font-semibold bg-[#F5F1EA] dark:bg-[#2A221E] text-espresso-800 dark:text-[#E8D0BE]">
                                 {{ $product->category_name ?: ucfirst($product->category_slug) }}
                             </span>
+                            @if($product->subcategory)
+                                <div class="text-[10px] text-gray-500 dark:text-gray-400 font-medium mt-1">
+                                    {{ $product->subcategory->name }}
+                                </div>
+                            @endif
                         </td>
 
                         <!-- Price -->
@@ -196,9 +217,15 @@
                         <!-- Stock & Status -->
                         <td class="py-3.5 px-3">
                             @if($product->availability === 'on_demand')
-                                <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-purple-50 text-purple-700 border border-purple-200">
-                                    On Demand
-                                </span>
+                                <div class="space-y-0.5">
+                                    <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-500/15 text-amber-800 dark:text-amber-400 border border-amber-500/30 inline-flex items-center gap-1">
+                                        <span class="w-1.5 h-1.5 rounded-full bg-amber-500"></span>
+                                        On Demand
+                                    </span>
+                                    <div class="text-[9px] text-[#8F8379] font-mono">
+                                        {{ $product->lead_time ?: '7–10 Days' }}
+                                    </div>
+                                </div>
                             @elseif($product->stock_quantity <= 0)
                                 <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-rose-50 text-rose-700 border border-rose-200">
                                     Out of Stock (0)

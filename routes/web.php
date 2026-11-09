@@ -94,6 +94,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
         // Subcategories
         Route::get('/subcategories', [AdminSubcategoryController::class, 'index'])->name('subcategories.index');
         Route::post('/subcategories', [AdminSubcategoryController::class, 'store'])->name('subcategories.store');
+        Route::put('/subcategories/{subcategory}', [AdminSubcategoryController::class, 'update'])->name('subcategories.update');
         Route::delete('/subcategories/{subcategory}', [AdminSubcategoryController::class, 'destroy'])->name('subcategories.destroy');
 
         // Inventory & Stock
@@ -105,10 +106,13 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::get('/orders/{order}', [AdminOrderController::class, 'show'])->name('orders.show');
         Route::post('/orders/{order}/status', [AdminOrderController::class, 'updateStatus'])->name('orders.update-status');
         Route::get('/orders/{order}/invoice', [AdminOrderController::class, 'invoice'])->name('orders.invoice');
+        Route::delete('/orders/{order}', [AdminOrderController::class, 'destroy'])->name('orders.destroy');
 
         // VIP Customers
         Route::get('/customers', [AdminCustomerController::class, 'index'])->name('customers.index');
         Route::post('/customers/{customer}/vip', [AdminCustomerController::class, 'toggleVip'])->name('customers.vip');
+        Route::put('/customers/{customer}', [AdminCustomerController::class, 'update'])->name('customers.update');
+        Route::delete('/customers/{customer}', [AdminCustomerController::class, 'destroy'])->name('customers.destroy');
 
         // Concierge Messages / Inquiries
         Route::get('/messages', [AdminInquiryController::class, 'index'])->name('messages.index');
@@ -123,6 +127,8 @@ Route::prefix('admin')->name('admin.')->group(function () {
         // Staff & Roles (RBAC)
         Route::get('/staff', [AdminStaffController::class, 'index'])->name('staff.index');
         Route::post('/staff', [AdminStaffController::class, 'store'])->name('staff.store');
+        Route::put('/staff/{staff}', [AdminStaffController::class, 'update'])->name('staff.update');
+        Route::delete('/staff/{staff}', [AdminStaffController::class, 'destroy'])->name('staff.destroy');
 
         // Store Settings
         Route::get('/settings', [AdminSettingController::class, 'index'])->name('settings.index');

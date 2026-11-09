@@ -35,18 +35,55 @@ class SubcategoryController extends Controller
         $validated = $request->validate([
             'category_id' => 'required|exists:categories,id',
             'name' => 'required|string|max:100',
+            'slug' => 'nullable|string|max:100',
             'description' => 'nullable|string|max:255',
         ]);
+
+        $slugBase = !empty($validated['slug']) ? Str::slug($validated['slug']) : Str::slug($validated['name']);
+        $slug = $slugBase;
+        $count = 1;
+        while (Subcategory::where('slug', $slug)->exists()) {
+            $slug = "{$slugBase}-{$count}";
+            $count++;
+        }
 
         Subcategory::create([
             'category_id' => $validated['category_id'],
             'name' => $validated['name'],
-            'slug' => Str::slug($validated['name']),
+            'slug' => $slug,
             'description' => $validated['description'] ?? null,
         ]);
 
         return redirect()->route('admin.subcategories.index')
             ->with('toast_success', "Subcategory '{$validated['name']}' added.");
+    }
+
+    public function update(Request $request, Subcategory $subcategory)
+    {
+        $validated = $request->validate([
+            'category_id' => 'required|exists:categories,id',
+            'name' => 'required|string|max:100',
+            'slug' => 'nullable|string|max:100',
+            'description' => 'nullable|string|max:255',
+        ]);
+
+        $slugBase = !empty($validated['slug']) ? Str::slug($validated['slug']) : Str::slug($validated['name']);
+        $slug = $slugBase;
+        $count = 1;
+        while (Subcategory::where('slug', $slug)->where('id', '!=', $subcategory->id)->exists()) {
+            $slug = "{$slugBase}-{$count}";
+            $count++;
+        }
+
+        $subcategory->update([
+            'category_id' => $validated['category_id'],
+            'name' => $validated['name'],
+            'slug' => $slug,
+            'description' => $validated['description'] ?? null,
+        ]);
+
+        return redirect()->route('admin.subcategories.index')
+            ->with('toast_success', "Subcategory '{$subcategory->name}' updated.");
     }
 
     public function destroy(Subcategory $subcategory)

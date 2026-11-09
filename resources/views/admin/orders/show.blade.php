@@ -32,6 +32,19 @@
                 <span>Print Invoice</span>
             </a>
 
+            <form action="{{ route('admin.orders.destroy', $order) }}" method="POST" onsubmit="return confirm('Permanently delete this order record?')">
+                @csrf
+                @method('DELETE')
+                <button 
+                    type="submit" 
+                    class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl border border-rose-200 text-xs font-semibold text-rose-600 hover:bg-rose-50 transition-colors"
+                    title="Delete Order"
+                >
+                    <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+                    <span>Delete</span>
+                </button>
+            </form>
+
             <a 
                 href="{{ route('admin.orders.index') }}" 
                 class="px-4 py-2 rounded-xl border border-[#DFD6CB] text-xs font-semibold text-gray-600 dark:text-gray-300 hover:bg-gray-50 transition-colors"
@@ -86,19 +99,56 @@
                 <div class="divide-y divide-[#F0EAE1] dark:divide-[#2C2420]">
                     @if(is_array($order->items) && count($order->items) > 0)
                         @foreach($order->items as $item)
-                            <div class="py-3 flex items-center justify-between">
-                                <div>
-                                    <div class="font-bold text-sm text-espresso-950 dark:text-white">
-                                        {{ $item['name'] ?? 'By Zunash Leather Article' }}
-                                    </div>
-                                    <div class="text-xs text-[#8F8379] mt-0.5">
-                                        Qty: <span class="font-bold text-espresso-900 dark:text-white">{{ $item['qty'] ?? 1 }}</span>
-                                        @if(isset($item['sku'])) • SKU: {{ $item['sku'] }} @endif
-                                        @if(isset($item['color'])) • Color: {{ $item['color'] }} @endif
+                            <div class="py-4 flex items-center justify-between gap-4">
+                                <div class="flex items-center gap-3.5 min-w-0">
+                                    <img 
+                                        src="{{ $item['image'] ?? '/images/products/prod-reversible-belt.jpg' }}" 
+                                        alt="{{ $item['name'] ?? 'By Zunash Article' }}"
+                                        class="w-14 h-14 rounded-xl object-cover border border-[#ECE6DE] dark:border-[#2C2420] shrink-0 bg-[#FAF8F5] dark:bg-[#201A18]"
+                                    >
+                                    <div class="min-w-0">
+                                        <div class="font-bold text-sm text-espresso-950 dark:text-white truncate">
+                                            {{ $item['name'] ?? 'By Zunash Leather Article' }}
+                                        </div>
+
+                                        <!-- Item Variant Badges (Color / Size) -->
+                                        <div class="flex items-center gap-2 mt-1 flex-wrap">
+                                            @if(!empty($item['variant']))
+                                                <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-[#FAF6F2] dark:bg-[#2A1E18] text-tan-700 dark:text-gold-300 border border-tan-200 dark:border-[#3E2A24]">
+                                                    {{ $item['variant'] }}
+                                                </span>
+                                            @endif
+
+                                            @if(!empty($item['color']) && empty($item['variant']))
+                                                <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-ivory-100 dark:bg-[#2A201C] text-espresso-900 dark:text-[#E8D0BE] border border-[#E0D7CB]">
+                                                    Color: {{ $item['color'] }}
+                                                </span>
+                                            @endif
+
+                                            @if(!empty($item['size']))
+                                                <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-ivory-100 dark:bg-[#2A201C] text-espresso-900 dark:text-[#E8D0BE] border border-[#E0D7CB]">
+                                                    Size: {{ $item['size'] }}″
+                                                </span>
+                                            @endif
+
+                                            <span class="text-xs text-[#8F8379]">
+                                                Qty: <strong class="text-espresso-900 dark:text-white font-mono">{{ $item['qty'] ?? ($item['quantity'] ?? 1) }}</strong>
+                                            </span>
+
+                                            @if(isset($item['sku']))
+                                                <span class="text-[10px] font-mono text-gray-400">SKU: {{ $item['sku'] }}</span>
+                                            @endif
+                                        </div>
                                     </div>
                                 </div>
-                                <div class="font-cinzel font-bold text-sm text-espresso-950 dark:text-white">
-                                    Rs. {{ number_format(($item['price'] ?? 0) * ($item['qty'] ?? 1)) }}
+
+                                <div class="text-right shrink-0">
+                                    <div class="font-cinzel font-bold text-sm text-espresso-950 dark:text-white">
+                                        Rs. {{ number_format(($item['price'] ?? 0) * ($item['qty'] ?? ($item['quantity'] ?? 1))) }}
+                                    </div>
+                                    <div class="text-[10px] text-gray-400 font-mono">
+                                        @ Rs. {{ number_format($item['price'] ?? 0) }}
+                                    </div>
                                 </div>
                             </div>
                         @endforeach
@@ -146,30 +196,61 @@
                     Client Dossier
                 </h2>
 
-                <div class="space-y-3 text-xs">
+                <div class="space-y-4 text-xs">
                     <div>
                         <div class="text-[10px] font-bold uppercase tracking-wider text-[#8F8379]">Client Name</div>
-                        <div class="font-bold text-espresso-950 dark:text-white text-sm mt-0.5">{{ $order->customer_name }}</div>
+                        <div class="font-bold text-espresso-950 dark:text-white text-base mt-0.5">{{ $order->customer_name }}</div>
                     </div>
 
                     <div>
                         <div class="text-[10px] font-bold uppercase tracking-wider text-[#8F8379]">Contact Details</div>
                         <div class="text-espresso-950 dark:text-white mt-0.5">{{ $order->customer_email }}</div>
-                        <div class="text-gray-500 font-mono mt-0.5">{{ $order->customer_phone ?: 'No phone provided' }}</div>
+                        <div class="text-gray-600 dark:text-gray-300 font-mono mt-0.5 font-semibold">{{ $order->customer_phone ?: 'No phone provided' }}</div>
+
+                        <!-- Direct VIP Contact Buttons -->
+                        @php
+                            $cleanPhone = preg_replace('/[^0-9]/', '', $order->customer_phone ?? '');
+                            if (str_starts_with($cleanPhone, '03')) {
+                                $cleanPhone = '92' . substr($cleanPhone, 1);
+                            }
+                        @endphp
+                        <div class="flex items-center gap-2 mt-2.5">
+                            @if($cleanPhone)
+                                <a 
+                                    href="https://wa.me/{{ $cleanPhone }}?text={{ urlencode('Assalam o Alaikum ' . $order->customer_name . ', regarding your By Zunash order #' . $order->order_number) }}" 
+                                    target="_blank" 
+                                    class="px-3 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-[11px] font-semibold flex items-center gap-1.5 transition-colors shadow-2xs"
+                                >
+                                    <i data-lucide="message-circle" class="w-3.5 h-3.5"></i>
+                                    <span>WhatsApp VIP</span>
+                                </a>
+                            @endif
+
+                            @if($order->customer_email)
+                                <a 
+                                    href="mailto:{{ $order->customer_email }}?subject={{ urlencode('Regarding your By Zunash Order #' . $order->order_number) }}" 
+                                    class="px-3 py-1.5 rounded-xl border border-[#DFD6CB] dark:border-[#382D27] text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-[#201A18] text-[11px] font-semibold flex items-center gap-1.5 transition-colors"
+                                >
+                                    <i data-lucide="mail" class="w-3.5 h-3.5"></i>
+                                    <span>Email Client</span>
+                                </a>
+                            @endif
+                        </div>
                     </div>
 
                     <div>
                         <div class="text-[10px] font-bold uppercase tracking-wider text-[#8F8379]">Shipping Destination</div>
-                        <div class="text-espresso-950 dark:text-white mt-0.5 leading-relaxed">
+                        <div class="text-espresso-950 dark:text-white mt-0.5 leading-relaxed bg-[#FAF8F5] dark:bg-[#201A18] p-3 rounded-xl border border-[#ECE6DE] dark:border-[#2C2420]">
                             {{ $order->shipping_address }}<br>
-                            {{ $order->city }} {{ $order->postal_code }}
+                            <strong>{{ $order->city }}</strong> {{ $order->postal_code }}
                         </div>
                     </div>
 
                     <div>
                         <div class="text-[10px] font-bold uppercase tracking-wider text-[#8F8379]">Payment Method</div>
-                        <div class="mt-1 font-bold text-tan-600">
-                            {{ $order->payment_method }}
+                        <div class="mt-1 font-bold text-tan-600 dark:text-gold-400 flex items-center gap-1.5">
+                            <span class="w-2 h-2 rounded-full bg-tan-600 dark:bg-gold-400"></span>
+                            <span>{{ $order->payment_method }}</span>
                         </div>
                     </div>
                 </div>

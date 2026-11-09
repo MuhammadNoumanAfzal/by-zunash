@@ -29,18 +29,24 @@ class CategoryController extends Controller
     {
         $validated = $request->validate([
             'name' => 'required|string|max:100',
-            'slug' => 'nullable|string|max:100|unique:categories,slug',
+            'slug' => 'nullable|string|max:100',
             'tagline' => 'nullable|string|max:255',
             'image' => 'nullable|string|max:255',
         ]);
 
-        $slug = $validated['slug'] ? Str::slug($validated['slug']) : Str::slug($validated['name']);
+        $slugBase = !empty($validated['slug']) ? Str::slug($validated['slug']) : Str::slug($validated['name']);
+        $slug = $slugBase;
+        $count = 1;
+        while (Category::where('slug', $slug)->exists()) {
+            $slug = "{$slugBase}-{$count}";
+            $count++;
+        }
 
         Category::create([
             'name' => $validated['name'],
             'slug' => $slug,
             'tagline' => $validated['tagline'] ?? null,
-            'image' => $validated['image'] ?? '/images/categories/cat-belts.jpg',
+            'image' => !empty($validated['image']) ? $validated['image'] : '/images/categories/cat-belts.jpg',
             'sort_order' => Category::count() + 1,
         ]);
 
@@ -52,16 +58,24 @@ class CategoryController extends Controller
     {
         $validated = $request->validate([
             'name' => 'required|string|max:100',
-            'slug' => 'required|string|max:100|unique:categories,slug,' . $category->id,
+            'slug' => 'nullable|string|max:100',
             'tagline' => 'nullable|string|max:255',
             'image' => 'nullable|string|max:255',
         ]);
 
+        $slugBase = !empty($validated['slug']) ? Str::slug($validated['slug']) : Str::slug($validated['name']);
+        $slug = $slugBase;
+        $count = 1;
+        while (Category::where('slug', $slug)->where('id', '!=', $category->id)->exists()) {
+            $slug = "{$slugBase}-{$count}";
+            $count++;
+        }
+
         $category->update([
             'name' => $validated['name'],
-            'slug' => Str::slug($validated['slug']),
+            'slug' => $slug,
             'tagline' => $validated['tagline'] ?? null,
-            'image' => $validated['image'] ?? $category->image,
+            'image' => !empty($validated['image']) ? $validated['image'] : $category->image,
         ]);
 
         return redirect()->route('admin.categories.index')

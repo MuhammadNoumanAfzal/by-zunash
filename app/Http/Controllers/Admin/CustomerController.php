@@ -45,7 +45,37 @@ class CustomerController extends Controller
         $customer->is_vip = !$customer->is_vip;
         $customer->save();
 
-        $status = $customer->is_vip ? 'granted VIP Atelier privilege' : 'reverted to regular client';
+        $status = $customer->is_vip ? 'promoted to VIP Atelier Patron' : 'reverted to regular client';
         return back()->with('toast_success', "Customer {$customer->name} {$status}.");
+    }
+
+    public function update(Request $request, Customer $customer)
+    {
+        $validated = $request->validate([
+            'name' => 'required|string|max:100',
+            'email' => 'required|email|unique:customers,email,' . $customer->id,
+            'phone' => 'nullable|string|max:30',
+            'city' => 'nullable|string|max:50',
+            'is_vip' => 'nullable|boolean',
+        ]);
+
+        $customer->update([
+            'name' => $validated['name'],
+            'email' => $validated['email'],
+            'phone' => $validated['phone'] ?? null,
+            'city' => $validated['city'] ?? $customer->city,
+            'is_vip' => $request->boolean('is_vip'),
+        ]);
+
+        return back()->with('toast_success', "Patron profile for {$customer->name} updated.");
+    }
+
+    public function destroy(Customer $customer)
+    {
+        $name = $customer->name;
+        $customer->delete();
+
+        return redirect()->route('admin.customers.index')
+            ->with('toast_success', "Customer profile for {$name} deleted.");
     }
 }

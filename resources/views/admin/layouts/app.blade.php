@@ -1,11 +1,25 @@
 <!DOCTYPE html>
-<html lang="en" class="scroll-smooth">
+<html lang="en" class="scroll-smooth bg-[#FAF9F6] dark:bg-[#0D0A09]">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
     <title>@yield('title', 'By Zunash Atelier Control Center | Luxury Leather Goods')</title>
+
+    <!-- Theme Initialization: Set 'dark' class on html before first render to prevent white flash -->
+    <script>
+        (function() {
+            try {
+                const storedTheme = localStorage.getItem('zunash_admin_theme');
+                if (storedTheme === 'dark' || (!storedTheme && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+                    document.documentElement.classList.add('dark');
+                } else {
+                    document.documentElement.classList.remove('dark');
+                }
+            } catch (e) {}
+        })();
+    </script>
 
     <!-- Google Fonts: Cinzel, Cormorant Garamond, Plus Jakarta Sans -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -105,6 +119,49 @@
             width: 0px !important;
             height: 0px !important;
         }
+
+        /* Universal Dead-Center Dialog Styling for All Admin Modals */
+        dialog {
+            position: fixed !important;
+            top: 50% !important;
+            left: 50% !important;
+            transform: translate(-50%, -50%) !important;
+            margin: 0 !important;
+            max-height: 90vh !important;
+            overflow-y: auto !important;
+            border: none !important;
+            outline: none !important;
+            z-index: 9999 !important;
+        }
+
+        dialog[open] {
+            display: block !important;
+            animation: modalCenterScale 0.22s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+
+        @keyframes modalCenterScale {
+            0% {
+                opacity: 0;
+                transform: translate(-50%, -46%) scale(0.96);
+            }
+            100% {
+                opacity: 1;
+                transform: translate(-50%, -50%) scale(1);
+            }
+        }
+
+        dialog::backdrop {
+            background: rgba(10, 8, 7, 0.75) !important;
+            backdrop-filter: blur(6px) !important;
+            -webkit-backdrop-filter: blur(6px) !important;
+            z-index: 9998 !important;
+            animation: backdropFade 0.2s ease-out forwards;
+        }
+
+        @keyframes backdropFade {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
     </style>
 
     @stack('styles')
@@ -112,7 +169,7 @@
 <body 
     x-data="{ 
         sidebarOpen: false,
-        theme: localStorage.getItem('zunash_admin_theme') || 'light',
+        theme: document.documentElement.classList.contains('dark') ? 'dark' : 'light',
         categoriesOpen: false,
         subcategoriesOpen: false,
         productsOpen: false,
@@ -125,10 +182,10 @@
             } else {
                 document.documentElement.classList.remove('dark');
             }
+            window.dispatchEvent(new CustomEvent('themechanged', { detail: this.theme }));
         }
     }"
-    :class="{ 'dark': theme === 'dark' }"
-    class="bg-[#FAF9F6] dark:bg-[#0D0A09] text-espresso-900 dark:text-[#F7F4EE] antialiased selection:bg-gold selection:text-espresso-950 min-h-screen flex flex-col"
+    class="bg-[#FAF9F6] dark:bg-[#0D0A09] text-espresso-900 dark:text-[#F7F4EE] antialiased selection:bg-gold selection:text-espresso-950 min-h-screen flex flex-col transition-colors duration-200"
 >
 
     <div class="min-h-screen flex flex-1">
@@ -387,7 +444,7 @@
         ></div>
 
         <!-- ======================= MAIN CONTENT WRAPPER ======================= -->
-        <div class="flex-1 lg:pl-64 flex flex-col min-h-screen">
+        <div class="flex-1 lg:pl-64 flex flex-col min-h-screen bg-[#FAF9F6] dark:bg-[#0D0A09] transition-colors duration-200">
 
             <!-- Top Header Bar (Compact Sleek h-14) -->
             <header class="sticky top-0 z-30 h-14 bg-white/95 dark:bg-[#161210]/95 backdrop-blur-md border-b border-[#ECE6DE] dark:border-[#261E1A] px-4 sm:px-6 flex items-center justify-between gap-4">
@@ -465,7 +522,7 @@
             </header>
 
             <!-- Main Page View Content (Compact Padding & Tighter Gaps) -->
-            <main class="flex-1 p-3 sm:p-5 space-y-3.5">
+            <main class="flex-1 p-3 sm:p-5 space-y-3.5 bg-[#FAF9F6] dark:bg-[#0D0A09] transition-colors duration-200">
                 @yield('content')
             </main>
 
@@ -514,6 +571,20 @@
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             lucide.createIcons();
+
+            // Backdrop click closes dialog
+            document.addEventListener('click', function(e) {
+                if (e.target.tagName === 'DIALOG' && e.target.open) {
+                    const rect = e.target.getBoundingClientRect();
+                    const isInDialog = (
+                        rect.top <= e.clientY && e.clientY <= rect.top + rect.height &&
+                        rect.left <= e.clientX && e.clientX <= rect.left + rect.width
+                    );
+                    if (!isInDialog) {
+                        e.target.close();
+                    }
+                }
+            });
         });
     </script>
 

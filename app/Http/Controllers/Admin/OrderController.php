@@ -79,4 +79,16 @@ class OrderController extends Controller
     {
         return view('admin.orders.invoice', compact('order'));
     }
+
+    /**
+     * Delete order record.
+     */
+    public function destroy(Order $order)
+    {
+        $orderNum = $order->order_number;
+        $order->delete();
+
+        return redirect()->route('admin.orders.index')
+            ->with('toast_success', "Order #{$orderNum} has been deleted.");
+    }
 }

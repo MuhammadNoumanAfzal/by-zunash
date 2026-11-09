@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Category;
 use App\Models\Product;
+use App\Models\Subcategory;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 
@@ -15,7 +16,7 @@ class ProductController extends Controller
      */
     public function index(Request $request)
     {
-        $query = Product::with('category');
+        $query = Product::with(['category', 'subcategory']);
 
         // Search query
         if ($request->filled('q')) {
@@ -102,7 +103,8 @@ class ProductController extends Controller
     public function create()
     {
         $categories = Category::orderBy('name')->get();
-        return view('admin.products.create', compact('categories'));
+        $subcategories = Subcategory::with('category')->orderBy('name')->get();
+        return view('admin.products.create', compact('categories', 'subcategories'));
     }
 
     /**
@@ -112,7 +114,9 @@ class ProductController extends Controller
     {
         $validated = $request->validate([
             'name' => 'required|string|max:200',
-            'category_slug' => 'required|string|exists:categories,slug',
+            'category_id' => 'nullable|exists:categories,id',
+            'category_slug' => 'nullable|string',
+            'subcategory_id' => 'nullable|exists:subcategories,id',
             'price' => 'required|numeric|min:0',
             'original_price' => 'nullable|numeric|min:0',
             'stock_quantity' => 'required|integer|min:0',
@@ -120,13 +124,31 @@ class ProductController extends Controller
             'badge' => 'nullable|string|max:50',
             'is_bestseller' => 'nullable|boolean',
             'is_new' => 'nullable|boolean',
-            'availability' => 'required|string|in:in_stock,out_of_stock,on_demand',
+            'availability' => 'nullable|string|in:in_stock,out_of_stock,on_demand',
+            'lead_time' => 'nullable|string|max:100',
             'short_description' => 'required|string|max:500',
             'description' => 'nullable|string',
             'image' => 'nullable|string|max:255',
+            'gallery_raw' => 'nullable|string',
+            'features_raw' => 'nullable|string',
+            'colors_json' => 'nullable|string',
+            'spec_material' => 'nullable|string|max:255',
+            'spec_hardware' => 'nullable|string|max:255',
+            'spec_dimensions' => 'nullable|string|max:255',
+            'spec_sizes' => 'nullable|string|max:255',
+            'spec_care' => 'nullable|string|max:255',
         ]);
 
-        $category = Category::where('slug', $validated['category_slug'])->first();
+        $category = null;
+        if (!empty($validated['category_id'])) {
+            $category = Category::find($validated['category_id']);
+        } elseif (!empty($validated['category_slug'])) {
+            $category = Category::where('slug', $validated['category_slug'])->first();
+        }
+
+        if (!$category) {
+            $category = Category::first();
+        }
 
         $slug = Str::slug($validated['name']);
         $originalSlug = $slug;
@@ -136,14 +158,27 @@ class ProductController extends Controller
             $count++;
         }
 
-        $sku = $validated['sku'] ?: ('BZ-' . strtoupper(substr($validated['category_slug'], 0, 3)) . '-' . rand(100, 999));
+        $availability = $validated['availability'] ?? ($validated['stock_quantity'] > 0 ? 'in_stock' : 'out_of_stock');
+        $sku = !empty($validated['sku']) ? $validated['sku'] : ('BZ-' . strtoupper(substr($category->slug, 0, 3)) . '-' . rand(100, 999));
+        $primaryImage = !empty($validated['image']) ? $validated['image'] : '/images/products/prod-reversible-belt.jpg';
+
+        $leadTime = !empty($validated['lead_time']) ? trim($validated['lead_time']) : null;
+        if ($availability === 'on_demand' && empty($leadTime)) {
+            $leadTime = '7–10 Working Days';
+        }
+
+        $colors = $this->parseColors($request);
+        $features = $this->parseFeatures($request);
+        $specifications = $this->parseSpecifications($request);
+        $gallery = $this->parseGallery($request, $primaryImage);
 
         Product::create([
             'name' => $validated['name'],
             'slug' => $slug,
-            'category_id' => $category?->id,
-            'category_slug' => $validated['category_slug'],
-            'category_name' => $category?->name,
+            'category_id' => $category->id,
+            'category_slug' => $category->slug,
+            'category_name' => $category->name,
+            'subcategory_id' => $validated['subcategory_id'] ?? null,
             'price' => $validated['price'],
             'original_price' => $validated['original_price'] ?? null,
             'stock_quantity' => $validated['stock_quantity'],
@@ -151,12 +186,16 @@ class ProductController extends Controller
             'badge' => $validated['badge'] ?? null,
             'is_bestseller' => $request->boolean('is_bestseller'),
             'is_new' => $request->boolean('is_new'),
-            'in_stock' => $validated['stock_quantity'] > 0 && $validated['availability'] !== 'out_of_stock',
-            'availability' => $validated['availability'],
+            'in_stock' => $validated['stock_quantity'] > 0 && $availability !== 'out_of_stock',
+            'availability' => $availability,
+            'lead_time' => $leadTime,
             'short_description' => $validated['short_description'],
-            'description' => $validated['description'] ?? $validated['short_description'],
-            'image' => $validated['image'] ?: '/images/products/prod-reversible-belt.jpg',
-            'gallery' => [$validated['image'] ?: '/images/products/prod-reversible-belt.jpg'],
+            'description' => !empty($validated['description']) ? $validated['description'] : $validated['short_description'],
+            'image' => $primaryImage,
+            'gallery' => $gallery,
+            'colors' => $colors,
+            'features' => $features,
+            'specifications' => $specifications,
             'rating' => 5.0,
             'reviews_count' => 0,
         ]);
@@ -171,7 +210,8 @@ class ProductController extends Controller
     public function edit(Product $product)
     {
         $categories = Category::orderBy('name')->get();
-        return view('admin.products.edit', compact('product', 'categories'));
+        $subcategories = Subcategory::with('category')->orderBy('name')->get();
+        return view('admin.products.edit', compact('product', 'categories', 'subcategories'));
     }
 
     /**
@@ -181,7 +221,9 @@ class ProductController extends Controller
     {
         $validated = $request->validate([
             'name' => 'required|string|max:200',
-            'category_slug' => 'required|string|exists:categories,slug',
+            'category_id' => 'nullable|exists:categories,id',
+            'category_slug' => 'nullable|string',
+            'subcategory_id' => 'nullable|exists:subcategories,id',
             'price' => 'required|numeric|min:0',
             'original_price' => 'nullable|numeric|min:0',
             'stock_quantity' => 'required|integer|min:0',
@@ -189,35 +231,198 @@ class ProductController extends Controller
             'badge' => 'nullable|string|max:50',
             'is_bestseller' => 'nullable|boolean',
             'is_new' => 'nullable|boolean',
-            'availability' => 'required|string|in:in_stock,out_of_stock,on_demand',
+            'availability' => 'nullable|string|in:in_stock,out_of_stock,on_demand',
+            'lead_time' => 'nullable|string|max:100',
             'short_description' => 'required|string|max:500',
             'description' => 'nullable|string',
             'image' => 'nullable|string|max:255',
+            'gallery_raw' => 'nullable|string',
+            'features_raw' => 'nullable|string',
+            'colors_json' => 'nullable|string',
+            'spec_material' => 'nullable|string|max:255',
+            'spec_hardware' => 'nullable|string|max:255',
+            'spec_dimensions' => 'nullable|string|max:255',
+            'spec_sizes' => 'nullable|string|max:255',
+            'spec_care' => 'nullable|string|max:255',
         ]);
 
-        $category = Category::where('slug', $validated['category_slug'])->first();
+        $category = null;
+        if (!empty($validated['category_id'])) {
+            $category = Category::find($validated['category_id']);
+        } elseif (!empty($validated['category_slug'])) {
+            $category = Category::where('slug', $validated['category_slug'])->first();
+        }
+
+        if (!$category) {
+            $category = $product->category ?: Category::first();
+        }
+
+        $availability = $validated['availability'] ?? ($validated['stock_quantity'] > 0 ? 'in_stock' : 'out_of_stock');
+        $primaryImage = !empty($validated['image']) ? $validated['image'] : $product->image;
+
+        $leadTime = !empty($validated['lead_time']) ? trim($validated['lead_time']) : $product->lead_time;
+        if ($availability === 'on_demand' && empty($leadTime)) {
+            $leadTime = '7–10 Working Days';
+        }
+
+        $colors = $this->parseColors($request, $product->colors);
+        $features = $this->parseFeatures($request, $product->features);
+        $specifications = $this->parseSpecifications($request, $product->specifications);
+        $gallery = $this->parseGallery($request, $primaryImage, $product->gallery);
 
         $product->update([
             'name' => $validated['name'],
             'category_id' => $category?->id,
-            'category_slug' => $validated['category_slug'],
+            'category_slug' => $category?->slug,
             'category_name' => $category?->name,
+            'subcategory_id' => $validated['subcategory_id'] ?? null,
             'price' => $validated['price'],
-            'original_price' => $validated['original_price'] ?? null,
+            'original_price' => $validated['original_price'] ?? $product->original_price,
             'stock_quantity' => $validated['stock_quantity'],
-            'sku' => $validated['sku'] ?: $product->sku,
-            'badge' => $validated['badge'] ?? null,
+            'sku' => !empty($validated['sku']) ? $validated['sku'] : $product->sku,
+            'badge' => $validated['badge'] ?? $product->badge,
             'is_bestseller' => $request->boolean('is_bestseller'),
             'is_new' => $request->boolean('is_new'),
-            'in_stock' => $validated['stock_quantity'] > 0 && $validated['availability'] !== 'out_of_stock',
-            'availability' => $validated['availability'],
+            'in_stock' => $validated['stock_quantity'] > 0 && $availability !== 'out_of_stock',
+            'availability' => $availability,
+            'lead_time' => $leadTime,
             'short_description' => $validated['short_description'],
-            'description' => $validated['description'] ?? $product->description,
-            'image' => $validated['image'] ?: $product->image,
+            'description' => !empty($validated['description']) ? $validated['description'] : $product->description,
+            'image' => $primaryImage,
+            'gallery' => $gallery,
+            'colors' => $colors,
+            'features' => $features,
+            'specifications' => $specifications,
         ]);
 
         return redirect()->route('admin.products.index')
             ->with('toast_success', "Product '{$product->name}' updated successfully.");
+    }
+
+    /**
+     * Parse leather tone colors from request.
+     */
+    protected function parseColors(Request $request, ?array $fallback = null): array
+    {
+        if ($request->filled('colors_json')) {
+            $decoded = json_decode($request->input('colors_json'), true);
+            if (is_array($decoded) && !empty($decoded)) {
+                return $decoded;
+            }
+        }
+
+        if ($request->has('preset_colors') && is_array($request->input('preset_colors'))) {
+            $presets = [
+                'Espresso & Obsidian Black' => '#24160F',
+                'Cognac Tan & Coffee' => '#A87548',
+                'Midnight Espresso' => '#120E0C',
+                'Oxblood Burgundy' => '#581825',
+                'Saddle Brown' => '#5D3A1A',
+                'Antique Gold' => '#C5A16B',
+                'Classic Black' => '#0D0A09',
+            ];
+            $colors = [];
+            foreach ($request->input('preset_colors') as $cName) {
+                if (isset($presets[$cName])) {
+                    $colors[] = ['name' => $cName, 'hex' => $presets[$cName], 'stock' => true];
+                }
+            }
+            if (!empty($colors)) {
+                return $colors;
+            }
+        }
+
+        return $fallback ?? [
+            ['name' => 'Midnight Espresso', 'hex' => '#120E0C', 'stock' => true],
+            ['name' => 'Cognac Tan', 'hex' => '#976239', 'stock' => true],
+        ];
+    }
+
+    /**
+     * Parse features from newline-delimited text.
+     */
+    protected function parseFeatures(Request $request, ?array $fallback = null): array
+    {
+        if ($request->filled('features_raw')) {
+            $lines = preg_split('/\r\n|\r|\n/', trim($request->input('features_raw')));
+            $features = [];
+            foreach ($lines as $line) {
+                $trimmed = trim(ltrim($line, " \t\n\r\0\x0B•-*"));
+                if ($trimmed !== '') {
+                    $features[] = $trimmed;
+                }
+            }
+            if (!empty($features)) {
+                return $features;
+            }
+        }
+
+        return $fallback ?? [
+            '100% Full-grain vegetable tanned leather',
+            'Hand-stitched perimeter with waxed thread',
+            'Solid brass hardware with antique satin finish',
+            'Presented in signature By Zunash embossed gift box',
+        ];
+    }
+
+    /**
+     * Parse key-value specifications.
+     */
+    protected function parseSpecifications(Request $request, ?array $fallback = null): array
+    {
+        $hasAnySpec = $request->filled('spec_material') || $request->filled('spec_hardware') ||
+                      $request->filled('spec_dimensions') || $request->filled('spec_sizes') ||
+                      $request->filled('spec_care');
+
+        if ($hasAnySpec) {
+            $specs = [];
+            if ($request->filled('spec_material')) $specs['Material'] = trim($request->input('spec_material'));
+            if ($request->filled('spec_hardware')) $specs['Hardware'] = trim($request->input('spec_hardware'));
+            if ($request->filled('spec_dimensions')) $specs['Width'] = trim($request->input('spec_dimensions'));
+            if ($request->filled('spec_sizes')) $specs['Available Sizes'] = trim($request->input('spec_sizes'));
+            if ($request->filled('spec_care')) $specs['Care'] = trim($request->input('spec_care'));
+            return $specs;
+        }
+
+        return $fallback ?? [
+            'Material' => '100% Full-Grain Vegetable Tanned Leather',
+            'Hardware' => 'Solid Antique Brass Finish',
+            'Width' => '34 mm (1.35 inches)',
+            'Available Sizes' => '30, 32, 34, 36, 38, 40, 42 inches',
+            'Care' => 'Wipe with soft cotton cloth; treat with neutral leather balm periodically',
+        ];
+    }
+
+    /**
+     * Parse gallery images.
+     */
+    protected function parseGallery(Request $request, string $primaryImage, ?array $fallback = null): array
+    {
+        if ($request->filled('gallery_raw')) {
+            $lines = preg_split('/\r\n|\r|\n/', trim($request->input('gallery_raw')));
+            $gallery = [];
+            foreach ($lines as $line) {
+                $trimmed = trim($line);
+                if ($trimmed !== '') {
+                    $gallery[] = $trimmed;
+                }
+            }
+            if (!empty($gallery)) {
+                if (!in_array($primaryImage, $gallery)) {
+                    array_unshift($gallery, $primaryImage);
+                }
+                return array_values(array_unique($gallery));
+            }
+        }
+
+        if (!empty($fallback)) {
+            if (!in_array($primaryImage, $fallback)) {
+                array_unshift($fallback, $primaryImage);
+            }
+            return array_values(array_unique($fallback));
+        }
+
+        return [$primaryImage];
     }
 
     /**

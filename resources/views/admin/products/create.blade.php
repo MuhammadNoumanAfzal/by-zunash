@@ -4,7 +4,37 @@
 
 @section('content')
 
-<div class="max-w-4xl mx-auto space-y-6">
+<div class="max-w-4xl mx-auto space-y-6" x-data="{
+    availability: '{{ old('availability', 'in_stock') }}',
+    leadTime: '{{ old('lead_time', '') }}',
+    colors: [
+        { name: 'Espresso & Obsidian Black', hex: '#24160F', stock: true, active: true },
+        { name: 'Cognac Tan & Coffee', hex: '#A87548', stock: true, active: true },
+        { name: 'Midnight Espresso', hex: '#120E0C', stock: true, active: false },
+        { name: 'Oxblood Burgundy', hex: '#581825', stock: true, active: false },
+        { name: 'Saddle Brown', hex: '#5D3A1A', stock: true, active: false },
+        { name: 'Antique Gold', hex: '#C5A16B', stock: true, active: false },
+        { name: 'Classic Black', hex: '#0D0A09', stock: true, active: false }
+    ],
+    customColorName: '',
+    customColorHex: '#8B4513',
+    addCustomColor() {
+        if (!this.customColorName.trim()) return;
+        this.colors.push({
+            name: this.customColorName.trim(),
+            hex: this.customColorHex,
+            stock: true,
+            active: true
+        });
+        this.customColorName = '';
+    },
+    removeColor(index) {
+        this.colors.splice(index, 1);
+    },
+    get activeColorsJson() {
+        return JSON.stringify(this.colors.filter(c => c.active).map(c => ({ name: c.name, hex: c.hex, stock: c.stock })));
+    }
+}">
 
     <!-- Header & Breadcrumbs -->
     <div class="flex items-center justify-between">
@@ -28,16 +58,22 @@
     </div>
 
     <!-- Creation Form Card -->
-    <form action="{{ route('admin.products.store') }}" method="POST" class="bg-white dark:bg-[#1A1513] rounded-3xl border border-[#ECE6DE] dark:border-[#2C2420] p-6 sm:p-8 shadow-card space-y-6">
+    <form action="{{ route('admin.products.store') }}" method="POST" class="bg-white dark:bg-[#1A1513] rounded-3xl border border-[#ECE6DE] dark:border-[#2C2420] p-6 sm:p-8 shadow-card space-y-8">
         @csrf
+
+        <!-- Hidden input for dynamic colors JSON -->
+        <input type="hidden" name="colors_json" :value="activeColorsJson">
 
         <!-- Section 1: Basic Information -->
         <div>
-            <h2 class="font-cinzel text-lg font-bold text-tan-600 dark:text-gold-400 pb-2 border-b border-[#F0EAE1] dark:border-[#2C2420]">
-                1. Product Identification & Category
-            </h2>
+            <div class="flex items-center gap-2 pb-2 border-b border-[#F0EAE1] dark:border-[#2C2420]">
+                <span class="w-6 h-6 rounded-full bg-tan-100 dark:bg-[#2A1E18] text-tan-700 dark:text-gold-400 font-bold text-xs flex items-center justify-center">1</span>
+                <h2 class="font-cinzel text-base font-bold text-espresso-950 dark:text-white">
+                    Product Identification & Category
+                </h2>
+            </div>
+
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-4">
-                
                 <!-- Product Name -->
                 <div class="sm:col-span-2">
                     <label class="block text-xs font-semibold text-espresso-900 dark:text-white mb-1.5">
@@ -48,7 +84,7 @@
                         name="name" 
                         value="{{ old('name') }}" 
                         required 
-                        placeholder="e.g. Signature Reversible Full-Grain Belt"
+                        placeholder="e.g. Signature Reversible Full-Grain Calfskin Belt"
                         class="w-full px-3.5 py-2.5 text-xs rounded-xl bg-[#FAF8F5] dark:bg-[#241D1A] border border-[#E0D7CB] dark:border-[#3A2F29] text-espresso-900 dark:text-white focus:outline-hidden focus:border-tan-500"
                     >
                 </div>
@@ -93,19 +129,18 @@
                 <!-- SKU -->
                 <div>
                     <label class="block text-xs font-semibold text-espresso-900 dark:text-white mb-1.5">
-                        SKU Reference <span class="text-rose-500">*</span>
+                        SKU Reference (Leave blank for auto-generation)
                     </label>
                     <input 
                         type="text" 
                         name="sku" 
                         value="{{ old('sku') }}" 
-                        required
                         placeholder="BZ-BELT-001"
                         class="w-full px-3.5 py-2.5 text-xs rounded-xl bg-[#FAF8F5] dark:bg-[#241D1A] border border-[#E0D7CB] dark:border-[#3A2F29] text-espresso-900 dark:text-white focus:outline-hidden focus:border-tan-500 font-mono uppercase"
                     >
                 </div>
 
-                <!-- Badge -->
+                <!-- Highlight Badge -->
                 <div>
                     <label class="block text-xs font-semibold text-espresso-900 dark:text-white mb-1.5">
                         Atelier Highlight Badge
@@ -114,22 +149,24 @@
                         type="text" 
                         name="badge" 
                         value="{{ old('badge') }}" 
-                        placeholder="e.g. Bespoke Edition, 2-in-1 Design"
+                        placeholder="e.g. Bespoke Edition, 2-in-1 Reversible, Limited"
                         class="w-full px-3.5 py-2.5 text-xs rounded-xl bg-[#FAF8F5] dark:bg-[#241D1A] border border-[#E0D7CB] dark:border-[#3A2F29] text-espresso-900 dark:text-white focus:outline-hidden focus:border-tan-500"
                     >
                 </div>
-
             </div>
         </div>
 
-        <!-- Section 2: Pricing & Stock -->
+        <!-- Section 2: Valuation, Inventory & Availability (On Demand / Out of Stock / In Stock) -->
         <div>
-            <h2 class="font-cinzel text-lg font-bold text-tan-600 dark:text-gold-400 pb-2 border-b border-[#F0EAE1] dark:border-[#2C2420]">
-                2. Valuation, Inventory & Status
-            </h2>
+            <div class="flex items-center gap-2 pb-2 border-b border-[#F0EAE1] dark:border-[#2C2420]">
+                <span class="w-6 h-6 rounded-full bg-tan-100 dark:bg-[#2A1E18] text-tan-700 dark:text-gold-400 font-bold text-xs flex items-center justify-center">2</span>
+                <h2 class="font-cinzel text-base font-bold text-espresso-950 dark:text-white">
+                    Valuation, Inventory & Production Mode
+                </h2>
+            </div>
+
             <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-4">
-                
-                <!-- Retail Price (Rs.) -->
+                <!-- Retail Price -->
                 <div>
                     <label class="block text-xs font-semibold text-espresso-900 dark:text-white mb-1.5">
                         Retail Price (PKR / Rs.) <span class="text-rose-500">*</span>
@@ -144,17 +181,17 @@
                     >
                 </div>
 
-                <!-- Original / Compare Price -->
+                <!-- Compare Price -->
                 <div>
                     <label class="block text-xs font-semibold text-espresso-900 dark:text-white mb-1.5">
-                        Original Compare Price (PKR / Rs.)
+                        Original Compare Price (Optional)
                     </label>
                     <input 
                         type="number" 
                         step="1" 
                         name="original_price" 
                         value="{{ old('original_price') }}" 
-                        placeholder="Optional discount anchor"
+                        placeholder="e.g. 6500"
                         class="w-full px-3.5 py-2.5 text-xs rounded-xl bg-[#FAF8F5] dark:bg-[#241D1A] border border-[#E0D7CB] dark:border-[#3A2F29] text-espresso-900 dark:text-white focus:outline-hidden focus:border-tan-500 font-mono"
                     >
                 </div>
@@ -162,7 +199,7 @@
                 <!-- Stock Quantity -->
                 <div>
                     <label class="block text-xs font-semibold text-espresso-900 dark:text-white mb-1.5">
-                        Stock Quantity (Units) <span class="text-rose-500">*</span>
+                        Ready Stock Quantity (Units) <span class="text-rose-500">*</span>
                     </label>
                     <input 
                         type="number" 
@@ -174,90 +211,289 @@
                     >
                 </div>
 
-                <!-- Availability Type -->
+                <!-- Availability Type (Frontend dynamic state) -->
                 <div>
                     <label class="block text-xs font-semibold text-espresso-900 dark:text-white mb-1.5">
-                        Availability Type
+                        Availability Status <span class="text-rose-500">*</span>
                     </label>
                     <select 
                         name="availability" 
-                        class="w-full px-3.5 py-2.5 text-xs rounded-xl bg-[#FAF8F5] dark:bg-[#241D1A] border border-[#E0D7CB] dark:border-[#3A2F29] text-espresso-900 dark:text-white focus:outline-hidden focus:border-tan-500"
+                        x-model="availability"
+                        class="w-full px-3.5 py-2.5 text-xs rounded-xl bg-[#FAF8F5] dark:bg-[#241D1A] border border-[#E0D7CB] dark:border-[#3A2F29] text-espresso-900 dark:text-white focus:outline-hidden focus:border-tan-500 font-medium"
                     >
-                        <option value="in_stock" {{ old('availability') === 'in_stock' ? 'selected' : '' }}>In Stock Ready to Dispatch</option>
-                        <option value="on_demand" {{ old('availability') === 'on_demand' ? 'selected' : '' }}>On Demand / Bespoke Commission</option>
-                        <option value="out_of_stock" {{ old('availability') === 'out_of_stock' ? 'selected' : '' }}>Sold Out / Archival</option>
+                        <option value="in_stock">In Stock — Ready to Dispatch</option>
+                        <option value="on_demand">On Demand — Made to Order</option>
+                        <option value="out_of_stock">Out of Stock — Sold Out / Concierge Notice</option>
                     </select>
                 </div>
 
-                <!-- Boolean Flags (Bestseller, New, Active) -->
-                <div class="sm:col-span-2 flex flex-wrap items-center gap-6 pt-5">
+                <!-- Lead Time (Visible & highlighted for On Demand) -->
+                <div class="sm:col-span-2">
+                    <label class="block text-xs font-semibold text-espresso-900 dark:text-white mb-1.5 flex items-center justify-between">
+                        <span>Production & Dispatch Lead Time</span>
+                        <span class="text-[10px] text-tan-600 dark:text-gold-400" x-show="availability === 'on_demand'">Recommended for On Demand</span>
+                    </label>
+                    <input 
+                        type="text" 
+                        name="lead_time" 
+                        x-model="leadTime"
+                        placeholder="e.g. 7–10 Working Days or 2–3 Weeks"
+                        class="w-full px-3.5 py-2.5 text-xs rounded-xl bg-[#FAF8F5] dark:bg-[#241D1A] border border-[#E0D7CB] dark:border-[#3A2F29] text-espresso-900 dark:text-white focus:outline-hidden focus:border-tan-500"
+                        :class="availability === 'on_demand' ? 'border-amber-400 dark:border-amber-500/50 bg-amber-50/20' : ''"
+                    >
+                </div>
+
+                <!-- Bestseller / New Arrival Flags -->
+                <div class="sm:col-span-3 flex flex-wrap items-center gap-6 pt-3">
                     <label class="inline-flex items-center gap-2 cursor-pointer text-xs font-medium text-espresso-900 dark:text-white">
                         <input type="checkbox" name="is_bestseller" value="1" {{ old('is_bestseller') ? 'checked' : '' }} class="rounded border-[#DFD6CB] text-tan-600 focus:ring-tan-500">
-                        <span>Bestseller / Flagship</span>
+                        <span>Bestseller / Flagship Collection</span>
                     </label>
 
                     <label class="inline-flex items-center gap-2 cursor-pointer text-xs font-medium text-espresso-900 dark:text-white">
                         <input type="checkbox" name="is_new" value="1" {{ old('is_new', 1) ? 'checked' : '' }} class="rounded border-[#DFD6CB] text-tan-600 focus:ring-tan-500">
                         <span>Mark as New Arrival</span>
                     </label>
-
-                    <label class="inline-flex items-center gap-2 cursor-pointer text-xs font-medium text-espresso-900 dark:text-white">
-                        <input type="checkbox" name="is_active" value="1" {{ old('is_active', 1) ? 'checked' : '' }} class="rounded border-[#DFD6CB] text-tan-600 focus:ring-tan-500">
-                        <span>Live in Storefront</span>
-                    </label>
                 </div>
-
             </div>
         </div>
 
-        <!-- Section 3: Media & Descriptions -->
+        <!-- Section 3: Leather Tone Variations (Colors) -->
         <div>
-            <h2 class="font-cinzel text-lg font-bold text-tan-600 dark:text-gold-400 pb-2 border-b border-[#F0EAE1] dark:border-[#2C2420]">
-                3. Imagery & Craft Story
-            </h2>
-            <div class="space-y-4 mt-4">
-                
-                <!-- Primary Image URL -->
+            <div class="flex items-center justify-between pb-2 border-b border-[#F0EAE1] dark:border-[#2C2420]">
+                <div class="flex items-center gap-2">
+                    <span class="w-6 h-6 rounded-full bg-tan-100 dark:bg-[#2A1E18] text-tan-700 dark:text-gold-400 font-bold text-xs flex items-center justify-center">3</span>
+                    <h2 class="font-cinzel text-base font-bold text-espresso-950 dark:text-white">
+                        Leather Tone & Swatch Variations
+                    </h2>
+                </div>
+                <span class="text-[11px] text-[#8F8379]">Select or add tones for storefront swatches</span>
+            </div>
+
+            <!-- Active Swatch Tiles -->
+            <div class="mt-4 space-y-4">
+                <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
+                    <template x-for="(color, idx) in colors" :key="idx">
+                        <div 
+                            class="p-2.5 rounded-2xl border transition-all flex items-center justify-between gap-2.5"
+                            :class="color.active ? 'bg-[#FAF8F5] dark:bg-[#241D1A] border-tan-400 dark:border-gold-500/50 shadow-2xs' : 'bg-gray-50/50 dark:bg-[#1E1816]/50 border-gray-200 dark:border-gray-800 opacity-60'"
+                        >
+                            <label class="flex items-center gap-2.5 cursor-pointer flex-1 min-w-0">
+                                <input type="checkbox" x-model="color.active" class="rounded border-gray-300 text-tan-600 focus:ring-tan-500 shrink-0">
+                                <span class="w-6 h-6 rounded-full border border-black/20 shrink-0 shadow-inner" :style="{ backgroundColor: color.hex }"></span>
+                                <span class="text-xs font-semibold text-espresso-950 dark:text-white truncate" x-text="color.name"></span>
+                            </label>
+                            
+                            <button 
+                                type="button" 
+                                @click="removeColor(idx)" 
+                                class="text-gray-400 hover:text-rose-500 p-1 rounded-md shrink-0 transition-colors"
+                                title="Remove Swatch"
+                            >
+                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                            </button>
+                        </div>
+                    </template>
+                </div>
+
+                <!-- Add Custom Swatch Input Row -->
+                <div class="p-3.5 rounded-2xl bg-[#FAF8F5] dark:bg-[#201A18] border border-[#E0D7CB] dark:border-[#342823] flex flex-wrap items-center gap-3">
+                    <div class="flex items-center gap-2">
+                        <input type="color" x-model="customColorHex" class="w-8 h-8 rounded-lg cursor-pointer border border-gray-300 dark:border-gray-700 p-0.5 bg-transparent">
+                        <input 
+                            type="text" 
+                            x-model="customColorName" 
+                            placeholder="Add custom leather tone (e.g. Havana Chestnut)" 
+                            class="px-3 py-1.5 text-xs rounded-xl bg-white dark:bg-[#2A201C] border border-[#DFD6CB] dark:border-[#42322C] text-espresso-900 dark:text-white focus:outline-hidden w-64"
+                            @keydown.enter.prevent="addCustomColor()"
+                        >
+                    </div>
+
+                    <button 
+                        type="button" 
+                        @click="addCustomColor()" 
+                        class="px-3 py-1.5 text-xs font-semibold rounded-xl bg-tan-600 hover:bg-tan-700 text-white transition-colors flex items-center gap-1.5"
+                    >
+                        <span>Add Swatch</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Section 4: Specifications & Dimensions -->
+        <div>
+            <div class="flex items-center gap-2 pb-2 border-b border-[#F0EAE1] dark:border-[#2C2420]">
+                <span class="w-6 h-6 rounded-full bg-tan-100 dark:bg-[#2A1E18] text-tan-700 dark:text-gold-400 font-bold text-xs flex items-center justify-center">4</span>
+                <h2 class="font-cinzel text-base font-bold text-espresso-950 dark:text-white">
+                    Technical Specifications & Sizing
+                </h2>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-4">
+                <!-- Leather Material -->
                 <div>
                     <label class="block text-xs font-semibold text-espresso-900 dark:text-white mb-1.5">
-                        Primary Image Asset Path or URL <span class="text-rose-500">*</span>
+                        Material Grade
+                    </label>
+                    <input 
+                        type="text" 
+                        name="spec_material" 
+                        value="{{ old('spec_material', '100% Full-Grain Vegetable Tanned Calfskin') }}" 
+                        placeholder="e.g. 100% Full-Grain Vegetable Tanned Calfskin"
+                        class="w-full px-3.5 py-2.5 text-xs rounded-xl bg-[#FAF8F5] dark:bg-[#241D1A] border border-[#E0D7CB] dark:border-[#3A2F29] text-espresso-900 dark:text-white focus:outline-hidden focus:border-tan-500"
+                    >
+                </div>
+
+                <!-- Hardware -->
+                <div>
+                    <label class="block text-xs font-semibold text-espresso-900 dark:text-white mb-1.5">
+                        Buckle / Hardware
+                    </label>
+                    <input 
+                        type="text" 
+                        name="spec_hardware" 
+                        value="{{ old('spec_hardware', 'Solid Antique Brass Finish (360° Reversible Swivel)') }}" 
+                        placeholder="e.g. Solid Antique Brass Finish"
+                        class="w-full px-3.5 py-2.5 text-xs rounded-xl bg-[#FAF8F5] dark:bg-[#241D1A] border border-[#E0D7CB] dark:border-[#3A2F29] text-espresso-900 dark:text-white focus:outline-hidden focus:border-tan-500"
+                    >
+                </div>
+
+                <!-- Width / Dimensions -->
+                <div>
+                    <label class="block text-xs font-semibold text-espresso-900 dark:text-white mb-1.5">
+                        Width & Dimensions
+                    </label>
+                    <input 
+                        type="text" 
+                        name="spec_dimensions" 
+                        value="{{ old('spec_dimensions', '34 mm (1.35 inches) Width • 3.8 mm Thickness') }}" 
+                        placeholder="e.g. 34 mm Width • 3.8 mm Thickness"
+                        class="w-full px-3.5 py-2.5 text-xs rounded-xl bg-[#FAF8F5] dark:bg-[#241D1A] border border-[#E0D7CB] dark:border-[#3A2F29] text-espresso-900 dark:text-white focus:outline-hidden focus:border-tan-500"
+                    >
+                </div>
+
+                <!-- Available Sizes -->
+                <div>
+                    <label class="block text-xs font-semibold text-espresso-900 dark:text-white mb-1.5">
+                        Available Sizes (Belts / Tailored)
+                    </label>
+                    <input 
+                        type="text" 
+                        name="spec_sizes" 
+                        value="{{ old('spec_sizes', '30, 32, 34, 36, 38, 40, 42 inches') }}" 
+                        placeholder="e.g. 30, 32, 34, 36, 38, 40, 42 inches"
+                        class="w-full px-3.5 py-2.5 text-xs rounded-xl bg-[#FAF8F5] dark:bg-[#241D1A] border border-[#E0D7CB] dark:border-[#3A2F29] text-espresso-900 dark:text-white focus:outline-hidden focus:border-tan-500"
+                    >
+                </div>
+
+                <!-- Care Guide -->
+                <div class="sm:col-span-2">
+                    <label class="block text-xs font-semibold text-espresso-900 dark:text-white mb-1.5">
+                        Leather Care & Preservation Note
+                    </label>
+                    <input 
+                        type="text" 
+                        name="spec_care" 
+                        value="{{ old('spec_care', 'Wipe with soft cotton cloth; treat with neutral organic leather balm periodically') }}" 
+                        class="w-full px-3.5 py-2.5 text-xs rounded-xl bg-[#FAF8F5] dark:bg-[#241D1A] border border-[#E0D7CB] dark:border-[#3A2F29] text-espresso-900 dark:text-white focus:outline-hidden focus:border-tan-500"
+                    >
+                </div>
+            </div>
+        </div>
+
+        <!-- Section 5: Artisanal Highlights / Features -->
+        <div>
+            <div class="flex items-center justify-between pb-2 border-b border-[#F0EAE1] dark:border-[#2C2420]">
+                <div class="flex items-center gap-2">
+                    <span class="w-6 h-6 rounded-full bg-tan-100 dark:bg-[#2A1E18] text-tan-700 dark:text-gold-400 font-bold text-xs flex items-center justify-center">5</span>
+                    <h2 class="font-cinzel text-base font-bold text-espresso-950 dark:text-white">
+                        Artisanal Highlights (Bullet Points)
+                    </h2>
+                </div>
+                <span class="text-[11px] text-[#8F8379]">One highlight per line</span>
+            </div>
+
+            <div class="mt-4">
+                <textarea 
+                    name="features_raw" 
+                    rows="4" 
+                    placeholder="Reversible 360-degree swivel buckle in brushed antique brass
+100% full-grain calfskin with beveled, wax-burnished edges
+Width: 34mm (1.35 in) — fits formal and casual belt loops
+Reinforced double-core structure to prevent creasing or stretching
+Presented in an embossed By Zunash magnetic presentation box"
+                    class="w-full px-3.5 py-2.5 text-xs rounded-xl bg-[#FAF8F5] dark:bg-[#241D1A] border border-[#E0D7CB] dark:border-[#3A2F29] text-espresso-900 dark:text-white focus:outline-hidden focus:border-tan-500 font-mono leading-relaxed"
+                >{{ old('features_raw') }}</textarea>
+            </div>
+        </div>
+
+        <!-- Section 6: Media, Atelier Gallery & Narrative -->
+        <div>
+            <div class="flex items-center gap-2 pb-2 border-b border-[#F0EAE1] dark:border-[#2C2420]">
+                <span class="w-6 h-6 rounded-full bg-tan-100 dark:bg-[#2A1E18] text-tan-700 dark:text-gold-400 font-bold text-xs flex items-center justify-center">6</span>
+                <h2 class="font-cinzel text-base font-bold text-espresso-950 dark:text-white">
+                    Imagery, Gallery & Atelier Craft Story
+                </h2>
+            </div>
+
+            <div class="space-y-4 mt-4">
+                <!-- Primary Image -->
+                <div>
+                    <label class="block text-xs font-semibold text-espresso-900 dark:text-white mb-1.5">
+                        Primary Image URL or Asset Path <span class="text-rose-500">*</span>
                     </label>
                     <input 
                         type="text" 
                         name="image" 
                         value="{{ old('image', '/images/products/prod-reversible-belt.jpg') }}" 
+                        required
                         placeholder="/images/products/prod-reversible-belt.jpg"
-                        class="w-full px-3.5 py-2.5 text-xs rounded-xl bg-[#FAF8F5] dark:bg-[#241D1A] border border-[#E0D7CB] dark:border-[#3A2F29] text-espresso-900 dark:text-white focus:outline-hidden focus:border-tan-500"
+                        class="w-full px-3.5 py-2.5 text-xs rounded-xl bg-[#FAF8F5] dark:bg-[#241D1A] border border-[#E0D7CB] dark:border-[#3A2F29] text-espresso-900 dark:text-white focus:outline-hidden focus:border-tan-500 font-mono"
                     >
                 </div>
 
-                <!-- Short Description -->
+                <!-- Gallery Images (One per line) -->
+                <div>
+                    <label class="block text-xs font-semibold text-espresso-900 dark:text-white mb-1.5 flex items-center justify-between">
+                        <span>Additional Atelier Gallery URLs</span>
+                        <span class="text-[11px] text-[#8F8379]">One URL per line</span>
+                    </label>
+                    <textarea 
+                        name="gallery_raw" 
+                        rows="3" 
+                        placeholder="/images/hero/slide-belt.jpg
+/images/brand/stitch-detail.jpg
+/images/brand/artisan-craft.jpg"
+                        class="w-full px-3.5 py-2 text-xs rounded-xl bg-[#FAF8F5] dark:bg-[#241D1A] border border-[#E0D7CB] dark:border-[#3A2F29] text-espresso-900 dark:text-white focus:outline-hidden focus:border-tan-500 font-mono"
+                    >{{ old('gallery_raw') }}</textarea>
+                </div>
+
+                <!-- Short Summary -->
                 <div>
                     <label class="block text-xs font-semibold text-espresso-900 dark:text-white mb-1.5">
-                        Short Summary <span class="text-rose-500">*</span>
+                        Short Summary (Catalog Cards & Meta) <span class="text-rose-500">*</span>
                     </label>
                     <textarea 
                         name="short_description" 
                         rows="2" 
                         required
-                        placeholder="Brief summary appearing on cards and catalog listings..."
+                        placeholder="Handcrafted in supple vegetable-tanned full-grain leather with a versatile dual-tone finish."
                         class="w-full px-3.5 py-2 text-xs rounded-xl bg-[#FAF8F5] dark:bg-[#241D1A] border border-[#E0D7CB] dark:border-[#3A2F29] text-espresso-900 dark:text-white focus:outline-hidden focus:border-tan-500"
                     >{{ old('short_description') }}</textarea>
                 </div>
 
-                <!-- Long Description -->
+                <!-- Full Craft Story -->
                 <div>
                     <label class="block text-xs font-semibold text-espresso-900 dark:text-white mb-1.5">
-                        Full Atelier Craftsmanship Story
+                        Full Atelier Craft Narrative & Heritage
                     </label>
                     <textarea 
                         name="description" 
                         rows="4" 
-                        placeholder="Detailed narrative describing leather grade, tanning process, hardware accents..."
+                        placeholder="Detailed narrative describing the hide selection, vegetable tanning in wooden drums, edge burnishing, and heirloom durability..."
                         class="w-full px-3.5 py-2 text-xs rounded-xl bg-[#FAF8F5] dark:bg-[#241D1A] border border-[#E0D7CB] dark:border-[#3A2F29] text-espresso-900 dark:text-white focus:outline-hidden focus:border-tan-500"
                     >{{ old('description') }}</textarea>
                 </div>
-
             </div>
         </div>
 
@@ -275,7 +511,7 @@
                 class="px-6 py-2.5 rounded-xl bg-espresso-900 hover:bg-tan-600 text-white font-semibold text-xs shadow-md transition-all active:scale-95 flex items-center gap-2 border border-gold-400/20"
             >
                 <i data-lucide="check" class="w-4 h-4 text-gold-400"></i>
-                <span>Publish Product to Catalogue</span>
+                <span>Publish Product to Atelier Catalogue</span>
             </button>
         </div>
 

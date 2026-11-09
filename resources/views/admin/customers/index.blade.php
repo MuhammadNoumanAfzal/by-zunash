@@ -35,7 +35,7 @@
                         <th class="py-3 px-3">ORDERS</th>
                         <th class="py-3 px-3">LIFETIME SPEND</th>
                         <th class="py-3 px-3">VIP STATUS</th>
-                        <th class="py-3 px-4 text-right">PRIVILEGE ACTION</th>
+                        <th class="py-3 px-4 text-right">ACTIONS</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-[#F0EAE1] dark:divide-[#28201C]">
@@ -81,15 +81,55 @@
                             </td>
 
                             <td class="py-3.5 px-4 text-right">
-                                <form action="{{ route('admin.customers.vip', $client) }}" method="POST">
-                                    @csrf
+                                <div class="inline-flex items-center gap-1.5 justify-end">
+                                    @php
+                                        $cleanPhone = preg_replace('/[^0-9]/', '', $client->phone ?? '');
+                                        if (str_starts_with($cleanPhone, '03')) {
+                                            $cleanPhone = '92' . substr($cleanPhone, 1);
+                                        }
+                                    @endphp
+                                    @if($cleanPhone)
+                                        <a 
+                                            href="https://wa.me/{{ $cleanPhone }}?text={{ urlencode('Assalam o Alaikum ' . $client->name . ', from By Zunash Luxury Leather Atelier.') }}" 
+                                            target="_blank"
+                                            class="p-1.5 text-emerald-600 hover:bg-emerald-50 dark:hover:bg-emerald-950/30 rounded-lg transition-colors"
+                                            title="Chat with Patron on WhatsApp"
+                                        >
+                                            <i data-lucide="message-circle" class="w-3.5 h-3.5"></i>
+                                        </a>
+                                    @endif
+
+                                    <!-- Toggle VIP -->
+                                    <form action="{{ route('admin.customers.vip', $client) }}" method="POST">
+                                        @csrf
+                                        <button 
+                                            type="submit" 
+                                            class="px-2.5 py-1 rounded-lg text-[10px] font-semibold border transition-colors {{ $client->is_vip ? 'border-gray-200 text-gray-600 hover:bg-gray-100' : 'border-tan-300 bg-tan-50 text-tan-800 hover:bg-tan-100' }}"
+                                            title="Toggle VIP Privilege"
+                                        >
+                                            {{ $client->is_vip ? 'Revoke' : 'Make VIP' }}
+                                        </button>
+                                    </form>
+
+                                    <!-- Edit Patron Button -->
                                     <button 
-                                        type="submit" 
-                                        class="px-3 py-1 rounded-lg text-[10px] font-semibold border transition-colors {{ $client->is_vip ? 'border-gray-200 text-gray-600 hover:bg-gray-100' : 'border-tan-300 bg-tan-50 text-tan-800 hover:bg-tan-100' }}"
+                                        type="button" 
+                                        onclick="openEditCustomerModal({{ json_encode($client) }})"
+                                        class="p-1.5 text-gray-400 hover:text-tan-600 hover:bg-[#FAF8F5] dark:hover:bg-[#2A1D1A] rounded-lg transition-colors"
+                                        title="Edit Patron Dossier"
                                     >
-                                        {{ $client->is_vip ? 'Revoke VIP' : 'Promote to VIP' }}
+                                        <i data-lucide="edit-3" class="w-3.5 h-3.5"></i>
                                     </button>
-                                </form>
+
+                                    <!-- Delete Patron Button -->
+                                    <form action="{{ route('admin.customers.destroy', $client) }}" method="POST" onsubmit="return confirm('Delete this patron profile?')">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" class="p-1.5 text-gray-400 hover:text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/30 rounded-lg transition-colors" title="Delete Patron">
+                                            <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+                                        </button>
+                                    </form>
+                                </div>
                             </td>
                         </tr>
                     @empty
@@ -109,5 +149,72 @@
     </div>
 
 </div>
+
+<!-- Edit Customer Modal Dialog -->
+<dialog id="editCustomerModal" class="rounded-3xl p-0 shadow-2xl max-w-md w-full bg-white dark:bg-[#1A1513] text-espresso-900 dark:text-white border border-[#ECE6DE] dark:border-[#2C2420]">
+    <div class="p-6">
+        <div class="flex items-center justify-between pb-3 border-b border-[#ECE6DE] dark:border-[#2C2420] mb-4">
+            <h3 class="font-cinzel text-xl font-bold text-tan-600 dark:text-gold-400">Edit Patron Dossier</h3>
+            <button type="button" onclick="document.getElementById('editCustomerModal').close()" class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300">
+                <i data-lucide="x" class="w-5 h-5"></i>
+            </button>
+        </div>
+
+        <form id="editCustomerForm" method="POST" class="space-y-4">
+            @csrf
+            @method('PUT')
+
+            <div>
+                <label class="block text-xs font-semibold mb-1">Patron Full Name <span class="text-rose-500">*</span></label>
+                <input type="text" id="edit_cust_name" name="name" required class="w-full px-3 py-2 text-xs rounded-xl bg-[#FAF8F5] dark:bg-[#241D1A] border border-[#E0D7CB] dark:border-[#3A2F29] text-espresso-900 dark:text-white focus:outline-hidden focus:border-tan-500">
+            </div>
+
+            <div>
+                <label class="block text-xs font-semibold mb-1">Email Address <span class="text-rose-500">*</span></label>
+                <input type="email" id="edit_cust_email" name="email" required class="w-full px-3 py-2 text-xs rounded-xl bg-[#FAF8F5] dark:bg-[#241D1A] border border-[#E0D7CB] dark:border-[#3A2F29] text-espresso-900 dark:text-white focus:outline-hidden focus:border-tan-500">
+            </div>
+
+            <div>
+                <label class="block text-xs font-semibold mb-1">Phone Number</label>
+                <input type="text" id="edit_cust_phone" name="phone" class="w-full px-3 py-2 text-xs rounded-xl bg-[#FAF8F5] dark:bg-[#241D1A] border border-[#E0D7CB] dark:border-[#3A2F29] text-espresso-900 dark:text-white focus:outline-hidden focus:border-tan-500 font-mono">
+            </div>
+
+            <div>
+                <label class="block text-xs font-semibold mb-1">Primary City</label>
+                <input type="text" id="edit_cust_city" name="city" class="w-full px-3 py-2 text-xs rounded-xl bg-[#FAF8F5] dark:bg-[#241D1A] border border-[#E0D7CB] dark:border-[#3A2F29] text-espresso-900 dark:text-white focus:outline-hidden focus:border-tan-500">
+            </div>
+
+            <div class="pt-1">
+                <label class="inline-flex items-center gap-2 cursor-pointer text-xs font-medium text-espresso-900 dark:text-white">
+                    <input type="checkbox" id="edit_cust_vip" name="is_vip" value="1" class="rounded border-[#DFD6CB] text-tan-600 focus:ring-tan-500">
+                    <span>VIP Atelier Patron Member</span>
+                </label>
+            </div>
+
+            <div class="flex items-center justify-end gap-2 pt-3 border-t border-[#ECE6DE] dark:border-[#2C2420]">
+                <button type="button" onclick="document.getElementById('editCustomerModal').close()" class="px-4 py-2 rounded-xl text-xs font-medium text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">
+                    Cancel
+                </button>
+                <button type="submit" class="px-5 py-2 rounded-xl bg-tan-600 hover:bg-espresso-900 text-white font-semibold text-xs shadow-md transition-colors border border-gold-400/20">
+                    Save Changes
+                </button>
+            </div>
+        </form>
+    </div>
+</dialog>
+
+@push('scripts')
+<script>
+function openEditCustomerModal(client) {
+    document.getElementById('editCustomerForm').action = '/admin/customers/' + client.id;
+    document.getElementById('edit_cust_name').value = client.name || '';
+    document.getElementById('edit_cust_email').value = client.email || '';
+    document.getElementById('edit_cust_phone').value = client.phone || '';
+    document.getElementById('edit_cust_city').value = client.city || '';
+    document.getElementById('edit_cust_vip').checked = !!client.is_vip;
+    document.getElementById('editCustomerModal').showModal();
+}
+</script>
+@endpush
 
 @endsection

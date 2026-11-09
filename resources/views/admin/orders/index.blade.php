@@ -176,13 +176,27 @@
                             </td>
 
                             <td class="py-3.5 px-4 text-right">
-                                <a 
-                                    href="{{ route('admin.orders.show', $order) }}" 
-                                    class="w-7 h-7 rounded-full border border-[#DFD6CB] dark:border-[#3A2F29] inline-flex items-center justify-center text-gray-500 hover:text-tan-600 hover:border-tan-500 transition-colors"
-                                    title="View Details"
-                                >
-                                    <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
-                                </a>
+                                <div class="inline-flex items-center gap-1.5 justify-end">
+                                    <a 
+                                        href="{{ route('admin.orders.show', $order) }}" 
+                                        class="w-7 h-7 rounded-full border border-[#DFD6CB] dark:border-[#3A2F29] inline-flex items-center justify-center text-gray-500 hover:text-tan-600 hover:border-tan-500 transition-colors"
+                                        title="View Details"
+                                    >
+                                        <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
+                                    </a>
+
+                                    <form action="{{ route('admin.orders.destroy', $order) }}" method="POST" onsubmit="return confirm('Permanently remove this order record?')">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button 
+                                            type="submit" 
+                                            class="w-7 h-7 rounded-full border border-[#DFD6CB] dark:border-[#3A2F29] inline-flex items-center justify-center text-gray-400 hover:text-rose-600 hover:border-rose-300 transition-colors"
+                                            title="Delete Order"
+                                        >
+                                            <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+                                        </button>
+                                    </form>
+                                </div>
                             </td>
                         </tr>
                     @empty

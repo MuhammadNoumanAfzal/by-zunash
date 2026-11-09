@@ -29,12 +29,14 @@ class InventoryController extends Controller
             $query->where('category_slug', $request->input('category'));
         }
 
-        // Status filter: all, low, out, adequate
+        // Status filter: all, low, out, on_demand, adequate
         $filter = $request->input('status', 'all');
         if ($filter === 'low') {
             $query->where('stock_quantity', '<=', 5)->where('stock_quantity', '>', 0);
         } elseif ($filter === 'out') {
             $query->where('stock_quantity', '<=', 0);
+        } elseif ($filter === 'on_demand') {
+            $query->where('availability', 'on_demand');
         } elseif ($filter === 'adequate') {
             $query->where('stock_quantity', '>', 5);
         }
@@ -45,6 +47,7 @@ class InventoryController extends Controller
         $totalInventory = Product::sum('stock_quantity');
         $lowStockCount = Product::where('stock_quantity', '<=', 5)->where('stock_quantity', '>', 0)->count();
         $outOfStockCount = Product::where('stock_quantity', '<=', 0)->count();
+        $onDemandCount = Product::where('availability', 'on_demand')->count();
         $totalSkus = Product::count();
 
         return view('admin.inventory.index', compact(
@@ -53,38 +56,53 @@ class InventoryController extends Controller
             'totalInventory',
             'lowStockCount',
             'outOfStockCount',
+            'onDemandCount',
             'totalSkus',
             'filter'
         ));
     }
 
     /**
-     * Fast AJAX/Form Stock Quantity Update
+     * Fast AJAX/Form Stock Quantity & Availability Update
      */
     public function updateStock(Request $request, Product $product)
     {
         $validated = $request->validate([
             'stock_quantity' => 'required|integer|min:0',
+            'availability' => 'nullable|string|in:in_stock,on_demand,out_of_stock',
+            'lead_time' => 'nullable|string|max:100',
         ]);
 
         $product->stock_quantity = $validated['stock_quantity'];
-        $product->in_stock = $validated['stock_quantity'] > 0;
-        if ($validated['stock_quantity'] == 0 && $product->availability !== 'on_demand') {
-            $product->availability = 'out_of_stock';
-        } elseif ($validated['stock_quantity'] > 0 && $product->availability === 'out_of_stock') {
-            $product->availability = 'in_stock';
+        
+        if (!empty($validated['availability'])) {
+            $product->availability = $validated['availability'];
+        } else {
+            if ($validated['stock_quantity'] == 0 && $product->availability !== 'on_demand') {
+                $product->availability = 'out_of_stock';
+            } elseif ($validated['stock_quantity'] > 0 && $product->availability === 'out_of_stock') {
+                $product->availability = 'in_stock';
+            }
         }
+
+        if ($request->has('lead_time')) {
+            $product->lead_time = trim($request->input('lead_time')) ?: null;
+        }
+
+        $product->in_stock = ($product->stock_quantity > 0) && ($product->availability !== 'out_of_stock');
         $product->save();
 
         if ($request->wantsJson()) {
             return response()->json([
                 'success' => true,
-                'message' => "Stock updated to {$product->stock_quantity} units.",
+                'message' => "Stock and availability for '{$product->name}' updated.",
                 'stock' => $product->stock_quantity,
+                'availability' => $product->availability,
+                'lead_time' => $product->lead_time,
                 'in_stock' => $product->in_stock,
             ]);
         }
 
-        return back()->with('toast_success', "Stock for {$product->name} updated to {$product->stock_quantity} units.");
+        return back()->with('toast_success', "Inventory status for '{$product->name}' updated successfully.");
     }
 }

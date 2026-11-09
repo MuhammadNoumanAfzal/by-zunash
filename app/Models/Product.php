@@ -16,6 +16,7 @@ class Product extends Model
         'category_id',
         'category_slug',
         'category_name',
+        'subcategory_id',
         'price',
         'original_price',
         'sku',
@@ -24,6 +25,7 @@ class Product extends Model
         'is_new',
         'in_stock',
         'availability',
+        'lead_time',
         'stock_quantity',
         'rating',
         'reviews_count',
@@ -54,5 +56,10 @@ class Product extends Model
     public function category(): BelongsTo
     {
         return $this->belongsTo(Category::class, 'category_id');
+    }
+
+    public function subcategory(): BelongsTo
+    {
+        return $this->belongsTo(Subcategory::class, 'subcategory_id');
     }
 }

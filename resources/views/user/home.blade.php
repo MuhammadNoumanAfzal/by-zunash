@@ -102,10 +102,10 @@
             :class="currentSlide === 0 ? 'scale-105' : 'scale-100'"
         >
         
-        <!-- Luxury Contrast Overlays to make text crystal clear -->
-        <div class="absolute inset-0 bg-black/45 pointer-events-none"></div>
-        <div class="absolute inset-0 bg-gradient-to-r from-black/90 via-black/60 to-black/10 pointer-events-none"></div>
-        <div class="absolute bottom-0 inset-x-0 h-36 bg-gradient-to-t from-black/80 via-black/35 to-transparent pointer-events-none"></div>
+        <!-- Balanced Medium Dark Luxury Contrast Overlays -->
+        <div class="absolute inset-0 bg-black/20 pointer-events-none"></div>
+        <div class="absolute inset-0 bg-gradient-to-r from-black/80 via-black/45 via-50% to-transparent pointer-events-none"></div>
+        <div class="absolute bottom-0 inset-x-0 h-32 bg-gradient-to-t from-black/60 via-black/20 to-transparent pointer-events-none"></div>
 
         <!-- Overlaid Animated Content -->
         <div class="relative z-10 w-full h-full flex items-center">
@@ -186,10 +186,10 @@
             :class="currentSlide === 1 ? 'scale-105' : 'scale-100'"
         >
         
-        <!-- Luxury Contrast Overlays to make text crystal clear -->
-        <div class="absolute inset-0 bg-black/45 pointer-events-none"></div>
-        <div class="absolute inset-0 bg-gradient-to-r from-black/90 via-black/60 to-black/10 pointer-events-none"></div>
-        <div class="absolute bottom-0 inset-x-0 h-36 bg-gradient-to-t from-black/80 via-black/35 to-transparent pointer-events-none"></div>
+        <!-- Balanced Medium Dark Luxury Contrast Overlays -->
+        <div class="absolute inset-0 bg-black/20 pointer-events-none"></div>
+        <div class="absolute inset-0 bg-gradient-to-r from-black/80 via-black/45 via-50% to-transparent pointer-events-none"></div>
+        <div class="absolute bottom-0 inset-x-0 h-32 bg-gradient-to-t from-black/60 via-black/20 to-transparent pointer-events-none"></div>
 
         <!-- Overlaid Animated Content -->
         <div class="relative z-10 w-full h-full flex items-center">
@@ -270,10 +270,10 @@
             :class="currentSlide === 2 ? 'scale-105' : 'scale-100'"
         >
         
-        <!-- Luxury Contrast Overlays to make text crystal clear -->
-        <div class="absolute inset-0 bg-black/45 pointer-events-none"></div>
-        <div class="absolute inset-0 bg-gradient-to-r from-black/90 via-black/60 to-black/10 pointer-events-none"></div>
-        <div class="absolute bottom-0 inset-x-0 h-36 bg-gradient-to-t from-black/80 via-black/35 to-transparent pointer-events-none"></div>
+        <!-- Balanced Medium Dark Luxury Contrast Overlays -->
+        <div class="absolute inset-0 bg-black/20 pointer-events-none"></div>
+        <div class="absolute inset-0 bg-gradient-to-r from-black/80 via-black/45 via-50% to-transparent pointer-events-none"></div>
+        <div class="absolute bottom-0 inset-x-0 h-32 bg-gradient-to-t from-black/60 via-black/20 to-transparent pointer-events-none"></div>
 
         <!-- Overlaid Animated Content -->
         <div class="relative z-10 w-full h-full flex items-center">

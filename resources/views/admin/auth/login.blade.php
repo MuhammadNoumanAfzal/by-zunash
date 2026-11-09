@@ -155,26 +155,6 @@
                 </button>
             </form>
 
-            <!-- Quick Demo Helper Pill -->
-            <div class="mt-6 p-3.5 rounded-2xl bg-[#FAF6F2] border border-[#EFE5DB] text-center">
-                <div class="text-[10px] font-bold uppercase tracking-wider text-tan-600 mb-1">
-                    Atelier Credentials Configured
-                </div>
-                <div class="text-xs text-espresso-900 font-mono font-medium">
-                    <strong>admin@byzunash.com</strong> • Pass: <strong>password</strong>
-                </div>
-                <div class="mt-2.5 flex items-center justify-center gap-2">
-                    <button 
-                        type="button" 
-                        onclick="fillCreds('admin@byzunash.com', 'password')"
-                        class="px-3 py-1.5 rounded-lg text-[10px] font-semibold bg-white border border-[#DFD6CB] hover:border-gold-400 text-espresso-900 shadow-xs transition-colors flex items-center gap-1.5"
-                    >
-                        <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
-                        Auto-Fill By Zunash Admin
-                    </button>
-                </div>
-            </div>
-
             <!-- Return to Live Storefront -->
             <div class="mt-6 text-center">
                 <a href="{{ route('home') }}" class="inline-flex items-center gap-1.5 text-xs text-[#8F8379] hover:text-tan-600 transition-colors">
@@ -189,10 +169,6 @@
 
     <script>
         lucide.createIcons();
-        function fillCreds(email, password) {
-            document.getElementById('admin-email').value = email;
-            document.getElementById('admin-password').value = password;
-        }
     </script>
 
 </body>

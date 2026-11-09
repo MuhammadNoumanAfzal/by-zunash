@@ -27,7 +27,7 @@
     :class="isScrolled ? 'bg-white/95 dark:bg-[#161210]/95 backdrop-blur-md shadow-xs border-b border-ivory-300 dark:border-white/10' : 'bg-white dark:bg-[#161210] border-b border-ivory-200 dark:border-white/10'"
 >
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative" @click.outside="collectionsOpen = false">
-        <div class="flex items-center justify-between h-20">
+        <div class="flex items-center justify-between h-16">
             
             <!-- Mobile Menu Toggle Button (Left on Mobile) -->
             <div class="flex items-center lg:hidden">
@@ -44,7 +44,7 @@
 
             <!-- Brand Logo (Center on Mobile, Left on Desktop) -->
             <div class="flex-shrink-0 flex items-center">
-                <x-user.components.logo height="h-10" />
+                <x-user.components.logo height="h-9" />
             </div>
 
             <!-- Desktop Navigation Links (Scalable Curated Top-Level) -->
@@ -65,7 +65,7 @@
                     <button 
                         type="button" 
                         @click="toggleCollections()"
-                        class="text-xs uppercase tracking-widest font-medium transition-colors duration-200 flex items-center gap-1.5 py-7 focus:outline-none"
+                        class="text-xs uppercase tracking-widest font-medium transition-colors duration-200 flex items-center gap-1.5 py-5 focus:outline-none"
                         :class="collectionsOpen || {{ request()->is('category*') ? 'true' : 'false' }} ? 'text-gold-600 font-semibold' : 'text-espresso-800 dark:text-ivory-200 hover:text-gold-600 dark:hover:text-gold'"
                         aria-expanded="collectionsOpen"
                     >
