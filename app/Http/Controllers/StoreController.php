@@ -274,19 +274,93 @@ class StoreController extends Controller
     }
 
     /**
-     * Deals & Curated Bundles page
+     * Deals & Curated Bundles page with sidebar category and price filters
      */
     public function deals(Request $request)
     {
-        $deals = \App\Models\Deal::active()
-            ->with('products')
-            ->orderBy('sort_order', 'asc')
-            ->orderBy('created_at', 'desc')
-            ->get();
+        $allActiveDeals = \App\Models\Deal::active()->with('products')->get();
+
+        // Calculate counts for categories
+        $categoryCounts = [
+            'all' => $allActiveDeals->count(),
+            'belts' => 0,
+            'wallets' => 0,
+            'handbags' => 0,
+            'accessories' => 0,
+        ];
+
+        foreach ($allActiveDeals as $d) {
+            $catSlugs = [$d->category_slug];
+            foreach ($d->products as $p) {
+                if ($p->category_slug) {
+                    $catSlugs[] = $p->category_slug;
+                }
+            }
+            $catSlugs = array_unique(array_filter($catSlugs));
+            foreach (['belts', 'wallets', 'handbags', 'accessories'] as $key) {
+                if (in_array($key, $catSlugs)) {
+                    $categoryCounts[$key]++;
+                }
+            }
+        }
+
+        // Filtering
+        $query = \App\Models\Deal::active()->with('products');
+
+        $activeCategory = $request->input('category', 'all');
+        if ($activeCategory !== 'all' && !empty($activeCategory)) {
+            $query->where(function ($q) use ($activeCategory) {
+                $q->where('category_slug', $activeCategory)
+                  ->orWhereHas('products', function ($pq) use ($activeCategory) {
+                      $pq->where('category_slug', $activeCategory);
+                  });
+            });
+        }
+
+        $activePriceRange = $request->input('price_range', 'all');
+        if ($activePriceRange === 'under-8k') {
+            $query->where('deal_price', '<=', 8000);
+        } elseif ($activePriceRange === '8k-15k') {
+            $query->where('deal_price', '>', 8000)->where('deal_price', '<=', 15000);
+        } elseif ($activePriceRange === 'above-15k') {
+            $query->where('deal_price', '>', 15000);
+        }
+
+        $activeSort = $request->input('sort', 'featured');
+        if ($activeSort === 'discount') {
+            $query->orderBy('discount_percentage', 'desc');
+        } elseif ($activeSort === 'price_asc') {
+            $query->orderBy('deal_price', 'asc');
+        } elseif ($activeSort === 'price_desc') {
+            $query->orderBy('deal_price', 'desc');
+        } else {
+            $query->orderBy('is_featured', 'desc')->orderBy('sort_order', 'asc')->orderBy('created_at', 'desc');
+        }
+
+        $deals = $query->get();
 
         $categories = $this->getCategories();
 
-        return view('user.deals', compact('deals', 'categories'));
+        return view('user.deals', compact('deals', 'categories', 'categoryCounts', 'activeCategory', 'activePriceRange', 'activeSort'));
+    }
+
+    /**
+     * Dedicated Deal & Curated Set Details Page
+     */
+    public function dealDetails($slug)
+    {
+        $deal = \App\Models\Deal::active()
+            ->where('slug', $slug)
+            ->with(['products'])
+            ->firstOrFail();
+
+        $otherDeals = \App\Models\Deal::active()
+            ->where('id', '!=', $deal->id)
+            ->with('products')
+            ->take(3)
+            ->get();
+
+        return view('user.deal-details', compact('deal', 'otherDeals'));
     }
 
     /**

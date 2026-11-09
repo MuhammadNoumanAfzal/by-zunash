@@ -30,6 +30,7 @@ Route::get('/', [StoreController::class, 'home'])->name('home');
 Route::get('/shop', [StoreController::class, 'shop'])->name('shop');
 Route::get('/category/{slug}', [StoreController::class, 'category'])->name('category');
 Route::get('/deals', [StoreController::class, 'deals'])->name('deals');
+Route::get('/deals/{slug}', [StoreController::class, 'dealDetails'])->name('deal.details');
 Route::get('/product/{slug}', [StoreController::class, 'productDetails'])->name('product.details');
 
 // Cart & Checkout

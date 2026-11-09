@@ -8,192 +8,359 @@
 @section('content')
 
 <!-- ========================================================
-     CLEAN, REFINED ATELIER HEADER
+     ATELIER HEADER: CURATED SETS & COMBINATIONS
      ======================================================== -->
-<section class="pt-10 pb-4 text-center bg-[#FAF8F5] dark:bg-[#14100E] border-b border-[#ECE6DE] dark:border-white/10">
+<section class="pt-10 pb-6 text-center bg-[#FAF8F5] dark:bg-[#14100E] border-b border-[#ECE6DE] dark:border-white/10">
     <div class="max-w-4xl mx-auto px-4 sm:px-6">
         <span class="text-[10px] uppercase tracking-[0.25em] font-semibold text-gold-700 dark:text-gold-400 block mb-1">
-            Atelier Curations
+            Exclusive Pairings & Bundles
         </span>
-        <h1 class="font-serif text-2xl sm:text-3xl font-bold text-espresso-950 dark:text-white tracking-tight">
-            Curated Leather Sets
+        <h1 class="font-serif text-2xl sm:text-3xl lg:text-4xl font-bold text-espresso-950 dark:text-white tracking-tight">
+            Curated Leather Deals
         </h1>
-        <p class="text-xs sm:text-sm text-espresso-800/80 dark:text-ivory-300 font-light max-w-md mx-auto mt-1.5 mb-2 leading-relaxed">
-            Complementary creations sculpted from matching full-grain hides, paired at special bundle rates with complimentary gift packaging.
+        <p class="text-xs sm:text-sm text-espresso-800/80 dark:text-ivory-300 font-light max-w-lg mx-auto mt-2 leading-relaxed">
+            Complementary creations sculpted from matching full-grain hides, paired together at special bundle rates with complimentary luxury gift packaging.
         </p>
     </div>
 </section>
 
 <!-- ========================================================
-     COMPACT 3-COLUMN LUXURY SETS GRID
+     MAIN CONTENT: SIDEBAR FILTERS + DEALS GRID
      ======================================================== -->
-<section class="py-8 sm:py-10 bg-white dark:bg-[#0F0C0A]">
-    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+<section class="py-8 sm:py-12 bg-white dark:bg-[#0F0C0A]" x-data="{ mobileFilterOpen: false }">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
-        @if($deals->count() > 0)
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-                @foreach($deals as $deal)
-                    <div 
-                        id="{{ $deal->slug }}" 
-                        class="group bg-white dark:bg-[#181310] rounded-xl border border-ivory-300 dark:border-white/10 shadow-xs hover:shadow-md transition-all duration-300 overflow-hidden flex flex-col scroll-mt-24"
-                    >
-                        <!-- Compact Multi-Product Showcase Visual (Height: h-32 sm:h-36) -->
-                        <div class="relative w-full h-32 sm:h-36 bg-[#F7F5F0] dark:bg-[#14100E] overflow-hidden border-b border-ivory-200 dark:border-white/10">
-                            @if($deal->products && $deal->products->count() > 1)
-                                <div class="grid h-full {{ $deal->products->count() >= 3 ? 'grid-cols-3' : 'grid-cols-2' }} divide-x divide-white/80 dark:divide-white/10">
-                                    @foreach($deal->products->take(3) as $dp)
-                                        <div class="relative h-full overflow-hidden bg-white dark:bg-[#181310] group/item">
-                                            <img 
-                                                src="{{ asset($dp->image) }}" 
-                                                alt="{{ $dp->name }}" 
-                                                class="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-500 ease-out"
-                                            >
-                                            <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-60"></div>
-                                            <div class="absolute bottom-1 inset-x-1 px-1 py-0.5 rounded bg-black/65 backdrop-blur-2xs text-[9px] text-white font-medium truncate text-center leading-tight">
-                                                {{ Str::limit($dp->name, 16) }}
-                                            </div>
-                                        </div>
-                                    @endforeach
-                                </div>
+        <!-- Mobile Filter Toggle Bar -->
+        <div class="lg:hidden flex items-center justify-between gap-3 mb-6 p-3 rounded-xl bg-[#FAF8F5] dark:bg-[#181310] border border-ivory-300 dark:border-white/10">
+            <button 
+                type="button" 
+                @click="mobileFilterOpen = !mobileFilterOpen"
+                class="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-espresso-950 dark:text-white"
+            >
+                <i data-lucide="sliders-horizontal" class="w-4 h-4 text-gold-600"></i>
+                <span>Filter Deals ({{ $activeCategory !== 'all' || $activePriceRange !== 'all' ? 'Active' : 'All' }})</span>
+            </button>
+            <span class="text-xs text-[#8F8379] dark:text-[#A09387]">
+                {{ $deals->count() }} Sets Found
+            </span>
+        </div>
 
-                                @if($deal->products->count() == 2)
-                                    <!-- Centered "+" indicator connecting the 2 paired items -->
-                                    <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-10 pointer-events-none">
-                                        <span class="w-6 h-6 rounded-full bg-espresso-950 text-gold-300 border border-gold/40 flex items-center justify-center text-xs font-serif font-bold shadow-md">
-                                            +
-                                        </span>
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+
+            <!-- ========================================================
+                 LEFT SIDEBAR FILTER (Desktop & Mobile Drawer)
+                 ======================================================== -->
+            <aside 
+                :class="mobileFilterOpen ? 'block' : 'hidden lg:block'"
+                class="lg:col-span-3 space-y-6 bg-[#FAF8F5] dark:bg-[#14100E] p-5 sm:p-6 rounded-2xl border border-ivory-300 dark:border-white/10"
+            >
+                <div class="flex items-center justify-between border-b border-ivory-200 dark:border-white/10 pb-3">
+                    <div class="flex items-center gap-2">
+                        <i data-lucide="filter" class="w-4 h-4 text-gold-600"></i>
+                        <h2 class="font-serif text-sm font-bold text-espresso-950 dark:text-white uppercase tracking-wider">
+                            Filter Deals
+                        </h2>
+                    </div>
+                    @if($activeCategory !== 'all' || $activePriceRange !== 'all' || $activeSort !== 'featured')
+                        <a 
+                            href="{{ route('deals') }}" 
+                            class="text-[11px] text-rose-600 hover:underline flex items-center gap-0.5"
+                        >
+                            <i data-lucide="rotate-ccw" class="w-3 h-3"></i>
+                            <span>Reset</span>
+                        </a>
+                    @endif
+                </div>
+
+                <form action="{{ route('deals') }}" method="GET" id="dealsFilterForm" class="space-y-6">
+
+                    <!-- Category Filter -->
+                    <div>
+                        <label class="block text-[11px] uppercase font-bold tracking-wider text-espresso-900 dark:text-white mb-2.5">
+                            Deal Category
+                        </label>
+                        <div class="space-y-1.5 text-xs">
+                            @php
+                                $categoriesList = [
+                                    'all' => ['name' => 'All Curated Sets', 'count' => $categoryCounts['all'] ?? 0],
+                                    'belts' => ['name' => 'Leather Belts Deals', 'count' => $categoryCounts['belts'] ?? 0],
+                                    'wallets' => ['name' => 'Wallets & Cardholders Deals', 'count' => $categoryCounts['wallets'] ?? 0],
+                                    'handbags' => ['name' => 'Handbags & Satchels Deals', 'count' => $categoryCounts['handbags'] ?? 0],
+                                    'accessories' => ['name' => 'Everyday Accessories Deals', 'count' => $categoryCounts['accessories'] ?? 0],
+                                ];
+                            @endphp
+
+                            @foreach($categoriesList as $slug => $cat)
+                                <label class="flex items-center justify-between p-2 rounded-lg cursor-pointer transition-colors {{ $activeCategory === $slug ? 'bg-espresso-950 text-white font-semibold' : 'hover:bg-white dark:hover:bg-[#201A16] text-espresso-800 dark:text-ivory-300' }}">
+                                    <div class="flex items-center gap-2">
+                                        <input 
+                                            type="radio" 
+                                            name="category" 
+                                            value="{{ $slug }}" 
+                                            {{ $activeCategory === $slug ? 'checked' : '' }}
+                                            onchange="document.getElementById('dealsFilterForm').submit()"
+                                            class="w-3.5 h-3.5 text-gold-600 focus:ring-0 cursor-pointer"
+                                        >
+                                        <span>{{ $cat['name'] }}</span>
                                     </div>
-                                @endif
-                            @else
-                                <img 
-                                    src="{{ asset($deal->image ?: ($deal->products->first()->image ?? 'images/brand/artisan-craft.jpg')) }}" 
-                                    alt="{{ $deal->title }}" 
-                                    class="w-full h-full object-cover object-center group-hover:scale-104 transition-transform duration-500 ease-out"
-                                >
-                                <div class="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent opacity-40"></div>
-                            @endif
-
-                            <!-- Top-Left Badge (Discount) -->
-                            <div class="absolute top-2 left-2 z-10">
-                                <span class="px-2 py-0.5 rounded bg-espresso-950/90 text-gold-300 text-[9px] font-bold uppercase tracking-wider backdrop-blur-xs shadow-2xs border border-gold/30">
-                                    {{ $deal->badge ?: 'Curated Set' }}
-                                </span>
-                            </div>
-
-                            <!-- Top-Right Savings & Gift Box Indicator -->
-                            <div class="absolute top-2 right-2 z-10 flex items-center gap-1">
-                                @if($deal->savings_amount > 0)
-                                    <span class="px-2 py-0.5 rounded bg-emerald-700/90 backdrop-blur-xs text-white text-[9px] font-bold shadow-2xs">
-                                        Save {{ $deal->discount_percentage }}%
+                                    <span class="text-[10px] {{ $activeCategory === $slug ? 'text-gold-300' : 'text-[#8F8379]' }}">
+                                        ({{ $cat['count'] }})
                                     </span>
-                                @endif
-                                <span class="px-1.5 py-0.5 rounded bg-black/60 backdrop-blur-xs text-white text-[9px] font-medium hidden sm:inline-flex items-center gap-0.5">
-                                    <i data-lucide="gift" class="w-2.5 h-2.5 text-gold"></i>
-                                    <span>Gift Box</span>
-                                </span>
-                            </div>
-                        </div>
-
-                        <!-- Card Body -->
-                        <div class="p-4 flex flex-col flex-1 justify-between">
-                            <div>
-                                @if($deal->tagline)
-                                    <span class="text-[10px] font-semibold uppercase tracking-wider text-gold-700 dark:text-gold-400 block mb-0.5">
-                                        {{ $deal->tagline }}
-                                    </span>
-                                @endif
-
-                                <h3 class="font-serif text-[15px] sm:text-base font-bold text-espresso-950 dark:text-white truncate mb-1 group-hover:text-gold-600 transition-colors">
-                                    {{ $deal->title }}
-                                </h3>
-
-                                @if($deal->description)
-                                    <p class="text-xs text-espresso-800/75 dark:text-ivory-300 font-light line-clamp-2 leading-relaxed mb-3">
-                                        {{ $deal->description }}
-                                    </p>
-                                @endif
-
-                                <!-- Included Pieces Mini-List -->
-                                <div class="p-2.5 rounded-lg bg-[#FAF8F5] dark:bg-[#201A16] border border-ivory-200 dark:border-white/10 mb-3">
-                                    <div class="text-[9px] font-bold uppercase tracking-wider text-[#8F8379] dark:text-[#A09387] mb-1.5 flex items-center justify-between">
-                                        <span>Included Pieces</span>
-                                        <span class="text-gold-700 dark:text-gold-400 font-semibold">{{ $deal->products->count() }} Items</span>
-                                    </div>
-
-                                    <div class="space-y-1">
-                                        @foreach($deal->products as $item)
-                                            <div class="flex items-center justify-between gap-2 text-xs">
-                                                <div class="flex items-center gap-2 min-w-0">
-                                                    <div class="w-6 h-6 rounded overflow-hidden bg-white shrink-0 border border-ivory-200">
-                                                        <img src="{{ asset($item->image) }}" alt="{{ $item->name }}" class="w-full h-full object-cover">
-                                                    </div>
-                                                    <a href="{{ route('product.details', $item->slug) }}" class="text-[11px] font-medium text-espresso-900 dark:text-ivory-200 truncate hover:text-gold-600 transition-colors">
-                                                        {{ $item->name }}
-                                                    </a>
-                                                </div>
-                                                <span class="text-[10px] text-[#8F8379] font-mono shrink-0">
-                                                    PKR {{ number_format($item->price) }}
-                                                </span>
-                                            </div>
-                                        @endforeach
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- Bottom Price & CTA Bar -->
-                            <div class="pt-2.5 border-t border-ivory-200 dark:border-white/10 flex items-center justify-between gap-2 mt-auto">
-                                <div>
-                                    <span class="text-[9px] uppercase tracking-wider text-[#8F8379] dark:text-[#A09387] font-semibold block leading-none mb-0.5">
-                                        Set Price
-                                    </span>
-                                    <div class="flex items-baseline gap-1.5">
-                                        <span class="font-serif text-base sm:text-lg font-bold text-espresso-950 dark:text-white">
-                                            <span class="text-[10px] font-bold text-gold-600 mr-0.5">PKR</span>{{ number_format($deal->deal_price) }}
-                                        </span>
-                                        @if($deal->effective_original_price > $deal->deal_price)
-                                            <span class="text-[11px] text-muted-light line-through font-sans">
-                                                {{ number_format($deal->effective_original_price) }}
-                                            </span>
-                                        @endif
-                                    </div>
-                                </div>
-
-                                <!-- Add Set Button -->
-                                <button 
-                                    type="button" 
-                                    @click="addDealToCart(@js($deal))" 
-                                    class="px-3.5 py-1.5 bg-espresso-950 hover:bg-gold-500 text-white hover:text-espresso-950 text-xs uppercase tracking-wider font-semibold rounded-lg shadow-2xs active:scale-95 transition-all flex items-center gap-1.5 shrink-0"
-                                >
-                                    <i data-lucide="shopping-bag" class="w-3.5 h-3.5 text-gold"></i>
-                                    <span>Add Set</span>
-                                </button>
-                            </div>
-
+                                </label>
+                            @endforeach
                         </div>
                     </div>
-                @endforeach
-            </div>
-        @else
-            <!-- Empty State -->
-            <div class="py-14 text-center max-w-sm mx-auto">
-                <div class="w-12 h-12 rounded-xl bg-gold/15 border border-gold/40 flex items-center justify-center text-gold-700 mx-auto mb-3">
-                    <i data-lucide="package" class="w-6 h-6"></i>
+
+                    <!-- Price Tier Filter -->
+                    <div class="border-t border-ivory-200 dark:border-white/10 pt-4">
+                        <label class="block text-[11px] uppercase font-bold tracking-wider text-espresso-900 dark:text-white mb-2.5">
+                            Price Range
+                        </label>
+                        <div class="space-y-1.5 text-xs">
+                            @php
+                                $priceTiers = [
+                                    'all' => 'All Price Points',
+                                    'under-8k' => 'Under PKR 8,000',
+                                    '8k-15k' => 'PKR 8,000 – PKR 15,000',
+                                    'above-15k' => 'Above PKR 15,000',
+                                ];
+                            @endphp
+                            @foreach($priceTiers as $pKey => $pLabel)
+                                <label class="flex items-center gap-2 p-2 rounded-lg cursor-pointer transition-colors {{ $activePriceRange === $pKey ? 'bg-gold-400/20 text-gold-900 dark:text-gold-300 font-semibold' : 'hover:bg-white dark:hover:bg-[#201A16] text-espresso-800 dark:text-ivory-300' }}">
+                                    <input 
+                                        type="radio" 
+                                        name="price_range" 
+                                        value="{{ $pKey }}" 
+                                        {{ $activePriceRange === $pKey ? 'checked' : '' }}
+                                        onchange="document.getElementById('dealsFilterForm').submit()"
+                                        class="w-3.5 h-3.5 text-gold-600 focus:ring-0 cursor-pointer"
+                                    >
+                                    <span>{{ $pLabel }}</span>
+                                </label>
+                            @endforeach
+                        </div>
+                    </div>
+
+                    <!-- Sort Filter -->
+                    <div class="border-t border-ivory-200 dark:border-white/10 pt-4">
+                        <label class="block text-[11px] uppercase font-bold tracking-wider text-espresso-900 dark:text-white mb-2" for="sortSelect">
+                            Sort Deals
+                        </label>
+                        <select 
+                            id="sortSelect" 
+                            name="sort" 
+                            onchange="document.getElementById('dealsFilterForm').submit()"
+                            class="w-full px-3 py-2 text-xs rounded-xl bg-white dark:bg-[#1A1513] border border-ivory-300 dark:border-white/10 text-espresso-900 dark:text-ivory focus:outline-hidden"
+                        >
+                            <option value="featured" {{ $activeSort === 'featured' ? 'selected' : '' }}>Featured Curations</option>
+                            <option value="discount" {{ $activeSort === 'discount' ? 'selected' : '' }}>Biggest Savings (%)</option>
+                            <option value="price_asc" {{ $activeSort === 'price_asc' ? 'selected' : '' }}>Price: Low to High</option>
+                            <option value="price_desc" {{ $activeSort === 'price_desc' ? 'selected' : '' }}>Price: High to Low</option>
+                        </select>
+                    </div>
+
+                </form>
+
+                <!-- Value Guarantee Box -->
+                <div class="p-3.5 rounded-xl bg-white dark:bg-[#1A1513] border border-ivory-200 dark:border-white/10 space-y-2 text-xs text-espresso-800 dark:text-ivory-300">
+                    <div class="flex items-center gap-1.5 font-bold text-espresso-950 dark:text-white">
+                        <i data-lucide="shield-check" class="w-4 h-4 text-gold-600"></i>
+                        <span>The Atelier Promise</span>
+                    </div>
+                    <p class="text-[11px] leading-relaxed text-[#8F8379] dark:text-[#A09387]">
+                        Every deal pairs genuine, matching vegetable-tanned full-grain pieces. Includes custom presentation packaging and nationwide delivery.
+                    </p>
                 </div>
-                <h3 class="font-serif text-lg font-bold text-espresso-950 dark:text-white mb-1">
-                    No Sets Currently Active
-                </h3>
-                <p class="text-xs text-[#8F8379] font-light mb-4 leading-relaxed">
-                    Our atelier curates exclusive pairings periodically. In the meantime, explore our catalog of individual creations.
-                </p>
-                <a 
-                    href="{{ route('shop') }}" 
-                    class="inline-flex items-center gap-1.5 px-4 py-2 bg-espresso-950 text-white rounded-lg text-xs uppercase tracking-wider font-semibold hover:bg-gold hover:text-espresso-950 transition-colors"
-                >
-                    <span>Browse All Pieces</span>
-                    <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
-                </a>
-            </div>
-        @endif
+            </aside>
+
+            <!-- ========================================================
+                 RIGHT DEALS SHOWCASE GRID (9 Cols)
+                 ======================================================== -->
+            <main class="lg:col-span-9 space-y-6">
+
+                <!-- Results Count & Active Category Badge -->
+                <div class="flex items-center justify-between pb-3 border-b border-ivory-200 dark:border-white/10">
+                    <div class="flex items-center gap-2">
+                        <span class="text-xs font-semibold text-espresso-950 dark:text-white">
+                            Showing {{ $deals->count() }} Curated Sets
+                        </span>
+                        @if($activeCategory !== 'all')
+                            <span class="px-2 py-0.5 rounded-full text-[10px] font-bold uppercase bg-gold-400/20 text-gold-800 dark:text-gold-300">
+                                {{ ucfirst($activeCategory) }}
+                            </span>
+                        @endif
+                    </div>
+                    <span class="text-[11px] text-[#8F8379] font-mono">
+                        Handcrafted in Atelier
+                    </span>
+                </div>
+
+                @if($deals->count() > 0)
+                    <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+                        @foreach($deals as $deal)
+                            <div 
+                                id="{{ $deal->slug }}" 
+                                class="group bg-white dark:bg-[#181310] rounded-2xl border border-ivory-300 dark:border-white/10 shadow-xs hover:shadow-md transition-all duration-300 overflow-hidden flex flex-col scroll-mt-24"
+                            >
+                                <!-- Top: Single High-Class Combination Image (Refined Height: h-44 sm:h-48) -->
+                                <div class="relative w-full h-44 sm:h-48 bg-[#F7F5F0] dark:bg-[#14100E] overflow-hidden border-b border-ivory-200 dark:border-white/10">
+                                    <a href="{{ route('deal.details', $deal->slug) }}" class="block w-full h-full">
+                                        <img 
+                                            src="{{ asset($deal->image ?: 'images/brand/artisan-craft.jpg') }}" 
+                                            alt="{{ $deal->title }}" 
+                                            class="w-full h-full object-cover object-center group-hover:scale-104 transition-transform duration-700 ease-out"
+                                        >
+                                    </a>
+                                    <div class="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent opacity-50 group-hover:opacity-30 transition-opacity pointer-events-none"></div>
+
+                                    <!-- Top-Left Badge (Discount / Tag) -->
+                                    <div class="absolute top-2.5 left-2.5 z-10">
+                                        <span class="px-2.5 py-1 rounded-full bg-espresso-950/90 text-gold-300 text-[10px] font-bold uppercase tracking-wider backdrop-blur-xs border border-gold/40 shadow-xs">
+                                            {{ $deal->badge ?: 'Curated Set' }}
+                                        </span>
+                                    </div>
+
+                                    <!-- Top-Right Savings Pill -->
+                                    @if($deal->savings_amount > 0)
+                                        <div class="absolute top-2.5 right-2.5 z-10">
+                                            <span class="px-2.5 py-0.5 rounded-full bg-emerald-700/90 text-white text-[10px] font-bold backdrop-blur-xs shadow-xs">
+                                                SAVE {{ $deal->savings_percentage }}%
+                                            </span>
+                                        </div>
+                                    @endif
+
+                                    <!-- Bottom Gift Box Overlay -->
+                                    <div class="absolute bottom-2 left-2.5 z-10 pointer-events-none">
+                                        <span class="px-2 py-0.5 rounded bg-black/60 backdrop-blur-xs text-white text-[9px] font-medium flex items-center gap-1">
+                                            <i data-lucide="gift" class="w-3 h-3 text-gold"></i>
+                                            <span>Rigid Gift Box Included</span>
+                                        </span>
+                                    </div>
+                                </div>
+
+                                <!-- Card Body -->
+                                <div class="p-4 sm:p-5 flex flex-col flex-1 justify-between">
+                                    <div>
+                                        <!-- Tagline -->
+                                        @if($deal->tagline)
+                                            <span class="text-[10px] font-semibold uppercase tracking-wider text-gold-700 dark:text-gold-400 block mb-0.5">
+                                                {{ $deal->tagline }}
+                                            </span>
+                                        @endif
+
+                                        <!-- Deal Title -->
+                                        <h3 class="font-serif text-base font-bold text-espresso-950 dark:text-white truncate mb-1 group-hover:text-gold-600 transition-colors">
+                                            <a href="{{ route('deal.details', $deal->slug) }}">
+                                                {{ $deal->title }}
+                                            </a>
+                                        </h3>
+
+                                        <!-- Products Included with Pics Mini-List -->
+                                        <div class="p-2.5 rounded-xl bg-[#FAF8F5] dark:bg-[#201A16] border border-ivory-200 dark:border-white/10 my-3">
+                                            <div class="text-[9px] font-bold uppercase tracking-wider text-[#8F8379] dark:text-[#A09387] mb-1.5 flex items-center justify-between">
+                                                <span>Included Pieces:</span>
+                                                <span class="text-gold-700 dark:text-gold-400 font-semibold">{{ $deal->products->count() }} Creations</span>
+                                            </div>
+
+                                            <div class="space-y-1.5">
+                                                @foreach($deal->products as $item)
+                                                    <div class="flex items-center justify-between gap-2 text-xs">
+                                                        <div class="flex items-center gap-2 min-w-0">
+                                                            <div class="w-7 h-7 rounded-lg overflow-hidden bg-white shrink-0 border border-ivory-200">
+                                                                <img src="{{ asset($item->image) }}" alt="{{ $item->name }}" class="w-full h-full object-cover">
+                                                            </div>
+                                                            <a href="{{ route('product.details', $item->slug) }}" class="text-[11px] font-medium text-espresso-900 dark:text-ivory-200 truncate hover:text-gold-600 transition-colors">
+                                                                {{ $item->name }}
+                                                            </a>
+                                                        </div>
+                                                        <span class="text-[10px] text-[#8F8379] font-mono shrink-0">
+                                                            PKR {{ number_format($item->price) }}
+                                                        </span>
+                                                    </div>
+                                                @endforeach
+                                            </div>
+                                        </div>
+
+                                        <!-- Overall Regular Price vs Deal Price (Value Framing) -->
+                                        <div class="flex items-center justify-between pt-1 mb-3">
+                                            <div>
+                                                <span class="text-[9px] uppercase tracking-wider text-[#8F8379] dark:text-[#A09387] font-semibold block leading-none mb-0.5">
+                                                    Special Set Price
+                                                </span>
+                                                <div class="flex items-baseline gap-2">
+                                                    <span class="font-serif text-lg font-bold text-espresso-950 dark:text-white">
+                                                        <span class="text-[11px] font-bold text-gold-600 mr-0.5">PKR</span>{{ number_format($deal->deal_price) }}
+                                                    </span>
+                                                    @if($deal->effective_original_price > $deal->deal_price)
+                                                        <span class="text-xs text-[#8F8379] line-through font-sans">
+                                                            PKR {{ number_format($deal->effective_original_price) }}
+                                                        </span>
+                                                    @endif
+                                                </div>
+                                            </div>
+
+                                            @if($deal->savings_amount > 0)
+                                                <div class="text-right">
+                                                    <span class="text-[9px] text-[#8F8379] block">Your Savings</span>
+                                                    <span class="text-xs font-bold text-emerald-700 dark:text-emerald-400">
+                                                        -PKR {{ number_format($deal->savings_amount) }}
+                                                    </span>
+                                                </div>
+                                            @endif
+                                        </div>
+                                    </div>
+
+                                    <!-- 2 Action Buttons: View Details + Add Set to Bag -->
+                                    <div class="grid grid-cols-2 gap-2 pt-3 border-t border-ivory-200 dark:border-white/10 mt-auto">
+                                        <!-- Button 1: View Details -->
+                                        <a 
+                                            href="{{ route('deal.details', $deal->slug) }}" 
+                                            class="py-2 px-2.5 rounded-xl border border-espresso-950/20 dark:border-white/20 text-espresso-950 dark:text-white hover:bg-[#FAF8F5] dark:hover:bg-white/5 text-[11px] font-bold uppercase tracking-wider transition-colors flex items-center justify-center gap-1"
+                                        >
+                                            <span>Details</span>
+                                            <i data-lucide="arrow-right" class="w-3 h-3 text-[#8F8379]"></i>
+                                        </a>
+
+                                        <!-- Button 2: Add Set to Bag -->
+                                        <button 
+                                            type="button" 
+                                            @click="addDealToCart(@js($deal))" 
+                                            class="py-2 px-2.5 rounded-xl bg-espresso-950 hover:bg-gold-500 text-white hover:text-espresso-950 text-[11px] font-bold uppercase tracking-wider transition-all shadow-xs flex items-center justify-center gap-1 active:scale-95"
+                                        >
+                                            <i data-lucide="shopping-bag" class="w-3 h-3 text-gold"></i>
+                                            <span>Add Set</span>
+                                        </button>
+                                    </div>
+
+                                </div>
+                            </div>
+                        @endforeach
+                    </div>
+                @else
+                    <!-- Empty State -->
+                    <div class="py-16 text-center max-w-sm mx-auto bg-[#FAF8F5] dark:bg-[#14100E] p-8 rounded-2xl border border-ivory-300 dark:border-white/10">
+                        <div class="w-12 h-12 rounded-xl bg-gold/15 border border-gold/40 flex items-center justify-center text-gold-700 mx-auto mb-3">
+                            <i data-lucide="package-search" class="w-6 h-6"></i>
+                        </div>
+                        <h3 class="font-serif text-lg font-bold text-espresso-950 dark:text-white mb-1">
+                            No Matching Deals Found
+                        </h3>
+                        <p class="text-xs text-[#8F8379] font-light mb-4 leading-relaxed">
+                            We couldn't find any curated sets matching your current filter criteria.
+                        </p>
+                        <a 
+                            href="{{ route('deals') }}" 
+                            class="inline-flex items-center gap-1.5 px-4 py-2 bg-espresso-950 text-white rounded-xl text-xs uppercase tracking-wider font-semibold hover:bg-gold hover:text-espresso-950 transition-colors"
+                        >
+                            <i data-lucide="rotate-ccw" class="w-3.5 h-3.5"></i>
+                            <span>View All Active Deals</span>
+                        </a>
+                    </div>
+                @endif
+
+            </main>
+
+        </div>
 
     </div>
 </section>

@@ -210,10 +210,10 @@
                                 <td class="py-4 px-4 text-right pr-6">
                                     <div class="inline-flex items-center gap-1">
                                         <a 
-                                            href="{{ route('deals') }}#{{ $deal->slug }}" 
+                                            href="{{ route('deal.details', $deal->slug) }}" 
                                             target="_blank" 
                                             class="p-1.5 text-[#8F8379] hover:text-tan-600 transition-colors"
-                                            title="View in Store"
+                                            title="View Deal Details Page"
                                         >
                                             <i data-lucide="external-link" class="w-4 h-4"></i>
                                         </a>

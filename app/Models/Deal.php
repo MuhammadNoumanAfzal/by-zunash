@@ -14,8 +14,10 @@ class Deal extends Model
         'title',
         'slug',
         'tagline',
+        'category_slug',
         'badge',
         'description',
+        'highlights',
         'image',
         'deal_price',
         'original_price',
@@ -105,5 +107,49 @@ class Deal extends Model
 
         return 0;
     }
+
+    /**
+     * Get human-readable category name
+     */
+    public function getCategoryNameAttribute(): string
+    {
+        $map = [
+            'belts' => 'Leather Belts',
+            'wallets' => 'Wallets & Cardholders',
+            'handbags' => 'Luxury Handbags',
+            'shoulder-bags' => 'Shoulder Bags',
+            'accessories' => 'Everyday Accessories',
+            'gift-sets' => 'Curated Gift Sets',
+        ];
+
+        if ($this->category_slug && isset($map[$this->category_slug])) {
+            return $map[$this->category_slug];
+        }
+
+        // Auto-derive from first product
+        if ($this->products && $this->products->first()) {
+            return $this->products->first()->category_name ?? 'Leather Goods';
+        }
+
+        return 'Curated Sets';
+    }
+
+    /**
+     * Get array of highlights/perks
+     */
+    public function getHighlightsListAttribute(): array
+    {
+        if (empty($this->highlights)) {
+            return [
+                '100% Full-Grain Vegetable-Tanned Leather',
+                'Hand-beveled and wax-burnished edges',
+                'Complimentary rigid matte gift presentation box',
+                '30-day exchange with lifetime stitch guarantee'
+            ];
+        }
+
+        return array_values(array_filter(array_map('trim', explode("\n", str_replace("\r", "", $this->highlights)))));
+    }
 }
+
 

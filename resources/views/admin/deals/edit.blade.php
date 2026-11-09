@@ -76,8 +76,8 @@
                         >
                     </div>
 
-                    <!-- Tagline & Badge -->
-                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <!-- Tagline, Category & Badge -->
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
                         <div>
                             <label class="block text-xs font-semibold text-espresso-900 dark:text-ivory-200 mb-1" for="tagline">
                                 Subtitle / Tagline
@@ -89,6 +89,25 @@
                                 value="{{ old('tagline', $deal->tagline) }}" 
                                 class="w-full px-3.5 py-2.5 text-xs rounded-xl bg-[#FAF8F5] dark:bg-[#120E0C] border border-[#E0D7CB] dark:border-[#2C2420] text-espresso-900 dark:text-ivory focus:outline-hidden focus:border-tan-500"
                             >
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-semibold text-espresso-900 dark:text-ivory-200 mb-1" for="category_slug">
+                                Deal Category
+                            </label>
+                            <select 
+                                id="category_slug" 
+                                name="category_slug" 
+                                class="w-full px-3.5 py-2.5 text-xs rounded-xl bg-[#FAF8F5] dark:bg-[#120E0C] border border-[#E0D7CB] dark:border-[#2C2420] text-espresso-900 dark:text-ivory focus:outline-hidden focus:border-tan-500"
+                            >
+                                <option value="">Auto-Detect from Products</option>
+                                <option value="belts" {{ old('category_slug', $deal->category_slug) == 'belts' ? 'selected' : '' }}>Leather Belts Deals</option>
+                                <option value="wallets" {{ old('category_slug', $deal->category_slug) == 'wallets' ? 'selected' : '' }}>Wallets & Cardholders Deals</option>
+                                <option value="handbags" {{ old('category_slug', $deal->category_slug) == 'handbags' ? 'selected' : '' }}>Handbags Deals</option>
+                                <option value="shoulder-bags" {{ old('category_slug', $deal->category_slug) == 'shoulder-bags' ? 'selected' : '' }}>Shoulder Bags Deals</option>
+                                <option value="accessories" {{ old('category_slug', $deal->category_slug) == 'accessories' ? 'selected' : '' }}>Everyday Accessories Deals</option>
+                                <option value="gift-sets" {{ old('category_slug', $deal->category_slug) == 'gift-sets' ? 'selected' : '' }}>Curated Gift Sets</option>
+                            </select>
                         </div>
 
                         <div>
@@ -113,6 +132,24 @@
                         <textarea 
                             id="description" 
                             name="description" 
+                            rows="3" 
+                            class="w-full px-3.5 py-2.5 text-xs rounded-xl bg-[#FAF8F5] dark:bg-[#120E0C] border border-[#E0D7CB] dark:border-[#2C2420] text-espresso-900 dark:text-ivory focus:outline-hidden focus:border-tan-500"
+                        >{{ old('description', $deal->description) }}</textarea>
+                    </div>
+
+                    <!-- Deal Highlights / Perks -->
+                    <div>
+                        <label class="block text-xs font-semibold text-espresso-900 dark:text-ivory-200 mb-1" for="highlights">
+                            Deal Highlights & Included Perks <span class="text-[10px] text-[#8F8379] font-normal">(One line per bullet point)</span>
+                        </label>
+                        <textarea 
+                            id="highlights" 
+                            name="highlights" 
+                            rows="3" 
+                            placeholder="100% Full-grain vegetable-tanned calfskin&#10;Hand-beveled and beeswax-burnished edges&#10;Complimentary rigid matte gift presentation box"
+                            class="w-full px-3.5 py-2.5 text-xs rounded-xl bg-[#FAF8F5] dark:bg-[#120E0C] border border-[#E0D7CB] dark:border-[#2C2420] text-espresso-900 dark:text-ivory focus:outline-hidden focus:border-tan-500"
+                        >{{ old('highlights', $deal->highlights) }}</textarea>
+                    </div>
                             rows="3" 
                             class="w-full px-3.5 py-2.5 text-xs rounded-xl bg-[#FAF8F5] dark:bg-[#120E0C] border border-[#E0D7CB] dark:border-[#2C2420] text-espresso-900 dark:text-ivory focus:outline-hidden focus:border-tan-500"
                         >{{ old('description', $deal->description) }}</textarea>
