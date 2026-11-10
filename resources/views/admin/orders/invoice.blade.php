@@ -110,7 +110,7 @@
         <div class="footer">
             Thank you for commissioning your fine leathercraft with <strong>By Zunash</strong>.<br>
             Each piece is masterfully handcrafted using genuine full-grain leather hides in Pakistan.<br>
-            For assistance, contact our concierge at <strong>concierge@byzunash.com</strong> or WhatsApp <strong>+92 300 1234567</strong>.
+            For assistance, contact our concierge at <strong>concierge@byzunash.com</strong> or WhatsApp <strong>+92 321 4700545</strong>.
         </div>
     </div>
 

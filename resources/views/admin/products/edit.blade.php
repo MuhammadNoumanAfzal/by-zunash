@@ -86,7 +86,7 @@
     </div>
 
     <!-- Edit Form Card -->
-    <form action="{{ route('admin.products.update', $product) }}" method="POST" class="bg-white dark:bg-[#1A1513] rounded-3xl border border-[#ECE6DE] dark:border-[#2C2420] p-6 sm:p-8 shadow-card space-y-8">
+    <form action="{{ route('admin.products.update', $product) }}" method="POST" enctype="multipart/form-data" class="bg-white dark:bg-[#1A1513] rounded-3xl border border-[#ECE6DE] dark:border-[#2C2420] p-6 sm:p-8 shadow-card space-y-8">
         @csrf
         @method('PUT')
 
@@ -457,15 +457,37 @@
                 <!-- Primary Image -->
                 <div>
                     <label class="block text-xs font-semibold text-espresso-900 dark:text-white mb-1.5">
-                        Primary Image URL or Asset Path <span class="text-rose-500">*</span>
+                        Primary Creation Image <span class="text-rose-500">*</span>
                     </label>
-                    <input 
-                        type="text" 
-                        name="image" 
-                        value="{{ old('image', $product->image) }}" 
-                        required
-                        class="w-full px-3.5 py-2.5 text-xs rounded-xl bg-[#FAF8F5] dark:bg-[#241D1A] border border-[#E0D7CB] dark:border-[#3A2F29] text-espresso-900 dark:text-white focus:outline-hidden focus:border-tan-500 font-mono"
-                    >
+
+                    <div class="p-3.5 rounded-2xl bg-[#FAF8F5] dark:bg-[#201815] border border-dashed border-[#DFD6CB] dark:border-[#382D27] flex items-center gap-3.5">
+                        <div class="w-16 h-16 rounded-xl overflow-hidden bg-espresso-950/10 dark:bg-black/40 border border-[#E0D7CB] dark:border-[#382D27] shrink-0 flex items-center justify-center">
+                            <img id="prod_preview" src="{{ old('image', $product->image ?: '/images/products/prod-reversible-belt.jpg') }}" alt="Preview" class="w-full h-full object-cover">
+                        </div>
+
+                        <div class="flex-1 min-w-0">
+                            <label class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-espresso-900 hover:bg-tan-600 text-white font-semibold text-xs cursor-pointer transition-colors shadow-2xs">
+                                <i data-lucide="upload-cloud" class="w-3.5 h-3.5 text-gold-400"></i>
+                                <span>Upload from Computer</span>
+                                <input type="file" name="image_file" accept="image/*" class="hidden" onchange="previewProductImage(this)">
+                            </label>
+                            <p class="text-[10px] text-[#8F8379] mt-1 truncate" id="prod_file_name">
+                                PNG, JPG, WEBP, AVIF up to 5MB
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="mt-2.5">
+                        <label class="block text-[10px] text-gray-400 uppercase tracking-wider mb-0.5">Or use Image URL / Existing Asset Path</label>
+                        <input 
+                            type="text" 
+                            id="prod_image_url"
+                            name="image" 
+                            value="{{ old('image', $product->image) }}" 
+                            oninput="previewProductUrl(this.value)"
+                            class="w-full px-3.5 py-2 text-xs rounded-xl bg-[#FAF8F5] dark:bg-[#241D1A] border border-[#E0D7CB] dark:border-[#3A2F29] text-espresso-900 dark:text-white focus:outline-hidden focus:border-tan-500 font-mono"
+                        >
+                    </div>
                 </div>
 
                 <!-- Additional Gallery Images -->
@@ -531,5 +553,29 @@
     </form>
 
 </div>
+
+@push('scripts')
+<script>
+function previewProductImage(input) {
+    if (input.files && input.files[0]) {
+        const file = input.files[0];
+        const nameEl = document.getElementById('prod_file_name');
+        if (nameEl) nameEl.textContent = file.name + ' (' + Math.round(file.size / 1024) + ' KB)';
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            const img = document.getElementById('prod_preview');
+            if (img) img.src = e.target.result;
+        };
+        reader.readAsDataURL(file);
+    }
+}
+function previewProductUrl(url) {
+    const img = document.getElementById('prod_preview');
+    if (img && url && url.trim().length > 0) {
+        img.src = url;
+    }
+}
+</script>
+@endpush
 
 @endsection

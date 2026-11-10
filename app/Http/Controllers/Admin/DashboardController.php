@@ -28,7 +28,8 @@ class DashboardController extends Controller
         $averageOrderValue = $totalOrders > 0 ? round($totalRevenue / $totalOrders) : 0;
 
         $activeInquiries = Inquiry::where('status', 'unread')->count();
-        $vipClients = Customer::where('is_vip', true)->count();
+        $totalClients = Customer::count();
+        $vipClients = $totalClients; // backward compat
 
         // Recent Store Orders
         $recentOrders = Order::latest()->take(5)->get();
@@ -140,6 +141,7 @@ class DashboardController extends Controller
             'averageOrderValue',
             'activeInquiries',
             'vipClients',
+            'totalClients',
             'recentOrders',
             'conciergeInquiries',
             'categoryShare',

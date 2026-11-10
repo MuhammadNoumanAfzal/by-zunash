@@ -59,7 +59,7 @@
 
                 <div>
                     <label class="block text-xs font-semibold text-espresso-900 dark:text-white mb-1.5">WhatsApp / Phone Hotline</label>
-                    <input type="text" name="contact_phone" value="{{ $settings['contact_phone'] ?? '+92 300 1234567' }}" class="w-full px-3.5 py-2 text-xs rounded-xl bg-[#FAF8F5] dark:bg-[#241D1A] border border-[#E0D7CB] dark:border-[#382D27] text-espresso-900 dark:text-white focus:outline-hidden focus:border-tan-500 font-mono">
+                    <input type="text" name="contact_phone" value="{{ $settings['contact_phone'] ?? '+92 321 4700545' }}" class="w-full px-3.5 py-2 text-xs rounded-xl bg-[#FAF8F5] dark:bg-[#241D1A] border border-[#E0D7CB] dark:border-[#382D27] text-espresso-900 dark:text-white focus:outline-hidden focus:border-tan-500 font-mono">
                 </div>
 
                 <div>

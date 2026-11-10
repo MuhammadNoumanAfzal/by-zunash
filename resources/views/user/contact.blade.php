@@ -21,7 +21,7 @@
             "mainEntity": {
                 "@type": "Organization",
                 "name": "By Zunash",
-                "telephone": "+92-300-1234567",
+                "telephone": "+92-321-4700545",
                 "email": "concierge@byzunash.com",
                 "address": {
                     "@type": "PostalAddress",
@@ -96,7 +96,7 @@
                 
                 <!-- WhatsApp Channel -->
                 <a 
-                    href="https://wa.me/923001234567?text=Assalam-o-Alaikum%20By%20Zunash%20Concierge,%20I%20would%20like%20assistance%20with%20an%20order." 
+                    href="https://wa.me/923214700545?text=Assalam-o-Alaikum%20By%20Zunash%20Concierge,%20I%20would%20like%20assistance%20with%20an%20order." 
                     target="_blank" 
                     rel="noopener noreferrer"
                     class="p-3.5 rounded-xl bg-white/10 hover:bg-white/15 backdrop-blur-md border border-white/15 hover:border-gold/60 transition-all duration-200 group flex items-center gap-3"
@@ -106,7 +106,7 @@
                     </div>
                     <div>
                         <div class="flex items-center gap-1.5 text-white text-xs font-bold font-serif">
-                            <span>WhatsApp VIP</span>
+                            <span>WhatsApp Concierge</span>
                             <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
                         </div>
                         <span class="text-[11px] text-ivory-300 block">Instant Chat Response</span>
@@ -115,7 +115,7 @@
 
                 <!-- Telephone Support -->
                 <a 
-                    href="tel:+923001234567" 
+                    href="tel:+923214700545" 
                     class="p-3.5 rounded-xl bg-white/10 hover:bg-white/15 backdrop-blur-md border border-white/15 hover:border-gold/60 transition-all duration-200 group flex items-center gap-3"
                 >
                     <div class="w-9 h-9 rounded-full bg-gold/20 text-gold flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform">
@@ -123,7 +123,7 @@
                     </div>
                     <div>
                         <div class="text-white text-xs font-bold font-serif">Direct Telephone</div>
-                        <span class="text-[11px] text-ivory-300 block">+92 (300) 123-4567</span>
+                        <span class="text-[11px] text-ivory-300 block">+92 321 4700545</span>
                     </div>
                 </a>
 
@@ -298,7 +298,7 @@
                                         type="tel" 
                                         name="phone" 
                                         value="{{ old('phone') }}"
-                                        placeholder="0300 1234567" 
+                                        placeholder="0321 4700545" 
                                         class="w-full pl-9 pr-3.5 py-2.5 bg-ivory-50/60 border border-ivory-300 rounded-xl text-xs text-espresso-950 focus:outline-none focus:ring-2 focus:ring-gold/40 focus:border-gold transition-all"
                                     >
                                 </div>
@@ -387,7 +387,7 @@
                         </p>
 
                         <a 
-                            href="https://wa.me/923001234567?text=Assalam-o-Alaikum%20By%20Zunash%20Concierge,%20I%20would%20like%20assistance." 
+                            href="https://wa.me/923214700545?text=Assalam-o-Alaikum%20By%20Zunash%20Concierge,%20I%20would%20like%20assistance." 
                             target="_blank" 
                             rel="noopener noreferrer"
                             class="w-full py-3 px-4 rounded-xl bg-[#25D366] hover:bg-[#20ba59] text-white text-xs uppercase tracking-widest font-bold shadow-sm transition-all flex items-center justify-center gap-2 active:scale-98"
@@ -410,7 +410,7 @@
                             </div>
                             <div>
                                 <span class="text-xs font-semibold text-espresso-900 block">Telephone Concierge</span>
-                                <span class="text-xs text-muted font-mono">+92 (300) 123-4567</span>
+                                <a href="tel:+923214700545" class="text-xs text-muted hover:text-gold font-mono transition-colors">+92 321 4700545</a>
                             </div>
                         </div>
 
@@ -545,7 +545,7 @@
                         x-collapse
                         class="px-5 pb-5 pt-1 text-xs text-ivory-300 font-light leading-relaxed border-t border-white/5"
                     >
-                        We offer a complimentary 7-Day Hassle-Free Exchange Policy. Simply message our WhatsApp concierge at <strong class="text-white">+92 (300) 123-4567</strong> with your order ID. We will promptly dispatch the replacement size and arrange a reverse pickup from your address.
+                        We offer a complimentary 7-Day Hassle-Free Exchange Policy. Simply message our WhatsApp concierge at <strong class="text-white">+92 321 4700545</strong> with your order ID. We will promptly dispatch the replacement size and arrange a reverse pickup from your address.
                     </div>
                 </div>
 

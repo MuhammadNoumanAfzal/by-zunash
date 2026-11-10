@@ -112,22 +112,22 @@
             </div>
         </a>
 
-        <!-- KPI 4: VIP PATRONS -->
+        <!-- KPI 4: TOTAL PATRONS -->
         <a href="{{ route('admin.customers.index') }}" class="p-2.5 sm:p-3.5 rounded-xl bg-white dark:bg-[#161210] border border-[#ECE6DE] dark:border-[#261E1A] shadow-2xs hover:border-emerald-500 transition-colors group flex items-center justify-between min-w-0 overflow-hidden">
             <div class="min-w-0 flex-1">
                 <div class="text-[9px] font-bold uppercase tracking-wider text-[#8F8379] truncate">
-                    VIP PATRONS
+                    TOTAL PATRONS
                 </div>
                 <div class="font-cinzel text-lg sm:text-2xl font-bold text-espresso-950 dark:text-white leading-tight mt-0.5">
-                    {{ $vipClients }}
+                    {{ $totalClients ?? $vipClients }}
                 </div>
                 <div class="flex items-center gap-1 text-[10px] text-emerald-600 dark:text-emerald-400 mt-0.5 font-medium truncate">
                     <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 shrink-0"></span>
-                    <span class="truncate">Ticket: Rs. {{ number_format($averageOrderValue) }}</span>
+                    <span class="truncate">Avg Ticket: Rs. {{ number_format($averageOrderValue) }}</span>
                 </div>
             </div>
             <div class="w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-[#F0FAF5] dark:bg-[#162720] text-emerald-600 flex items-center justify-center shrink-0 border border-[#D5EFE2] dark:border-[#223E32] group-hover:scale-105 transition-transform ml-1">
-                <i data-lucide="crown" class="w-3.5 h-3.5 sm:w-4 sm:h-4"></i>
+                <i data-lucide="users" class="w-3.5 h-3.5 sm:w-4 sm:h-4"></i>
             </div>
         </a>
 

@@ -317,15 +317,6 @@
                     <i data-lucide="search" class="w-5 h-5"></i>
                 </button>
 
-                <!-- Customer Account Link -->
-                <a 
-                    href="{{ route('contact') }}" 
-                    class="p-2 text-espresso-900 dark:text-ivory-200 hover:text-gold-600 dark:hover:text-gold transition-colors focus:outline-none hidden sm:inline-flex"
-                    aria-label="Client Services & Contact"
-                    title="Client Services"
-                >
-                    <i data-lucide="user" class="w-5 h-5"></i>
-                </a>
 
                 <!-- Wishlist Icon with Dynamic Badge (Desktop & Tablet only; in mobile drawer) -->
                 <a 

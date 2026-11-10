@@ -340,7 +340,7 @@
                     @if($isOutOfStock)
                         <p class="text-xs text-rose-800 mt-2 flex items-center gap-1.5">
                             <i data-lucide="clock" class="w-3.5 h-3.5 text-rose-600"></i>
-                            <span>Temporarily sold out. Leave your inquiry below for VIP priority restock notification.</span>
+                            <span>Temporarily sold out. Leave your inquiry below for priority restock notification.</span>
                         </p>
                     @elseif($isOnDemand)
                         <p class="text-xs text-amber-900 mt-2 flex items-center gap-1.5">
@@ -614,7 +614,7 @@
 
                         <!-- WhatsApp Quick Order (High Converting for Pakistani Ad Traffic) -->
                         <a 
-                            href="https://wa.me/923001234567?text={{ urlencode('Hello By Zunash Concierge! I want to order ' . $product['name'] . ' (PKR ' . number_format($product['price']) . '). Link: ' . url()->current() . ' — My delivery city is: ') }}" 
+                            href="https://wa.me/923214700545?text={{ urlencode('Hello By Zunash Concierge! I want to order ' . $product['name'] . ' (PKR ' . number_format($product['price']) . '). Link: ' . url()->current() . ' — My delivery city is: ') }}" 
                             target="_blank"
                             rel="noopener"
                             class="w-full h-11 px-4 bg-[#25D366] hover:bg-[#20BD5A] text-white text-xs font-bold uppercase tracking-wider rounded-xl shadow-xs transition-all flex items-center justify-center gap-2 active:scale-[0.98]"
@@ -869,7 +869,7 @@
                         </p>
                         <p><strong class="font-serif uppercase tracking-wider text-espresso-950">7-Day Size & Model Exchange:</strong></p>
                         <p class="text-muted">
-                            If your belt or accessory size needs an adjustment, simply WhatsApp our atelier concierge at <strong class="text-espresso-950">+92 (300) 123-4567</strong> within 7 days of receiving your parcel. We will arrange a courier pickup and replacement promptly.
+                            If your belt or accessory size needs an adjustment, simply WhatsApp our atelier concierge at <strong class="text-espresso-950">+92 321 4700545</strong> within 7 days of receiving your parcel. We will arrange a courier pickup and replacement promptly.
                         </p>
                     </div>
                 </div>

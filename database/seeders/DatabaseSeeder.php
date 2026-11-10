@@ -579,7 +579,7 @@ class DatabaseSeeder extends Seeder
             'currency_symbol' => 'Rs. ',
             'currency_code' => 'PKR',
             'contact_email' => 'concierge@byzunash.com',
-            'contact_phone' => '+92 300 1234567',
+            'contact_phone' => '+92 321 4700545',
             'warehouse_city' => 'Lahore',
             'tax_rate_percent' => '0',
             'free_shipping_threshold' => '3000',

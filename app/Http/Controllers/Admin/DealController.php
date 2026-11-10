@@ -70,7 +70,6 @@ class DealController extends Controller
     {
         $validated = $request->validate([
             'title' => 'required|string|max:255',
-            'slug' => 'nullable|string|max:255|unique:deals,slug',
             'tagline' => 'nullable|string|max:255',
             'category_slug' => 'nullable|string|max:100',
             'badge' => 'nullable|string|max:100',
@@ -91,15 +90,11 @@ class DealController extends Controller
             'products.*.quantity' => 'nullable|integer|min:1',
         ]);
 
-        $slug = !empty($validated['slug']) 
-            ? Str::slug($validated['slug']) 
-            : Str::slug($validated['title']);
-
-        // Check if slug exists and make unique
-        $originalSlug = $slug;
+        $slugBase = Str::slug($validated['title']);
+        $slug = $slugBase;
         $counter = 1;
         while (Deal::where('slug', $slug)->exists()) {
-            $slug = "{$originalSlug}-{$counter}";
+            $slug = "{$slugBase}-{$counter}";
             $counter++;
         }
 
@@ -181,7 +176,6 @@ class DealController extends Controller
     {
         $validated = $request->validate([
             'title' => 'required|string|max:255',
-            'slug' => 'required|string|max:255|unique:deals,slug,' . $deal->id,
             'tagline' => 'nullable|string|max:255',
             'category_slug' => 'nullable|string|max:100',
             'badge' => 'nullable|string|max:100',
@@ -201,6 +195,17 @@ class DealController extends Controller
             'products.*.id' => 'required|exists:products,id',
             'products.*.quantity' => 'nullable|integer|min:1',
         ]);
+
+        $slug = $deal->slug;
+        if (empty($slug) || $deal->title !== $validated['title']) {
+            $slugBase = Str::slug($validated['title']);
+            $slug = $slugBase;
+            $counter = 1;
+            while (Deal::where('slug', $slug)->where('id', '!=', $deal->id)->exists()) {
+                $slug = "{$slugBase}-{$counter}";
+                $counter++;
+            }
+        }
 
         $imagePath = $validated['image'] ?? $deal->image;
         if ($request->hasFile('image_file')) {
@@ -227,7 +232,7 @@ class DealController extends Controller
 
         $deal->update([
             'title' => $validated['title'],
-            'slug' => Str::slug($validated['slug']),
+            'slug' => $slug,
             'tagline' => $validated['tagline'] ?? null,
             'category_slug' => $validated['category_slug'] ?? null,
             'badge' => $validated['badge'] ?? null,

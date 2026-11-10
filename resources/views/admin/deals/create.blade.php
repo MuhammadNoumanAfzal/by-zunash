@@ -143,20 +143,6 @@
                         >{{ old('highlights') }}</textarea>
                     </div>
 
-                    <!-- Custom Slug (Optional) -->
-                    <div>
-                        <label class="block text-xs font-semibold text-espresso-900 dark:text-ivory-200 mb-1" for="slug">
-                            Custom Slug <span class="text-[10px] text-muted font-normal">(Leave blank to auto-generate)</span>
-                        </label>
-                        <input 
-                            type="text" 
-                            id="slug" 
-                            name="slug" 
-                            value="{{ old('slug') }}" 
-                            placeholder="e.g. the-executive-duo" 
-                            class="w-full px-3.5 py-2.5 text-xs rounded-xl bg-[#FAF8F5] dark:bg-[#120E0C] border border-[#E0D7CB] dark:border-[#2C2420] text-espresso-900 dark:text-ivory focus:outline-hidden focus:border-tan-500 font-mono"
-                        >
-                    </div>
                 </div>
 
                 <!-- Pricing & Savings Card -->

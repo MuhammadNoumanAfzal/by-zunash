@@ -15,6 +15,9 @@ use App\Http\Controllers\Admin\ReviewController as AdminReviewController;
 use App\Http\Controllers\Admin\StaffController as AdminStaffController;
 use App\Http\Controllers\Admin\SettingController as AdminSettingController;
 use App\Http\Controllers\Admin\DealController as AdminDealController;
+use App\Http\Controllers\Admin\AbandonedCartController as AdminAbandonedCartController;
+use App\Http\Controllers\Admin\CouponController as AdminCouponController;
+use App\Http\Controllers\Admin\AnalyticsController as AdminAnalyticsController;
 
 /*
 |--------------------------------------------------------------------------
@@ -37,6 +40,8 @@ Route::get('/product/{slug}', [StoreController::class, 'productDetails'])->name(
 Route::get('/cart', [StoreController::class, 'cart'])->name('cart');
 Route::get('/checkout', [StoreController::class, 'checkout'])->name('checkout');
 Route::post('/api/checkout/process', [StoreController::class, 'processCheckout'])->name('checkout.process');
+Route::post('/api/checkout/track-abandoned', [StoreController::class, 'trackAbandoned'])->name('checkout.track-abandoned');
+Route::post('/api/coupon/validate', [StoreController::class, 'validateCoupon'])->name('coupon.validate');
 
 // Wishlist
 Route::get('/wishlist', [StoreController::class, 'wishlist'])->name('wishlist');
@@ -112,15 +117,34 @@ Route::prefix('admin')->name('admin.')->group(function () {
         // Inventory & Stock
         Route::get('/inventory', [AdminInventoryController::class, 'index'])->name('inventory.index');
         Route::post('/inventory/{product}/update', [AdminInventoryController::class, 'updateStock'])->name('inventory.update');
+        Route::post('/inventory/{product}/bespoke', [AdminInventoryController::class, 'switchBespoke'])->name('inventory.bespoke');
 
-        // Store Orders & Invoices
+        // Store Orders & Printing
         Route::get('/orders', [AdminOrderController::class, 'index'])->name('orders.index');
+        Route::get('/orders/print-report', [AdminOrderController::class, 'printReport'])->name('orders.print-report');
+        Route::post('/orders/bulk-action', [AdminOrderController::class, 'bulkAction'])->name('orders.bulk-action');
+        Route::post('/orders/{order}/courier', [AdminOrderController::class, 'updateCourier'])->name('orders.courier');
         Route::get('/orders/{order}', [AdminOrderController::class, 'show'])->name('orders.show');
         Route::post('/orders/{order}/status', [AdminOrderController::class, 'updateStatus'])->name('orders.update-status');
         Route::get('/orders/{order}/invoice', [AdminOrderController::class, 'invoice'])->name('orders.invoice');
+        Route::get('/orders/{order}/packing-slip', [AdminOrderController::class, 'packingSlip'])->name('orders.packing-slip');
+        Route::get('/orders/{order}/receipt', [AdminOrderController::class, 'receipt'])->name('orders.receipt');
         Route::delete('/orders/{order}', [AdminOrderController::class, 'destroy'])->name('orders.destroy');
 
-        // VIP Customers
+        // Abandoned Carts & Drop-off Recovery
+        Route::get('/abandoned-carts', [AdminAbandonedCartController::class, 'index'])->name('abandoned-carts.index');
+        Route::post('/abandoned-carts/{cart}/whatsapp', [AdminAbandonedCartController::class, 'sendRecovery'])->name('abandoned-carts.whatsapp');
+        Route::post('/abandoned-carts/{cart}/recover', [AdminAbandonedCartController::class, 'markRecovered'])->name('abandoned-carts.recover');
+        Route::delete('/abandoned-carts/{cart}', [AdminAbandonedCartController::class, 'destroy'])->name('abandoned-carts.destroy');
+
+        // Coupon & Promo Code Engine
+        Route::get('/coupons', [AdminCouponController::class, 'index'])->name('coupons.index');
+        Route::post('/coupons', [AdminCouponController::class, 'store'])->name('coupons.store');
+        Route::put('/coupons/{coupon}', [AdminCouponController::class, 'update'])->name('coupons.update');
+        Route::post('/coupons/{coupon}/toggle', [AdminCouponController::class, 'toggle'])->name('coupons.toggle');
+        Route::delete('/coupons/{coupon}', [AdminCouponController::class, 'destroy'])->name('coupons.destroy');
+
+        // Customer & Client Dossiers
         Route::get('/customers', [AdminCustomerController::class, 'index'])->name('customers.index');
         Route::post('/customers/{customer}/vip', [AdminCustomerController::class, 'toggleVip'])->name('customers.vip');
         Route::put('/customers/{customer}', [AdminCustomerController::class, 'update'])->name('customers.update');
@@ -135,6 +159,12 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::get('/reviews', [AdminReviewController::class, 'index'])->name('reviews.index');
         Route::post('/reviews/{review}/publish', [AdminReviewController::class, 'togglePublish'])->name('reviews.publish');
         Route::delete('/reviews/{review}', [AdminReviewController::class, 'destroy'])->name('reviews.destroy');
+
+        // Financial Export & Analytics Dashboard
+        Route::get('/analytics', [AdminAnalyticsController::class, 'index'])->name('analytics.index');
+        Route::get('/analytics/export/orders', [AdminAnalyticsController::class, 'exportOrders'])->name('analytics.export.orders');
+        Route::get('/analytics/export/tax', [AdminAnalyticsController::class, 'exportTaxSummary'])->name('analytics.export.tax');
+        Route::get('/analytics/export/inventory', [AdminAnalyticsController::class, 'exportAgingInventory'])->name('analytics.export.inventory');
 
         // Staff & Roles (RBAC)
         Route::get('/staff', [AdminStaffController::class, 'index'])->name('staff.index');

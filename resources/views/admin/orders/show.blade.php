@@ -23,14 +23,48 @@
         </div>
 
         <div class="flex items-center flex-wrap gap-2">
-            <a 
-                href="{{ route('admin.orders.invoice', $order) }}" 
-                target="_blank"
-                class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-white dark:bg-[#1A1513] border border-[#DFD6CB] dark:border-[#3A2F29] text-xs font-semibold text-espresso-900 dark:text-white hover:border-tan-500 shadow-2xs transition-colors"
-            >
-                <i data-lucide="printer" class="w-3.5 h-3.5 text-tan-600"></i>
-                <span>Print Invoice</span>
-            </a>
+            <!-- Print Actions Group -->
+            <div class="inline-flex items-center rounded-xl bg-white dark:bg-[#1A1513] border border-[#DFD6CB] dark:border-[#3A2F29] p-0.5 shadow-2xs">
+                <a 
+                    href="{{ route('admin.orders.invoice', $order) }}" 
+                    target="_blank"
+                    class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold text-espresso-900 dark:text-white hover:bg-[#FAF8F5] dark:hover:bg-[#251D1A] transition-colors"
+                    title="Print Tax / Commercial Invoice"
+                >
+                    <i data-lucide="file-text" class="w-3.5 h-3.5 text-tan-600"></i>
+                    <span>Invoice</span>
+                </a>
+                <span class="w-px h-4 bg-[#DFD6CB] dark:bg-[#3A2F29]"></span>
+                <a 
+                    href="{{ route('admin.orders.packing-slip', $order) }}" 
+                    target="_blank"
+                    class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold text-espresso-900 dark:text-white hover:bg-[#FAF8F5] dark:hover:bg-[#251D1A] transition-colors"
+                    title="Print Courier Packaging & Dispatch Slip"
+                >
+                    <i data-lucide="package-check" class="w-3.5 h-3.5 text-tan-600"></i>
+                    <span>Packing Slip</span>
+                </a>
+                <span class="w-px h-4 bg-[#DFD6CB] dark:bg-[#3A2F29]"></span>
+                <a 
+                    href="{{ route('admin.orders.receipt', $order) }}" 
+                    target="_blank"
+                    class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold text-espresso-900 dark:text-white hover:bg-[#FAF8F5] dark:hover:bg-[#251D1A] transition-colors"
+                    title="Print Official Payment Voucher / Settlement Receipt"
+                >
+                    <i data-lucide="receipt" class="w-3.5 h-3.5 text-tan-600"></i>
+                    <span>Receipt</span>
+                </a>
+                <span class="w-px h-4 bg-[#DFD6CB] dark:bg-[#3A2F29]"></span>
+                <button 
+                    type="button"
+                    onclick="window.print()"
+                    class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold text-espresso-900 dark:text-white hover:bg-[#FAF8F5] dark:hover:bg-[#251D1A] transition-colors"
+                    title="Print Order Summary Page"
+                >
+                    <i data-lucide="printer" class="w-3.5 h-3.5 text-tan-600"></i>
+                    <span>Print Order</span>
+                </button>
+            </div>
 
             <form action="{{ route('admin.orders.destroy', $order) }}" method="POST" onsubmit="return confirm('Permanently delete this order record?')">
                 @csrf
@@ -54,36 +88,103 @@
         </div>
     </div>
 
-    <!-- Status Update Banner Card -->
-    <div class="p-4 sm:p-5 rounded-3xl bg-white dark:bg-[#1A1513] border border-[#ECE6DE] dark:border-[#2C2420] shadow-card">
-        <form action="{{ route('admin.orders.update-status', $order) }}" method="POST" class="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
-            @csrf
-            
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 flex-1">
-                <div>
-                    <label class="block text-[10px] font-bold uppercase tracking-wider text-[#8F8379] mb-1">Order Fulfillment Status</label>
-                    <select name="order_status" class="w-full px-3 py-2 text-xs rounded-xl bg-[#FAF8F5] dark:bg-[#241D1A] border border-[#DFD6CB] text-espresso-900 dark:text-white font-semibold">
-                        <option value="pending" {{ $order->order_status === 'pending' ? 'selected' : '' }}>● Pending</option>
-                        <option value="processing" {{ $order->order_status === 'processing' ? 'selected' : '' }}>● In Crafting / Processing</option>
-                        <option value="completed" {{ $order->order_status === 'completed' ? 'selected' : '' }}>● Delivered & Closed</option>
-                        <option value="cancelled" {{ $order->order_status === 'cancelled' ? 'selected' : '' }}>● Cancelled</option>
-                    </select>
+    <!-- Status & Courier Dispatch Grid -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <!-- Fulfillment & Payment Status Card -->
+        <div class="p-5 rounded-3xl bg-white dark:bg-[#1A1513] border border-[#ECE6DE] dark:border-[#2C2420] shadow-card">
+            <h2 class="font-cinzel text-sm font-bold text-espresso-950 dark:text-white flex items-center gap-2 mb-3 pb-2 border-b border-[#F0EAE1] dark:border-[#2C2420]">
+                <i data-lucide="check-circle" class="w-4 h-4 text-tan-600"></i>
+                <span>Fulfillment & Payment Status</span>
+            </h2>
+            <form action="{{ route('admin.orders.update-status', $order) }}" method="POST" class="space-y-3">
+                @csrf
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-[10px] font-bold uppercase tracking-wider text-[#8F8379] mb-1">Order Status</label>
+                        <select name="order_status" class="w-full px-3 py-2 text-xs rounded-xl bg-[#FAF8F5] dark:bg-[#241D1A] border border-[#DFD6CB] dark:border-[#382D27] text-espresso-900 dark:text-white font-semibold">
+                            <option value="pending" {{ $order->order_status === 'pending' ? 'selected' : '' }}>● Pending</option>
+                            <option value="processing" {{ $order->order_status === 'processing' ? 'selected' : '' }}>● In Crafting / Processing</option>
+                            <option value="completed" {{ $order->order_status === 'completed' ? 'selected' : '' }}>● Delivered & Closed</option>
+                            <option value="cancelled" {{ $order->order_status === 'cancelled' ? 'selected' : '' }}>● Cancelled</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label class="block text-[10px] font-bold uppercase tracking-wider text-[#8F8379] mb-1">Payment Status</label>
+                        <select name="payment_status" class="w-full px-3 py-2 text-xs rounded-xl bg-[#FAF8F5] dark:bg-[#241D1A] border border-[#DFD6CB] dark:border-[#382D27] text-espresso-900 dark:text-white font-semibold">
+                            <option value="pending" {{ $order->payment_status === 'pending' ? 'selected' : '' }}>Pending Clearance</option>
+                            <option value="paid" {{ $order->payment_status === 'paid' ? 'selected' : '' }}>Paid / Cleared</option>
+                            <option value="failed" {{ $order->payment_status === 'failed' ? 'selected' : '' }}>Payment Failed</option>
+                        </select>
+                    </div>
                 </div>
 
-                <div>
-                    <label class="block text-[10px] font-bold uppercase tracking-wider text-[#8F8379] mb-1">Payment Status</label>
-                    <select name="payment_status" class="w-full px-3 py-2 text-xs rounded-xl bg-[#FAF8F5] dark:bg-[#241D1A] border border-[#DFD6CB] text-espresso-900 dark:text-white font-semibold">
-                        <option value="pending" {{ $order->payment_status === 'pending' ? 'selected' : '' }}>Pending Clearance</option>
-                        <option value="paid" {{ $order->payment_status === 'paid' ? 'selected' : '' }}>Paid / Cleared</option>
-                        <option value="failed" {{ $order->payment_status === 'failed' ? 'selected' : '' }}>Payment Failed</option>
-                    </select>
+                <div class="flex justify-end pt-1">
+                    <button type="submit" class="w-full sm:w-auto px-4 py-2 rounded-xl bg-espresso-900 hover:bg-tan-600 text-white font-semibold text-xs shadow-md transition-colors text-center">
+                        Update Status
+                    </button>
                 </div>
+            </form>
+        </div>
+
+        <!-- Courier & One-Click WhatsApp Dispatch Card -->
+        <div class="p-5 rounded-3xl bg-white dark:bg-[#1A1513] border border-[#ECE6DE] dark:border-[#2C2420] shadow-card">
+            <div class="flex items-center justify-between mb-3 pb-2 border-b border-[#F0EAE1] dark:border-[#2C2420]">
+                <h2 class="font-cinzel text-sm font-bold text-espresso-950 dark:text-white flex items-center gap-2">
+                    <i data-lucide="truck" class="w-4 h-4 text-emerald-600"></i>
+                    <span>Courier & WhatsApp Dispatch</span>
+                </h2>
+                @if($order->dispatched_at)
+                    <span class="text-[10px] font-semibold text-emerald-600 bg-emerald-50 dark:bg-emerald-950/40 px-2 py-0.5 rounded-full border border-emerald-200">
+                        Dispatched {{ $order->dispatched_at->diffForHumans() }}
+                    </span>
+                @endif
             </div>
 
-            <button type="submit" class="w-full sm:w-auto px-5 py-2.5 rounded-xl bg-espresso-900 hover:bg-tan-600 text-white font-semibold text-xs shadow-md transition-colors text-center shrink-0">
-                Update Order Status
-            </button>
-        </form>
+            <form action="{{ route('admin.orders.courier', $order) }}" method="POST" class="space-y-3">
+                @csrf
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-[10px] font-bold uppercase tracking-wider text-[#8F8379] mb-1">Courier Service</label>
+                        <select name="courier_name" class="w-full px-3 py-2 text-xs rounded-xl bg-[#FAF8F5] dark:bg-[#241D1A] border border-[#DFD6CB] dark:border-[#382D27] text-espresso-900 dark:text-white font-semibold">
+                            @foreach(['TCS Express', 'Trax Logistics', 'Leopards Courier', 'PostEx', 'Call Courier', 'M&P Express', 'Rider PK'] as $c)
+                                <option value="{{ $c }}" {{ ($order->courier_name ?: 'TCS Express') === $c ? 'selected' : '' }}>
+                                    {{ $c }}
+                                </option>
+                            @endforeach
+                        </select>
+                    </div>
+
+                    <div>
+                        <label class="block text-[10px] font-bold uppercase tracking-wider text-[#8F8379] mb-1">Tracking ID / CN #</label>
+                        <input 
+                            type="text" 
+                            name="tracking_number" 
+                            value="{{ old('tracking_number', $order->tracking_number) }}" 
+                            placeholder="e.g. 129384920"
+                            class="w-full px-3 py-2 text-xs rounded-xl bg-[#FAF8F5] dark:bg-[#241D1A] border border-[#DFD6CB] dark:border-[#382D27] text-espresso-900 dark:text-white font-mono"
+                        >
+                    </div>
+                </div>
+
+                <div class="flex items-center justify-between gap-3 pt-1">
+                    <label class="inline-flex items-center gap-1.5 cursor-pointer text-xs font-medium text-gray-700 dark:text-gray-300">
+                        <input type="checkbox" name="mark_dispatched" value="1" {{ $order->order_status === 'completed' ? '' : 'checked' }} class="rounded border-[#DFD6CB] text-emerald-600 focus:ring-emerald-500">
+                        <span>Mark Dispatched</span>
+                    </label>
+
+                    <div class="flex items-center gap-2">
+                        <button type="submit" name="open_whatsapp" value="1" class="px-3.5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-semibold text-xs shadow-md transition-colors flex items-center gap-1.5" title="Save details and immediately launch WhatsApp Web">
+                            <i data-lucide="message-circle" class="w-3.5 h-3.5"></i>
+                            <span>Save & Open WhatsApp</span>
+                        </button>
+                        <button type="submit" class="px-3 py-2 rounded-xl border border-[#DFD6CB] dark:border-[#382D27] hover:bg-gray-100 dark:hover:bg-[#241D1A] text-xs font-semibold text-espresso-900 dark:text-white transition-colors">
+                            Save Only
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
     </div>
 
     <!-- 2 Column Layout: Order Items & Customer Details -->
@@ -208,21 +309,16 @@
                         <div class="text-gray-600 dark:text-gray-300 font-mono mt-0.5 font-semibold">{{ $order->customer_phone ?: 'No phone provided' }}</div>
 
                         <!-- Direct VIP Contact Buttons -->
-                        @php
-                            $cleanPhone = preg_replace('/[^0-9]/', '', $order->customer_phone ?? '');
-                            if (str_starts_with($cleanPhone, '03')) {
-                                $cleanPhone = '92' . substr($cleanPhone, 1);
-                            }
-                        @endphp
                         <div class="flex items-center gap-2 mt-2.5">
-                            @if($cleanPhone)
+                            @if($order->whatsapp_phone)
                                 <a 
-                                    href="https://wa.me/{{ $cleanPhone }}?text={{ urlencode('Assalam o Alaikum ' . $order->customer_name . ', regarding your By Zunash order #' . $order->order_number) }}" 
+                                    href="https://wa.me/{{ $order->whatsapp_phone }}?text={{ urlencode($order->whatsapp_dispatch_message) }}" 
                                     target="_blank" 
                                     class="px-3 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-[11px] font-semibold flex items-center gap-1.5 transition-colors shadow-2xs"
+                                    title="Send Personalized Dispatch Message on WhatsApp"
                                 >
                                     <i data-lucide="message-circle" class="w-3.5 h-3.5"></i>
-                                    <span>WhatsApp VIP</span>
+                                    <span>WhatsApp Dispatch</span>
                                 </a>
                             @endif
 
@@ -260,5 +356,28 @@
     </div>
 
 </div>
+
+@push('styles')
+<style>
+@media print {
+    aside, header, nav, .no-print, form[action*="status"], form[action*="destroy"], a[href*="orders.index"] {
+        display: none !important;
+    }
+    body {
+        background: #fff !important;
+        color: #000 !important;
+    }
+    .max-w-4xl {
+        max-width: 100% !important;
+        margin: 0 !important;
+        padding: 0 !important;
+    }
+    .shadow-card, .shadow-2xs {
+        box-shadow: none !important;
+        border: 1px solid #ccc !important;
+    }
+}
+</style>
+@endpush
 
 @endsection

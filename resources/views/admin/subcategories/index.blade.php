@@ -152,8 +152,8 @@
 </div>
 
 <!-- Add Subcategory Modal -->
-<dialog id="addSubcatModal" class="rounded-3xl p-0 shadow-2xl max-w-md w-full bg-white dark:bg-[#1A1513] text-espresso-900 dark:text-white border border-[#ECE6DE] dark:border-[#2C2420]">
-    <div class="p-6">
+<dialog id="addSubcatModal" class="rounded-3xl p-0 shadow-2xl">
+    <div class="p-6 sm:p-7">
         <div class="flex items-center justify-between pb-3 border-b border-[#ECE6DE] dark:border-[#2C2420] mb-4">
             <h3 class="font-cinzel text-xl font-bold text-tan-600 dark:text-gold-400">Add Subcategory</h3>
             <button type="button" onclick="document.getElementById('addSubcatModal').close()" class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300">
@@ -178,11 +178,6 @@
             </div>
 
             <div>
-                <label class="block text-xs font-semibold mb-1">Slug URL (Optional)</label>
-                <input type="text" name="slug" placeholder="e.g. formal-dress-belts" class="w-full px-3 py-2 text-xs rounded-xl bg-[#FAF8F5] dark:bg-[#241D1A] border border-[#E0D7CB] dark:border-[#3A2F29] text-espresso-900 dark:text-white focus:outline-hidden focus:border-tan-500 font-mono">
-            </div>
-
-            <div>
                 <label class="block text-xs font-semibold mb-1">Description</label>
                 <input type="text" name="description" placeholder="Optional details..." class="w-full px-3 py-2 text-xs rounded-xl bg-[#FAF8F5] dark:bg-[#241D1A] border border-[#E0D7CB] dark:border-[#3A2F29] text-espresso-900 dark:text-white focus:outline-hidden focus:border-tan-500">
             </div>
@@ -200,8 +195,8 @@
 </dialog>
 
 <!-- Edit Subcategory Modal -->
-<dialog id="editSubcatModal" class="rounded-3xl p-0 shadow-2xl max-w-md w-full bg-white dark:bg-[#1A1513] text-espresso-900 dark:text-white border border-[#ECE6DE] dark:border-[#2C2420]">
-    <div class="p-6">
+<dialog id="editSubcatModal" class="rounded-3xl p-0 shadow-2xl">
+    <div class="p-6 sm:p-7">
         <div class="flex items-center justify-between pb-3 border-b border-[#ECE6DE] dark:border-[#2C2420] mb-4">
             <h3 class="font-cinzel text-xl font-bold text-tan-600 dark:text-gold-400">Edit Subcategory</h3>
             <button type="button" onclick="document.getElementById('editSubcatModal').close()" class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300">
@@ -228,11 +223,6 @@
             </div>
 
             <div>
-                <label class="block text-xs font-semibold mb-1">Slug URL (Optional)</label>
-                <input type="text" id="edit_subcat_slug" name="slug" class="w-full px-3 py-2 text-xs rounded-xl bg-[#FAF8F5] dark:bg-[#241D1A] border border-[#E0D7CB] dark:border-[#3A2F29] text-espresso-900 dark:text-white focus:outline-hidden focus:border-tan-500 font-mono">
-            </div>
-
-            <div>
                 <label class="block text-xs font-semibold mb-1">Description</label>
                 <input type="text" id="edit_subcat_description" name="description" class="w-full px-3 py-2 text-xs rounded-xl bg-[#FAF8F5] dark:bg-[#241D1A] border border-[#E0D7CB] dark:border-[#3A2F29] text-espresso-900 dark:text-white focus:outline-hidden focus:border-tan-500">
             </div>
@@ -255,7 +245,6 @@ function openEditSubcatModal(subcat) {
     document.getElementById('editSubcatForm').action = '/admin/subcategories/' + subcat.id;
     document.getElementById('edit_subcat_category_id').value = subcat.category_id || '';
     document.getElementById('edit_subcat_name').value = subcat.name || '';
-    document.getElementById('edit_subcat_slug').value = subcat.slug || '';
     document.getElementById('edit_subcat_description').value = subcat.description || '';
     document.getElementById('editSubcatModal').showModal();
 }

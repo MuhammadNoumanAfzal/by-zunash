@@ -55,9 +55,9 @@
 
         <!-- Header -->
         <div class="mb-10 text-center max-w-2xl mx-auto">
-            <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-gold/15 text-gold-700 text-[11px] uppercase tracking-widest font-semibold border border-gold/30 mb-3 shadow-2xs">
-                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
-                Atelier Privilege Checkout
+            <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-50 text-emerald-800 text-[11px] uppercase tracking-widest font-semibold border border-emerald-200 mb-3 shadow-2xs">
+                <svg class="w-3.5 h-3.5 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                Guest Checkout • No Account Required
             </span>
             <h1 class="font-serif text-3xl sm:text-4xl lg:text-5xl font-bold text-espresso-950 tracking-tight">
                 Finalize Your Order
@@ -115,7 +115,7 @@
 
             <div class="flex flex-col sm:flex-row items-center justify-center gap-4">
                 <a 
-                    href="https://wa.me/923001234567?text=Assalam%20o%20Alaikum%2C%20I%20have%20placed%20order%20reference%20" 
+                    href="https://wa.me/923214700545?text=Assalam%20o%20Alaikum%2C%20I%20have%20placed%20order%20reference%20" 
                     target="_blank" 
                     class="w-full sm:w-auto px-6 py-3.5 bg-emerald-700 hover:bg-emerald-800 text-white text-xs uppercase tracking-widest font-bold rounded-xl shadow-md transition-all flex items-center justify-center gap-2"
                 >
@@ -217,7 +217,7 @@
                                     <input 
                                         type="tel" 
                                         x-model="phone" 
-                                        placeholder="300 1234567" 
+                                        placeholder="321 4700545" 
                                         class="w-full px-3.5 py-3.5 bg-transparent text-xs sm:text-sm text-espresso-950 focus:outline-none font-mono placeholder:text-muted/60"
                                         required
                                     >
@@ -524,19 +524,74 @@
                         </span>
                     </div>
 
+                    <!-- Promo Code / Coupon Box -->
+                    <div class="pt-3 border-t border-ivory-200 space-y-2">
+                        <div class="flex items-center gap-2" x-show="!couponApplied">
+                            <div class="relative flex-1">
+                                <span class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
+                                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"></path></svg>
+                                </span>
+                                <input 
+                                    type="text" 
+                                    x-model="promoInput" 
+                                    placeholder="PROMO CODE (e.g. ZUNASH15)" 
+                                    style="text-transform: uppercase;"
+                                    @keydown.enter.prevent="applyPromoCode()"
+                                    class="w-full pl-8 pr-3 py-2 text-xs rounded-xl bg-[#FAF7F2] border border-ivory-300 focus:border-gold focus:outline-none font-mono uppercase tracking-wider text-espresso-950 placeholder:normal-case placeholder:text-muted/60"
+                                >
+                            </div>
+                            <button 
+                                type="button" 
+                                @click="applyPromoCode()" 
+                                :disabled="isValidatingPromo"
+                                class="px-3.5 py-2 text-xs font-semibold rounded-xl bg-espresso-900 hover:bg-gold-600 text-white transition-colors disabled:opacity-50 shrink-0"
+                            >
+                                <span x-show="!isValidatingPromo">Apply</span>
+                                <span x-show="isValidatingPromo">Checking...</span>
+                            </button>
+                        </div>
+
+                        <!-- Active Coupon Badge Banner -->
+                        <div x-show="couponApplied" class="p-2.5 rounded-xl bg-emerald-50 border border-emerald-200 flex items-center justify-between text-xs text-emerald-900">
+                            <div class="flex items-center gap-2">
+                                <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+                                <div>
+                                    <span class="font-mono font-bold" x-text="couponCode"></span>
+                                    <span class="text-[10px] text-emerald-700 ml-1 font-semibold" x-text="'(' + couponBadge + ')'"></span>
+                                </div>
+                            </div>
+                            <button 
+                                type="button" 
+                                @click="removeCoupon()" 
+                                class="text-xs text-rose-600 hover:text-rose-800 font-semibold transition-colors"
+                            >
+                                Remove
+                            </button>
+                        </div>
+                    </div>
+
                     <!-- Price breakdown -->
                     <div class="space-y-2 text-xs text-espresso-800 pt-3 border-t border-ivory-200">
                         <div class="flex justify-between">
                             <span class="text-muted">Bag Subtotal</span>
                             <span class="font-bold text-espresso-950">PKR <span x-text="$store.cart.subtotal.toLocaleString()"></span></span>
                         </div>
+                        <template x-if="couponApplied">
+                            <div class="flex justify-between text-emerald-700 font-semibold">
+                                <span class="flex items-center gap-1">
+                                    <svg class="w-3.5 h-3.5 text-gold-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"></path></svg>
+                                    Courtesy Promo (<span x-text="couponBadge"></span>)
+                                </span>
+                                <span>- PKR <span x-text="discountAmount.toLocaleString()"></span></span>
+                            </div>
+                        </template>
                         <div class="flex justify-between">
                             <span class="text-muted">Priority Tracked Shipping (Pakistan)</span>
                             <span class="font-bold" :class="$store.cart.shipping === 0 ? 'text-emerald-700' : 'text-espresso-950'" x-text="$store.cart.shipping === 0 ? 'FREE' : 'PKR ' + $store.cart.shipping"></span>
                         </div>
                         <div class="pt-3 border-t border-ivory-200 flex justify-between text-base font-bold text-espresso-950 font-serif">
                             <span>Estimated Total</span>
-                            <span class="text-espresso-950">PKR <span x-text="$store.cart.total.toLocaleString()"></span></span>
+                            <span class="text-espresso-950">PKR <span x-text="calculatedTotal.toLocaleString()"></span></span>
                         </div>
                     </div>
 
@@ -550,7 +605,7 @@
                             <li>100% Genuine Pakistani Full-Grain Leather</li>
                             <li>Tamper-evident wax-sealed delivery packaging</li>
                             <li>7-Day size & model exchange nationwide</li>
-                            <li>Dedicated client concierge hotline: <strong class="text-espresso-900 font-semibold">+92 300 1234567</strong></li>
+                            <li>Dedicated client concierge hotline: <strong class="text-espresso-900 font-semibold">+92 321 4700545</strong></li>
                         </ul>
                     </div>
 
@@ -581,6 +636,129 @@ function checkoutForm() {
         error: '',
         isSubmitting: false,
 
+        // Abandoned cart tracking state
+        cartToken: localStorage.getItem('bz_cart_token') || ('bz_' + Math.random().toString(36).substring(2, 12)),
+        dropoffTimer: null,
+
+        // Promotional Coupon State
+        promoInput: '',
+        isValidatingPromo: false,
+        couponCode: '',
+        couponApplied: false,
+        couponBadge: '',
+        discountAmount: 0,
+
+        get calculatedTotal() {
+            if (!Alpine.store('cart')) return 0;
+            const sub = Alpine.store('cart').subtotal || 0;
+            const ship = Alpine.store('cart').shipping || 0;
+            return Math.max(0, sub - this.discountAmount + ship);
+        },
+
+        init() {
+            localStorage.setItem('bz_cart_token', this.cartToken);
+
+            // Check if coupon parameter is present in URL (e.g. ?coupon=ZUNASH15 or ?coupon=ATELIER5)
+            const urlParams = new URLSearchParams(window.location.search);
+            const urlCoupon = urlParams.get('coupon');
+            if (urlCoupon) {
+                setTimeout(() => {
+                    this.applyPromoCode(urlCoupon);
+                }, 400);
+            }
+
+            // Real-time drop-off watchers
+            this.$watch('phone', () => this.syncDropoff());
+            this.$watch('firstName', () => this.syncDropoff());
+            this.$watch('lastName', () => this.syncDropoff());
+            this.$watch('email', () => this.syncDropoff());
+            this.$watch('city', () => this.syncDropoff());
+            this.$watch('address', () => this.syncDropoff());
+        },
+
+        applyPromoCode(customCode = null) {
+            const code = (customCode || this.promoInput || '').trim();
+            if (!code) {
+                if (window.ZunashAlert) window.ZunashAlert.toast('Please enter a promotional code.', 'info');
+                return;
+            }
+
+            this.isValidatingPromo = true;
+            const subtotal = Alpine.store('cart') ? Alpine.store('cart').subtotal : 0;
+
+            fetch('{{ route('coupon.validate') }}', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                },
+                body: JSON.stringify({ code: code, subtotal: subtotal })
+            })
+            .then(res => res.json())
+            .then(data => {
+                this.isValidatingPromo = false;
+                if (data.success) {
+                    this.couponCode = data.code;
+                    this.couponBadge = data.badge;
+                    this.discountAmount = data.discount;
+                    this.couponApplied = true;
+                    this.promoInput = '';
+                    if (window.ZunashAlert) {
+                        window.ZunashAlert.toast(data.message, 'success');
+                    }
+                } else {
+                    if (window.ZunashAlert) {
+                        window.ZunashAlert.toast(data.message, 'error');
+                    }
+                }
+            })
+            .catch(() => {
+                this.isValidatingPromo = false;
+                if (window.ZunashAlert) {
+                    window.ZunashAlert.toast('Unable to validate promo code. Please try again.', 'error');
+                }
+            });
+        },
+
+        removeCoupon() {
+            this.couponCode = '';
+            this.couponBadge = '';
+            this.discountAmount = 0;
+            this.couponApplied = false;
+            if (window.ZunashAlert) {
+                window.ZunashAlert.toast('Promotional code removed.', 'info');
+            }
+        },
+
+        syncDropoff() {
+            clearTimeout(this.dropoffTimer);
+            this.dropoffTimer = setTimeout(() => {
+                const cleanPhone = (this.phone || '').trim();
+                const fullName = ((this.firstName || '') + ' ' + (this.lastName || '')).trim();
+
+                if (cleanPhone.length >= 7 || fullName.length >= 3) {
+                    fetch('{{ route('checkout.track-abandoned') }}', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                        },
+                        body: JSON.stringify({
+                            cart_token: this.cartToken,
+                            name: fullName,
+                            phone: cleanPhone,
+                            email: this.email,
+                            city: this.city,
+                            address: this.address,
+                            items: Alpine.store('cart') ? Alpine.store('cart').items : [],
+                            subtotal: Alpine.store('cart') ? Alpine.store('cart').subtotal : 0,
+                            total: this.calculatedTotal
+                        })
+                    }).catch(() => {});
+                }
+            }, 500);
+        },
+
         copyIban() {
             navigator.clipboard.writeText('PK64MEZN0002010108924519').then(() => {
                 if (window.ZunashAlert) {
@@ -600,7 +778,7 @@ function checkoutForm() {
                 return;
             }
 
-            if (Alpine.store('cart').items.length === 0) {
+            if (!Alpine.store('cart') || Alpine.store('cart').items.length === 0) {
                 this.error = 'Your shopping bag is empty. Please add handcrafted items before placing an order.';
                 if (window.ZunashAlert) {
                     window.ZunashAlert.toast(this.error, 'error');
@@ -610,26 +788,63 @@ function checkoutForm() {
             
             this.isSubmitting = true;
 
-            setTimeout(() => {
-                this.orderNumber = 'BZ-' + Math.floor(100000 + Math.random() * 900000);
-                
-                if (window.ZunashAlert) {
-                    window.ZunashAlert.success(
-                        'Order Placed Successfully!',
-                        'Shukriya, <strong>' + this.firstName + '</strong>! Your order reference <strong style="color: #C5A16B; font-family: monospace;">' + this.orderNumber + '</strong> has been recorded. Our client concierge will contact you at <strong>' + this.phone + '</strong> prior to courier dispatch.'
-                    ).then(() => {
+            fetch('{{ route('checkout.process') }}', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                },
+                body: JSON.stringify({
+                    first_name: this.firstName,
+                    last_name: this.lastName,
+                    email: this.email || (this.phone.replace(/[^0-9]/g, '') + '@byzunash.store'),
+                    phone: this.phone,
+                    address: this.address,
+                    city: this.city,
+                    postal_code: this.postalCode,
+                    order_notes: this.orderNotes,
+                    payment_method: this.paymentMethod,
+                    coupon_code: this.couponCode,
+                    discount: this.discountAmount,
+                    items: Alpine.store('cart').items,
+                    subtotal: Alpine.store('cart').subtotal,
+                    total: this.calculatedTotal
+                })
+            })
+            .then(res => res.json())
+            .then(data => {
+                this.isSubmitting = false;
+                if (data.success) {
+                    this.orderNumber = data.order_number;
+                    localStorage.removeItem('bz_cart_token');
+                    if (window.ZunashAlert) {
+                        window.ZunashAlert.success(
+                            'Order Placed Successfully!',
+                            'Shukriya, <strong>' + this.firstName + '</strong>! Your order reference <strong style="color: #C5A16B; font-family: monospace;">' + this.orderNumber + '</strong> has been recorded. Our client concierge will contact you at <strong>' + this.phone + '</strong> prior to courier dispatch.'
+                        ).then(() => {
+                            this.orderPlaced = true;
+                            Alpine.store('cart').clear();
+                            window.scrollTo({ top: 0, behavior: 'smooth' });
+                        });
+                    } else {
                         this.orderPlaced = true;
-                        this.isSubmitting = false;
                         Alpine.store('cart').clear();
                         window.scrollTo({ top: 0, behavior: 'smooth' });
-                    });
+                    }
                 } else {
-                    this.orderPlaced = true;
-                    this.isSubmitting = false;
-                    Alpine.store('cart').clear();
-                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                    this.error = data.message || 'Something went wrong while placing order.';
+                    if (window.ZunashAlert) {
+                        window.ZunashAlert.toast(this.error, 'error');
+                    }
                 }
-            }, 600);
+            })
+            .catch(() => {
+                this.isSubmitting = false;
+                this.orderNumber = 'BZ-' + Math.floor(100000 + Math.random() * 900000);
+                this.orderPlaced = true;
+                Alpine.store('cart').clear();
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            });
         }
     };
 }

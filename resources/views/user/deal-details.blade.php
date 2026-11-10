@@ -302,7 +302,7 @@
 
                     <!-- WhatsApp Quick Order (High Converting for Pakistani Ad Traffic) -->
                     <a 
-                        href="https://wa.me/923001234567?text={{ urlencode('Hello By Zunash! I want to order the Curated Deal: ' . $deal->title . ' (PKR ' . number_format($deal->deal_price) . '). Link: ' . url()->current() . ' — My delivery city is: ') }}" 
+                        href="https://wa.me/923214700545?text={{ urlencode('Hello By Zunash! I want to order the Curated Deal: ' . $deal->title . ' (PKR ' . number_format($deal->deal_price) . '). Link: ' . url()->current() . ' — My delivery city is: ') }}" 
                         target="_blank"
                         rel="noopener"
                         class="w-full h-11 px-4 bg-[#25D366] hover:bg-[#20BD5A] text-white text-xs font-bold uppercase tracking-wider rounded-xl shadow-xs transition-all flex items-center justify-center gap-2 active:scale-[0.98]"

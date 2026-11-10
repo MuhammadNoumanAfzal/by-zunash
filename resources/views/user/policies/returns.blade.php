@@ -206,7 +206,7 @@
                             <span class="w-6 h-6 rounded-full bg-gold text-espresso-950 font-bold text-xs flex items-center justify-center">1</span>
                             <h4 class="font-serif text-xs font-bold text-espresso-950 pt-1">Contact Concierge</h4>
                             <p class="text-[11px] text-muted font-light leading-relaxed">
-                                WhatsApp our client care desk (+92 300 123-4567) quoting your Order Number and preferred new size.
+                                WhatsApp our client care desk (+92 321 4700545) quoting your Order Number and preferred new size.
                             </p>
                         </div>
 
@@ -263,7 +263,7 @@
 
                     <div class="space-y-3">
                         <a 
-                            href="https://wa.me/923001234567?text=Assalam%20o%20Alaikum%2C%20I%20would%20like%20to%20request%20a%20size%20exchange%20for%20my%20order" 
+                            href="https://wa.me/923214700545?text=Assalam%20o%20Alaikum%2C%20I%20would%20like%20to%20request%20a%20size%20exchange%20for%20my%20order" 
                             target="_blank" 
                             class="w-full py-3.5 px-4 bg-emerald-700 hover:bg-emerald-800 text-white text-xs uppercase tracking-widest font-bold rounded-xl text-center block transition-all shadow-md flex items-center justify-center gap-2"
                         >
@@ -272,11 +272,11 @@
                         </a>
 
                         <a 
-                            href="tel:+923001234567" 
+                            href="tel:+923214700545" 
                             class="w-full py-3 px-4 bg-white/10 hover:bg-white/15 text-ivory text-xs uppercase tracking-widest font-semibold rounded-xl text-center block transition-all border border-ivory-300/30 flex items-center justify-center gap-2"
                         >
                             <i data-lucide="phone" class="w-4 h-4 text-gold"></i>
-                            <span>+92 (300) 123-4567</span>
+                            <span>+92 321 4700545</span>
                         </a>
                     </div>
                 </div>

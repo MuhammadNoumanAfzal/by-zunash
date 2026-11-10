@@ -1,6 +1,6 @@
 @extends('admin.layouts.app')
 
-@section('title', 'VIP Customers & Client Profiles | By Zunash Atelier')
+@section('title', 'Customers & Client Profiles | By Zunash Atelier')
 
 @section('content')
 
@@ -9,7 +9,7 @@
     <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
             <h1 class="font-cinzel text-2xl sm:text-3xl font-bold text-espresso-950 dark:text-white">
-                VIP Patrons & Client Dossiers
+                Customers & Client Dossiers
             </h1>
             <p class="text-xs text-[#8F8379] dark:text-[#A09387] mt-0.5">
                 Curate Pakistani luxury patrons across Lahore, Islamabad, Karachi, and nationwide with lifetime spend tracking.
@@ -18,7 +18,7 @@
 
         <div class="flex items-center gap-2">
             <span class="px-3.5 py-1.5 rounded-xl bg-white dark:bg-[#1A1513] border border-[#ECE6DE] dark:border-[#2C2420] text-xs font-bold text-tan-600 dark:text-gold-400 shadow-2xs">
-                {{ $vipCount }} Registered VIP Atelier Patrons
+                {{ $customers->total() }} Total Registered Patrons
             </span>
         </div>
     </div>
@@ -45,14 +45,6 @@
                                 {{ $client->email }} @if($client->phone) • {{ $client->phone }} @endif
                             </div>
                         </div>
-                        @if($client->is_vip)
-                            <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-[#FAF6F2] dark:bg-[#2A1D1A] text-tan-700 dark:text-gold-300 border border-tan-200 dark:border-[#3E2A24] shrink-0">
-                                <span class="w-1.5 h-1.5 rounded-full bg-tan-500"></span>
-                                VIP
-                            </span>
-                        @else
-                            <span class="text-[10px] text-gray-400 shrink-0">Standard</span>
-                        @endif
                     </div>
 
                     <div class="flex items-center justify-between text-xs pt-1">
@@ -77,16 +69,6 @@
                                 <span>WhatsApp</span>
                             </a>
                         @endif
-
-                        <form action="{{ route('admin.customers.vip', $client) }}" method="POST" class="inline">
-                            @csrf
-                            <button 
-                                type="submit" 
-                                class="px-2.5 py-1 rounded-lg text-xs font-semibold border transition-colors {{ $client->is_vip ? 'border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-300' : 'border-tan-300 bg-tan-50 text-tan-800' }}"
-                            >
-                                {{ $client->is_vip ? 'Revoke VIP' : 'Make VIP' }}
-                            </button>
-                        </form>
 
                         <button 
                             type="button" 
@@ -114,7 +96,6 @@
                         <th class="py-3 px-3 whitespace-nowrap">PRIMARY CITY</th>
                         <th class="py-3 px-3 whitespace-nowrap">ORDERS</th>
                         <th class="py-3 px-3 whitespace-nowrap">LIFETIME SPEND</th>
-                        <th class="py-3 px-3 whitespace-nowrap">VIP STATUS</th>
                         <th class="py-3 px-4 text-right whitespace-nowrap">ACTIONS</th>
                     </tr>
                 </thead>
@@ -147,19 +128,6 @@
                                 Rs. {{ number_format($client->total_spent) }}
                             </td>
 
-                            <td class="py-3.5 px-3">
-                                @if($client->is_vip)
-                                    <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-[#FAF6F2] text-tan-700 border border-tan-200">
-                                        <span class="w-1.5 h-1.5 rounded-full bg-tan-500"></span>
-                                        VIP Atelier Member
-                                    </span>
-                                @else
-                                    <span class="text-[11px] text-gray-400">
-                                        Standard Patron
-                                    </span>
-                                @endif
-                            </td>
-
                             <td class="py-3.5 px-4 text-right">
                                 <div class="inline-flex items-center gap-1.5 justify-end">
                                     @php
@@ -178,18 +146,6 @@
                                             <i data-lucide="message-circle" class="w-3.5 h-3.5"></i>
                                         </a>
                                     @endif
-
-                                    <!-- Toggle VIP -->
-                                    <form action="{{ route('admin.customers.vip', $client) }}" method="POST">
-                                        @csrf
-                                        <button 
-                                            type="submit" 
-                                            class="px-2.5 py-1 rounded-lg text-[10px] font-semibold border transition-colors {{ $client->is_vip ? 'border-gray-200 text-gray-600 hover:bg-gray-100' : 'border-tan-300 bg-tan-50 text-tan-800 hover:bg-tan-100' }}"
-                                            title="Toggle VIP Privilege"
-                                        >
-                                            {{ $client->is_vip ? 'Revoke' : 'Make VIP' }}
-                                        </button>
-                                    </form>
 
                                     <!-- Edit Patron Button -->
                                     <button 
@@ -231,8 +187,8 @@
 </div>
 
 <!-- Edit Customer Modal Dialog -->
-<dialog id="editCustomerModal" class="rounded-3xl p-0 shadow-2xl max-w-md w-full bg-white dark:bg-[#1A1513] text-espresso-900 dark:text-white border border-[#ECE6DE] dark:border-[#2C2420]">
-    <div class="p-6">
+<dialog id="editCustomerModal" class="rounded-3xl p-0 shadow-2xl">
+    <div class="p-6 sm:p-7">
         <div class="flex items-center justify-between pb-3 border-b border-[#ECE6DE] dark:border-[#2C2420] mb-4">
             <h3 class="font-cinzel text-xl font-bold text-tan-600 dark:text-gold-400">Edit Patron Dossier</h3>
             <button type="button" onclick="document.getElementById('editCustomerModal').close()" class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300">
@@ -264,13 +220,6 @@
                 <input type="text" id="edit_cust_city" name="city" class="w-full px-3 py-2 text-xs rounded-xl bg-[#FAF8F5] dark:bg-[#241D1A] border border-[#E0D7CB] dark:border-[#3A2F29] text-espresso-900 dark:text-white focus:outline-hidden focus:border-tan-500">
             </div>
 
-            <div class="pt-1">
-                <label class="inline-flex items-center gap-2 cursor-pointer text-xs font-medium text-espresso-900 dark:text-white">
-                    <input type="checkbox" id="edit_cust_vip" name="is_vip" value="1" class="rounded border-[#DFD6CB] text-tan-600 focus:ring-tan-500">
-                    <span>VIP Atelier Patron Member</span>
-                </label>
-            </div>
-
             <div class="flex items-center justify-end gap-2 pt-3 border-t border-[#ECE6DE] dark:border-[#2C2420]">
                 <button type="button" onclick="document.getElementById('editCustomerModal').close()" class="px-4 py-2 rounded-xl text-xs font-medium text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">
                     Cancel
@@ -291,7 +240,6 @@ function openEditCustomerModal(client) {
     document.getElementById('edit_cust_email').value = client.email || '';
     document.getElementById('edit_cust_phone').value = client.phone || '';
     document.getElementById('edit_cust_city').value = client.city || '';
-    document.getElementById('edit_cust_vip').checked = !!client.is_vip;
     document.getElementById('editCustomerModal').showModal();
 }
 </script>

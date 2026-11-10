@@ -29,12 +29,28 @@ class CategoryController extends Controller
     {
         $validated = $request->validate([
             'name' => 'required|string|max:100',
-            'slug' => 'nullable|string|max:100',
             'tagline' => 'nullable|string|max:255',
             'image' => 'nullable|string|max:255',
+            'image_file' => 'nullable|image|mimes:jpeg,png,jpg,webp,gif,avif|max:5120',
         ]);
 
-        $slugBase = !empty($validated['slug']) ? Str::slug($validated['slug']) : Str::slug($validated['name']);
+        $imagePath = '/images/categories/cat-belts.jpg';
+
+        if ($request->hasFile('image_file')) {
+            $file = $request->file('image_file');
+            $extension = $file->getClientOriginalExtension() ?: 'jpg';
+            $filename = 'cat-' . Str::slug($validated['name']) . '-' . time() . '.' . $extension;
+            $destinationPath = public_path('images/categories');
+            if (!file_exists($destinationPath)) {
+                mkdir($destinationPath, 0755, true);
+            }
+            $file->move($destinationPath, $filename);
+            $imagePath = '/images/categories/' . $filename;
+        } elseif (!empty($validated['image'])) {
+            $imagePath = $validated['image'];
+        }
+
+        $slugBase = Str::slug($validated['name']);
         $slug = $slugBase;
         $count = 1;
         while (Category::where('slug', $slug)->exists()) {
@@ -46,7 +62,7 @@ class CategoryController extends Controller
             'name' => $validated['name'],
             'slug' => $slug,
             'tagline' => $validated['tagline'] ?? null,
-            'image' => !empty($validated['image']) ? $validated['image'] : '/images/categories/cat-belts.jpg',
+            'image' => $imagePath,
             'sort_order' => Category::count() + 1,
         ]);
 
@@ -58,24 +74,43 @@ class CategoryController extends Controller
     {
         $validated = $request->validate([
             'name' => 'required|string|max:100',
-            'slug' => 'nullable|string|max:100',
             'tagline' => 'nullable|string|max:255',
             'image' => 'nullable|string|max:255',
+            'image_file' => 'nullable|image|mimes:jpeg,png,jpg,webp,gif,avif|max:5120',
         ]);
 
-        $slugBase = !empty($validated['slug']) ? Str::slug($validated['slug']) : Str::slug($validated['name']);
-        $slug = $slugBase;
-        $count = 1;
-        while (Category::where('slug', $slug)->where('id', '!=', $category->id)->exists()) {
-            $slug = "{$slugBase}-{$count}";
-            $count++;
+        $imagePath = $category->image;
+
+        if ($request->hasFile('image_file')) {
+            $file = $request->file('image_file');
+            $extension = $file->getClientOriginalExtension() ?: 'jpg';
+            $filename = 'cat-' . Str::slug($validated['name']) . '-' . time() . '.' . $extension;
+            $destinationPath = public_path('images/categories');
+            if (!file_exists($destinationPath)) {
+                mkdir($destinationPath, 0755, true);
+            }
+            $file->move($destinationPath, $filename);
+            $imagePath = '/images/categories/' . $filename;
+        } elseif (!empty($validated['image'])) {
+            $imagePath = $validated['image'];
+        }
+
+        $slug = $category->slug;
+        if (empty($slug) || $category->name !== $validated['name']) {
+            $slugBase = Str::slug($validated['name']);
+            $slug = $slugBase;
+            $count = 1;
+            while (Category::where('slug', $slug)->where('id', '!=', $category->id)->exists()) {
+                $slug = "{$slugBase}-{$count}";
+                $count++;
+            }
         }
 
         $category->update([
             'name' => $validated['name'],
             'slug' => $slug,
             'tagline' => $validated['tagline'] ?? null,
-            'image' => !empty($validated['image']) ? $validated['image'] : $category->image,
+            'image' => $imagePath,
         ]);
 
         return redirect()->route('admin.categories.index')

@@ -555,6 +555,15 @@ class StoreController extends Controller
         $orderNumber = 'BZ-' . date('Ym') . '-' . rand(1000, 9999);
         $fullName = trim($validated['first_name'] . ' ' . $validated['last_name']);
 
+        $discount = (float)($request->input('discount', 0));
+        if ($request->filled('coupon_code')) {
+            $code = strtoupper(trim($request->input('coupon_code')));
+            $coupon = \App\Models\Coupon::where('code', $code)->first();
+            if ($coupon) {
+                $coupon->increment('used_count');
+            }
+        }
+
         $order = \App\Models\Order::create([
             'order_number' => $orderNumber,
             'customer_name' => $fullName,
@@ -569,7 +578,7 @@ class StoreController extends Controller
             'order_status' => 'pending',
             'subtotal' => $validated['subtotal'],
             'shipping_fee' => 0.00,
-            'discount' => 0.00,
+            'discount' => $discount,
             'total' => $validated['total'],
             'items' => $validated['items'],
         ]);
@@ -584,10 +593,167 @@ class StoreController extends Controller
         $customer->total_spent = ($customer->total_spent ?? 0) + $validated['total'];
         $customer->save();
 
+        // Inventory Stock Deduction & Audit Trail Logging
+        if (is_array($validated['items'])) {
+            foreach ($validated['items'] as $it) {
+                $qty = (int)($it['quantity'] ?? $it['qty'] ?? 1);
+                $prod = null;
+                if (!empty($it['id'])) {
+                    $prod = \App\Models\Product::find($it['id']);
+                } elseif (!empty($it['sku'])) {
+                    $prod = \App\Models\Product::where('sku', $it['sku'])->first();
+                } elseif (!empty($it['name'])) {
+                    $prod = \App\Models\Product::where('name', $it['name'])->first();
+                }
+
+                if ($prod) {
+                    $prev = $prod->stock_quantity;
+                    $new = max(0, $prev - $qty);
+                    $prod->stock_quantity = $new;
+                    if ($new == 0 && $prod->availability !== 'on_demand') {
+                        $prod->availability = 'out_of_stock';
+                        $prod->in_stock = false;
+                    }
+                    $prod->save();
+
+                    \App\Models\InventoryLog::create([
+                        'product_id' => $prod->id,
+                        'product_name' => $prod->name,
+                        'sku' => $prod->sku,
+                        'admin_name' => 'Storefront Checkout',
+                        'change_type' => 'order_placed',
+                        'quantity_change' => -$qty,
+                        'previous_stock' => $prev,
+                        'new_stock' => $new,
+                        'reason' => "Order #{$orderNumber} placed: -{$qty}",
+                    ]);
+                }
+            }
+        }
+
+        // Mark any matching abandoned cart as Recovered!
+        \App\Models\AbandonedCart::where(function ($q) use ($validated) {
+            $q->where('customer_phone', $validated['phone'])
+              ->orWhere('customer_email', $validated['email']);
+        })->update([
+            'status' => 'recovered',
+            'recovered_at' => now(),
+        ]);
+
         return response()->json([
             'success' => true,
             'order_number' => $orderNumber,
             'message' => 'Order successfully placed!',
+        ]);
+    }
+
+    /**
+     * Validate Coupon & Calculate Live Discount
+     */
+    public function validateCoupon(Request $request)
+    {
+        $code = strtoupper(trim($request->input('code', '')));
+        $subtotal = (float)$request->input('subtotal', 0);
+
+        if (empty($code)) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Please enter a promotional code.',
+            ], 422);
+        }
+
+        $coupon = \App\Models\Coupon::where('code', $code)->first();
+
+        if (!$coupon) {
+            return response()->json([
+                'success' => false,
+                'message' => "Promotional code '{$code}' does not exist.",
+            ], 404);
+        }
+
+        $error = null;
+        if (!$coupon->validateForCart($subtotal, $error)) {
+            return response()->json([
+                'success' => false,
+                'message' => $error,
+            ], 422);
+        }
+
+        $discount = $coupon->calculateDiscount($subtotal);
+        $newTotal = max(0, $subtotal - $discount);
+
+        return response()->json([
+            'success' => true,
+            'code' => $coupon->code,
+            'description' => $coupon->description,
+            'badge' => $coupon->badge_text,
+            'type' => $coupon->type,
+            'value' => $coupon->value,
+            'discount' => $discount,
+            'new_total' => $newTotal,
+            'message' => "Promotional code '{$coupon->code}' applied! You save Rs. " . number_format($discount) . ".",
+        ]);
+    }
+
+    /**
+     * Track Drop-off / Abandoned Cart in real-time as shopper fills checkout fields.
+     */
+    public function trackAbandoned(Request $request)
+    {
+        $phone = trim($request->input('phone', ''));
+        $name = trim($request->input('name', ''));
+        $email = trim($request->input('email', ''));
+
+        if (empty($phone) && empty($name) && empty($email)) {
+            return response()->json(['success' => false, 'message' => 'No contact info provided']);
+        }
+
+        $cart = null;
+
+        if (!empty($phone)) {
+            $cart = \App\Models\AbandonedCart::where('customer_phone', $phone)
+                ->where('status', '!=', 'recovered')
+                ->latest()
+                ->first();
+        }
+
+        if (!$cart && !empty($email)) {
+            $cart = \App\Models\AbandonedCart::where('customer_email', $email)
+                ->where('status', '!=', 'recovered')
+                ->latest()
+                ->first();
+        }
+
+        if (!$cart && $request->filled('cart_token')) {
+            $cart = \App\Models\AbandonedCart::where('cart_token', $request->input('cart_token'))
+                ->where('status', '!=', 'recovered')
+                ->first();
+        }
+
+        if (!$cart) {
+            $cart = new \App\Models\AbandonedCart();
+        }
+
+        $cart->cart_token = $request->input('cart_token') ?: ($cart->cart_token ?: \Illuminate\Support\Str::random(32));
+        if (!empty($name)) $cart->customer_name = $name;
+        if (!empty($phone)) $cart->customer_phone = $phone;
+        if (!empty($email)) $cart->customer_email = $email;
+        if ($request->filled('city')) $cart->city = $request->input('city');
+        if ($request->filled('address')) $cart->shipping_address = $request->input('address');
+        if ($request->filled('items')) $cart->items = $request->input('items');
+        if ($request->filled('subtotal')) $cart->subtotal = (float)$request->input('subtotal');
+        if ($request->filled('total')) $cart->total = (float)$request->input('total');
+
+        if ($cart->status !== 'contacted') {
+            $cart->status = 'abandoned';
+        }
+
+        $cart->save();
+
+        return response()->json([
+            'success' => true,
+            'cart_id' => $cart->id,
+            'cart_token' => $cart->cart_token,
         ]);
     }
 

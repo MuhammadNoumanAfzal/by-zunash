@@ -53,7 +53,7 @@
     <form action="{{ route('admin.products.index') }}" method="GET" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-12 gap-3">
         
         <!-- Search -->
-        <div class="lg:col-span-4 relative">
+        <div class="lg:col-span-3 relative">
             <i data-lucide="search" class="w-4 h-4 text-[#A89C91] absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none"></i>
             <input 
                 type="text" 
@@ -108,22 +108,21 @@
         </div>
 
         <!-- Submit & Reset Buttons -->
-        <div class="sm:col-span-2 lg:col-span-1 flex items-center gap-2">
+        <div class="sm:col-span-2 lg:col-span-2 flex items-center gap-1.5">
             <button 
                 type="submit" 
-                class="flex-1 lg:flex-none w-full py-2 px-3 rounded-xl bg-espresso-900 hover:bg-tan-600 text-white font-semibold text-xs transition-colors flex items-center justify-center gap-1.5"
+                class="flex-1 min-w-0 py-2 px-3 rounded-xl bg-espresso-900 hover:bg-tan-600 text-white font-semibold text-xs transition-colors flex items-center justify-center gap-1.5 shadow-2xs"
                 title="Apply Filter"
             >
-                <i data-lucide="filter" class="w-3.5 h-3.5"></i>
-                <span class="sm:hidden lg:hidden">Filter</span>
+                <i data-lucide="filter" class="w-3.5 h-3.5 shrink-0"></i>
+                <span class="truncate">Filter</span>
             </button>
             <a 
                 href="{{ route('admin.products.index') }}" 
-                class="py-2 px-3 rounded-xl border border-[#DFD6CB] dark:border-[#382D27] text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors flex items-center justify-center gap-1.5 shrink-0"
-                title="Reset Filters"
+                class="w-9 h-9 shrink-0 rounded-xl border border-[#DFD6CB] dark:border-[#382D27] text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors flex items-center justify-center shadow-2xs"
+                title="Reset All Filters"
             >
-                <i data-lucide="rotate-ccw" class="w-3.5 h-3.5"></i>
-                <span class="sm:hidden lg:hidden text-xs">Reset</span>
+                <i data-lucide="rotate-ccw" class="w-3.5 h-3.5 shrink-0"></i>
             </a>
         </div>
 

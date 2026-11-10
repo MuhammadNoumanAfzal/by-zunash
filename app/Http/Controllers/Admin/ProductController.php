@@ -129,6 +129,7 @@ class ProductController extends Controller
             'short_description' => 'required|string|max:500',
             'description' => 'nullable|string',
             'image' => 'nullable|string|max:255',
+            'image_file' => 'nullable|image|mimes:jpeg,png,jpg,webp,gif,avif|max:5120',
             'gallery_raw' => 'nullable|string',
             'features_raw' => 'nullable|string',
             'colors_json' => 'nullable|string',
@@ -161,6 +162,17 @@ class ProductController extends Controller
         $availability = $validated['availability'] ?? ($validated['stock_quantity'] > 0 ? 'in_stock' : 'out_of_stock');
         $sku = !empty($validated['sku']) ? $validated['sku'] : ('BZ-' . strtoupper(substr($category->slug, 0, 3)) . '-' . rand(100, 999));
         $primaryImage = !empty($validated['image']) ? $validated['image'] : '/images/products/prod-reversible-belt.jpg';
+
+        if ($request->hasFile('image_file')) {
+            $file = $request->file('image_file');
+            $filename = 'prod-' . $slug . '-' . time() . '.' . $file->getClientOriginalExtension();
+            $destDir = public_path('images/products');
+            if (!file_exists($destDir)) {
+                @mkdir($destDir, 0755, true);
+            }
+            $file->move($destDir, $filename);
+            $primaryImage = '/images/products/' . $filename;
+        }
 
         $leadTime = !empty($validated['lead_time']) ? trim($validated['lead_time']) : null;
         if ($availability === 'on_demand' && empty($leadTime)) {
@@ -236,6 +248,7 @@ class ProductController extends Controller
             'short_description' => 'required|string|max:500',
             'description' => 'nullable|string',
             'image' => 'nullable|string|max:255',
+            'image_file' => 'nullable|image|mimes:jpeg,png,jpg,webp,gif,avif|max:5120',
             'gallery_raw' => 'nullable|string',
             'features_raw' => 'nullable|string',
             'colors_json' => 'nullable|string',
@@ -259,6 +272,17 @@ class ProductController extends Controller
 
         $availability = $validated['availability'] ?? ($validated['stock_quantity'] > 0 ? 'in_stock' : 'out_of_stock');
         $primaryImage = !empty($validated['image']) ? $validated['image'] : $product->image;
+
+        if ($request->hasFile('image_file')) {
+            $file = $request->file('image_file');
+            $filename = 'prod-' . $product->slug . '-' . time() . '.' . $file->getClientOriginalExtension();
+            $destDir = public_path('images/products');
+            if (!file_exists($destDir)) {
+                @mkdir($destDir, 0755, true);
+            }
+            $file->move($destDir, $filename);
+            $primaryImage = '/images/products/' . $filename;
+        }
 
         $leadTime = !empty($validated['lead_time']) ? trim($validated['lead_time']) : $product->lead_time;
         if ($availability === 'on_demand' && empty($leadTime)) {

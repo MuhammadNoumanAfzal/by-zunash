@@ -386,7 +386,7 @@
 
                     <div class="space-y-3">
                         <a 
-                            href="https://wa.me/923001234567?text=Assalam%20o%20Alaikum%2C%20I%20have%20a%20question%20regarding%20leather%20sizing%20and%20orders" 
+                            href="https://wa.me/923214700545?text=Assalam%20o%20Alaikum%2C%20I%20have%20a%20question%20regarding%20leather%20sizing%20and%20orders" 
                             target="_blank" 
                             class="w-full py-3.5 px-4 bg-emerald-700 hover:bg-emerald-800 text-white text-xs uppercase tracking-widest font-bold rounded-xl text-center block transition-all shadow-md flex items-center justify-center gap-2"
                         >

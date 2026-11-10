@@ -35,11 +35,10 @@ class SubcategoryController extends Controller
         $validated = $request->validate([
             'category_id' => 'required|exists:categories,id',
             'name' => 'required|string|max:100',
-            'slug' => 'nullable|string|max:100',
             'description' => 'nullable|string|max:255',
         ]);
 
-        $slugBase = !empty($validated['slug']) ? Str::slug($validated['slug']) : Str::slug($validated['name']);
+        $slugBase = Str::slug($validated['name']);
         $slug = $slugBase;
         $count = 1;
         while (Subcategory::where('slug', $slug)->exists()) {
@@ -63,16 +62,18 @@ class SubcategoryController extends Controller
         $validated = $request->validate([
             'category_id' => 'required|exists:categories,id',
             'name' => 'required|string|max:100',
-            'slug' => 'nullable|string|max:100',
             'description' => 'nullable|string|max:255',
         ]);
 
-        $slugBase = !empty($validated['slug']) ? Str::slug($validated['slug']) : Str::slug($validated['name']);
-        $slug = $slugBase;
-        $count = 1;
-        while (Subcategory::where('slug', $slug)->where('id', '!=', $subcategory->id)->exists()) {
-            $slug = "{$slugBase}-{$count}";
-            $count++;
+        $slug = $subcategory->slug;
+        if (empty($slug) || $subcategory->name !== $validated['name']) {
+            $slugBase = Str::slug($validated['name']);
+            $slug = $slugBase;
+            $count = 1;
+            while (Subcategory::where('slug', $slug)->where('id', '!=', $subcategory->id)->exists()) {
+                $slug = "{$slugBase}-{$count}";
+                $count++;
+            }
         }
 
         $subcategory->update([

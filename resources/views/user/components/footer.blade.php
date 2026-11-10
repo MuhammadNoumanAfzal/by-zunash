@@ -64,7 +64,7 @@
                     </li>
                     <li class="flex items-center gap-2.5">
                         <i data-lucide="phone" class="w-4 h-4 text-gold flex-shrink-0"></i>
-                        <span>+92 (300) 123-4567</span>
+                        <a href="https://wa.me/923214700545" target="_blank" rel="noopener noreferrer" class="hover:text-gold transition-colors">+92 321 4700545</a>
                     </li>
                     <li class="flex items-center gap-2.5">
                         <i data-lucide="mail" class="w-4 h-4 text-gold flex-shrink-0"></i>

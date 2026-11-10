@@ -93,8 +93,8 @@
 </div>
 
 <!-- Add Category Modal Dialog -->
-<dialog id="addCategoryModal" class="rounded-3xl p-0 shadow-2xl max-w-md w-full bg-white dark:bg-[#1A1513] text-espresso-900 dark:text-white border border-[#ECE6DE] dark:border-[#2C2420]">
-    <div class="p-6">
+<dialog id="addCategoryModal" class="rounded-3xl p-0 shadow-2xl">
+    <div class="p-6 sm:p-7">
         <div class="flex items-center justify-between pb-3 border-b border-[#ECE6DE] dark:border-[#2C2420] mb-4">
             <h3 class="font-cinzel text-xl font-bold text-tan-600 dark:text-gold-400">Add Collection Category</h3>
             <button type="button" onclick="document.getElementById('addCategoryModal').close()" class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300">
@@ -102,16 +102,11 @@
             </button>
         </div>
 
-        <form action="{{ route('admin.categories.store') }}" method="POST" class="space-y-4">
+        <form action="{{ route('admin.categories.store') }}" method="POST" enctype="multipart/form-data" class="space-y-4">
             @csrf
             <div>
                 <label class="block text-xs font-semibold mb-1">Category Title <span class="text-rose-500">*</span></label>
                 <input type="text" name="name" required placeholder="e.g. Travel Duffles & Luggage" class="w-full px-3 py-2 text-xs rounded-xl bg-[#FAF8F5] dark:bg-[#241D1A] border border-[#E0D7CB] dark:border-[#3A2F29] text-espresso-900 dark:text-white focus:outline-hidden focus:border-tan-500">
-            </div>
-
-            <div>
-                <label class="block text-xs font-semibold mb-1">Slug URL (Optional - auto-generated if omitted)</label>
-                <input type="text" name="slug" placeholder="e.g. travel-duffles" class="w-full px-3 py-2 text-xs rounded-xl bg-[#FAF8F5] dark:bg-[#241D1A] border border-[#E0D7CB] dark:border-[#3A2F29] text-espresso-900 dark:text-white focus:outline-hidden focus:border-tan-500 font-mono">
             </div>
 
             <div>
@@ -120,8 +115,29 @@
             </div>
 
             <div>
-                <label class="block text-xs font-semibold mb-1">Banner Image URL</label>
-                <input type="text" name="image" placeholder="/images/categories/cat-belts.jpg" class="w-full px-3 py-2 text-xs rounded-xl bg-[#FAF8F5] dark:bg-[#241D1A] border border-[#E0D7CB] dark:border-[#3A2F29] text-espresso-900 dark:text-white focus:outline-hidden focus:border-tan-500">
+                <label class="block text-xs font-semibold mb-1">Banner Image</label>
+                <div class="p-3 rounded-2xl bg-[#FAF8F5] dark:bg-[#201815] border border-dashed border-[#DFD6CB] dark:border-[#382D27] flex items-center gap-3.5">
+                    <div class="w-14 h-14 rounded-xl overflow-hidden bg-espresso-950/10 dark:bg-black/40 border border-[#E0D7CB] dark:border-[#382D27] shrink-0 flex items-center justify-center">
+                        <img id="add_category_preview" src="" alt="Preview" class="w-full h-full object-cover hidden">
+                        <i id="add_category_preview_icon" data-lucide="image" class="w-6 h-6 text-gray-400"></i>
+                    </div>
+
+                    <div class="flex-1 min-w-0">
+                        <label class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-espresso-900 hover:bg-tan-600 text-white font-semibold text-xs cursor-pointer transition-colors shadow-2xs">
+                            <i data-lucide="upload-cloud" class="w-3.5 h-3.5 text-gold-400"></i>
+                            <span>Upload from Computer</span>
+                            <input type="file" id="add_category_file" name="image_file" accept="image/*" class="hidden" onchange="previewAddCatImage(this)">
+                        </label>
+                        <p class="text-[10px] text-[#8F8379] mt-1 truncate" id="add_category_file_name">
+                            PNG, JPG, WEBP up to 5MB
+                        </p>
+                    </div>
+                </div>
+
+                <div class="mt-2">
+                    <label class="block text-[10px] text-gray-400 uppercase tracking-wider mb-0.5">Or use Image URL / Path</label>
+                    <input type="text" id="add_category_image" name="image" placeholder="/images/categories/cat-belts.jpg" oninput="previewAddCatUrl(this.value)" class="w-full px-3 py-1.5 text-xs rounded-xl bg-[#FAF8F5] dark:bg-[#241D1A] border border-[#E0D7CB] dark:border-[#3A2F29] text-espresso-900 dark:text-white focus:outline-hidden focus:border-tan-500 font-mono">
+                </div>
             </div>
 
             <div class="flex items-center justify-end gap-2 pt-3 border-t border-[#ECE6DE] dark:border-[#2C2420]">
@@ -137,8 +153,8 @@
 </dialog>
 
 <!-- Edit Category Modal Dialog -->
-<dialog id="editCategoryModal" class="rounded-3xl p-0 shadow-2xl max-w-md w-full bg-white dark:bg-[#1A1513] text-espresso-900 dark:text-white border border-[#ECE6DE] dark:border-[#2C2420]">
-    <div class="p-6">
+<dialog id="editCategoryModal" class="rounded-3xl p-0 shadow-2xl">
+    <div class="p-6 sm:p-7">
         <div class="flex items-center justify-between pb-3 border-b border-[#ECE6DE] dark:border-[#2C2420] mb-4">
             <h3 class="font-cinzel text-xl font-bold text-tan-600 dark:text-gold-400">Edit Collection Category</h3>
             <button type="button" onclick="document.getElementById('editCategoryModal').close()" class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300">
@@ -146,7 +162,7 @@
             </button>
         </div>
 
-        <form id="editCategoryForm" method="POST" class="space-y-4">
+        <form id="editCategoryForm" method="POST" enctype="multipart/form-data" class="space-y-4">
             @csrf
             @method('PUT')
 
@@ -156,18 +172,34 @@
             </div>
 
             <div>
-                <label class="block text-xs font-semibold mb-1">Slug URL</label>
-                <input type="text" id="edit_category_slug" name="slug" class="w-full px-3 py-2 text-xs rounded-xl bg-[#FAF8F5] dark:bg-[#241D1A] border border-[#E0D7CB] dark:border-[#3A2F29] text-espresso-900 dark:text-white focus:outline-hidden focus:border-tan-500 font-mono">
-            </div>
-
-            <div>
                 <label class="block text-xs font-semibold mb-1">Tagline</label>
                 <input type="text" id="edit_category_tagline" name="tagline" class="w-full px-3 py-2 text-xs rounded-xl bg-[#FAF8F5] dark:bg-[#241D1A] border border-[#E0D7CB] dark:border-[#3A2F29] text-espresso-900 dark:text-white focus:outline-hidden focus:border-tan-500">
             </div>
 
             <div>
-                <label class="block text-xs font-semibold mb-1">Banner Image URL</label>
-                <input type="text" id="edit_category_image" name="image" class="w-full px-3 py-2 text-xs rounded-xl bg-[#FAF8F5] dark:bg-[#241D1A] border border-[#E0D7CB] dark:border-[#3A2F29] text-espresso-900 dark:text-white focus:outline-hidden focus:border-tan-500">
+                <label class="block text-xs font-semibold mb-1">Banner Image</label>
+                <div class="p-3 rounded-2xl bg-[#FAF8F5] dark:bg-[#201815] border border-dashed border-[#DFD6CB] dark:border-[#382D27] flex items-center gap-3.5">
+                    <div class="w-14 h-14 rounded-xl overflow-hidden bg-espresso-950/10 dark:bg-black/40 border border-[#E0D7CB] dark:border-[#382D27] shrink-0 flex items-center justify-center">
+                        <img id="edit_category_preview" src="" alt="Preview" class="w-full h-full object-cover hidden">
+                        <i id="edit_category_preview_icon" data-lucide="image" class="w-6 h-6 text-gray-400"></i>
+                    </div>
+
+                    <div class="flex-1 min-w-0">
+                        <label class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-espresso-900 hover:bg-tan-600 text-white font-semibold text-xs cursor-pointer transition-colors shadow-2xs">
+                            <i data-lucide="upload-cloud" class="w-3.5 h-3.5 text-gold-400"></i>
+                            <span>Upload from Computer</span>
+                            <input type="file" id="edit_category_file" name="image_file" accept="image/*" class="hidden" onchange="previewEditCatImage(this)">
+                        </label>
+                        <p class="text-[10px] text-[#8F8379] mt-1 truncate" id="edit_category_file_name">
+                            PNG, JPG, WEBP up to 5MB
+                        </p>
+                    </div>
+                </div>
+
+                <div class="mt-2">
+                    <label class="block text-[10px] text-gray-400 uppercase tracking-wider mb-0.5">Or use Image URL / Path</label>
+                    <input type="text" id="edit_category_image" name="image" placeholder="/images/categories/cat-belts.jpg" oninput="previewEditCatUrl(this.value)" class="w-full px-3 py-1.5 text-xs rounded-xl bg-[#FAF8F5] dark:bg-[#241D1A] border border-[#E0D7CB] dark:border-[#3A2F29] text-espresso-900 dark:text-white focus:outline-hidden focus:border-tan-500 font-mono">
+                </div>
             </div>
 
             <div class="flex items-center justify-end gap-2 pt-3 border-t border-[#ECE6DE] dark:border-[#2C2420]">
@@ -184,13 +216,83 @@
 
 @push('scripts')
 <script>
+function previewAddCatImage(input) {
+    if (input.files && input.files[0]) {
+        const file = input.files[0];
+        document.getElementById('add_category_file_name').textContent = file.name + ' (' + Math.round(file.size / 1024) + ' KB)';
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            const img = document.getElementById('add_category_preview');
+            img.src = e.target.result;
+            img.classList.remove('hidden');
+            document.getElementById('add_category_preview_icon').classList.add('hidden');
+        };
+        reader.readAsDataURL(file);
+    }
+}
+
+function previewAddCatUrl(url) {
+    const img = document.getElementById('add_category_preview');
+    const icon = document.getElementById('add_category_preview_icon');
+    if (url && url.trim().length > 0) {
+        img.src = url;
+        img.classList.remove('hidden');
+        icon.classList.add('hidden');
+    } else {
+        img.classList.add('hidden');
+        icon.classList.remove('hidden');
+    }
+}
+
+function previewEditCatImage(input) {
+    if (input.files && input.files[0]) {
+        const file = input.files[0];
+        document.getElementById('edit_category_file_name').textContent = file.name + ' (' + Math.round(file.size / 1024) + ' KB)';
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            const img = document.getElementById('edit_category_preview');
+            img.src = e.target.result;
+            img.classList.remove('hidden');
+            document.getElementById('edit_category_preview_icon').classList.add('hidden');
+        };
+        reader.readAsDataURL(file);
+    }
+}
+
+function previewEditCatUrl(url) {
+    const img = document.getElementById('edit_category_preview');
+    const icon = document.getElementById('edit_category_preview_icon');
+    if (url && url.trim().length > 0) {
+        img.src = url;
+        img.classList.remove('hidden');
+        icon.classList.add('hidden');
+    } else {
+        img.classList.add('hidden');
+        icon.classList.remove('hidden');
+    }
+}
+
 function openEditCategoryModal(category) {
     document.getElementById('editCategoryForm').action = '/admin/categories/' + category.id;
     document.getElementById('edit_category_name').value = category.name || '';
-    document.getElementById('edit_category_slug').value = category.slug || '';
     document.getElementById('edit_category_tagline').value = category.tagline || '';
     document.getElementById('edit_category_image').value = category.image || '';
+    document.getElementById('edit_category_file').value = '';
+    document.getElementById('edit_category_file_name').textContent = 'PNG, JPG, WEBP up to 5MB';
+
+    const img = document.getElementById('edit_category_preview');
+    const icon = document.getElementById('edit_category_preview_icon');
+    if (category.image) {
+        img.src = category.image;
+        img.classList.remove('hidden');
+        icon.classList.add('hidden');
+    } else {
+        img.classList.add('hidden');
+        icon.classList.remove('hidden');
+    }
+
     document.getElementById('editCategoryModal').showModal();
+    if (window.lucide) lucide.createIcons();
 }
 
 // Automatically open Add Category if URL hash is #add-category
@@ -198,6 +300,7 @@ function checkCategoryHash() {
     if (window.location.hash === '#add-category' || window.location.hash === '#addCategoryModal') {
         const modal = document.getElementById('addCategoryModal');
         if (modal) modal.showModal();
+        if (window.lucide) lucide.createIcons();
     }
 }
 document.addEventListener('DOMContentLoaded', checkCategoryHash);

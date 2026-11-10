@@ -120,20 +120,45 @@
             height: 0px !important;
         }
 
-        /* Universal Dead-Center Dialog Styling for All Admin Modals */
+        /* Universal Dead-Center Dialog Styling for All Admin Modals: Compact Luxury Card Shape */
         dialog {
             position: fixed !important;
             top: 50% !important;
             left: 50% !important;
             transform: translate(-50%, -50%) !important;
             margin: 0 !important;
-            max-height: 90vh !important;
-            max-width: calc(100vw - 2rem) !important;
+            width: min(480px, calc(100vw - 2rem)) !important;
+            max-width: 480px !important;
+            max-height: 88vh !important;
             box-sizing: border-box !important;
             overflow-y: auto !important;
-            border: none !important;
+            border-radius: 1.5rem !important;
+            border: 1px solid #ECE6DE !important;
+            background: #ffffff !important;
+            color: #120E0C !important;
+            box-shadow: 0 25px 60px -15px rgba(0, 0, 0, 0.45), 0 0 0 1px rgba(197, 161, 107, 0.25) !important;
             outline: none !important;
             z-index: 9999 !important;
+        }
+
+        html.dark dialog {
+            background: #1A1513 !important;
+            color: #FAF5F0 !important;
+            border-color: #2C2420 !important;
+            box-shadow: 0 25px 60px -15px rgba(0, 0, 0, 0.8), 0 0 0 1px rgba(197, 161, 107, 0.2) !important;
+        }
+
+        /* Wider card only for Staff Modal with 12 module checkboxes */
+        dialog#addStaffModal,
+        dialog#editStaffModal,
+        dialog.modal-wide,
+        dialog.max-w-2xl {
+            width: min(580px, calc(100vw - 2rem)) !important;
+            max-width: 580px !important;
+        }
+
+        dialog:not([open]) {
+            display: none !important;
         }
 
         dialog[open] {
@@ -222,6 +247,7 @@
             <!-- Navigation Links -->
             <nav class="flex-1 px-4 py-5 space-y-1 overflow-y-auto">
                 
+                @if(auth('admin')->user()->hasPermission('dashboard'))
                 <!-- Dashboard Overview -->
                 <a 
                     href="{{ route('admin.dashboard') }}" 
@@ -230,7 +256,9 @@
                     <i data-lucide="layout-dashboard" class="w-4 h-4 {{ request()->routeIs('admin.dashboard*') ? 'text-tan-600 dark:text-gold' : 'text-[#9C8F85]' }}"></i>
                     <span>Dashboard Overview</span>
                 </a>
+                @endif
 
+                @if(auth('admin')->user()->hasPermission('categories'))
                 <!-- Categories -->
                 <div>
                     <button 
@@ -252,7 +280,9 @@
                         </a>
                     </div>
                 </div>
+                @endif
 
+                @if(auth('admin')->user()->hasPermission('subcategories'))
                 <!-- Subcategories -->
                 <div>
                     <button 
@@ -274,7 +304,9 @@
                         </a>
                     </div>
                 </div>
+                @endif
 
+                @if(auth('admin')->user()->hasPermission('products'))
                 <!-- Product Catalog -->
                 <div>
                     <button 
@@ -296,7 +328,9 @@
                         </a>
                     </div>
                 </div>
+                @endif
 
+                @if(auth('admin')->user()->hasPermission('deals'))
                 <!-- Deals & Bundles Module -->
                 <div>
                     <button 
@@ -318,8 +352,10 @@
                         </a>
                     </div>
                 </div>
+                @endif
 
-                <!-- Inventory & Stock (With 4 Low Badge) -->
+                @if(auth('admin')->user()->hasPermission('inventory'))
+                <!-- Inventory & Stock (With Low Badge) -->
                 @php
                     $navLowStock = \App\Models\Product::where('stock_quantity', '<=', 5)->where('stock_quantity', '>', 0)->count();
                 @endphp
@@ -337,7 +373,9 @@
                         </span>
                     @endif
                 </a>
+                @endif
 
+                @if(auth('admin')->user()->hasPermission('orders'))
                 <!-- Store Orders -->
                 <div>
                     <button 
@@ -359,16 +397,78 @@
                         </a>
                     </div>
                 </div>
+                @endif
 
-                <!-- VIP Customers -->
+                @if(auth('admin')->user()->hasPermission('abandoned_carts'))
+                <!-- Abandoned Carts & Drop-off Recovery -->
+                @php
+                    $navPendingAbandoned = \App\Models\AbandonedCart::where('status', 'abandoned')->count();
+                @endphp
+                <a 
+                    href="{{ route('admin.abandoned-carts.index') }}" 
+                    class="flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-medium transition-colors {{ request()->routeIs('admin.abandoned-carts*') ? 'bg-[#FAF4ED] dark:bg-[#251A14] text-tan-700 font-bold border-l-4 border-tan-600' : 'text-[#6C635B] dark:text-[#B3A69C] hover:bg-[#FAF9F6] dark:hover:bg-[#1C1613]' }}"
+                >
+                    <div class="flex items-center gap-3">
+                        <i data-lucide="shopping-cart" class="w-4 h-4 text-[#9C8F85]"></i>
+                        <span>Abandoned Carts</span>
+                    </div>
+                    @if($navPendingAbandoned > 0)
+                        <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-50 text-amber-700 dark:bg-amber-950/40 dark:text-amber-300 border border-amber-200">
+                            {{ $navPendingAbandoned }} Drop-offs
+                        </span>
+                    @endif
+                </a>
+                @endif
+
+                @if(auth('admin')->user()->hasPermission('coupons'))
+                <!-- Coupons & Promo Codes -->
+                @php
+                    $navActiveCoupons = \App\Models\Coupon::where('is_active', true)->where(function ($q) { $q->whereNull('expires_at')->orWhere('expires_at', '>=', now()); })->count();
+                @endphp
+                <a 
+                    href="{{ route('admin.coupons.index') }}" 
+                    class="flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-medium transition-colors {{ request()->routeIs('admin.coupons*') ? 'bg-[#FAF4ED] dark:bg-[#251A14] text-tan-700 font-bold border-l-4 border-tan-600' : 'text-[#6C635B] dark:text-[#B3A69C] hover:bg-[#FAF9F6] dark:hover:bg-[#1C1613]' }}"
+                >
+                    <div class="flex items-center gap-3">
+                        <i data-lucide="ticket" class="w-4 h-4 text-[#9C8F85]"></i>
+                        <span>Coupons & Promos</span>
+                    </div>
+                    @if($navActiveCoupons > 0)
+                        <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-[#FAF4ED] text-tan-700 border border-tan-300">
+                            {{ $navActiveCoupons }} Active
+                        </span>
+                    @endif
+                </a>
+                @endif
+
+                @if(auth('admin')->user()->hasPermission('analytics'))
+                <!-- Financial Analytics & Reports -->
+                <a 
+                    href="{{ route('admin.analytics.index') }}" 
+                    class="flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-medium transition-colors {{ request()->routeIs('admin.analytics*') ? 'bg-[#FAF4ED] dark:bg-[#251A14] text-tan-700 font-bold border-l-4 border-tan-600' : 'text-[#6C635B] dark:text-[#B3A69C] hover:bg-[#FAF9F6] dark:hover:bg-[#1C1613]' }}"
+                >
+                    <div class="flex items-center gap-3">
+                        <i data-lucide="line-chart" class="w-4 h-4 text-[#9C8F85]"></i>
+                        <span>Analytics & Finance</span>
+                    </div>
+                    <span class="px-1.5 py-0.5 rounded text-[9px] font-bold bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300 border border-emerald-200">
+                        ROI
+                    </span>
+                </a>
+                @endif
+
+                @if(auth('admin')->user()->hasPermission('customers'))
+                <!-- Customers & Patrons -->
                 <a 
                     href="{{ route('admin.customers.index') }}" 
                     class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-medium transition-colors {{ request()->routeIs('admin.customers*') ? 'bg-[#FAF4ED] dark:bg-[#251A14] text-tan-700 font-bold border-l-4 border-tan-600' : 'text-[#6C635B] dark:text-[#B3A69C] hover:bg-[#FAF9F6] dark:hover:bg-[#1C1613]' }}"
                 >
                     <i data-lucide="users" class="w-4 h-4 text-[#9C8F85]"></i>
-                    <span>VIP Customers</span>
+                    <span>Customers & Patrons</span>
                 </a>
+                @endif
 
+                @if(auth('admin')->user()->hasPermission('messages'))
                 <!-- Customer Messages (Concierge) -->
                 @php
                     $navUnreadMsgs = \App\Models\Inquiry::where('status', 'unread')->count();
@@ -387,7 +487,9 @@
                         </span>
                     @endif
                 </a>
+                @endif
 
+                @if(auth('admin')->user()->hasPermission('reviews'))
                 <!-- Customer Reviews -->
                 <a 
                     href="{{ route('admin.reviews.index') }}" 
@@ -396,7 +498,9 @@
                     <i data-lucide="star" class="w-4 h-4 text-[#9C8F85]"></i>
                     <span>Customer Reviews</span>
                 </a>
+                @endif
 
+                @if(auth('admin')->user()->hasPermission('staff'))
                 <!-- Staff & Roles (RBAC) -->
                 <a 
                     href="{{ route('admin.staff.index') }}" 
@@ -410,7 +514,9 @@
                         RBAC
                     </span>
                 </a>
+                @endif
 
+                @if(auth('admin')->user()->hasPermission('settings'))
                 <!-- Store Settings -->
                 <a 
                     href="{{ route('admin.settings.index') }}" 
@@ -419,6 +525,7 @@
                     <i data-lucide="sliders" class="w-4 h-4 text-[#9C8F85]"></i>
                     <span>Store Settings</span>
                 </a>
+                @endif
 
             </nav>
 
