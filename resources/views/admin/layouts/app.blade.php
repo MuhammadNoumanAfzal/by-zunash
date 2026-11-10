@@ -624,7 +624,7 @@
                                             this.$nextTick(() => { if (window.lucide) lucide.createIcons(); });
                                         })
                                         .catch(() => { this.loading = false; });
-                                }, 220);
+                                }, 150);
                             }
                         }"
                         @click.outside="open = false"
@@ -717,6 +717,28 @@
                                                 <p class="text-[11px] text-muted truncate mt-0.5" x-text="ord.customer + ' (' + ord.city + ')'"></p>
                                             </div>
                                             <span class="text-xs font-bold font-mono text-espresso-900 dark:text-white" x-text="ord.total"></span>
+                                        </a>
+                                    </template>
+                                </div>
+                            </div>
+
+                            <!-- Subcategories -->
+                            <div x-show="results.subcategories && results.subcategories.length > 0" class="p-2.5">
+                                <div class="px-2 py-1 text-[10px] font-bold uppercase tracking-wider text-tan-700 dark:text-gold flex items-center justify-between">
+                                    <span>Subcategories</span>
+                                    <span class="text-muted" x-text="results.subcategories.length + ' found'"></span>
+                                </div>
+                                <div class="space-y-1 mt-1">
+                                    <template x-for="sub in results.subcategories" :key="'sub-' + sub.id">
+                                        <a 
+                                            :href="sub.url" 
+                                            class="flex items-center justify-between gap-2 p-2 rounded-xl hover:bg-tan-50 dark:hover:bg-[#251C18] transition-colors"
+                                        >
+                                            <div class="flex items-center gap-2">
+                                                <i data-lucide="git-branch" class="w-3.5 h-3.5 text-tan-600"></i>
+                                                <span class="text-xs font-semibold text-espresso-950 dark:text-white" x-text="sub.name"></span>
+                                            </div>
+                                            <span class="text-[10px] text-muted font-medium" x-text="sub.category"></span>
                                         </a>
                                     </template>
                                 </div>

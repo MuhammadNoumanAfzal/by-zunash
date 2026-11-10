@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Product;
 use App\Models\Order;
 use App\Models\Category;
+use App\Models\Subcategory;
 use App\Models\Customer;
 use Illuminate\Http\Request;
 
@@ -21,6 +22,7 @@ class SearchController extends Controller
         $products = collect();
         $orders = collect();
         $categories = collect();
+        $subcategories = collect();
         $customers = collect();
 
         if ($query !== '') {
@@ -46,6 +48,13 @@ class SearchController extends Controller
                 ->take(8)
                 ->get();
 
+            $subcategories = Subcategory::with('category')
+                ->where('name', 'like', "%{$query}%")
+                ->orWhere('slug', 'like', "%{$query}%")
+                ->latest()
+                ->take(8)
+                ->get();
+
             $customers = Customer::where('name', 'like', "%{$query}%")
                 ->orWhere('email', 'like', "%{$query}%")
                 ->orWhere('phone', 'like', "%{$query}%")
@@ -55,9 +64,9 @@ class SearchController extends Controller
                 ->get();
         }
 
-        $totalMatches = $products->count() + $orders->count() + $categories->count() + $customers->count();
+        $totalMatches = $products->count() + $orders->count() + $categories->count() + $subcategories->count() + $customers->count();
 
-        return view('admin.search', compact('query', 'products', 'orders', 'categories', 'customers', 'totalMatches'));
+        return view('admin.search', compact('query', 'products', 'orders', 'categories', 'subcategories', 'customers', 'totalMatches'));
     }
 
     /**
@@ -129,6 +138,21 @@ class SearchController extends Controller
                 ];
             });
 
+        $subcategories = Subcategory::with('category')
+            ->where('name', 'like', "%{$query}%")
+            ->orWhere('slug', 'like', "%{$query}%")
+            ->latest()
+            ->take(3)
+            ->get()
+            ->map(function ($s) {
+                return [
+                    'id' => $s->id,
+                    'name' => $s->name,
+                    'category' => $s->category?->name ?? 'Collection',
+                    'url' => route('admin.subcategories.index', ['q' => $s->name]),
+                ];
+            });
+
         $customers = Customer::where('name', 'like', "%{$query}%")
             ->orWhere('email', 'like', "%{$query}%")
             ->orWhere('phone', 'like', "%{$query}%")
@@ -145,12 +169,13 @@ class SearchController extends Controller
                 ];
             });
 
-        $total = $products->count() + $orders->count() + $categories->count() + $customers->count();
+        $total = $products->count() + $orders->count() + $categories->count() + $subcategories->count() + $customers->count();
 
         return response()->json([
             'products' => $products,
             'orders' => $orders,
             'categories' => $categories,
+            'subcategories' => $subcategories,
             'customers' => $customers,
             'total' => $total,
         ]);

@@ -89,6 +89,16 @@
 
         <button 
             type="button" 
+            @click="activeTab = 'subcategories'"
+            :class="activeTab === 'subcategories' ? 'bg-espresso-900 text-white shadow-2xs' : 'bg-white dark:bg-[#1E1714] text-muted hover:text-espresso-900 border border-[#ECE6DE] dark:border-[#261E1A]'"
+            class="px-3.5 py-1.5 rounded-xl text-xs font-semibold transition-all shrink-0 flex items-center gap-1.5"
+        >
+            <i data-lucide="git-branch" class="w-3.5 h-3.5"></i>
+            <span>Subcategories ({{ $subcategories->count() }})</span>
+        </button>
+
+        <button 
+            type="button" 
             @click="activeTab = 'customers'"
             :class="activeTab === 'customers' ? 'bg-espresso-900 text-white shadow-2xs' : 'bg-white dark:bg-[#1E1714] text-muted hover:text-espresso-900 border border-[#ECE6DE] dark:border-[#261E1A]'"
             class="px-3.5 py-1.5 rounded-xl text-xs font-semibold transition-all shrink-0 flex items-center gap-1.5"
@@ -235,6 +245,35 @@
                                 <span class="font-mono text-[10px] text-muted">{{ $cat->slug }}</span>
                             </div>
                             <a href="{{ route('admin.categories.index', ['q' => $cat->name]) }}" class="p-1.5 rounded-lg text-muted hover:text-tan-700 text-xs font-semibold" title="Manage Category">
+                                <i data-lucide="external-link" class="w-3.5 h-3.5"></i>
+                            </a>
+                        </div>
+                    @endforeach
+                </div>
+            @endif
+        </div>
+
+        <!-- Section 3b: Subcategories -->
+        <div x-show="activeTab === 'all' || activeTab === 'subcategories'" class="space-y-2 pt-2">
+            @if($subcategories->isNotEmpty())
+                <div class="flex items-center justify-between">
+                    <h2 class="font-cinzel text-sm font-bold text-espresso-950 dark:text-white flex items-center gap-2">
+                        <i data-lucide="git-branch" class="w-4 h-4 text-tan-600"></i>
+                        <span>Matching Subcategories ({{ $subcategories->count() }})</span>
+                    </h2>
+                    <a href="{{ route('admin.subcategories.index', ['q' => $query]) }}" class="text-[11px] text-tan-700 dark:text-gold hover:underline font-medium">
+                        View in Subcategories &rarr;
+                    </a>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                    @foreach($subcategories as $sub)
+                        <div class="p-3 rounded-xl bg-white dark:bg-[#161210] border border-[#ECE6DE] dark:border-[#261E1A] flex items-center justify-between gap-2 shadow-2xs">
+                            <div>
+                                <h3 class="font-bold text-xs text-espresso-950 dark:text-white">{{ $sub->name }}</h3>
+                                <span class="text-[10px] text-muted">{{ $sub->category?->name ?? 'Collection' }}</span>
+                            </div>
+                            <a href="{{ route('admin.subcategories.index', ['q' => $sub->name]) }}" class="p-1.5 rounded-lg text-muted hover:text-tan-700 text-xs font-semibold" title="Manage Subcategory">
                                 <i data-lucide="external-link" class="w-3.5 h-3.5"></i>
                             </a>
                         </div>

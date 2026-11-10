@@ -4,7 +4,38 @@
 
 @section('content')
 
-<div class="space-y-6">
+<div class="space-y-6" x-data="{
+    searchQuery: '{{ addslashes(request('q', '')) }}',
+    openDropdown: false,
+    items: [
+        @foreach($subcategories as $s)
+            { id: {{ $s->id }}, name: '{{ addslashes($s->name) }}', cat: '{{ addslashes($s->category?->name ?? 'None') }}', count: {{ $s->products_count }} },
+        @endforeach
+    ],
+    get filteredSuggestions() {
+        if (!this.searchQuery.trim()) return [];
+        const q = this.searchQuery.trim().toLowerCase();
+        return this.items.filter(i => i.name.toLowerCase().includes(q) || i.cat.toLowerCase().includes(q)).slice(0, 6);
+    },
+    matches(name, cat) {
+        if (!this.searchQuery.trim()) return true;
+        const q = this.searchQuery.trim().toLowerCase();
+        return name.toLowerCase().includes(q) || cat.toLowerCase().includes(q);
+    },
+    hasVisibleItems() {
+        if (!this.searchQuery.trim()) return true;
+        const q = this.searchQuery.trim().toLowerCase();
+        return this.items.some(i => i.name.toLowerCase().includes(q) || i.cat.toLowerCase().includes(q));
+    },
+    selectWord(word) {
+        this.searchQuery = word;
+        this.openDropdown = false;
+    },
+    clearSearch() {
+        this.searchQuery = '';
+        this.openDropdown = false;
+    }
+}">
 
     <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
@@ -26,26 +57,64 @@
         </button>
     </div>
 
-    <!-- Search & Filter Bar -->
+    <!-- Search & Filter Bar with Instant Keystroke Suggestions -->
     <div class="bg-white dark:bg-[#1A1513] rounded-2xl border border-[#ECE6DE] dark:border-[#2C2420] p-3.5 sm:p-4 shadow-card">
         <form action="{{ route('admin.subcategories.index') }}" method="GET" class="flex flex-col lg:flex-row lg:items-center gap-3">
             
-            <!-- Search Input -->
+            <!-- Live Search Input -->
             <div class="relative flex-1">
                 <i data-lucide="search" class="w-4 h-4 text-[#A89C91] absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none"></i>
                 <input 
                     type="text" 
                     name="q" 
-                    value="{{ request('q') }}" 
+                    x-model="searchQuery"
+                    @input="openDropdown = true"
+                    @focus="if(searchQuery.trim()) openDropdown = true"
+                    @keydown.escape="openDropdown = false"
                     placeholder="Search subcategory name..." 
+                    autocomplete="off"
                     style="padding-left: 2.5rem !important;"
                     class="w-full pl-10 pr-8 py-2 text-xs rounded-xl bg-[#FAF8F5] dark:bg-[#241D1A] border border-[#E0D7CB] dark:border-[#382D27] text-espresso-900 dark:text-white placeholder-[#A89C91] focus:outline-hidden focus:border-tan-500 transition-colors"
                 >
-                @if(request('q'))
-                    <a href="{{ route('admin.subcategories.index', request()->except('q')) }}" class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-200">
-                        <i data-lucide="x" class="w-3.5 h-3.5"></i>
-                    </a>
-                @endif
+                <!-- Clear Button -->
+                <button 
+                    type="button" 
+                    x-show="searchQuery.length > 0" 
+                    @click="clearSearch()"
+                    class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 cursor-pointer"
+                    title="Clear"
+                    x-cloak
+                >
+                    <i data-lucide="x" class="w-3.5 h-3.5"></i>
+                </button>
+
+                <!-- Floating Live Word Suggestions Dropdown -->
+                <div 
+                    x-show="openDropdown && filteredSuggestions.length > 0" 
+                    x-cloak
+                    @click.outside="openDropdown = false"
+                    class="absolute left-0 right-0 top-full mt-1.5 bg-white dark:bg-[#1E1714] rounded-2xl border border-[#ECE6DE] dark:border-[#2C2420] shadow-2xl p-2 z-50 divide-y divide-[#F0EAE1] dark:divide-[#28201C]"
+                >
+                    <div class="px-3 py-1 text-[10px] uppercase font-bold tracking-wider text-tan-600 dark:text-gold-400 flex items-center justify-between">
+                        <span>Matching Words</span>
+                        <span class="text-gray-400" x-text="filteredSuggestions.length + ' found'"></span>
+                    </div>
+                    <div class="py-1">
+                        <template x-for="item in filteredSuggestions" :key="item.id">
+                            <button 
+                                type="button" 
+                                @click="selectWord(item.name)"
+                                class="w-full text-left px-3 py-2 text-xs rounded-xl hover:bg-[#FAF8F5] dark:hover:bg-[#28201C] text-espresso-950 dark:text-white font-semibold flex items-center justify-between transition-colors group cursor-pointer"
+                            >
+                                <div class="flex items-center gap-2 min-w-0">
+                                    <i data-lucide="corner-down-right" class="w-3.5 h-3.5 text-tan-600 shrink-0 group-hover:translate-x-0.5 transition-transform"></i>
+                                    <span x-text="item.name" class="truncate"></span>
+                                </div>
+                                <span class="text-[10px] px-2 py-0.5 rounded-full bg-tan-50 dark:bg-[#2A1D1A] text-tan-700 dark:text-gold-300 border border-tan-200 dark:border-[#3E2A24] shrink-0" x-text="item.cat"></span>
+                            </button>
+                        </template>
+                    </div>
+                </div>
             </div>
 
             <!-- Parent Category Filter -->
@@ -109,7 +178,10 @@
         <!-- Mobile Clean Card View (Visible on screens < 640px) -->
         <div class="block sm:hidden divide-y divide-[#F0EAE1] dark:divide-[#28201C]">
             @forelse($subcategories as $subcat)
-                <div class="p-4 hover:bg-[#FAF8F5] dark:hover:bg-[#221B18] transition-colors space-y-2.5">
+                <div 
+                    x-show="matches('{{ addslashes($subcat->name) }}', '{{ addslashes($subcat->category?->name ?? 'None') }}')"
+                    class="p-4 hover:bg-[#FAF8F5] dark:hover:bg-[#221B18] transition-colors space-y-2.5"
+                >
                     <div class="flex items-center justify-between gap-2">
                         <div class="min-w-0 flex-1">
                             <h3 class="font-bold text-sm text-espresso-950 dark:text-white truncate">
@@ -163,6 +235,19 @@
                     @endif
                 </div>
             @endforelse
+
+            <!-- Client-side No Match state for Mobile -->
+            <div x-show="!hasVisibleItems() && items.length > 0" x-cloak class="p-8 text-center text-xs text-gray-400 space-y-2">
+                <div class="w-10 h-10 rounded-full bg-tan-50 dark:bg-[#201815] text-tan-600 mx-auto flex items-center justify-center mb-1">
+                    <i data-lucide="search-x" class="w-5 h-5"></i>
+                </div>
+                <div class="font-semibold text-espresso-950 dark:text-white">
+                    No subcategories match "<span x-text="searchQuery"></span>"
+                </div>
+                <button type="button" @click="clearSearch()" class="inline-block mt-2 px-3 py-1.5 rounded-lg bg-espresso-900 text-white text-[11px] font-semibold cursor-pointer">
+                    Clear Search
+                </button>
+            </div>
         </div>
 
         <!-- Desktop / Tablet Table View (Visible on >= 640px) -->
@@ -178,7 +263,10 @@
                 </thead>
                 <tbody class="divide-y divide-[#F0EAE1] dark:divide-[#28201C]">
                     @forelse($subcategories as $subcat)
-                        <tr class="hover:bg-[#FAF8F5] dark:hover:bg-[#221B18] transition-colors">
+                        <tr 
+                            x-show="matches('{{ addslashes($subcat->name) }}', '{{ addslashes($subcat->category?->name ?? 'None') }}')"
+                            class="hover:bg-[#FAF8F5] dark:hover:bg-[#221B18] transition-colors"
+                        >
                             <td class="py-3.5 px-4 font-bold text-espresso-950 dark:text-white whitespace-nowrap">
                                 {{ $subcat->name }}
                             </td>
@@ -229,6 +317,22 @@
                             </td>
                         </tr>
                     @endforelse
+
+                    <!-- Client-side No Match state for Desktop -->
+                    <tr x-show="!hasVisibleItems() && items.length > 0" x-cloak>
+                        <td colspan="4" class="py-12 text-center text-xs text-gray-400 space-y-2">
+                            <div class="w-10 h-10 rounded-full bg-tan-50 dark:bg-[#201815] text-tan-600 mx-auto flex items-center justify-center mb-1">
+                                <i data-lucide="search-x" class="w-5 h-5"></i>
+                            </div>
+                            <div class="font-semibold text-espresso-950 dark:text-white">
+                                No subcategories match "<span x-text="searchQuery"></span>"
+                            </div>
+                            <p class="text-[11px] text-gray-400">Try checking spelling or clear search.</p>
+                            <button type="button" @click="clearSearch()" class="inline-block mt-2 px-3 py-1.5 rounded-lg bg-espresso-900 text-white text-[11px] font-semibold cursor-pointer">
+                                Clear Search
+                            </button>
+                        </td>
+                    </tr>
                 </tbody>
             </table>
         </div>
