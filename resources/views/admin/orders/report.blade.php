@@ -3,18 +3,18 @@
 <head>
     <meta charset="utf-8">
     <title>Orders Summary Manifest | By Zunash Atelier</title>
-    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
         * { box-sizing: border-box; }
         body { font-family: 'Plus Jakarta Sans', sans-serif; color: #120E0C; margin: 0; padding: 25px; background: #fff; font-size: 12px; }
         .report-box { max-width: 1000px; margin: auto; }
         .header { display: flex; justify-content: space-between; align-items: flex-start; padding-bottom: 16px; border-bottom: 2px solid #120E0C; margin-bottom: 20px; }
-        .brand-title { font-family: 'Cinzel', serif; font-size: 24px; font-weight: 700; margin: 0; }
+        .brand-title { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 24px; font-weight: 800; letter-spacing: -0.5px; margin: 0; }
         .brand-sub { font-size: 10px; text-transform: uppercase; letter-spacing: 1.5px; color: #976239; font-weight: 700; margin-top: 2px; }
         .kpi-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 20px; }
         .kpi-card { padding: 12px; border-radius: 8px; background: #FAF8F5; border: 1px solid #ECE4DA; text-align: center; }
-        .kpi-label { font-size: 9px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: #7F7368; }
-        .kpi-value { font-family: 'Cinzel', serif; font-size: 18px; font-weight: 700; color: #120E0C; margin-top: 2px; }
+        .kpi-label { font-size: 9px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: #7F7368; }
+        .kpi-value { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 18px; font-weight: 800; color: #120E0C; margin-top: 2px; }
         table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 11px; }
         th { text-align: left; font-size: 9px; text-transform: uppercase; letter-spacing: 1px; color: #7F7368; padding: 10px 6px; border-bottom: 2px solid #120E0C; background: #FAF7F2; }
         td { padding: 9px 6px; border-bottom: 1px solid #ECE6DE; }

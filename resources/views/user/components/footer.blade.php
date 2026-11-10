@@ -60,19 +60,26 @@
                 <ul class="space-y-3 text-xs text-ivory-300">
                     <li class="flex items-start gap-2.5">
                         <i data-lucide="map-pin" class="w-4 h-4 text-gold flex-shrink-0 mt-0.5"></i>
-                        <span>Lahore & Karachi, Pakistan</span>
+                        <span>{{ !empty($storeSettings['warehouse_city']) ? $storeSettings['warehouse_city'] : 'Sargodha, Pakistan' }}</span>
                     </li>
                     <li class="flex items-center gap-2.5">
                         <i data-lucide="phone" class="w-4 h-4 text-gold flex-shrink-0"></i>
-                        <a href="https://wa.me/923214700545" target="_blank" rel="noopener noreferrer" class="hover:text-gold transition-colors">+92 321 4700545</a>
+                        @php
+                            $phone = !empty($storeSettings['contact_phone']) ? $storeSettings['contact_phone'] : '+92 321 4700545';
+                            $waNum = preg_replace('/[^0-9]/', '', $phone);
+                        @endphp
+                        <a href="https://wa.me/{{ $waNum }}" target="_blank" rel="noopener noreferrer" class="hover:text-gold transition-colors font-mono">{{ $phone }}</a>
                     </li>
                     <li class="flex items-center gap-2.5">
                         <i data-lucide="mail" class="w-4 h-4 text-gold flex-shrink-0"></i>
-                        <span>concierge@byzunash.com</span>
+                        @php
+                            $email = !empty($storeSettings['contact_email']) ? $storeSettings['contact_email'] : 'zunash@gmail.com';
+                        @endphp
+                        <a href="mailto:{{ $email }}" class="hover:text-gold transition-colors font-mono">{{ $email }}</a>
                     </li>
                     <li class="flex items-start gap-2.5">
                         <i data-lucide="clock" class="w-4 h-4 text-gold flex-shrink-0 mt-0.5"></i>
-                        <span>Mon – Sat: 10:00 AM – 8:00 PM PKT</span>
+                        <span>{{ !empty($storeSettings['store_timing']) ? $storeSettings['store_timing'] : 'Mon – Sat: 10:00 AM – 8:00 PM PKT' }}</span>
                     </li>
                 </ul>
             </div>

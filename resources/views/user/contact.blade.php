@@ -87,8 +87,16 @@
                 How May We Assist You?
             </h1>
 
+            @php
+                $contactPhone = !empty($storeSettings['contact_phone']) ? $storeSettings['contact_phone'] : '+92 321 4700545';
+                $waNumber = preg_replace('/[^0-9]/', '', $contactPhone);
+                $contactEmail = !empty($storeSettings['contact_email']) ? $storeSettings['contact_email'] : 'zunash@gmail.com';
+                $workshopCity = !empty($storeSettings['warehouse_city']) ? $storeSettings['warehouse_city'] : 'Sargodha, Pakistan';
+                $timing = !empty($storeSettings['store_timing']) ? $storeSettings['store_timing'] : 'Monday – Saturday: 10:00 AM – 8:00 PM PKT';
+            @endphp
+
             <p class="text-xs sm:text-sm text-ivory-200 font-light max-w-xl mx-auto leading-relaxed mb-8">
-                Whether you need bespoke belt sizing guidance, order dispatch updates, or corporate gifting packages, our senior concierge team in Lahore and Karachi is at your disposal.
+                Whether you need bespoke belt sizing guidance, order dispatch updates, or corporate gifting packages, our concierge team in {{ $workshopCity }} is at your disposal.
             </p>
 
             <!-- 3 Quick Action Bar Cards (Interactive Lift) -->
@@ -96,7 +104,7 @@
                 
                 <!-- WhatsApp Channel -->
                 <a 
-                    href="https://wa.me/923214700545?text=Assalam-o-Alaikum%20By%20Zunash%20Concierge,%20I%20would%20like%20assistance%20with%20an%20order." 
+                    href="https://wa.me/{{ $waNumber }}?text=Assalam-o-Alaikum%20By%20Zunash%20Concierge,%20I%20would%20like%20assistance%20with%20an%20order." 
                     target="_blank" 
                     rel="noopener noreferrer"
                     class="p-3.5 rounded-xl bg-white/10 hover:bg-white/15 backdrop-blur-md border border-white/15 hover:border-gold/60 transition-all duration-200 group flex items-center gap-3"
@@ -115,7 +123,7 @@
 
                 <!-- Telephone Support -->
                 <a 
-                    href="tel:+923214700545" 
+                    href="tel:{{ $contactPhone }}" 
                     class="p-3.5 rounded-xl bg-white/10 hover:bg-white/15 backdrop-blur-md border border-white/15 hover:border-gold/60 transition-all duration-200 group flex items-center gap-3"
                 >
                     <div class="w-9 h-9 rounded-full bg-gold/20 text-gold flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform">
@@ -123,13 +131,13 @@
                     </div>
                     <div>
                         <div class="text-white text-xs font-bold font-serif">Direct Telephone</div>
-                        <span class="text-[11px] text-ivory-300 block">+92 321 4700545</span>
+                        <span class="text-[11px] text-ivory-300 block font-mono">{{ $contactPhone }}</span>
                     </div>
                 </a>
 
                 <!-- Email Desk -->
                 <a 
-                    href="mailto:concierge@byzunash.com" 
+                    href="mailto:{{ $contactEmail }}" 
                     class="p-3.5 rounded-xl bg-white/10 hover:bg-white/15 backdrop-blur-md border border-white/15 hover:border-gold/60 transition-all duration-200 group flex items-center gap-3"
                 >
                     <div class="w-9 h-9 rounded-full bg-gold/20 text-gold flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform">
@@ -137,7 +145,7 @@
                     </div>
                     <div>
                         <div class="text-white text-xs font-bold font-serif">Email Atelier</div>
-                        <span class="text-[11px] text-ivory-300 block">24h Guaranteed Reply</span>
+                        <span class="text-[11px] text-ivory-300 block font-mono">{{ $contactEmail }}</span>
                     </div>
                 </a>
 
@@ -410,7 +418,7 @@
                             </div>
                             <div>
                                 <span class="text-xs font-semibold text-espresso-900 block">Telephone Concierge</span>
-                                <a href="tel:+923214700545" class="text-xs text-muted hover:text-gold font-mono transition-colors">+92 321 4700545</a>
+                                <a href="tel:{{ $contactPhone }}" class="text-xs text-muted hover:text-gold font-mono transition-colors">{{ $contactPhone }}</a>
                             </div>
                         </div>
 
@@ -421,7 +429,7 @@
                             </div>
                             <div>
                                 <span class="text-xs font-semibold text-espresso-900 block">General Inquiries</span>
-                                <span class="text-xs text-muted font-mono">concierge@byzunash.com</span>
+                                <a href="mailto:{{ $contactEmail }}" class="text-xs text-muted hover:text-gold font-mono transition-colors">{{ $contactEmail }}</a>
                             </div>
                         </div>
 
@@ -432,8 +440,8 @@
                             </div>
                             <div>
                                 <span class="text-xs font-semibold text-espresso-900 block">Hours of Operation</span>
-                                <span class="text-xs text-muted">Monday – Saturday: 10:00 AM – 8:00 PM PKT</span>
-                                <span class="text-[11px] text-muted-dark block">Sunday: WhatsApp Emergency Support</span>
+                                <span class="text-xs text-muted">{{ $timing }}</span>
+                                <span class="text-[11px] text-muted-dark block">Sunday: WhatsApp Support Available</span>
                             </div>
                         </div>
 
@@ -443,8 +451,8 @@
                                 <i data-lucide="map-pin" class="w-4 h-4"></i>
                             </div>
                             <div>
-                                <span class="text-xs font-semibold text-espresso-900 block">Studios & Dispatch Hubs</span>
-                                <span class="text-xs text-muted">Gulberg III, Lahore & Clifton, Karachi</span>
+                                <span class="text-xs font-semibold text-espresso-900 block">Workshop & Dispatch Hub</span>
+                                <span class="text-xs text-muted">{{ $workshopCity }}</span>
                                 <span class="text-[11px] text-muted-dark block">Nationwide Express Delivery to 120+ Cities</span>
                             </div>
                         </div>

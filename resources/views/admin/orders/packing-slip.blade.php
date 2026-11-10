@@ -3,21 +3,21 @@
 <head>
     <meta charset="utf-8">
     <title>Packing Slip #{{ $order->order_number }} | By Zunash Luxury Leather</title>
-    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
         * { box-sizing: border-box; }
         body { font-family: 'Plus Jakarta Sans', sans-serif; color: #120E0C; margin: 0; padding: 30px; background: #fff; font-size: 13px; }
         .slip-box { max-width: 820px; margin: auto; padding: 36px; border: 2px dashed #D5CBC0; border-radius: 16px; background: #fff; }
         .header { display: flex; justify-content: space-between; align-items: flex-start; padding-bottom: 20px; border-bottom: 2px solid #120E0C; }
-        .brand-title { font-family: 'Cinzel', serif; font-size: 26px; font-weight: 700; color: #120E0C; letter-spacing: 2px; margin: 0; }
-        .brand-sub { font-size: 10px; text-transform: uppercase; letter-spacing: 2px; color: #976239; font-weight: 700; margin-top: 3px; }
-        .slip-badge { display: inline-block; padding: 4px 12px; background: #120E0C; color: #E7D5BA; font-family: 'Cinzel', serif; font-size: 11px; font-weight: 700; letter-spacing: 1.5px; border-radius: 6px; margin-top: 6px; text-transform: uppercase; }
+        .brand-title { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 26px; font-weight: 800; color: #120E0C; letter-spacing: -0.5px; margin: 0; }
+        .brand-sub { font-size: 10px; text-transform: uppercase; letter-spacing: 1.5px; color: #976239; font-weight: 700; margin-top: 3px; }
+        .slip-badge { display: inline-block; padding: 4px 12px; background: #120E0C; color: #E7D5BA; font-family: 'Plus Jakarta Sans', sans-serif; font-size: 11px; font-weight: 700; letter-spacing: 0.5px; border-radius: 6px; margin-top: 6px; text-transform: uppercase; }
         .grid-2 { display: grid; grid-template-columns: 1.2fr 0.8fr; gap: 24px; margin: 24px 0; }
         .panel { padding: 16px; border-radius: 10px; background: #FAF7F2; border: 1px solid #ECE4DA; }
-        .panel-title { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: #976239; margin-bottom: 8px; display: flex; items-center; justify-content: space-between; }
-        .fragile-box { padding: 10px 14px; background: #FFF5F5; border: 1.5px solid #F87171; border-radius: 8px; color: #991B1B; font-weight: 700; font-size: 11px; text-transform: uppercase; letter-spacing: 1px; text-align: center; margin-bottom: 16px; }
+        .panel-title { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: #976239; margin-bottom: 8px; display: flex; items-center; justify-content: space-between; }
+        .fragile-box { padding: 10px 14px; background: #FFF5F5; border: 1.5px solid #F87171; border-radius: 8px; color: #991B1B; font-weight: 700; font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; text-align: center; margin-bottom: 16px; }
         .cod-banner { padding: 14px; border-radius: 10px; background: #FFFBEB; border: 2px solid #F59E0B; text-align: center; }
-        .cod-amount { font-family: 'Cinzel', serif; font-size: 24px; font-weight: 800; color: #92400E; margin-top: 4px; }
+        .cod-amount { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 24px; font-weight: 800; color: #92400E; margin-top: 4px; }
         table { width: 100%; border-collapse: collapse; margin-top: 15px; }
         th { text-align: left; font-size: 10px; text-transform: uppercase; letter-spacing: 1px; color: #7F7368; padding: 10px 8px; border-bottom: 2px solid #120E0C; background: #FAF8F5; }
         td { padding: 12px 8px; border-bottom: 1px solid #F0EAE1; font-size: 12px; }
@@ -113,7 +113,7 @@
                             <div style="font-size: 11px; font-weight: 800; text-transform: uppercase; color: #065F46;">
                                 Direct Bank Transfer (IBFT) — Paid in Full
                             </div>
-                            <div style="font-family: 'Cinzel', serif; font-size: 20px; font-weight: 800; color: #047857; margin-top: 4px;">
+                            <div style="font-family: 'Plus Jakarta Sans', sans-serif; font-size: 20px; font-weight: 800; color: #047857; margin-top: 4px;">
                                 DO NOT COLLECT CASH
                             </div>
                             <div style="font-size: 10px; color: #047857; margin-top: 4px;">

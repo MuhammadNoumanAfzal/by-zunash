@@ -18,6 +18,7 @@ use App\Http\Controllers\Admin\DealController as AdminDealController;
 use App\Http\Controllers\Admin\AbandonedCartController as AdminAbandonedCartController;
 use App\Http\Controllers\Admin\CouponController as AdminCouponController;
 use App\Http\Controllers\Admin\AnalyticsController as AdminAnalyticsController;
+use App\Http\Controllers\Admin\SearchController as AdminSearchController;
 
 /*
 |--------------------------------------------------------------------------
@@ -54,6 +55,7 @@ Route::get('/contact', [StoreController::class, 'contact'])->name('contact');
 Route::post('/contact', [StoreController::class, 'submitContact'])->name('contact.submit');
 Route::get('/faq', [StoreController::class, 'faq'])->name('faq');
 Route::get('/search', [StoreController::class, 'search'])->name('search');
+Route::get('/search/live', [StoreController::class, 'searchLive'])->name('search.live');
 
 // Policy Pages
 Route::prefix('policies')->name('policy.')->group(function () {
@@ -175,5 +177,9 @@ Route::prefix('admin')->name('admin.')->group(function () {
         // Store Settings
         Route::get('/settings', [AdminSettingController::class, 'index'])->name('settings.index');
         Route::post('/settings', [AdminSettingController::class, 'update'])->name('settings.update');
+
+        // Global Unified Search & Live Autocomplete
+        Route::get('/search', [AdminSearchController::class, 'index'])->name('search');
+        Route::get('/search/live', [AdminSearchController::class, 'live'])->name('search.live');
     });
 });

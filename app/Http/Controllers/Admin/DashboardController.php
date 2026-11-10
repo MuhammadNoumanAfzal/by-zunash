@@ -49,32 +49,51 @@ class DashboardController extends Controller
             ];
         });
 
-        // 1. 12-Month Revenue & Sales Trajectory Curve
-        $monthlyTrajectory = [
-            ['month' => 'Jan', 'revenue' => 19500, 'volume' => 4],
-            ['month' => 'Feb', 'revenue' => 22000, 'volume' => 5],
-            ['month' => 'Mar', 'revenue' => 25800, 'volume' => 6],
-            ['month' => 'Apr', 'revenue' => 19000, 'volume' => 4],
-            ['month' => 'May', 'revenue' => 24500, 'volume' => 5],
-            ['month' => 'Jun', 'revenue' => 23800, 'volume' => 5],
-            ['month' => 'Jul', 'revenue' => 27900, 'volume' => 6],
-            ['month' => 'Aug', 'revenue' => 26400, 'volume' => 6],
-            ['month' => 'Sep', 'revenue' => 31200, 'volume' => 7],
-            ['month' => 'Oct', 'revenue' => 32800, 'volume' => 8],
-            ['month' => 'Nov', 'revenue' => 34100, 'volume' => 8],
-            ['month' => 'Dec', 'revenue' => 34800, 'volume' => 9],
-        ];
+        // 1. 12-Month Revenue & Sales Trajectory Curve (Dynamic Trailing 12 Months)
+        $monthlyTrajectory = [];
+        for ($i = 11; $i >= 0; $i--) {
+            $targetDate = now()->subMonths($i);
+            $year = $targetDate->year;
+            $month = $targetDate->month;
+            $monthLabel = $targetDate->format('M');
 
-        // 2. 7-Day Velocity
-        $weeklyTrajectory = [
-            ['day' => 'Mon', 'revenue' => 8400, 'orders' => 2],
-            ['day' => 'Tue', 'revenue' => 14200, 'orders' => 3],
-            ['day' => 'Wed', 'revenue' => 9800, 'orders' => 2],
-            ['day' => 'Thu', 'revenue' => 18500, 'orders' => 4],
-            ['day' => 'Fri', 'revenue' => 23600, 'orders' => 5],
-            ['day' => 'Sat', 'revenue' => 29400, 'orders' => 6],
-            ['day' => 'Sun', 'revenue' => 18000, 'orders' => 4],
-        ];
+            $rev = (int) Order::whereYear('created_at', $year)
+                ->whereMonth('created_at', $month)
+                ->where('order_status', '!=', 'cancelled')
+                ->sum('total');
+
+            $vol = Order::whereYear('created_at', $year)
+                ->whereMonth('created_at', $month)
+                ->where('order_status', '!=', 'cancelled')
+                ->count();
+
+            $monthlyTrajectory[] = [
+                'month' => $monthLabel,
+                'revenue' => $rev,
+                'volume' => $vol,
+            ];
+        }
+
+        // 2. 7-Day Velocity (Dynamic Trailing 7 Days)
+        $weeklyTrajectory = [];
+        for ($i = 6; $i >= 0; $i--) {
+            $targetDay = now()->subDays($i);
+            $dayLabel = $targetDay->format('D');
+
+            $rev = (int) Order::whereDate('created_at', $targetDay->toDateString())
+                ->where('order_status', '!=', 'cancelled')
+                ->sum('total');
+
+            $ord = Order::whereDate('created_at', $targetDay->toDateString())
+                ->where('order_status', '!=', 'cancelled')
+                ->count();
+
+            $weeklyTrajectory[] = [
+                'day' => $dayLabel,
+                'revenue' => $rev,
+                'orders' => $ord,
+            ];
+        }
 
         // 3. Orders Fulfillment Status Breakdown
         $orderStatusBreakdown = [
@@ -105,24 +124,21 @@ class DashboardController extends Controller
         ];
 
         // 5. Regional Pakistani City Distribution
-        $cities = Order::select('city')
+        $cities = Order::whereNotNull('city')
+            ->where('city', '!=', '')
+            ->select('city')
             ->selectRaw('count(*) as count, sum(total) as revenue')
             ->groupBy('city')
             ->orderByDesc('revenue')
             ->get();
 
         if ($cities->isEmpty()) {
-            $regionalDistribution = collect([
-                ['city' => 'Lahore (DHA & Gulberg)', 'orders' => 5, 'revenue' => 68500, 'share' => 45],
-                ['city' => 'Karachi (Clifton & Defence)', 'orders' => 3, 'revenue' => 42200, 'share' => 28],
-                ['city' => 'Islamabad (F-Sectors)', 'orders' => 2, 'revenue' => 27800, 'share' => 18],
-                ['city' => 'Rawalpindi (Cantt)', 'orders' => 1, 'revenue' => 12800, 'share' => 9],
-            ]);
+            $regionalDistribution = collect([]);
         } else {
             $regionalDistribution = $cities->map(function ($c) use ($totalRevenue) {
                 $pct = $totalRevenue > 0 ? round(($c->revenue / $totalRevenue) * 100) : 0;
                 return [
-                    'city' => $c->city ?: 'Lahore',
+                    'city' => $c->city,
                     'orders' => $c->count,
                     'revenue' => (int) $c->revenue,
                     'share' => $pct,

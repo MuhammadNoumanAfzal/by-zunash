@@ -52,6 +52,39 @@
         activeFilter: 'all',
         writeModalOpen: false,
         formRating: 5,
+        formTitle: '',
+        formComment: '',
+        presets: [
+            {
+                label: '✨ Heirloom Quality',
+                title: 'Impeccable leathercraft & flawless stitching',
+                comment: 'The quality of the full-grain hide and hand-burnished edges exceeded my expectations. Feels substantial, smells amazing, and the hardware is authoritative.'
+            },
+            {
+                label: '💼 Perfect Everyday Fit',
+                title: 'Sublime leather finish & tailored dimensions',
+                comment: 'Remarkably slim in suit pockets yet effortlessly holds Pakistani currency notes. The craftsmanship is on par with international luxury fashion houses.'
+            },
+            {
+                label: '🚚 Doorstep Inspection',
+                title: 'Exceptional doorstep parcel inspection experience',
+                comment: 'Being able to inspect the genuine leather hide and stitching at my doorstep before paying COD made ordering online completely risk-free. Truly impressed.'
+            },
+            {
+                label: '🔄 Swivel Mechanism',
+                title: 'Solid swivel buckle mechanism & versatile styling',
+                comment: 'Transitions smoothly between formal obsidian black and rich espresso calfskin. The buckle click is authoritative and solid. Best leather piece I have owned in Pakistan.'
+            },
+            {
+                label: '🎁 Regal Gifting',
+                title: 'Bespoke luxury presentation & magnetic rigid box',
+                comment: 'Ordered as a gift and the packaging alone was regal. The aroma of genuine vegetable-tanned hide and custom gold hardware are extraordinary.'
+            }
+        ],
+        applyPreset(preset) {
+            this.formTitle = preset.title;
+            this.formComment = preset.comment;
+        },
         reviews: {{ json_encode($reviews) }},
         filterReviews(cat) {
             this.activeFilter = cat;
@@ -97,7 +130,13 @@
                 <span>◈</span>
                 <span>Verified Client Patronage</span>
                 <span>◈</span>
-                <span class="text-white font-mono text-[10px]">4.9 / 5.0 Rating</span>
+                <span class="text-white font-mono text-[10px]">
+                    @if($reviewsCount > 0)
+                        {{ number_format($averageRating, 1) }} / 5.0 Rating ({{ $reviewsCount }} {{ Str::plural('Review', $reviewsCount) }})
+                    @else
+                        Authentic Reviews
+                    @endif
+                </span>
             </div>
 
             <h1 class="font-serif text-3xl sm:text-4xl lg:text-5xl font-bold text-white mb-3 leading-tight tracking-tight">
@@ -145,63 +184,50 @@
                 <!-- Overall Score Box (4 cols) -->
                 <div class="lg:col-span-4 text-center lg:text-left lg:border-r lg:border-ivory-300/80 lg:pr-8">
                     <span class="text-xs uppercase tracking-widest text-gold-700 font-serif font-bold block mb-1">Overall Client Rating</span>
-                    <div class="flex items-baseline justify-center lg:justify-start gap-3">
-                        <span class="font-serif text-5xl sm:text-6xl font-bold text-espresso-950">4.9</span>
-                        <span class="text-sm text-muted font-light">/ 5.0 Star Average</span>
-                    </div>
+                    @if($reviewsCount > 0)
+                        <div class="flex items-baseline justify-center lg:justify-start gap-3">
+                            <span class="font-serif text-5xl sm:text-6xl font-bold text-espresso-950">{{ number_format($averageRating, 1) }}</span>
+                            <span class="text-sm text-muted font-light">/ 5.0 Star Average</span>
+                        </div>
 
-                    <div class="flex items-center justify-center lg:justify-start gap-1 text-gold my-2">
-                        @for($i = 0; $i < 5; $i++)
-                            <i data-lucide="star" class="w-4 h-4 fill-gold"></i>
-                        @endfor
-                    </div>
+                        <div class="flex items-center justify-center lg:justify-start gap-1 text-gold my-2">
+                            @for($i = 1; $i <= 5; $i++)
+                                <i data-lucide="star" class="w-4 h-4 {{ $i <= round($averageRating) ? 'fill-gold text-gold' : 'text-ivory-300' }}"></i>
+                            @endfor
+                        </div>
 
-                    <p class="text-xs text-muted leading-relaxed font-light">
-                        Based on <strong>540+ verified client evaluations</strong> across Pakistan with zero sponsored reviews.
-                    </p>
+                        <p class="text-xs text-muted leading-relaxed font-light">
+                            Based on <strong>{{ $reviewsCount }} verified client {{ Str::plural('evaluation', $reviewsCount) }}</strong> across Pakistan with zero sponsored reviews.
+                        </p>
+                    @else
+                        <div class="flex items-baseline justify-center lg:justify-start gap-3">
+                            <span class="font-serif text-3xl sm:text-4xl font-bold text-espresso-950">0.0</span>
+                            <span class="text-sm text-muted font-light">/ 5.0 Rating</span>
+                        </div>
+
+                        <div class="flex items-center justify-center lg:justify-start gap-1 text-ivory-300 my-2">
+                            @for($i = 1; $i <= 5; $i++)
+                                <i data-lucide="star" class="w-4 h-4"></i>
+                            @endfor
+                        </div>
+
+                        <p class="text-xs text-muted leading-relaxed font-light">
+                            No verified reviews published yet. Be the first to share your experience!
+                        </p>
+                    @endif
                 </div>
 
                 <!-- Star Distribution Progress Bars (4 cols) -->
                 <div class="lg:col-span-4 space-y-2">
-                    <div class="flex items-center gap-3 text-xs">
-                        <span class="w-12 text-espresso-900 font-semibold font-mono">5 Stars</span>
-                        <div class="flex-1 h-2 rounded-full bg-ivory-200 overflow-hidden">
-                            <div class="h-full bg-gold rounded-full w-[94%]"></div>
+                    @foreach([5, 4, 3, 2, 1] as $star)
+                        <div class="flex items-center gap-3 text-xs {{ ($distribution[$star] ?? 0) === 0 ? 'opacity-60' : '' }}">
+                            <span class="w-12 text-espresso-900 font-semibold font-mono">{{ $star }} {{ $star == 1 ? 'Star' : 'Stars' }}</span>
+                            <div class="flex-1 h-2 rounded-full bg-ivory-200 overflow-hidden">
+                                <div class="h-full bg-gold rounded-full transition-all duration-500" style="width: {{ $distribution[$star] ?? 0 }}%"></div>
+                            </div>
+                            <span class="w-10 text-right text-muted font-mono">{{ $distribution[$star] ?? 0 }}%</span>
                         </div>
-                        <span class="w-10 text-right text-muted font-mono">94%</span>
-                    </div>
-
-                    <div class="flex items-center gap-3 text-xs">
-                        <span class="w-12 text-espresso-900 font-semibold font-mono">4 Stars</span>
-                        <div class="flex-1 h-2 rounded-full bg-ivory-200 overflow-hidden">
-                            <div class="h-full bg-gold-400 rounded-full w-[6%]"></div>
-                        </div>
-                        <span class="w-10 text-right text-muted font-mono">6%</span>
-                    </div>
-
-                    <div class="flex items-center gap-3 text-xs opacity-60">
-                        <span class="w-12 text-espresso-900 font-semibold font-mono">3 Stars</span>
-                        <div class="flex-1 h-2 rounded-full bg-ivory-200 overflow-hidden">
-                            <div class="h-full bg-gold rounded-full w-[0%]"></div>
-                        </div>
-                        <span class="w-10 text-right text-muted font-mono">0%</span>
-                    </div>
-
-                    <div class="flex items-center gap-3 text-xs opacity-60">
-                        <span class="w-12 text-espresso-900 font-semibold font-mono">2 Stars</span>
-                        <div class="flex-1 h-2 rounded-full bg-ivory-200 overflow-hidden">
-                            <div class="h-full bg-gold rounded-full w-[0%]"></div>
-                        </div>
-                        <span class="w-10 text-right text-muted font-mono">0%</span>
-                    </div>
-
-                    <div class="flex items-center gap-3 text-xs opacity-60">
-                        <span class="w-12 text-espresso-900 font-semibold font-mono">1 Star</span>
-                        <div class="flex-1 h-2 rounded-full bg-ivory-200 overflow-hidden">
-                            <div class="h-full bg-gold rounded-full w-[0%]"></div>
-                        </div>
-                        <span class="w-10 text-right text-muted font-mono">0%</span>
-                    </div>
+                    @endforeach
                 </div>
 
                 <!-- Verified Guarantees Badge (4 cols) -->
@@ -243,58 +269,20 @@
                         ? 'bg-espresso-950 text-ivory shadow-sm ring-2 ring-gold/40' 
                         : 'bg-ivory-100 text-espresso-800 hover:bg-ivory-200 border border-ivory-300/80'"
                 >
-                    All Patrons (8)
+                    All Patrons (<span x-text="reviews.length"></span>)
                 </button>
-                <button 
-                    type="button" 
-                    @click="filterReviews('belts')"
-                    class="px-3.5 py-1.5 rounded-full text-xs font-semibold tracking-wider uppercase transition-all focus:outline-none whitespace-nowrap"
-                    :class="activeFilter === 'belts' 
-                        ? 'bg-espresso-950 text-ivory shadow-sm ring-2 ring-gold/40' 
-                        : 'bg-ivory-100 text-espresso-800 hover:bg-ivory-200 border border-ivory-300/80'"
-                >
-                    Leather Belts
-                </button>
-                <button 
-                    type="button" 
-                    @click="filterReviews('wallets')"
-                    class="px-3.5 py-1.5 rounded-full text-xs font-semibold tracking-wider uppercase transition-all focus:outline-none whitespace-nowrap"
-                    :class="activeFilter === 'wallets' 
-                        ? 'bg-espresso-950 text-ivory shadow-sm ring-2 ring-gold/40' 
-                        : 'bg-ivory-100 text-espresso-800 hover:bg-ivory-200 border border-ivory-300/80'"
-                >
-                    Wallets & Cardholders
-                </button>
-                <button 
-                    type="button" 
-                    @click="filterReviews('handbags')"
-                    class="px-3.5 py-1.5 rounded-full text-xs font-semibold tracking-wider uppercase transition-all focus:outline-none whitespace-nowrap"
-                    :class="activeFilter === 'handbags' 
-                        ? 'bg-espresso-950 text-ivory shadow-sm ring-2 ring-gold/40' 
-                        : 'bg-ivory-100 text-espresso-800 hover:bg-ivory-200 border border-ivory-300/80'"
-                >
-                    Handbags
-                </button>
-                <button 
-                    type="button" 
-                    @click="filterReviews('shoulder-bags')"
-                    class="px-3.5 py-1.5 rounded-full text-xs font-semibold tracking-wider uppercase transition-all focus:outline-none whitespace-nowrap"
-                    :class="activeFilter === 'shoulder-bags' 
-                        ? 'bg-espresso-950 text-ivory shadow-sm ring-2 ring-gold/40' 
-                        : 'bg-ivory-100 text-espresso-800 hover:bg-ivory-200 border border-ivory-300/80'"
-                >
-                    Shoulder Bags
-                </button>
-                <button 
-                    type="button" 
-                    @click="filterReviews('accessories')"
-                    class="px-3.5 py-1.5 rounded-full text-xs font-semibold tracking-wider uppercase transition-all focus:outline-none whitespace-nowrap"
-                    :class="activeFilter === 'accessories' 
-                        ? 'bg-espresso-950 text-ivory shadow-sm ring-2 ring-gold/40' 
-                        : 'bg-ivory-100 text-espresso-800 hover:bg-ivory-200 border border-ivory-300/80'"
-                >
-                    Accessories
-                </button>
+                @foreach($categories as $cat)
+                    <button 
+                        type="button" 
+                        @click="filterReviews('{{ $cat->slug }}')"
+                        class="px-3.5 py-1.5 rounded-full text-xs font-semibold tracking-wider uppercase transition-all focus:outline-none whitespace-nowrap"
+                        :class="activeFilter === '{{ $cat->slug }}' 
+                            ? 'bg-espresso-950 text-ivory shadow-sm ring-2 ring-gold/40' 
+                            : 'bg-ivory-100 text-espresso-800 hover:bg-ivory-200 border border-ivory-300/80'"
+                    >
+                        {{ $cat->name }}
+                    </button>
+                @endforeach
             </div>
 
             <div class="text-xs text-muted font-light">
@@ -389,6 +377,25 @@
                 </div>
             </template>
 
+            <!-- Elegant Empty State when No Reviews Match -->
+            <div x-show="filteredList.length === 0" class="col-span-full py-16 text-center bg-white rounded-2xl border border-dashed border-ivory-300 p-8 shadow-xs">
+                <div class="w-14 h-14 rounded-full bg-gold/10 text-gold mx-auto flex items-center justify-center mb-4 border border-gold/25">
+                    <i data-lucide="message-square" class="w-7 h-7"></i>
+                </div>
+                <h3 class="font-serif text-xl font-bold text-espresso-950 mb-2">No Client Reviews Yet</h3>
+                <p class="text-xs text-muted max-w-md mx-auto mb-6 leading-relaxed">
+                    Be the first to share your impressions of our handmade Pakistani leathercraft. Your verified evaluation will be featured here once submitted.
+                </p>
+                <button 
+                    type="button" 
+                    @click="writeModalOpen = true"
+                    class="px-6 py-3 bg-espresso-950 hover:bg-chocolate-800 text-gold font-serif text-xs uppercase tracking-widest font-bold rounded-xl border border-gold/40 shadow-xs inline-flex items-center gap-2 transition-all active:scale-95"
+                >
+                    <i data-lucide="star" class="w-3.5 h-3.5 fill-gold"></i>
+                    <span>Share Your Review</span>
+                </button>
+            </div>
+
         </div>
 
     </div>
@@ -425,7 +432,7 @@
 
 
     <!-- =========================================================================
-         SECTION 5: CLIENT REVIEW SUBMISSION MODAL
+         SECTION 5: CLIENT REVIEW SUBMISSION MODAL (No Scrollbar & 1-Click Custom Presets)
          ========================================================================= -->
     <div 
         x-show="writeModalOpen" 
@@ -436,114 +443,146 @@
         x-transition:leave="transition ease-in duration-200"
         x-transition:leave-start="opacity-100"
         x-transition:leave-end="opacity-0"
-        class="fixed inset-0 z-50 bg-black/75 backdrop-blur-md flex items-center justify-center p-4"
+        class="fixed inset-0 z-50 bg-black/75 backdrop-blur-md flex items-center justify-center p-3 sm:p-4"
         @click.self="writeModalOpen = false"
     >
-        <div class="bg-white rounded-2xl max-w-lg w-full p-6 sm:p-8 shadow-2xl border border-ivory-300 relative text-espresso-900 max-h-[90vh] overflow-y-auto">
+        <div class="bg-white rounded-2xl max-w-xl w-full p-5 sm:p-6 shadow-2xl border border-ivory-300 relative text-espresso-900 max-h-[92vh] overflow-y-auto scrollbar-none [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
             
             <button 
                 type="button" 
                 @click="writeModalOpen = false"
-                class="absolute top-5 right-5 p-2 rounded-full text-muted hover:text-espresso-950 hover:bg-ivory-100 transition-colors focus:outline-none"
+                class="absolute top-4 right-4 p-1.5 rounded-full text-muted hover:text-espresso-950 hover:bg-ivory-100 transition-colors focus:outline-none"
                 aria-label="Close modal"
             >
                 <i data-lucide="x" class="w-5 h-5"></i>
             </button>
 
-            <div class="flex items-center gap-2 text-gold-700 mb-1">
+            <div class="flex items-center gap-2 text-gold-700 mb-0.5">
                 <i data-lucide="award" class="w-4 h-4"></i>
-                <span class="text-xs font-serif uppercase tracking-widest font-bold">Patron Evaluation</span>
+                <span class="text-[11px] font-serif uppercase tracking-widest font-bold">Patron Evaluation</span>
             </div>
-            <h3 class="font-serif text-2xl font-bold text-espresso-950 mb-2">Share Your Experience</h3>
-            <p class="text-xs text-muted leading-relaxed mb-5">
-                Your feedback directly informs our master leathercraft artisans in Lahore and Karachi.
+            <h3 class="font-serif text-xl sm:text-2xl font-bold text-espresso-950 mb-1">Share Your Experience</h3>
+            <p class="text-xs text-muted leading-relaxed mb-4">
+                Your feedback directly informs our master leathercraft artisans in {{ !empty($storeSettings['warehouse_city']) ? $storeSettings['warehouse_city'] : 'our atelier' }}.
             </p>
 
-            <form action="{{ route('reviews.submit') }}" method="POST" class="space-y-4">
+            <form action="{{ route('reviews.submit') }}" method="POST" class="space-y-3.5">
                 @csrf
 
                 <!-- Rating Selector -->
                 <div>
-                    <label class="block text-xs uppercase tracking-wider font-bold text-espresso-900 mb-1.5">Overall Rating *</label>
-                    <div class="flex items-center gap-2">
+                    <div class="flex items-center justify-between">
+                        <label class="block text-[11px] uppercase tracking-wider font-bold text-espresso-900">Overall Rating *</label>
+                        <span class="text-xs font-bold text-espresso-900 font-mono" x-text="formRating + ' / 5 Stars'"></span>
+                    </div>
+                    <div class="flex items-center gap-1.5 mt-1">
                         <template x-for="star in [1, 2, 3, 4, 5]" :key="star">
                             <button 
                                 type="button" 
                                 @click="formRating = star"
-                                class="p-1 focus:outline-none transition-transform hover:scale-125"
+                                class="p-0.5 focus:outline-none transition-transform hover:scale-125"
                             >
                                 <i 
                                     data-lucide="star" 
-                                    class="w-6 h-6 transition-colors"
+                                    class="w-5 h-5 transition-colors"
                                     :class="star <= formRating ? 'text-gold fill-gold' : 'text-ivory-300'"
                                 ></i>
                             </button>
                         </template>
-                        <span class="text-xs font-bold text-espresso-900 ml-2" x-text="formRating + ' / 5 Stars'"></span>
                     </div>
                     <input type="hidden" name="rating" :value="formRating">
                 </div>
 
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+                <!-- Client Info: Name & City -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <div>
-                        <label class="block text-xs uppercase tracking-wider font-semibold text-espresso-900 mb-1">Your Full Name *</label>
+                        <label class="block text-[11px] uppercase tracking-wider font-semibold text-espresso-900 mb-1">Your Full Name *</label>
                         <input 
                             type="text" 
                             name="author" 
-                            placeholder="e.g. Tariq Mehmood" 
-                            class="w-full px-3.5 py-2.5 bg-ivory-50 border border-ivory-300 rounded-xl text-xs text-espresso-950 focus:outline-none focus:ring-2 focus:ring-gold/40 focus:border-gold"
+                            placeholder="e.g., Tariq Mehmood" 
+                            class="w-full px-3 py-2 bg-ivory-50 border border-ivory-300 rounded-xl text-xs text-espresso-950 focus:outline-none focus:ring-2 focus:ring-gold/40 focus:border-gold"
                             required
                         >
                     </div>
 
                     <div>
-                        <label class="block text-xs uppercase tracking-wider font-semibold text-espresso-900 mb-1">City / Region *</label>
+                        <label class="block text-[11px] uppercase tracking-wider font-semibold text-espresso-900 mb-1">City / Region *</label>
                         <input 
                             type="text" 
                             name="city" 
-                            placeholder="e.g. Islamabad (F-8)" 
-                            class="w-full px-3.5 py-2.5 bg-ivory-50 border border-ivory-300 rounded-xl text-xs text-espresso-950 focus:outline-none focus:ring-2 focus:ring-gold/40 focus:border-gold"
+                            placeholder="e.g., Islamabad (F-8)" 
+                            class="w-full px-3 py-2 bg-ivory-50 border border-ivory-300 rounded-xl text-xs text-espresso-950 focus:outline-none focus:ring-2 focus:ring-gold/40 focus:border-gold"
                             required
                         >
                     </div>
                 </div>
 
-                <div>
-                    <label class="block text-xs uppercase tracking-wider font-semibold text-espresso-900 mb-1">Product Purchased *</label>
-                    <input 
-                        type="text" 
-                        name="product_name" 
-                        placeholder="e.g. The Royal Reversible Calfskin Belt" 
-                        class="w-full px-3.5 py-2.5 bg-ivory-50 border border-ivory-300 rounded-xl text-xs text-espresso-950 focus:outline-none focus:ring-2 focus:ring-gold/40 focus:border-gold"
-                        required
-                    >
+                <!-- Product & Headline -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-[11px] uppercase tracking-wider font-semibold text-espresso-900 mb-1">Product Purchased *</label>
+                        <input 
+                            type="text" 
+                            name="product_name" 
+                            placeholder="e.g., The Royal Reversible Belt" 
+                            class="w-full px-3 py-2 bg-ivory-50 border border-ivory-300 rounded-xl text-xs text-espresso-950 focus:outline-none focus:ring-2 focus:ring-gold/40 focus:border-gold"
+                            required
+                        >
+                    </div>
+
+                    <div>
+                        <label class="block text-[11px] uppercase tracking-wider font-semibold text-espresso-900 mb-1">Review Headline *</label>
+                        <input 
+                            type="text" 
+                            name="title" 
+                            x-model="formTitle"
+                            placeholder="e.g., Impeccable craftsmanship and authentic hide" 
+                            class="w-full px-3 py-2 bg-ivory-50 border border-ivory-300 rounded-xl text-xs text-espresso-950 focus:outline-none focus:ring-2 focus:ring-gold/40 focus:border-gold"
+                            required
+                        >
+                    </div>
                 </div>
 
-                <div>
-                    <label class="block text-xs uppercase tracking-wider font-semibold text-espresso-900 mb-1">Review Headline *</label>
-                    <input 
-                        type="text" 
-                        name="title" 
-                        placeholder="e.g. Impeccable craftsmanship and authentic hide" 
-                        class="w-full px-3.5 py-2.5 bg-ivory-50 border border-ivory-300 rounded-xl text-xs text-espresso-950 focus:outline-none focus:ring-2 focus:ring-gold/40 focus:border-gold"
-                        required
-                    >
+                <!-- 1-Click Quick Feedback Custom Presets -->
+                <div class="pt-1">
+                    <div class="flex items-center justify-between mb-1.5">
+                        <label class="block text-[11px] uppercase tracking-wider font-semibold text-espresso-900">
+                            1-Click Quick Praise Presets
+                        </label>
+                        <span class="text-[10px] text-gold-700 font-medium">Click to auto-fill description</span>
+                    </div>
+                    <div class="flex items-center gap-1.5 overflow-x-auto scrollbar-none [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden pb-1">
+                        <template x-for="(p, idx) in presets" :key="idx">
+                            <button 
+                                type="button" 
+                                @click="applyPreset(p)"
+                                class="px-2.5 py-1 rounded-lg text-[11px] bg-ivory-100 hover:bg-gold/15 hover:text-espresso-950 text-espresso-800 border border-ivory-300 hover:border-gold/50 transition-all shrink-0 active:scale-95 flex items-center gap-1"
+                                :class="formComment === p.comment ? 'bg-gold/20 border-gold text-espresso-950 font-semibold' : ''"
+                            >
+                                <span x-text="p.label"></span>
+                            </button>
+                        </template>
+                    </div>
                 </div>
 
+                <!-- Feedback Details Textarea -->
                 <div>
-                    <label class="block text-xs uppercase tracking-wider font-semibold text-espresso-900 mb-1">Your Feedback & Details *</label>
+                    <label class="block text-[11px] uppercase tracking-wider font-semibold text-espresso-900 mb-1">Your Feedback & Details *</label>
                     <textarea 
                         name="comment" 
-                        rows="3" 
+                        x-model="formComment"
+                        rows="2" 
                         placeholder="Describe your impressions of the leather texture, hardware weight, stitching, or packaging..."
-                        class="w-full p-3.5 bg-ivory-50 border border-ivory-300 rounded-xl text-xs text-espresso-950 focus:outline-none focus:ring-2 focus:ring-gold/40 focus:border-gold resize-y"
+                        class="w-full p-3 bg-ivory-50 border border-ivory-300 rounded-xl text-xs text-espresso-950 focus:outline-none focus:ring-2 focus:ring-gold/40 focus:border-gold resize-y"
                         required
                     ></textarea>
                 </div>
 
+                <!-- Submit Button -->
                 <button 
                     type="submit" 
-                    class="w-full py-3.5 bg-espresso hover:bg-chocolate-800 text-ivory text-xs uppercase tracking-widest font-semibold rounded-xl shadow-md transition-all border border-gold/30"
+                    class="w-full py-3 bg-espresso hover:bg-chocolate-800 text-ivory text-xs uppercase tracking-widest font-semibold rounded-xl shadow-md transition-all border border-gold/30 active:scale-98"
                 >
                     Submit Verified Review
                 </button>

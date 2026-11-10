@@ -1122,15 +1122,17 @@
                     Appreciated Across Pakistan
                 </h2>
                 <div class="flex items-center gap-2 mt-1.5">
-                    <div class="flex items-center text-gold">
-                        <i data-lucide="star" class="w-3.5 h-3.5 fill-gold"></i>
-                        <i data-lucide="star" class="w-3.5 h-3.5 fill-gold"></i>
-                        <i data-lucide="star" class="w-3.5 h-3.5 fill-gold"></i>
-                        <i data-lucide="star" class="w-3.5 h-3.5 fill-gold"></i>
-                        <i data-lucide="star" class="w-3.5 h-3.5 fill-gold"></i>
-                    </div>
-                    <span class="text-xs font-semibold text-white">4.9/5 Rating</span>
-                    <span class="text-xs text-ivory-300/70">• 500+ Discerning Patrons in Lahore, Karachi & Islamabad</span>
+                    @if(isset($testimonials) && $testimonials->isNotEmpty())
+                        <div class="flex items-center text-gold">
+                            @for($i = 1; $i <= 5; $i++)
+                                <i data-lucide="star" class="w-3.5 h-3.5 fill-gold"></i>
+                            @endfor
+                        </div>
+                        <span class="text-xs font-semibold text-white">{{ number_format($testimonials->avg('rating'), 1) }}/5 Rating</span>
+                        <span class="text-xs text-ivory-300/70">• {{ $testimonials->count() }} Verified Patrons</span>
+                    @else
+                        <span class="text-xs text-ivory-300/70">Authentic patron evaluations of By Zunash leathercraft</span>
+                    @endif
                 </div>
             </div>
 
@@ -1140,119 +1142,102 @@
                     href="{{ route('reviews') }}" 
                     class="text-xs uppercase tracking-widest text-gold hover:text-white transition-colors font-semibold flex items-center gap-1.5 mr-1"
                 >
-                    <span>All Reviews (4.9★)</span>
+                    <span>All Reviews</span>
                     <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
                 </a>
-                <button 
-                    type="button" 
-                    @click="scrollPrev()" 
-                    class="w-9 h-9 rounded-full border border-gold/40 hover:border-gold bg-espresso-900/80 hover:bg-gold text-white hover:text-espresso-950 flex items-center justify-center transition-all duration-200 shadow-md active:scale-95"
-                    aria-label="Previous review"
-                >
-                    <i data-lucide="chevron-left" class="w-4 h-4"></i>
-                </button>
-                <button 
-                    type="button" 
-                    @click="scrollNext()" 
-                    class="w-9 h-9 rounded-full border border-gold/40 hover:border-gold bg-espresso-900/80 hover:bg-gold text-white hover:text-espresso-950 flex items-center justify-center transition-all duration-200 shadow-md active:scale-95"
-                    aria-label="Next review"
-                >
-                    <i data-lucide="chevron-right" class="w-4 h-4"></i>
-                </button>
+                @if(isset($testimonials) && $testimonials->isNotEmpty())
+                    <button 
+                        type="button" 
+                        @click="scrollPrev()" 
+                        class="w-9 h-9 rounded-full border border-gold/40 hover:border-gold bg-espresso-900/80 hover:bg-gold text-white hover:text-espresso-950 flex items-center justify-center transition-all duration-200 shadow-md active:scale-95"
+                        aria-label="Previous review"
+                    >
+                        <i data-lucide="chevron-left" class="w-4 h-4"></i>
+                    </button>
+                    <button 
+                        type="button" 
+                        @click="scrollNext()" 
+                        class="w-9 h-9 rounded-full border border-gold/40 hover:border-gold bg-espresso-900/80 hover:bg-gold text-white hover:text-espresso-950 flex items-center justify-center transition-all duration-200 shadow-md active:scale-95"
+                        aria-label="Next review"
+                    >
+                        <i data-lucide="chevron-right" class="w-4 h-4"></i>
+                    </button>
+                @endif
             </div>
         </div>
 
-        <!-- Horizontal Multi-Card Slider Track (Shows real card shapes side-by-side!) -->
-        <div 
-            x-ref="reviewsTrack"
-            class="flex items-stretch gap-5 overflow-x-auto scroll-smooth snap-x snap-mandatory hide-scrollbar pb-2 pt-1 -mx-4 px-4 sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8"
-        >
-            @php
-                $testimonials = [
-                    [
-                        'name' => 'Dr. Hamza Khan',
-                        'city' => 'Lahore',
-                        'initials' => 'HK',
-                        'product' => 'The Royal Reversible Belt',
-                        'quote' => 'Without question the finest belt I have owned in Pakistan. The swivel buckle feels authoritative, clicks with solid precision, and the espresso calfskin is flawless.',
-                    ],
-                    [
-                        'name' => 'Ayesha Tariq',
-                        'city' => 'Islamabad',
-                        'initials' => 'AT',
-                        'product' => 'Signature Satchel',
-                        'quote' => 'Ordered for my anniversary. The packaging alone was regal. The aroma of genuine vegetable-tanned leather and gold lock easily rival European luxury houses.',
-                    ],
-                    [
-                        'name' => 'Bilal Mansoor',
-                        'city' => 'Karachi',
-                        'initials' => 'BM',
-                        'product' => 'Heritage Bifold Wallet',
-                        'quote' => 'Finding a leather wallet properly proportioned for Pakistani 5000-rupee notes that remains remarkably slim in a tailored suit pocket is rare. Fantastic COD experience.',
-                    ],
-                    [
-                        'name' => 'Maryam Farooq',
-                        'city' => 'Rawalpindi',
-                        'initials' => 'MF',
-                        'product' => 'Empress Structured Tote',
-                        'quote' => 'Holds my 14-inch MacBook securely while exuding quiet luxury in corporate boardrooms. The hand-burnished handles are incredibly comfortable even when fully loaded.',
-                    ],
-                    [
-                        'name' => 'Usman Ali Khan',
-                        'city' => 'Faisalabad',
-                        'initials' => 'UK',
-                        'product' => 'Brass & Leather Key Fob',
-                        'quote' => 'From the solid antique brass hardware to the deep drum-dyed leather, the attention to detail is remarkable. World-class leathercraft originating right here in Pakistan.',
-                    ],
-                ];
-            @endphp
-
-            @foreach($testimonials as $t)
-                <div class="snap-start flex-shrink-0 w-[84vw] max-w-[310px] sm:max-w-none sm:w-[340px] lg:w-[calc(33.333%-14px)] rounded-2xl bg-white/[0.05] hover:bg-white/[0.08] backdrop-blur-md border border-white/10 hover:border-gold/50 p-5 sm:p-6 flex flex-col justify-between shadow-xl transition-all duration-300 hover:-translate-y-1.5 group">
-                    <div>
-                        <!-- Rating & Product -->
-                        <div class="flex items-center justify-between gap-2 mb-4">
-                            <div class="flex items-center gap-1 text-gold">
-                                <i data-lucide="star" class="w-3.5 h-3.5 fill-gold"></i>
-                                <i data-lucide="star" class="w-3.5 h-3.5 fill-gold"></i>
-                                <i data-lucide="star" class="w-3.5 h-3.5 fill-gold"></i>
-                                <i data-lucide="star" class="w-3.5 h-3.5 fill-gold"></i>
-                                <i data-lucide="star" class="w-3.5 h-3.5 fill-gold"></i>
+        @if(isset($testimonials) && $testimonials->isNotEmpty())
+            <!-- Horizontal Multi-Card Slider Track (Shows real card shapes side-by-side!) -->
+            <div 
+                x-ref="reviewsTrack"
+                class="flex items-stretch gap-5 overflow-x-auto scroll-smooth snap-x snap-mandatory hide-scrollbar pb-2 pt-1 -mx-4 px-4 sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8"
+            >
+                @foreach($testimonials as $t)
+                    <div class="snap-start flex-shrink-0 w-[84vw] max-w-[310px] sm:max-w-none sm:w-[340px] lg:w-[calc(33.333%-14px)] rounded-2xl bg-white/[0.05] hover:bg-white/[0.08] backdrop-blur-md border border-white/10 hover:border-gold/50 p-5 sm:p-6 flex flex-col justify-between shadow-xl transition-all duration-300 hover:-translate-y-1.5 group">
+                        <div>
+                            <!-- Rating & Product -->
+                            <div class="flex items-center justify-between gap-2 mb-4">
+                                <div class="flex items-center gap-1 text-gold">
+                                    @for($i = 1; $i <= 5; $i++)
+                                        <i data-lucide="star" class="w-3.5 h-3.5 {{ $i <= $t->rating ? 'fill-gold text-gold' : 'text-white/20' }}"></i>
+                                    @endfor
+                                </div>
+                                <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-gold/15 text-gold-300 text-[9px] font-bold uppercase tracking-wider border border-gold/30">
+                                    <i data-lucide="check" class="w-2.5 h-2.5"></i>
+                                    <span>Verified</span>
+                                </span>
                             </div>
-                            <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-gold/15 text-gold-300 text-[9px] font-bold uppercase tracking-wider border border-gold/30">
-                                <i data-lucide="check" class="w-2.5 h-2.5"></i>
-                                <span>Verified</span>
-                            </span>
+
+                            <!-- Quote -->
+                            <blockquote class="font-serif text-sm sm:text-base text-ivory-100 font-light italic leading-relaxed mb-6">
+                                “{{ $t->comment }}”
+                            </blockquote>
                         </div>
 
-                        <!-- Quote -->
-                        <blockquote class="font-serif text-sm sm:text-base text-ivory-100 font-light italic leading-relaxed mb-6">
-                            “{{ $t['quote'] }}”
-                        </blockquote>
-                    </div>
+                        <!-- Author & Product Footer -->
+                        <div class="pt-4 border-t border-white/10 flex items-center justify-between">
+                            <div class="flex items-center gap-3">
+                                <div class="w-9 h-9 rounded-full bg-gold/20 text-gold font-serif font-bold text-xs flex items-center justify-center border border-gold/40">
+                                    {{ $t->initials ?: strtoupper(substr($t->author, 0, 2)) }}
+                                </div>
+                                <div>
+                                    <div class="font-serif text-xs font-bold text-white leading-tight">
+                                        {{ $t->author }}
+                                    </div>
+                                    <div class="text-[10px] text-ivory-400/80">
+                                        {{ $t->city }}
+                                    </div>
+                                </div>
+                            </div>
 
-                    <!-- Author & Product Footer -->
-                    <div class="pt-4 border-t border-white/10 flex items-center justify-between">
-                        <div class="flex items-center gap-3">
-                            <div class="w-9 h-9 rounded-full bg-gold/20 text-gold font-serif font-bold text-xs flex items-center justify-center border border-gold/40">
-                                {{ $t['initials'] }}
-                            </div>
-                            <div>
-                                <div class="font-serif text-xs font-bold text-white leading-tight">
-                                    {{ $t['name'] }}
-                                </div>
-                                <div class="text-[10px] text-ivory-400/80">
-                                    {{ $t['city'] }}, Pakistan
-                                </div>
-                            </div>
+                            @if($t->product_name)
+                                <span class="text-[10px] text-gold-400 font-sans font-medium line-clamp-1 max-w-[120px] text-right">
+                                    {{ $t->product_name }}
+                                </span>
+                            @endif
                         </div>
-
-                        <span class="text-[10px] text-gold-400 font-sans font-medium line-clamp-1 max-w-[120px] text-right">
-                            {{ $t['product'] }}
-                        </span>
                     </div>
+                @endforeach
+            </div>
+        @else
+            <!-- Elegant Empty State on Home -->
+            <div class="py-12 text-center bg-white/[0.03] rounded-2xl border border-white/10 p-8 backdrop-blur-md max-w-xl mx-auto">
+                <div class="w-12 h-12 rounded-full bg-gold/15 text-gold mx-auto flex items-center justify-center mb-3 border border-gold/30">
+                    <i data-lucide="star" class="w-5 h-5 fill-gold"></i>
                 </div>
-            @endforeach
+                <h3 class="font-serif text-lg font-bold text-white mb-2">Be Our First Reviewed Patron</h3>
+                <p class="text-xs text-ivory-300 font-light max-w-md mx-auto mb-5 leading-relaxed">
+                    Have you experienced By Zunash artisanal leathercraft? Share your verified evaluation with fellow patrons across Pakistan.
+                </p>
+                <a 
+                    href="{{ route('reviews') }}" 
+                    class="px-5 py-2.5 bg-gold hover:bg-gold-light text-espresso-950 font-serif text-xs uppercase tracking-wider font-bold rounded-xl shadow-md inline-flex items-center gap-2 transition-all active:scale-95"
+                >
+                    <i data-lucide="star" class="w-3.5 h-3.5 fill-espresso-950"></i>
+                    <span>Leave a Review</span>
+                </a>
+            </div>
+        @endif
         </div>
 
     </div>

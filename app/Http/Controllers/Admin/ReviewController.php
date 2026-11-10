@@ -35,7 +35,7 @@ class ReviewController extends Controller
 
         $totalReviews = Review::count();
         $publishedCount = Review::where('status', 'published')->count();
-        $averageRating = Review::avg('rating') ?: 5.0;
+        $averageRating = Review::avg('rating') ? round(Review::avg('rating'), 1) : 0;
 
         return view('admin.reviews.index', compact(
             'reviews',

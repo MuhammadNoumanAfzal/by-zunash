@@ -3,21 +3,21 @@
 <head>
     <meta charset="utf-8">
     <title>Invoice {{ $order->order_number }} | By Zunash Atelier</title>
-    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
         body { font-family: 'Plus Jakarta Sans', sans-serif; color: #120E0C; margin: 0; padding: 40px; background: #fff; }
         .invoice-box { max-width: 800px; margin: auto; padding: 36px; border: 1px solid #ECE6DE; border-radius: 20px; box-shadow: 0 4px 20px rgba(0,0,0,0.03); }
         .header { display: flex; justify-content: space-between; align-items: flex-start; padding-bottom: 24px; border-bottom: 2px solid #120E0C; }
-        .title { font-family: 'Cinzel', serif; font-size: 26px; font-weight: 700; color: #120E0C; letter-spacing: 2px; margin: 0; }
-        .sub { font-size: 10px; text-transform: uppercase; letter-spacing: 2px; color: #976239; font-weight: 600; margin-top: 4px; }
+        .title { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 26px; font-weight: 800; color: #120E0C; letter-spacing: -0.5px; margin: 0; }
+        .sub { font-size: 10px; text-transform: uppercase; letter-spacing: 1.5px; color: #976239; font-weight: 600; margin-top: 4px; }
         .details-grid { display: flex; justify-content: space-between; margin: 30px 0; }
         .col { font-size: 13px; line-height: 1.6; }
-        .col strong { color: #976239; font-size: 11px; text-transform: uppercase; letter-spacing: 1px; }
+        .col strong { color: #976239; font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; }
         table { width: 100%; border-collapse: collapse; margin-top: 20px; }
-        th { text-align: left; font-size: 11px; text-transform: uppercase; letter-spacing: 1px; color: #8F8379; padding: 12px 0; border-bottom: 1px solid #ECE6DE; }
+        th { text-align: left; font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; color: #8F8379; padding: 12px 0; border-bottom: 1px solid #ECE6DE; }
         td { padding: 14px 0; font-size: 13px; border-bottom: 1px solid #FAF5F0; }
         .text-right { text-align: right; }
-        .total-row { font-size: 20px; font-family: 'Cinzel', serif; font-weight: 700; color: #120E0C; }
+        .total-row { font-size: 20px; font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 800; color: #120E0C; }
         .footer { margin-top: 40px; text-align: center; font-size: 11px; color: #8F8379; border-top: 1px solid #ECE6DE; padding-top: 24px; line-height: 1.8; }
         .badge { display: inline-block; padding: 3px 8px; border-radius: 6px; font-size: 11px; font-weight: 700; background: #FAF6F2; color: #976239; border: 1px solid #EED9C5; }
         @media print {

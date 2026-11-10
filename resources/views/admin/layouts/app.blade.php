@@ -21,10 +21,10 @@
         })();
     </script>
 
-    <!-- Google Fonts: Cinzel, Cormorant Garamond, Plus Jakarta Sans -->
+    <!-- Google Fonts: Plus Jakarta Sans & Inter for clean, ultra-readable modern e-commerce dashboard -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700;800&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400;1,600&display=swap" rel="stylesheet">
 
     <!-- Tailwind CSS (Play CDN for Admin UI) -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -79,9 +79,10 @@
                         }
                     },
                     fontFamily: {
-                        cinzel: ['"Cinzel"', 'serif'],
-                        serif: ['"Cormorant Garamond"', 'Georgia', 'serif'],
-                        sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+                        cinzel: ['"Plus Jakarta Sans"', 'Inter', 'sans-serif'],
+                        serif: ['"Plus Jakarta Sans"', 'Inter', 'sans-serif'],
+                        sans: ['"Plus Jakarta Sans"', 'Inter', 'sans-serif'],
+                        heading: ['"Plus Jakarta Sans"', 'Inter', 'sans-serif'],
                     },
                     boxShadow: {
                         'zunash': '0 10px 30px -5px rgba(18, 14, 12, 0.08), 0 4px 12px -2px rgba(151, 98, 57, 0.06)',
@@ -105,9 +106,18 @@
 
     <style>
         [x-cloak] { display: none !important; }
-        body { font-family: 'Plus Jakarta Sans', sans-serif; }
-        .font-cinzel { font-family: 'Cinzel', serif; }
-        .font-serif { font-family: 'Cormorant Garamond', serif; }
+        body, button, input, select, textarea {
+            font-family: 'Plus Jakarta Sans', 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+        .font-cinzel {
+            font-family: 'Plus Jakarta Sans', 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
+            letter-spacing: -0.015em;
+        }
+        .font-serif {
+            font-family: 'Plus Jakarta Sans', 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
+        }
 
         /* Completely hide scrollbars across all browsers while keeping smooth scrollable functionality */
         html, body, aside, nav, div, * {
@@ -587,17 +597,144 @@
                         <i data-lucide="menu" class="w-5 h-5"></i>
                     </button>
 
-                    <!-- Global Search Input -->
-                    <form action="{{ route('admin.products.index') }}" method="GET" class="relative w-full min-w-0">
-                        <i data-lucide="search" class="w-4 h-4 text-[#A89C91] absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none"></i>
-                        <input 
-                            type="text" 
-                            name="q" 
-                            placeholder="Search creations, orders..." 
-                            value="{{ request('q') }}"
-                            class="w-full pl-9 pr-3 sm:pr-4 py-1.5 text-xs rounded-full bg-[#FAF9F6] dark:bg-[#201815] border border-[#E8E1D7] dark:border-[#332620] text-espresso-900 dark:text-white placeholder-[#A89C91] focus:outline-hidden focus:border-gold focus:bg-white transition-all shadow-2xs"
+                    <!-- Global Search Input with Instant Live Autocomplete Dropdown -->
+                    <div 
+                        class="relative w-full min-w-0" 
+                        x-data="{
+                            searchQuery: '{{ request('q') }}',
+                            open: false,
+                            loading: false,
+                            results: { products: [], orders: [], categories: [], customers: [], total: 0 },
+                            timer: null,
+                            search() {
+                                if (this.searchQuery.trim().length < 1) {
+                                    this.results = { products: [], orders: [], categories: [], customers: [], total: 0 };
+                                    this.open = false;
+                                    return;
+                                }
+                                this.loading = true;
+                                clearTimeout(this.timer);
+                                this.timer = setTimeout(() => {
+                                    fetch('{{ route('admin.search.live') }}?q=' + encodeURIComponent(this.searchQuery))
+                                        .then(res => res.json())
+                                        .then(data => {
+                                            this.results = data;
+                                            this.open = true;
+                                            this.loading = false;
+                                            this.$nextTick(() => { if (window.lucide) lucide.createIcons(); });
+                                        })
+                                        .catch(() => { this.loading = false; });
+                                }, 220);
+                            }
+                        }"
+                        @click.outside="open = false"
+                        @keydown.escape="open = false"
+                    >
+                        <form action="{{ route('admin.search') }}" method="GET" class="relative w-full">
+                            <i data-lucide="search" class="w-4 h-4 text-[#A89C91] absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none"></i>
+                            <input 
+                                type="text" 
+                                name="q" 
+                                placeholder="Search creations, orders, patrons..." 
+                                x-model="searchQuery"
+                                @input="search()"
+                                @focus="if (searchQuery.trim().length >= 1) open = true"
+                                autocomplete="off"
+                                class="w-full pl-9 pr-8 py-1.5 text-xs rounded-full bg-[#FAF9F6] dark:bg-[#201815] border border-[#E8E1D7] dark:border-[#332620] text-espresso-900 dark:text-white placeholder-[#A89C91] focus:outline-hidden focus:border-gold focus:bg-white transition-all shadow-2xs"
+                            >
+                            <!-- Mini Loading Spinner -->
+                            <div x-show="loading" class="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none" x-cloak>
+                                <svg class="animate-spin h-3.5 w-3.5 text-tan-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path>
+                                </svg>
+                            </div>
+                        </form>
+
+                        <!-- Live Dropdown Results Popup -->
+                        <div 
+                            x-show="open && searchQuery.trim().length >= 1" 
+                            x-cloak
+                            x-transition:enter="transition ease-out duration-150"
+                            x-transition:enter-start="opacity-0 translate-y-2"
+                            x-transition:enter-end="opacity-100 translate-y-0"
+                            class="absolute left-0 right-0 top-full mt-2 bg-white dark:bg-[#1A1412] rounded-2xl shadow-2xl border border-[#ECE6DE] dark:border-[#2D231E] overflow-hidden z-50 max-h-[75vh] overflow-y-auto scrollbar-thin text-espresso-900 dark:text-white divide-y divide-gray-100 dark:divide-white/5"
                         >
-                    </form>
+                            <!-- If no results -->
+                            <div x-show="!loading && results.total === 0" class="p-6 text-center text-xs text-muted">
+                                <i data-lucide="search-x" class="w-6 h-6 mx-auto mb-1.5 text-tan-600"></i>
+                                <p>No creations, orders, or patrons matching "<span class="font-bold text-espresso-900 dark:text-white" x-text="searchQuery"></span>"</p>
+                            </div>
+
+                            <!-- Products / Creations -->
+                            <div x-show="results.products && results.products.length > 0" class="p-2.5">
+                                <div class="px-2 py-1 text-[10px] font-bold uppercase tracking-wider text-tan-700 dark:text-gold flex items-center justify-between">
+                                    <span>Creations</span>
+                                    <span class="text-muted" x-text="results.products.length + ' found'"></span>
+                                </div>
+                                <div class="space-y-1 mt-1">
+                                    <template x-for="item in results.products" :key="'p-' + item.id">
+                                        <a 
+                                            :href="item.url" 
+                                            class="flex items-center justify-between gap-3 p-2 rounded-xl hover:bg-tan-50 dark:hover:bg-[#251C18] transition-colors group"
+                                        >
+                                            <div class="flex items-center gap-2.5 min-w-0">
+                                                <div class="w-8 h-8 rounded-lg bg-gray-100 dark:bg-black/30 overflow-hidden shrink-0 border border-gray-200 dark:border-white/10">
+                                                    <img :src="item.image" :alt="item.name" class="w-full h-full object-cover">
+                                                </div>
+                                                <div class="min-w-0">
+                                                    <h4 class="text-xs font-semibold text-espresso-950 dark:text-white truncate group-hover:text-tan-700 transition-colors" x-text="item.name"></h4>
+                                                    <div class="flex items-center gap-1.5 text-[10px] text-muted">
+                                                        <span x-text="'SKU: ' + item.sku"></span>
+                                                        <span>•</span>
+                                                        <span x-text="item.category"></span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <span class="text-xs font-bold font-mono text-tan-700 dark:text-gold shrink-0" x-text="item.price"></span>
+                                        </a>
+                                    </template>
+                                </div>
+                            </div>
+
+                            <!-- Orders -->
+                            <div x-show="results.orders && results.orders.length > 0" class="p-2.5">
+                                <div class="px-2 py-1 text-[10px] font-bold uppercase tracking-wider text-tan-700 dark:text-gold flex items-center justify-between">
+                                    <span>Orders</span>
+                                    <span class="text-muted" x-text="results.orders.length + ' found'"></span>
+                                </div>
+                                <div class="space-y-1 mt-1">
+                                    <template x-for="ord in results.orders" :key="'o-' + ord.id">
+                                        <a 
+                                            :href="ord.url" 
+                                            class="flex items-center justify-between gap-2 p-2 rounded-xl hover:bg-tan-50 dark:hover:bg-[#251C18] transition-colors"
+                                        >
+                                            <div>
+                                                <div class="flex items-center gap-2">
+                                                    <span class="font-mono font-bold text-xs text-espresso-950 dark:text-white" x-text="ord.order_number"></span>
+                                                    <span class="text-[9px] px-1.5 py-0.2 rounded bg-tan-100 text-tan-800 font-bold" x-text="ord.status"></span>
+                                                </div>
+                                                <p class="text-[11px] text-muted truncate mt-0.5" x-text="ord.customer + ' (' + ord.city + ')'"></p>
+                                            </div>
+                                            <span class="text-xs font-bold font-mono text-espresso-900 dark:text-white" x-text="ord.total"></span>
+                                        </a>
+                                    </template>
+                                </div>
+                            </div>
+
+                            <!-- View All Footer Link -->
+                            <div class="p-2 bg-gray-50 dark:bg-[#150F0D] text-center">
+                                <a 
+                                    :href="'{{ route('admin.search') }}?q=' + encodeURIComponent(searchQuery)"
+                                    class="text-xs font-bold text-tan-700 dark:text-gold hover:underline inline-flex items-center gap-1.5"
+                                >
+                                    <span>View full results in Omnisearch</span>
+                                    <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
+                                </a>
+                            </div>
+
+                        </div>
+                    </div>
                 </div>
 
                 <!-- Right Header Actions -->

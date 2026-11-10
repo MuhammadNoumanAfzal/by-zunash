@@ -3,23 +3,23 @@
 <head>
     <meta charset="utf-8">
     <title>Payment Receipt #{{ $order->order_number }} | By Zunash Atelier</title>
-    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
         * { box-sizing: border-box; }
         body { font-family: 'Plus Jakarta Sans', sans-serif; color: #120E0C; margin: 0; padding: 40px; background: #fff; font-size: 13px; }
         .receipt-card { max-width: 780px; margin: auto; padding: 40px; border: 1px solid #E5DCD2; border-radius: 16px; box-shadow: 0 4px 20px rgba(0,0,0,0.03); position: relative; background: #fff; }
         .header { display: flex; justify-content: space-between; align-items: flex-start; padding-bottom: 24px; border-bottom: 2px solid #120E0C; }
-        .brand-name { font-family: 'Cinzel', serif; font-size: 26px; font-weight: 700; letter-spacing: 2px; margin: 0; }
-        .voucher-title { font-size: 11px; text-transform: uppercase; letter-spacing: 2px; color: #976239; font-weight: 700; margin-top: 4px; }
+        .brand-name { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 26px; font-weight: 800; letter-spacing: -0.5px; margin: 0; }
+        .voucher-title { font-size: 11px; text-transform: uppercase; letter-spacing: 1.5px; color: #976239; font-weight: 700; margin-top: 4px; }
         
         /* Payment Stamp */
         .stamp {
             display: inline-block;
             padding: 8px 16px;
-            font-family: 'Cinzel', serif;
-            font-size: 14px;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-size: 13px;
             font-weight: 800;
-            letter-spacing: 2px;
+            letter-spacing: 0.5px;
             border-radius: 8px;
             text-transform: uppercase;
         }
@@ -41,16 +41,16 @@
 
         .meta-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin: 28px 0; }
         .meta-col { font-size: 13px; line-height: 1.6; }
-        .meta-col strong { color: #976239; font-size: 10px; text-transform: uppercase; letter-spacing: 1px; display: block; margin-bottom: 4px; }
+        .meta-col strong { color: #976239; font-size: 10px; text-transform: uppercase; letter-spacing: 0.5px; display: block; margin-bottom: 4px; }
         
         table { width: 100%; border-collapse: collapse; margin-top: 20px; }
-        th { text-align: left; font-size: 10px; text-transform: uppercase; letter-spacing: 1px; color: #8F8379; padding: 12px 10px; border-bottom: 1.5px solid #120E0C; background: #FAF7F2; }
+        th { text-align: left; font-size: 10px; text-transform: uppercase; letter-spacing: 0.5px; color: #8F8379; padding: 12px 10px; border-bottom: 1.5px solid #120E0C; background: #FAF7F2; }
         td { padding: 12px 10px; font-size: 12px; border-bottom: 1px solid #F0EAE1; }
         .text-right { text-align: right; }
         
         .totals-box { margin-top: 20px; border-top: 2px solid #120E0C; padding-top: 14px; }
         .total-line { display: flex; justify-content: space-between; padding: 5px 0; font-size: 13px; }
-        .grand-total { font-family: 'Cinzel', serif; font-size: 20px; font-weight: 800; color: #120E0C; border-top: 1px solid #ECE6DE; margin-top: 8px; padding-top: 10px; }
+        .grand-total { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 20px; font-weight: 800; color: #120E0C; border-top: 1px solid #ECE6DE; margin-top: 8px; padding-top: 10px; }
         
         .bank-details { margin-top: 24px; padding: 16px; border-radius: 10px; background: #FAF8F5; border: 1px solid #EAE3DA; font-size: 12px; line-height: 1.6; }
         .signatures { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; margin-top: 40px; padding-top: 20px; }

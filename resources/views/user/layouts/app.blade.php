@@ -105,8 +105,14 @@
         }
     </style>
 
-    <!-- Immediate Theme Initialization (Zero-Flash Dark Mode) -->
+    <!-- Immediate Theme & Dynamic Store Settings Initialization -->
+    @php
+        $freeShippingThreshold = (int) \App\Models\StoreSetting::get('free_shipping_threshold', 5000);
+        $currencySymbol = \App\Models\StoreSetting::get('currency_symbol', 'Rs.');
+    @endphp
     <script>
+        window.BYZUNASH_FREE_SHIPPING_THRESHOLD = {{ $freeShippingThreshold }};
+        window.BYZUNASH_CURRENCY_SYMBOL = "{{ $currencySymbol }}";
         (function() {
             const saved = localStorage.getItem('byzunash_theme');
             const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
@@ -199,32 +205,35 @@
                     </button>
                 </div>
 
-                <!-- Animated Free Shipping Progress Bar -->
-                <div class="px-5 py-3 bg-ivory-50 dark:bg-[#1A1411] border-b border-ivory-200/90 dark:border-white/10 text-xs flex-shrink-0">
-                    <template x-if="$store.cart.subtotal >= 6000">
-                        <div class="flex items-center gap-2 text-emerald-800 font-semibold bg-emerald-50/90 px-3 py-1.5 rounded-lg border border-emerald-200/70">
+                <!-- Animated Free Shipping Progress Bar (Dynamically Calculated from Backend Settings) -->
+                @php
+                    $freeShippingThreshold = (int) \App\Models\StoreSetting::get('free_shipping_threshold', 5000);
+                @endphp
+                <div class="px-5 py-3 bg-ivory-50 dark:bg-[#1A1411] border-b border-ivory-200/90 dark:border-white/10 text-xs flex-shrink-0" x-data="{ threshold: {{ $freeShippingThreshold }} }">
+                    <template x-if="threshold <= 0 || $store.cart.subtotal >= threshold">
+                        <div class="flex items-center gap-2 text-emerald-800 dark:text-emerald-300 font-semibold bg-emerald-50/90 dark:bg-emerald-950/40 px-3 py-1.5 rounded-lg border border-emerald-200/70 dark:border-emerald-800">
                             <svg class="w-4 h-4 text-emerald-600 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><rect x="1" y="3" width="15" height="13"></rect><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"></polygon><circle cx="5.5" cy="18.5" r="2.5"></circle><circle cx="18.5" cy="18.5" r="2.5"></circle></svg>
-                            <span class="text-[11px]">Complimentary Priority Nationwide Delivery Unlocked!</span>
+                            <span class="text-[11px]">Free Nationwide Delivery Unlocked!</span>
                         </div>
                     </template>
-                    <template x-if="$store.cart.subtotal > 0 && $store.cart.subtotal < 6000">
+                    <template x-if="threshold > 0 && $store.cart.subtotal > 0 && $store.cart.subtotal < threshold">
                         <div>
-                            <div class="flex items-center justify-between text-[11px] text-espresso-800 mb-1.5">
-                                <span>Add <strong class="text-espresso-950 font-bold">PKR <span x-text="(6000 - $store.cart.subtotal).toLocaleString()"></span></strong> for Free Delivery</span>
-                                <span class="font-mono text-gold-700 font-semibold" x-text="Math.min(100, Math.round(($store.cart.subtotal / 6000) * 100)) + '%'"></span>
+                            <div class="flex items-center justify-between text-[11px] text-espresso-800 dark:text-ivory-200 mb-1.5">
+                                <span>Add <strong class="text-espresso-950 dark:text-white font-bold">PKR <span x-text="(threshold - $store.cart.subtotal).toLocaleString()"></span></strong> for Free Delivery</span>
+                                <span class="font-mono text-gold-700 dark:text-gold-400 font-semibold" x-text="Math.min(100, Math.round(($store.cart.subtotal / threshold) * 100)) + '%'"></span>
                             </div>
-                            <div class="w-full h-1.5 rounded-full bg-ivory-200 overflow-hidden">
+                            <div class="w-full h-1.5 rounded-full bg-ivory-200 dark:bg-white/10 overflow-hidden">
                                 <div 
                                     class="h-full bg-gold rounded-full transition-all duration-500" 
-                                    :style="'width: ' + Math.min(100, Math.round(($store.cart.subtotal / 6000) * 100)) + '%'"
+                                    :style="'width: ' + Math.min(100, Math.round(($store.cart.subtotal / threshold) * 100)) + '%'"
                                 ></div>
                             </div>
                         </div>
                     </template>
-                    <template x-if="$store.cart.subtotal === 0">
+                    <template x-if="threshold > 0 && $store.cart.subtotal === 0">
                         <div class="text-[11px] text-muted flex items-center gap-1.5">
                             <svg class="w-3.5 h-3.5 text-gold-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><rect x="1" y="3" width="15" height="13"></rect><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"></polygon><circle cx="5.5" cy="18.5" r="2.5"></circle><circle cx="18.5" cy="18.5" r="2.5"></circle></svg>
-                            <span>Free Priority Delivery on orders over PKR 6,000.</span>
+                            <span>Free Delivery on orders over PKR {{ number_format($freeShippingThreshold) }}.</span>
                         </div>
                     </template>
                 </div>

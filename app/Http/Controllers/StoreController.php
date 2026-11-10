@@ -90,8 +90,9 @@ class StoreController extends Controller
             $bestsellers = $products->take(8);
         }
         $newArrivals = $products->where('is_new', true)->take(4);
+        $testimonials = \App\Models\Review::where('status', 'published')->latest()->take(6)->get();
 
-        return view('user.home', compact('bestsellers', 'newArrivals', 'categories'));
+        return view('user.home', compact('bestsellers', 'newArrivals', 'categories', 'testimonials'));
     }
 
     /**
@@ -442,64 +443,39 @@ class StoreController extends Controller
     public function reviews()
     {
         $dbReviews = \App\Models\Review::where('status', 'published')->latest()->get();
+        $reviewsCount = $dbReviews->count();
+        $averageRating = $reviewsCount > 0 ? round($dbReviews->avg('rating'), 1) : 0;
 
-        if ($dbReviews->isNotEmpty()) {
-            $reviews = $dbReviews->map(function ($r) {
-                return [
-                    'id' => $r->id,
-                    'author' => $r->author,
-                    'city' => $r->city,
-                    'initials' => $r->initials ?: strtoupper(substr($r->author, 0, 2)),
-                    'category' => $r->category ?: 'belts',
-                    'product_name' => $r->product_name,
-                    'product_slug' => $r->product_slug ?: \Illuminate\Support\Str::slug($r->product_name),
-                    'rating' => $r->rating,
-                    'date' => $r->created_at ? $r->created_at->format('F d, Y') : 'Recent',
-                    'verified' => (bool) $r->verified,
-                    'title' => $r->title,
-                    'comment' => $r->comment,
-                    'image' => $r->image ?: '/images/products/prod-reversible-belt.jpg',
-                    'helpful' => (int) $r->helpful,
-                ];
-            })->toArray();
-        } else {
-            $reviews = [
-                [
-                    'id' => 1,
-                    'author' => 'Dr. Hamza Khan',
-                    'city' => 'Lahore (DHA Phase 5)',
-                    'initials' => 'HK',
-                    'category' => 'belts',
-                    'product_name' => 'The Royal Reversible Calfskin Belt',
-                    'product_slug' => 'the-royal-reversible-calfskin-belt',
-                    'rating' => 5,
-                    'date' => 'October 14, 2026',
-                    'verified' => true,
-                    'title' => 'The swivel buckle mechanism is sheer mechanical perfection',
-                    'comment' => 'Without question the finest leather belt I have purchased in Pakistan. The swivel mechanism has a solid, authoritative click that transitions between obsidian black and rich espresso calfskin effortlessly. The beveled wax-burnished edge does not crease under daily wear.',
-                    'image' => '/images/products/prod-reversible-belt.jpg',
-                    'helpful' => 48,
-                ],
-                [
-                    'id' => 2,
-                    'author' => 'Ayesha Tariq',
-                    'city' => 'Islamabad (F-7/2)',
-                    'initials' => 'AT',
-                    'category' => 'handbags',
-                    'product_name' => 'The Zunash Signature Satchel',
-                    'product_slug' => 'the-zunash-signature-satchel',
-                    'rating' => 5,
-                    'date' => 'October 08, 2026',
-                    'verified' => true,
-                    'title' => 'Rivals European luxury fashion houses in every detail',
-                    'comment' => 'I was initially hesitant to order fine leather online, but the doorstep Cash on Delivery made it risk-free. The packaging alone was regal—a magnetic rigid box with a linen dust pouch. The aroma of genuine vegetable-tanned hide and custom 24k gold hardware are exceptional.',
-                    'image' => '/images/products/prod-signature-satchel.jpg',
-                    'helpful' => 39,
-                ],
+        $distribution = [
+            5 => $reviewsCount > 0 ? round(($dbReviews->where('rating', 5)->count() / $reviewsCount) * 100) : 0,
+            4 => $reviewsCount > 0 ? round(($dbReviews->where('rating', 4)->count() / $reviewsCount) * 100) : 0,
+            3 => $reviewsCount > 0 ? round(($dbReviews->where('rating', 3)->count() / $reviewsCount) * 100) : 0,
+            2 => $reviewsCount > 0 ? round(($dbReviews->where('rating', 2)->count() / $reviewsCount) * 100) : 0,
+            1 => $reviewsCount > 0 ? round(($dbReviews->where('rating', 1)->count() / $reviewsCount) * 100) : 0,
+        ];
+
+        $reviews = $dbReviews->map(function ($r) {
+            return [
+                'id' => $r->id,
+                'author' => $r->author,
+                'city' => $r->city,
+                'initials' => $r->initials ?: strtoupper(substr($r->author, 0, 2)),
+                'category' => $r->category ?: 'all',
+                'product_name' => $r->product_name,
+                'product_slug' => $r->product_slug ?: \Illuminate\Support\Str::slug($r->product_name),
+                'rating' => (int) $r->rating,
+                'date' => $r->created_at ? $r->created_at->format('F d, Y') : 'Recent',
+                'verified' => (bool) $r->verified,
+                'title' => $r->title,
+                'comment' => $r->comment,
+                'image' => $r->image ?: null,
+                'helpful' => (int) $r->helpful,
             ];
-        }
+        })->values()->toArray();
 
-        return view('user.reviews', compact('reviews'));
+        $categories = \App\Models\Category::all();
+
+        return view('user.reviews', compact('reviews', 'reviewsCount', 'averageRating', 'distribution', 'categories'));
     }
 
     /**
@@ -776,13 +752,72 @@ class StoreController extends Controller
         if (!empty($query)) {
             $lowerQuery = strtolower($query);
             $products = $this->getProducts()->filter(function ($item) use ($lowerQuery) {
-                return str_contains(strtolower($item['name']), $lowerQuery)
-                    || str_contains(strtolower($item['short_description']), $lowerQuery)
-                    || str_contains(strtolower($item['category_name']), $lowerQuery);
+                return str_contains(strtolower($item['name'] ?? ''), $lowerQuery)
+                    || str_contains(strtolower($item['short_description'] ?? ''), $lowerQuery)
+                    || str_contains(strtolower($item['category_name'] ?? ''), $lowerQuery)
+                    || str_contains(strtolower($item['sku'] ?? ''), $lowerQuery);
             });
         }
 
-        return view('user.search', compact('products', 'query'));
+        $categories = \App\Models\Category::all();
+
+        return view('user.search', compact('products', 'query', 'categories'));
+    }
+
+    /**
+     * Frontend Live Ajax Instant Search
+     */
+    public function searchLive(Request $request)
+    {
+        $query = trim($request->input('q', ''));
+
+        if ($query === '') {
+            return response()->json([
+                'products' => [],
+                'categories' => [],
+                'total' => 0
+            ]);
+        }
+
+        $lowerQuery = strtolower($query);
+
+        $matchedProducts = $this->getProducts()->filter(function ($item) use ($lowerQuery) {
+            return str_contains(strtolower($item['name'] ?? ''), $lowerQuery)
+                || str_contains(strtolower($item['short_description'] ?? ''), $lowerQuery)
+                || str_contains(strtolower($item['category_name'] ?? ''), $lowerQuery)
+                || str_contains(strtolower($item['sku'] ?? ''), $lowerQuery);
+        })->take(6)->values()->map(function ($p) {
+            return [
+                'id' => $p['id'],
+                'name' => $p['name'],
+                'slug' => $p['slug'],
+                'category' => $p['category_name'] ?? 'Collection',
+                'price' => 'PKR ' . number_format($p['price']),
+                'original_price' => !empty($p['original_price']) ? 'PKR ' . number_format($p['original_price']) : null,
+                'image' => $p['image'] ?? '/images/products/prod-reversible-belt.jpg',
+                'in_stock' => $p['in_stock'] ?? true,
+                'url' => route('product.details', $p['slug']),
+            ];
+        });
+
+        $matchedCategories = \App\Models\Category::where('name', 'like', "%{$query}%")
+            ->orWhere('slug', 'like', "%{$query}%")
+            ->take(3)
+            ->get()
+            ->map(function ($c) {
+                return [
+                    'id' => $c->id,
+                    'name' => $c->name,
+                    'slug' => $c->slug,
+                    'url' => route('category', $c->slug),
+                ];
+            });
+
+        return response()->json([
+            'products' => $matchedProducts,
+            'categories' => $matchedCategories,
+            'total' => $matchedProducts->count() + $matchedCategories->count(),
+        ]);
     }
 
     /**

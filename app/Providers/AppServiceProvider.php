@@ -37,5 +37,17 @@ class AppServiceProvider extends ServiceProvider
             Blade::component($view, $alias);
             Blade::component($view, 'user.components.' . $alias);
         }
+
+        // Share store settings globally with all views
+        view()->composer('*', function ($view) {
+            try {
+                $storeSettings = \Illuminate\Support\Facades\Cache::remember('store_settings_all', 60, function () {
+                    return \App\Models\StoreSetting::all()->pluck('value', 'key');
+                });
+            } catch (\Throwable $e) {
+                $storeSettings = collect();
+            }
+            $view->with('storeSettings', $storeSettings);
+        });
     }
 }

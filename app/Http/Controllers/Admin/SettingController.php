@@ -22,6 +22,8 @@ class SettingController extends Controller
             StoreSetting::set($key, $value);
         }
 
+        \Illuminate\Support\Facades\Cache::forget('store_settings_all');
+
         return back()->with('toast_success', 'Atelier store configuration saved.');
     }
 }

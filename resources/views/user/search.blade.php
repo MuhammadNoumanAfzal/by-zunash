@@ -80,10 +80,15 @@
                 </p>
 
                 <div class="flex flex-wrap justify-center gap-2 mb-8">
-                    <a href="{{ route('category', 'belts') }}" class="px-3 py-1.5 bg-white border border-ivory-300 rounded-full text-xs text-espresso-800 hover:border-gold">Leather Belts</a>
-                    <a href="{{ route('category', 'wallets') }}" class="px-3 py-1.5 bg-white border border-ivory-300 rounded-full text-xs text-espresso-800 hover:border-gold">Wallets</a>
-                    <a href="{{ route('category', 'handbags') }}" class="px-3 py-1.5 bg-white border border-ivory-300 rounded-full text-xs text-espresso-800 hover:border-gold">Handbags</a>
-                    <a href="{{ route('category', 'accessories') }}" class="px-3 py-1.5 bg-white border border-ivory-300 rounded-full text-xs text-espresso-800 hover:border-gold">Key Fobs & Folios</a>
+                    @forelse($categories ?? [] as $cat)
+                        <a href="{{ route('category', $cat->slug) }}" class="px-3.5 py-1.5 bg-white border border-ivory-300 rounded-full text-xs font-semibold text-espresso-800 hover:border-gold hover:text-gold-700 transition-colors">
+                            {{ $cat->name }}
+                        </a>
+                    @empty
+                        <a href="{{ route('shop') }}" class="px-3.5 py-1.5 bg-white border border-ivory-300 rounded-full text-xs font-semibold text-espresso-800 hover:border-gold">
+                            Atelier Shop
+                        </a>
+                    @endforelse
                 </div>
 
                 <a 

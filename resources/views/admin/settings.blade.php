@@ -26,22 +26,22 @@
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-4">
                 <div>
                     <label class="block text-xs font-semibold text-espresso-900 dark:text-white mb-1.5">Store Brand Name</label>
-                    <input type="text" name="store_name" value="{{ $settings['store_name'] ?? 'By Zunash Atelier' }}" class="w-full px-3.5 py-2 text-xs rounded-xl bg-[#FAF8F5] dark:bg-[#241D1A] border border-[#E0D7CB] dark:border-[#382D27] text-espresso-900 dark:text-white focus:outline-hidden focus:border-tan-500">
+                    <input type="text" name="store_name" value="{{ $settings['store_name'] ?? '' }}" placeholder="e.g., By Zunash Atelier" class="w-full px-3.5 py-2 text-xs rounded-xl bg-[#FAF8F5] dark:bg-[#241D1A] border border-[#E0D7CB] dark:border-[#382D27] text-espresso-900 dark:text-white focus:outline-hidden focus:border-tan-500">
                 </div>
 
                 <div>
                     <label class="block text-xs font-semibold text-espresso-900 dark:text-white mb-1.5">Tagline</label>
-                    <input type="text" name="store_tagline" value="{{ $settings['store_tagline'] ?? 'Artisanal Leathercraft • Handcrafted in Pakistan' }}" class="w-full px-3.5 py-2 text-xs rounded-xl bg-[#FAF8F5] dark:bg-[#241D1A] border border-[#E0D7CB] dark:border-[#382D27] text-espresso-900 dark:text-white focus:outline-hidden focus:border-tan-500">
+                    <input type="text" name="store_tagline" value="{{ $settings['store_tagline'] ?? '' }}" placeholder="e.g., Luxury Pakistani Leather Goods — Heirloom Craftsmanship" class="w-full px-3.5 py-2 text-xs rounded-xl bg-[#FAF8F5] dark:bg-[#241D1A] border border-[#E0D7CB] dark:border-[#382D27] text-espresso-900 dark:text-white focus:outline-hidden focus:border-tan-500">
                 </div>
 
                 <div>
                     <label class="block text-xs font-semibold text-espresso-900 dark:text-white mb-1.5">Currency Symbol</label>
-                    <input type="text" name="currency_symbol" value="{{ $settings['currency_symbol'] ?? 'Rs.' }}" class="w-full px-3.5 py-2 text-xs rounded-xl bg-[#FAF8F5] dark:bg-[#241D1A] border border-[#E0D7CB] dark:border-[#382D27] text-espresso-900 dark:text-white focus:outline-hidden focus:border-tan-500 font-bold font-mono">
+                    <input type="text" name="currency_symbol" value="{{ $settings['currency_symbol'] ?? '' }}" placeholder="e.g., Rs." class="w-full px-3.5 py-2 text-xs rounded-xl bg-[#FAF8F5] dark:bg-[#241D1A] border border-[#E0D7CB] dark:border-[#382D27] text-espresso-900 dark:text-white focus:outline-hidden focus:border-tan-500 font-bold font-mono">
                 </div>
 
                 <div>
                     <label class="block text-xs font-semibold text-espresso-900 dark:text-white mb-1.5">Currency Code</label>
-                    <input type="text" name="currency_code" value="{{ $settings['currency_code'] ?? 'PKR' }}" class="w-full px-3.5 py-2 text-xs rounded-xl bg-[#FAF8F5] dark:bg-[#241D1A] border border-[#E0D7CB] dark:border-[#382D27] text-espresso-900 dark:text-white focus:outline-hidden focus:border-tan-500 font-mono">
+                    <input type="text" name="currency_code" value="{{ $settings['currency_code'] ?? '' }}" placeholder="e.g., PKR" class="w-full px-3.5 py-2 text-xs rounded-xl bg-[#FAF8F5] dark:bg-[#241D1A] border border-[#E0D7CB] dark:border-[#382D27] text-espresso-900 dark:text-white focus:outline-hidden focus:border-tan-500 font-mono">
                 </div>
             </div>
         </div>
@@ -54,22 +54,27 @@
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-4">
                 <div>
                     <label class="block text-xs font-semibold text-espresso-900 dark:text-white mb-1.5">Concierge Email</label>
-                    <input type="email" name="contact_email" value="{{ $settings['contact_email'] ?? 'concierge@byzunash.com' }}" class="w-full px-3.5 py-2 text-xs rounded-xl bg-[#FAF8F5] dark:bg-[#241D1A] border border-[#E0D7CB] dark:border-[#382D27] text-espresso-900 dark:text-white focus:outline-hidden focus:border-tan-500">
+                    <input type="email" name="contact_email" value="{{ $settings['contact_email'] ?? '' }}" placeholder="e.g., concierge@byzunash.com" class="w-full px-3.5 py-2 text-xs rounded-xl bg-[#FAF8F5] dark:bg-[#241D1A] border border-[#E0D7CB] dark:border-[#382D27] text-espresso-900 dark:text-white focus:outline-hidden focus:border-tan-500">
                 </div>
 
                 <div>
                     <label class="block text-xs font-semibold text-espresso-900 dark:text-white mb-1.5">WhatsApp / Phone Hotline</label>
-                    <input type="text" name="contact_phone" value="{{ $settings['contact_phone'] ?? '+92 321 4700545' }}" class="w-full px-3.5 py-2 text-xs rounded-xl bg-[#FAF8F5] dark:bg-[#241D1A] border border-[#E0D7CB] dark:border-[#382D27] text-espresso-900 dark:text-white focus:outline-hidden focus:border-tan-500 font-mono">
+                    <input type="text" name="contact_phone" value="{{ $settings['contact_phone'] ?? '' }}" placeholder="e.g., +92 321 4700545" class="w-full px-3.5 py-2 text-xs rounded-xl bg-[#FAF8F5] dark:bg-[#241D1A] border border-[#E0D7CB] dark:border-[#382D27] text-espresso-900 dark:text-white focus:outline-hidden focus:border-tan-500 font-mono">
                 </div>
 
                 <div>
-                    <label class="block text-xs font-semibold text-espresso-900 dark:text-white mb-1.5">Workshop City</label>
-                    <input type="text" name="warehouse_city" value="{{ $settings['warehouse_city'] ?? 'Lahore, Pakistan' }}" class="w-full px-3.5 py-2 text-xs rounded-xl bg-[#FAF8F5] dark:bg-[#241D1A] border border-[#E0D7CB] dark:border-[#382D27] text-espresso-900 dark:text-white focus:outline-hidden focus:border-tan-500">
+                    <label class="block text-xs font-semibold text-espresso-900 dark:text-white mb-1.5">Workshop City / Location</label>
+                    <input type="text" name="warehouse_city" value="{{ $settings['warehouse_city'] ?? '' }}" placeholder="e.g., Sargodha, Pakistan" class="w-full px-3.5 py-2 text-xs rounded-xl bg-[#FAF8F5] dark:bg-[#241D1A] border border-[#E0D7CB] dark:border-[#382D27] text-espresso-900 dark:text-white focus:outline-hidden focus:border-tan-500">
+                </div>
+
+                <div>
+                    <label class="block text-xs font-semibold text-espresso-900 dark:text-white mb-1.5">Concierge & Atelier Timing</label>
+                    <input type="text" name="store_timing" value="{{ $settings['store_timing'] ?? 'Mon – Sat: 10:00 AM – 8:00 PM PKT' }}" placeholder="e.g., Mon – Sat: 10:00 AM – 8:00 PM PKT" class="w-full px-3.5 py-2 text-xs rounded-xl bg-[#FAF8F5] dark:bg-[#241D1A] border border-[#E0D7CB] dark:border-[#382D27] text-espresso-900 dark:text-white focus:outline-hidden focus:border-tan-500">
                 </div>
 
                 <div>
                     <label class="block text-xs font-semibold text-espresso-900 dark:text-white mb-1.5">Complimentary Shipping Threshold (PKR)</label>
-                    <input type="number" name="free_shipping_threshold" value="{{ $settings['free_shipping_threshold'] ?? 0 }}" class="w-full px-3.5 py-2 text-xs rounded-xl bg-[#FAF8F5] dark:bg-[#241D1A] border border-[#E0D7CB] dark:border-[#382D27] text-espresso-900 dark:text-white focus:outline-hidden focus:border-tan-500 font-mono">
+                    <input type="number" name="free_shipping_threshold" value="{{ $settings['free_shipping_threshold'] ?? '' }}" placeholder="e.g., 0 for all free, or 5000" class="w-full px-3.5 py-2 text-xs rounded-xl bg-[#FAF8F5] dark:bg-[#241D1A] border border-[#E0D7CB] dark:border-[#382D27] text-espresso-900 dark:text-white focus:outline-hidden focus:border-tan-500 font-mono">
                 </div>
             </div>
         </div>

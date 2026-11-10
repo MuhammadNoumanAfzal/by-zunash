@@ -341,7 +341,11 @@ Alpine.store('cart', {
 
     get shipping() {
         if (this.subtotal === 0) return 0;
-        return this.subtotal >= 6000 ? 0 : 250;
+        const threshold = (typeof window.BYZUNASH_FREE_SHIPPING_THRESHOLD === 'number') 
+            ? window.BYZUNASH_FREE_SHIPPING_THRESHOLD 
+            : 5000;
+        if (threshold <= 0) return 0;
+        return this.subtotal >= threshold ? 0 : 250;
     },
 
     get total() {

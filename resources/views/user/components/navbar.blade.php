@@ -3,6 +3,31 @@
         mobileMenuOpen: false, 
         searchOpen: false, 
         searchQuery: '',
+        searchLoading: false,
+        searchResults: { products: [], categories: [], total: 0 },
+        searchTimer: null,
+        onSearchInput() {
+            if (this.searchQuery.trim().length < 1) {
+                this.searchResults = { products: [], categories: [], total: 0 };
+                return;
+            }
+            this.searchLoading = true;
+            clearTimeout(this.searchTimer);
+            this.searchTimer = setTimeout(() => {
+                fetch('{{ route('search.live') }}?q=' + encodeURIComponent(this.searchQuery))
+                    .then(res => res.json())
+                    .then(data => {
+                        this.searchResults = data;
+                        this.searchLoading = false;
+                        this.$nextTick(() => { if (window.lucide) lucide.createIcons(); });
+                    })
+                    .catch(() => { this.searchLoading = false; });
+            }, 200);
+        },
+        applyPopular(term) {
+            this.searchQuery = term;
+            this.onSearchInput();
+        },
         collectionsOpen: false,
         mobileCollectionsOpen: true,
         hoverTimer: null,
@@ -84,7 +109,12 @@
                         <i data-lucide="chevron-down" class="w-3.5 h-3.5 transition-transform duration-200" :class="collectionsOpen ? 'rotate-180 text-gold-600' : ''"></i>
                     </button>
 
-                    <!-- Full-Width Luxury Mega-Menu Dropdown (Centered & Contained within max-w-7xl, Zero Overflow) -->
+                    <!-- Full-Width Luxury Mega-Menu Dropdown (Dynamic from Atelier Database) -->
+                    @php
+                        $megaCategories = \App\Models\Category::with(['subcategories'])->withCount('products')->orderBy('sort_order')->take(4)->get();
+                        $totalCreationsCount = \App\Models\Product::count();
+                        $spotlightProduct = \App\Models\Product::where('is_bestseller', true)->orWhere('is_new', true)->first() ?: \App\Models\Product::first();
+                    @endphp
                     <div 
                         x-show="collectionsOpen"
                         x-cloak
@@ -99,160 +129,112 @@
                         @mouseleave="closeCollections()"
                     >
                         <div class="grid grid-cols-12 gap-8 pb-7">
-                            
-                            <!-- Column 1: Leather Belts -->
-                            <div class="col-span-3 space-y-3">
-                                <a href="{{ route('category', 'belts') }}" class="group flex items-center justify-between pb-2.5 border-b border-ivory-200 dark:border-white/10">
-                                    <h4 class="font-serif text-xs font-bold uppercase tracking-wider text-espresso-950 dark:text-ivory group-hover:text-gold-600 transition-colors">
-                                        Leather Belts
-                                    </h4>
-                                    <i data-lucide="chevron-right" class="w-3.5 h-3.5 text-gold-600 transition-transform group-hover:translate-x-1"></i>
-                                </a>
-                                <ul class="space-y-1 text-xs">
-                                    <li>
-                                        <a href="{{ route('product.details', 'the-royal-reversible-calfskin-belt') }}" class="text-espresso-800 hover:text-gold-600 hover:bg-ivory-50 px-2 py-1.5 rounded font-medium transition-all block">
-                                            Reversible 360° Calfskin Belts
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a href="{{ route('product.details', 'hand-burnished-classic-dress-belt') }}" class="text-espresso-800 hover:text-gold-600 hover:bg-ivory-50 px-2 py-1.5 rounded font-medium transition-all block">
-                                            Hand-Burnished Classic Dress Belts
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a href="{{ route('product.details', 'saddle-stitched-artisan-casual-belt') }}" class="text-espresso-800 hover:text-gold-600 hover:bg-ivory-50 px-2 py-1.5 rounded font-medium transition-all block">
-                                            Saddle-Stitched Casual Belts
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a href="{{ route('product.details', 'braided-heritage-leather-belt') }}" class="text-espresso-800 hover:text-gold-600 hover:bg-ivory-50 px-2 py-1.5 rounded font-medium transition-all block">
-                                            Braided Heritage Leather Belts
-                                        </a>
-                                    </li>
-                                    <li class="pt-1.5">
-                                        <a href="{{ route('category', 'belts') }}" class="text-xs font-bold text-gold-600 hover:text-gold-700 uppercase tracking-wider flex items-center gap-1.5 px-2">
-                                            <span>All Belts (4 Pieces)</span>
-                                            <i data-lucide="arrow-right" class="w-3 h-3"></i>
-                                        </a>
-                                    </li>
-                                </ul>
-                            </div>
+                            @if($megaCategories->isNotEmpty())
+                                @php
+                                    $catCount = $megaCategories->count();
+                                    // Allocate column width nicely depending on how many categories exist
+                                    $catColSpan = match($catCount) {
+                                        1 => ($spotlightProduct ? 'col-span-8' : 'col-span-12'),
+                                        2 => ($spotlightProduct ? 'col-span-4' : 'col-span-6'),
+                                        default => ($spotlightProduct ? 'col-span-3' : 'col-span-4'),
+                                    };
+                                @endphp
 
-                            <!-- Column 2: Wallets & Cardholders -->
-                            <div class="col-span-3 space-y-3">
-                                <a href="{{ route('category', 'wallets') }}" class="group flex items-center justify-between pb-2.5 border-b border-ivory-200 dark:border-white/10">
-                                    <h4 class="font-serif text-xs font-bold uppercase tracking-wider text-espresso-950 dark:text-ivory group-hover:text-gold-600 transition-colors">
-                                        Wallets & Cardholders
-                                    </h4>
-                                    <i data-lucide="chevron-right" class="w-3.5 h-3.5 text-gold-600 transition-transform group-hover:translate-x-1"></i>
-                                </a>
-                                <ul class="space-y-1 text-xs">
-                                    <li>
-                                        <a href="{{ route('product.details', 'the-heritage-bifold-leather-wallet') }}" class="text-espresso-800 hover:text-gold-600 hover:bg-ivory-50 px-2 py-1.5 rounded font-medium transition-all block">
-                                            The Heritage Bifold Wallet
+                                @foreach($megaCategories as $cat)
+                                    <div class="{{ $catColSpan }} space-y-3">
+                                        <a href="{{ route('category', $cat->slug) }}" class="group flex items-center justify-between pb-2.5 border-b border-ivory-200 dark:border-white/10">
+                                            <h4 class="font-serif text-xs font-bold uppercase tracking-wider text-espresso-950 dark:text-ivory group-hover:text-gold-600 transition-colors">
+                                                {{ $cat->name }}
+                                            </h4>
+                                            <i data-lucide="chevron-right" class="w-3.5 h-3.5 text-gold-600 transition-transform group-hover:translate-x-1"></i>
                                         </a>
-                                    </li>
-                                    <li>
-                                        <a href="{{ route('product.details', 'minimalist-slim-cardholder') }}" class="text-espresso-800 hover:text-gold-600 hover:bg-ivory-50 px-2 py-1.5 rounded font-medium transition-all block">
-                                            Minimalist Slim Cardholders
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a href="{{ route('product.details', 'the-continental-zippered-long-wallet') }}" class="text-espresso-800 hover:text-gold-600 hover:bg-ivory-50 px-2 py-1.5 rounded font-medium transition-all block">
-                                            Continental Zippered Long Wallets
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a href="{{ route('product.details', 'the-executive-travel-passport-case') }}" class="text-espresso-800 hover:text-gold-600 hover:bg-ivory-50 px-2 py-1.5 rounded font-medium transition-all block">
-                                            Executive Travel Passport Cases
-                                        </a>
-                                    </li>
-                                    <li class="pt-1.5">
-                                        <a href="{{ route('category', 'wallets') }}" class="text-xs font-bold text-gold-600 hover:text-gold-700 uppercase tracking-wider flex items-center gap-1.5 px-2">
-                                            <span>All Wallets (4 Pieces)</span>
-                                            <i data-lucide="arrow-right" class="w-3 h-3"></i>
-                                        </a>
-                                    </li>
-                                </ul>
-                            </div>
 
-                            <!-- Column 3: Handbags & Shoulder Bags -->
-                            <div class="col-span-3 space-y-3">
-                                <a href="{{ route('category', 'handbags') }}" class="group flex items-center justify-between pb-2.5 border-b border-ivory-200 dark:border-white/10">
-                                    <h4 class="font-serif text-xs font-bold uppercase tracking-wider text-espresso-950 dark:text-ivory group-hover:text-gold-600 transition-colors">
-                                        Handbags & Bags
-                                    </h4>
-                                    <i data-lucide="chevron-right" class="w-3.5 h-3.5 text-gold-600 transition-transform group-hover:translate-x-1"></i>
-                                </a>
-                                <ul class="space-y-1 text-xs">
-                                    <li>
-                                        <a href="{{ route('product.details', 'the-sovereign-leather-tote') }}" class="text-espresso-800 hover:text-gold-600 hover:bg-ivory-50 px-2 py-1.5 rounded font-medium transition-all block">
-                                            The Sovereign Leather Tote
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a href="{{ route('product.details', 'the-zunash-signature-satchel') }}" class="text-espresso-800 hover:text-gold-600 hover:bg-ivory-50 px-2 py-1.5 rounded font-medium transition-all block">
-                                            The Zunash Signature Satchel
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a href="{{ route('category', 'shoulder-bags') }}" class="text-espresso-800 hover:text-gold-600 hover:bg-ivory-50 px-2 py-1.5 rounded font-medium transition-all block">
-                                            Shoulder Bags & Crossbodies
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a href="{{ route('category', 'accessories') }}" class="text-espresso-800 hover:text-gold-600 hover:bg-ivory-50 px-2 py-1.5 rounded font-medium transition-all block">
-                                            Everyday Leather Accessories
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a href="{{ route('category', 'on-demand') }}" class="text-amber-900 font-semibold hover:text-gold-600 hover:bg-amber-50/60 px-2 py-1.5 rounded transition-all flex items-center justify-between">
-                                            <span>On Demand & Bespoke</span>
-                                            <span class="text-[9px] bg-amber-100 text-amber-900 border border-amber-300 px-1.5 py-0.2 rounded font-sans uppercase">Custom</span>
-                                        </a>
-                                    </li>
-                                    <li class="pt-1.5">
-                                        <a href="{{ route('shop') }}" class="text-xs font-bold text-gold-600 hover:text-gold-700 uppercase tracking-wider flex items-center gap-1.5 px-2">
-                                            <span>All Creations (23 Pieces)</span>
-                                            <i data-lucide="arrow-right" class="w-3 h-3"></i>
-                                        </a>
-                                    </li>
-                                </ul>
-                            </div>
-
-                            <!-- Column 4: Atelier Spotlight Card -->
-                            <div class="col-span-3 bg-ivory-50 dark:bg-[#241C18] rounded-xl p-4 border border-ivory-200 dark:border-white/10 flex flex-col justify-between shadow-xs">
-                                <div>
-                                    <div class="flex items-center justify-between mb-2">
-                                        <span class="text-[10px] uppercase tracking-widest text-gold-600 font-serif font-bold">
-                                            Atelier Spotlight
-                                        </span>
-                                        <span class="text-[10px] uppercase tracking-wider text-emerald-700 bg-emerald-50 dark:bg-emerald-950/60 dark:text-emerald-300 px-1.5 py-0.5 rounded font-medium border border-emerald-200 dark:border-emerald-800">
-                                            Bestseller
-                                        </span>
+                                        @if($cat->subcategories->isNotEmpty())
+                                            <ul class="space-y-1 text-xs">
+                                                @foreach($cat->subcategories->take(4) as $sub)
+                                                    <li>
+                                                        <a href="{{ route('shop', ['category' => $cat->slug]) }}" class="text-espresso-800 dark:text-ivory-200 hover:text-gold-600 hover:bg-ivory-50 dark:hover:bg-white/5 px-2 py-1.5 rounded font-medium transition-all block">
+                                                            {{ $sub->name }}
+                                                        </a>
+                                                    </li>
+                                                @endforeach
+                                                <li class="pt-1.5">
+                                                    <a href="{{ route('category', $cat->slug) }}" class="text-xs font-bold text-gold-600 hover:text-gold-700 uppercase tracking-wider flex items-center gap-1.5 px-2">
+                                                        <span>All {{ $cat->name }} ({{ $cat->products_count }} {{ Str::plural('Piece', $cat->products_count) }})</span>
+                                                        <i data-lucide="arrow-right" class="w-3 h-3"></i>
+                                                    </a>
+                                                </li>
+                                            </ul>
+                                        @elseif($cat->tagline)
+                                            <p class="text-xs text-muted dark:text-ivory-300 font-light italic leading-relaxed px-1">
+                                                {{ $cat->tagline }}
+                                            </p>
+                                            <div class="pt-2">
+                                                <a href="{{ route('category', $cat->slug) }}" class="text-xs font-bold text-gold-600 hover:text-gold-700 uppercase tracking-wider flex items-center gap-1.5 px-1">
+                                                    <span>Explore Collection ({{ $cat->products_count }} {{ Str::plural('Piece', $cat->products_count) }})</span>
+                                                    <i data-lucide="arrow-right" class="w-3 h-3"></i>
+                                                </a>
+                                            </div>
+                                        @else
+                                            <div class="pt-1">
+                                                <a href="{{ route('category', $cat->slug) }}" class="text-xs font-bold text-gold-600 hover:text-gold-700 uppercase tracking-wider flex items-center gap-1.5 px-1">
+                                                    <span>View Collection ({{ $cat->products_count }} {{ Str::plural('Piece', $cat->products_count) }})</span>
+                                                    <i data-lucide="arrow-right" class="w-3 h-3"></i>
+                                                </a>
+                                            </div>
+                                        @endif
                                     </div>
-                                    <h5 class="font-serif text-sm font-bold text-espresso-950 dark:text-ivory mb-1">
-                                        The Royal Reversible Belt
-                                    </h5>
-                                    <p class="text-[11px] text-muted-dark dark:text-ivory-300 leading-relaxed line-clamp-2 mb-3 font-light">
-                                        Two refined looks in one. Italian calfskin with 360° swivel brass buckle.
-                                    </p>
-                                    <div class="aspect-[16/10] rounded-lg overflow-hidden bg-ivory-100 dark:bg-[#161210] mb-3 border border-ivory-300 dark:border-white/10">
-                                        <img 
-                                            src="https://images.unsplash.com/photo-1624222247344-550fb60583dc?auto=format&fit=crop&w=600&q=80" 
-                                            alt="The Royal Reversible Belt" 
-                                            class="w-full h-full object-cover"
+                                @endforeach
+
+                                @if($spotlightProduct)
+                                    <!-- Dynamic Atelier Spotlight Card -->
+                                    <div class="col-span-4 bg-ivory-50 dark:bg-[#241C18] rounded-2xl p-4 border border-ivory-200 dark:border-white/10 flex flex-col justify-between shadow-xs">
+                                        <div>
+                                            <div class="flex items-center justify-between mb-2">
+                                                <span class="text-[10px] uppercase tracking-widest text-gold-600 font-serif font-bold">
+                                                    Atelier Spotlight
+                                                </span>
+                                                @if($spotlightProduct->badge)
+                                                    <span class="text-[10px] uppercase tracking-wider text-emerald-700 bg-emerald-50 dark:bg-emerald-950/60 dark:text-emerald-300 px-1.5 py-0.5 rounded font-medium border border-emerald-200 dark:border-emerald-800">
+                                                        {{ $spotlightProduct->badge }}
+                                                    </span>
+                                                @endif
+                                            </div>
+                                            <h5 class="font-serif text-sm font-bold text-espresso-950 dark:text-ivory mb-1 truncate">
+                                                {{ $spotlightProduct->name }}
+                                            </h5>
+                                            <p class="text-[11px] text-muted-dark dark:text-ivory-300 leading-relaxed line-clamp-2 mb-3 font-light">
+                                                {{ $spotlightProduct->short_description ?: $spotlightProduct->tagline ?: 'Handcrafted luxury full-grain piece.' }}
+                                            </p>
+                                            @if($spotlightProduct->image)
+                                                <div class="aspect-[16/10] rounded-xl overflow-hidden bg-ivory-100 dark:bg-[#161210] mb-3 border border-ivory-300 dark:border-white/10">
+                                                    <img 
+                                                        src="{{ $spotlightProduct->image }}" 
+                                                        alt="{{ $spotlightProduct->name }}" 
+                                                        class="w-full h-full object-cover"
+                                                    >
+                                                </div>
+                                            @endif
+                                        </div>
+                                        <a 
+                                            href="{{ route('product.details', $spotlightProduct->slug) }}" 
+                                            class="w-full py-2 bg-espresso-950 hover:bg-gold-600 text-white hover:text-white text-xs uppercase tracking-wider font-bold rounded-xl text-center block transition-all shadow-xs"
                                         >
+                                            Inspect • PKR {{ number_format($spotlightProduct->price) }}
+                                        </a>
                                     </div>
+                                @endif
+                            @else
+                                <div class="col-span-12 py-8 text-center space-y-2">
+                                    <p class="font-serif text-sm text-espresso-900 dark:text-ivory">
+                                        Atelier collections are currently being curated.
+                                    </p>
+                                    <a href="{{ route('shop') }}" class="inline-flex items-center gap-1.5 text-xs uppercase tracking-widest font-bold text-gold-600 hover:underline">
+                                        <span>Explore Full Catalog</span>
+                                        <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
+                                    </a>
                                 </div>
-                                <a 
-                                    href="{{ route('product.details', 'the-royal-reversible-calfskin-belt') }}" 
-                                    class="w-full py-2 bg-espresso-950 hover:bg-gold-600 text-white hover:text-white text-xs uppercase tracking-wider font-bold rounded-lg text-center block transition-all shadow-xs"
-                                >
-                                    Inspect • PKR 4,950
-                                </a>
-                            </div>
-
+                            @endif
                         </div>
 
                         <!-- Mega Menu Bottom Reassurance Bar -->
@@ -268,7 +250,7 @@
                                 </span>
                             </div>
                             <a href="{{ route('shop') }}" class="font-bold text-gold-600 hover:text-gold-700 uppercase tracking-widest text-xs flex items-center gap-1.5 group">
-                                <span>Explore Full Catalog (23 Pieces)</span>
+                                <span>Explore Full Catalog ({{ $totalCreationsCount }} {{ Str::plural('Piece', $totalCreationsCount) }})</span>
                                 <i data-lucide="arrow-right" class="w-3.5 h-3.5 transition-transform group-hover:translate-x-1"></i>
                             </a>
                         </div>
@@ -369,7 +351,7 @@
         </div>
     </div>
 
-    <!-- Search Overlay Bar (Slide Down) -->
+    <!-- Search Overlay Bar with Live Instant Autocomplete Dropdown -->
     <div 
         x-show="searchOpen" 
         x-cloak
@@ -379,44 +361,133 @@
         x-transition:leave="transition ease-in duration-150"
         x-transition:leave-start="opacity-100 translate-y-0"
         x-transition:leave-end="opacity-0 -translate-y-4"
-        class="bg-ivory-50 dark:bg-[#1E1815] border-t border-b border-ivory-300 dark:border-white/10 py-4 px-4 sm:px-6 shadow-md"
+        class="bg-ivory-50 dark:bg-[#1E1815] border-t border-b border-ivory-300 dark:border-white/10 py-4 px-4 sm:px-6 shadow-md relative z-50"
     >
-        <div class="max-w-3xl mx-auto">
+        <div class="max-w-3xl mx-auto relative">
             <form action="{{ route('search') }}" method="GET" class="relative flex items-center">
                 <i data-lucide="search" class="absolute left-4 w-5 h-5 text-muted pointer-events-none"></i>
                 <input 
                     type="search" 
                     name="q" 
                     x-model="searchQuery" 
+                    @input="onSearchInput()"
                     placeholder="Search fine leather belts, wallets, handbags, and accessories..." 
-                    class="w-full pl-12 pr-24 py-3 bg-white dark:bg-[#161210] border border-ivory-300 dark:border-white/10 rounded-lg text-sm text-espresso-900 dark:text-ivory-100 placeholder-muted focus:outline-none focus:ring-2 focus:ring-gold/60 focus:border-gold"
+                    class="w-full pl-12 pr-28 py-3.5 bg-white dark:bg-[#161210] border border-ivory-300 dark:border-white/10 rounded-xl text-sm text-espresso-900 dark:text-ivory-100 placeholder-muted focus:outline-none focus:ring-2 focus:ring-gold/60 focus:border-gold shadow-xs"
                     autofocus
+                    autocomplete="off"
                 >
-                <div class="absolute right-2 flex items-center space-x-1">
+                <div class="absolute right-2 flex items-center space-x-1.5">
+                    <!-- Loading Indicator -->
+                    <div x-show="searchLoading" class="mr-1 text-gold-600" x-cloak>
+                        <svg class="animate-spin h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path>
+                        </svg>
+                    </div>
+
                     <button 
                         type="submit" 
-                        class="px-4 py-1.5 bg-espresso text-ivory text-xs uppercase tracking-wider font-medium rounded hover:bg-chocolate-700 transition-colors"
+                        class="px-4 py-1.5 bg-espresso hover:bg-chocolate-800 text-ivory text-xs uppercase tracking-wider font-semibold rounded-lg shadow-sm transition-all"
                     >
                         Search
                     </button>
                     <button 
                         type="button" 
                         @click="searchOpen = false" 
-                        class="p-2 text-muted hover:text-espresso-900"
+                        class="p-2 text-muted hover:text-espresso-900 dark:hover:text-white transition-colors"
                         aria-label="Close search"
                     >
                         <i data-lucide="x" class="w-4 h-4"></i>
                     </button>
                 </div>
             </form>
-            <div class="mt-2.5 flex items-center gap-2 text-xs text-muted">
-                <span class="font-medium text-espresso-800">Popular:</span>
-                <a href="{{ route('category', 'belts') }}" class="hover:text-gold-600 underline underline-offset-2">Reversible Belts</a>
+
+            <!-- Popular Suggestions Pills -->
+            <div class="mt-2.5 flex items-center gap-2 text-xs text-muted flex-wrap">
+                <span class="font-medium text-espresso-800 dark:text-ivory-200">Popular:</span>
+                <button type="button" @click="applyPopular('Leather Belts')" class="hover:text-gold-600 dark:hover:text-gold underline underline-offset-2">Leather Belts</button>
                 <span>•</span>
-                <a href="{{ route('category', 'wallets') }}" class="hover:text-gold-600 underline underline-offset-2">RFID Wallets</a>
+                <button type="button" @click="applyPopular('Reversible Belt')" class="hover:text-gold-600 dark:hover:text-gold underline underline-offset-2">Reversible Belts</button>
                 <span>•</span>
-                <a href="{{ route('category', 'handbags') }}" class="hover:text-gold-600 underline underline-offset-2">Signature Satchels</a>
+                <button type="button" @click="applyPopular('Wallets')" class="hover:text-gold-600 dark:hover:text-gold underline underline-offset-2">Wallets</button>
+                <span>•</span>
+                <button type="button" @click="applyPopular('Handbags')" class="hover:text-gold-600 dark:hover:text-gold underline underline-offset-2">Handbags</button>
             </div>
+
+            <!-- Instant Live Results Floating Card -->
+            <div 
+                x-show="searchQuery.trim().length >= 1" 
+                x-cloak
+                x-transition:enter="transition ease-out duration-200"
+                x-transition:enter-start="opacity-0 translate-y-2"
+                x-transition:enter-end="opacity-100 translate-y-0"
+                class="absolute left-0 right-0 top-full mt-2 bg-white dark:bg-[#1A1412] rounded-2xl shadow-2xl border border-ivory-300 dark:border-white/10 overflow-hidden z-50 max-h-[70vh] overflow-y-auto scrollbar-thin divide-y divide-ivory-200 dark:divide-white/5"
+            >
+                <!-- If No Matches -->
+                <div x-show="!searchLoading && searchResults.total === 0" class="p-8 text-center">
+                    <div class="w-12 h-12 rounded-full bg-ivory-100 dark:bg-[#251D18] text-muted mx-auto flex items-center justify-center mb-2.5">
+                        <i data-lucide="search-x" class="w-6 h-6"></i>
+                    </div>
+                    <h4 class="font-serif font-bold text-sm text-espresso-950 dark:text-white">No creations found matching "<span x-text="searchQuery"></span>"</h4>
+                    <p class="text-xs text-muted mt-1">Try searching by leather type, collection name, or SKU.</p>
+                </div>
+
+                <!-- Matched Products -->
+                <div x-show="searchResults.products && searchResults.products.length > 0" class="p-3">
+                    <div class="px-2 py-1 text-[10px] uppercase tracking-wider font-bold text-gold-700 dark:text-gold flex items-center justify-between">
+                        <span>Handcrafted Creations</span>
+                        <span class="text-muted font-normal" x-text="searchResults.products.length + ' matches'"></span>
+                    </div>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 mt-1.5">
+                        <template x-for="item in searchResults.products" :key="'sp-' + item.id">
+                            <a 
+                                :href="item.url" 
+                                class="flex items-center gap-3 p-2 rounded-xl hover:bg-ivory-100 dark:hover:bg-[#251D18] transition-all group border border-transparent hover:border-ivory-300 dark:hover:border-white/10"
+                            >
+                                <div class="w-12 h-12 rounded-lg bg-ivory-50 dark:bg-black/30 overflow-hidden shrink-0 border border-ivory-200 dark:border-white/10 shadow-xs">
+                                    <img :src="item.image" :alt="item.name" class="w-full h-full object-cover group-hover:scale-105 transition-transform">
+                                </div>
+                                <div class="min-w-0 flex-1">
+                                    <span class="text-[10px] text-gold-700 font-medium uppercase tracking-wider block" x-text="item.category"></span>
+                                    <h5 class="text-xs font-serif font-bold text-espresso-950 dark:text-white truncate group-hover:text-gold-700 transition-colors" x-text="item.name"></h5>
+                                    <span class="text-xs font-mono font-bold text-espresso-900 dark:text-ivory-100" x-text="item.price"></span>
+                                </div>
+                            </a>
+                        </template>
+                    </div>
+                </div>
+
+                <!-- Matched Categories -->
+                <div x-show="searchResults.categories && searchResults.categories.length > 0" class="p-3 bg-ivory-50/50 dark:bg-[#161210]/50">
+                    <div class="px-2 py-0.5 text-[10px] uppercase tracking-wider font-bold text-gold-700 dark:text-gold">
+                        Collections
+                    </div>
+                    <div class="flex items-center gap-2 flex-wrap mt-1.5">
+                        <template x-for="cat in searchResults.categories" :key="'sc-' + cat.id">
+                            <a 
+                                :href="cat.url" 
+                                class="px-3 py-1 rounded-full text-xs font-semibold bg-white dark:bg-[#251D18] border border-ivory-300 dark:border-white/10 text-espresso-900 dark:text-white hover:border-gold hover:text-gold-700 transition-colors inline-flex items-center gap-1.5"
+                            >
+                                <i data-lucide="folder" class="w-3 h-3 text-gold-600"></i>
+                                <span x-text="cat.name"></span>
+                            </a>
+                        </template>
+                    </div>
+                </div>
+
+                <!-- Full Search Page Link Footer -->
+                <div class="p-2.5 bg-ivory-100/60 dark:bg-[#120E0C] text-center">
+                    <a 
+                        :href="'{{ route('search') }}?q=' + encodeURIComponent(searchQuery)" 
+                        class="text-xs font-bold text-espresso-950 dark:text-gold hover:underline inline-flex items-center gap-1.5"
+                    >
+                        <span>View all matching creations in catalog</span>
+                        <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
+                    </a>
+                </div>
+
+            </div>
+
         </div>
     </div>
 
@@ -503,63 +574,28 @@
                         </button>
 
                         <div x-show="mobileCollectionsOpen" class="pl-3 pr-1 py-2 space-y-4">
-                            <!-- Belts Subgroup -->
-                            <div>
-                                <div class="flex items-center justify-between text-xs font-bold text-espresso-900 uppercase font-serif pb-1">
-                                    <a href="{{ route('category', 'belts') }}" @click="mobileMenuOpen = false" class="hover:text-gold-600">Leather Belts</a>
+                            @forelse($megaCategories as $cat)
+                                <div>
+                                    <div class="flex items-center justify-between text-xs font-bold text-espresso-900 dark:text-ivory uppercase font-serif pb-1">
+                                        <a href="{{ route('category', $cat->slug) }}" @click="mobileMenuOpen = false" class="hover:text-gold-600">{{ $cat->name }}</a>
+                                    </div>
+                                    @if($cat->subcategories->isNotEmpty())
+                                        <ul class="pl-2 space-y-1.5 text-xs text-muted dark:text-ivory-300">
+                                            @foreach($cat->subcategories as $sub)
+                                                <li>
+                                                    <a href="{{ route('shop', ['category' => $cat->slug]) }}" @click="mobileMenuOpen = false" class="hover:text-gold-600 block py-0.5">
+                                                        {{ $sub->name }}
+                                                    </a>
+                                                </li>
+                                            @endforeach
+                                        </ul>
+                                    @endif
                                 </div>
-                                <ul class="pl-2 space-y-1.5 text-xs text-muted">
-                                    <li><a href="{{ route('category', 'belts') }}" @click="mobileMenuOpen = false" class="hover:text-gold-600 block py-0.5">Reversible Belts</a></li>
-                                    <li><a href="{{ route('category', 'belts') }}" @click="mobileMenuOpen = false" class="hover:text-gold-600 block py-0.5">Formal Dress Belts</a></li>
-                                </ul>
-                            </div>
-
-                            <!-- Wallets Subgroup -->
-                            <div>
-                                <div class="flex items-center justify-between text-xs font-bold text-espresso-900 uppercase font-serif pb-1">
-                                    <a href="{{ route('category', 'wallets') }}" @click="mobileMenuOpen = false" class="hover:text-gold-600">Wallets & Smallgoods</a>
+                            @empty
+                                <div class="text-xs text-muted py-2">
+                                    <a href="{{ route('shop') }}" @click="mobileMenuOpen = false" class="hover:text-gold-600">Explore All Creations</a>
                                 </div>
-                                <ul class="pl-2 space-y-1.5 text-xs text-muted">
-                                    <li><a href="{{ route('category', 'wallets') }}" @click="mobileMenuOpen = false" class="hover:text-gold-600 block py-0.5">Slim Bifold Wallets</a></li>
-                                    <li><a href="{{ route('category', 'wallets') }}" @click="mobileMenuOpen = false" class="hover:text-gold-600 block py-0.5">RFID Shielded Wallets</a></li>
-                                </ul>
-                            </div>
-
-                            <!-- Bags Subgroup -->
-                            <div>
-                                <div class="flex items-center justify-between text-xs font-bold text-espresso-900 uppercase font-serif pb-1">
-                                    <a href="{{ route('category', 'handbags') }}" @click="mobileMenuOpen = false" class="hover:text-gold-600">Handbags & Purses</a>
-                                </div>
-                                <ul class="pl-2 space-y-1.5 text-xs text-muted">
-                                    <li><a href="{{ route('category', 'handbags') }}" @click="mobileMenuOpen = false" class="hover:text-gold-600 block py-0.5">Signature Satchels</a></li>
-                                    <li><a href="{{ route('category', 'shoulder-bags') }}" @click="mobileMenuOpen = false" class="hover:text-gold-600 block py-0.5">Crossbody & Shoulder</a></li>
-                                </ul>
-                            </div>
-
-                            <!-- Accessories Subgroup -->
-                            <div>
-                                <div class="flex items-center justify-between text-xs font-bold text-espresso-900 uppercase font-serif pb-1">
-                                    <a href="{{ route('category', 'accessories') }}" @click="mobileMenuOpen = false" class="hover:text-gold-600">Accessories & Care</a>
-                                </div>
-                                <ul class="pl-2 space-y-1.5 text-xs text-muted">
-                                    <li><a href="{{ route('category', 'accessories') }}" @click="mobileMenuOpen = false" class="hover:text-gold-600 block py-0.5">Passport Folios & Sleeves</a></li>
-                                    <li><a href="{{ route('category', 'accessories') }}" @click="mobileMenuOpen = false" class="hover:text-gold-600 block py-0.5">Bespoke Gift Sets</a></li>
-                                </ul>
-                            </div>
-
-                            <!-- On Demand & Bespoke Subgroup -->
-                            <div>
-                                <div class="flex items-center justify-between text-xs font-bold text-amber-950 uppercase font-serif pb-1">
-                                    <a href="{{ route('category', 'on-demand') }}" @click="mobileMenuOpen = false" class="hover:text-gold-600 flex items-center gap-1.5">
-                                        <span>On Demand & Bespoke</span>
-                                        <span class="text-[9px] bg-amber-100 text-amber-900 border border-amber-300 px-1 py-0.2 rounded uppercase font-sans">Craft</span>
-                                    </a>
-                                </div>
-                                <ul class="pl-2 space-y-1.5 text-xs text-muted">
-                                    <li><a href="{{ route('category', 'on-demand') }}" @click="mobileMenuOpen = false" class="hover:text-gold-600 block py-0.5">Bespoke Attaches & Briefcases</a></li>
-                                    <li><a href="{{ route('category', 'on-demand') }}" @click="mobileMenuOpen = false" class="hover:text-gold-600 block py-0.5">Custom Monogrammed Pieces</a></li>
-                                </ul>
-                            </div>
+                            @endforelse
                         </div>
                     </div>
 

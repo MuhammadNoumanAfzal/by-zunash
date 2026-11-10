@@ -4,7 +4,30 @@
 
 @section('content')
 
-<div class="space-y-3.5 w-full min-w-0 max-w-full" x-data="{ activeChartTab: 'revenue', trajectoryPeriod: '12m' }">
+<div class="space-y-3.5 w-full min-w-0 max-w-full" x-data="{ 
+    activeChartTab: 'revenue', 
+    trajectoryPeriod: '12m',
+    chartTabs: ['revenue', 'orders', 'payments', 'collections', 'regions'],
+    touchStartX: 0,
+    nextChart() {
+        let idx = this.chartTabs.indexOf(this.activeChartTab);
+        let nextIdx = (idx + 1) % this.chartTabs.length;
+        this.setChart(this.chartTabs[nextIdx]);
+    },
+    prevChart() {
+        let idx = this.chartTabs.indexOf(this.activeChartTab);
+        let prevIdx = (idx - 1 + this.chartTabs.length) % this.chartTabs.length;
+        this.setChart(this.chartTabs[prevIdx]);
+    },
+    setChart(tab) {
+        this.activeChartTab = tab;
+        switchChart(tab);
+        this.$nextTick(() => {
+            const btn = document.getElementById('tab-btn-' + tab);
+            if (btn) btn.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+        });
+    }
+}">
 
     <!-- ======================= 1. COMPACT EXECUTIVE RIBBON ======================= -->
     <div class="relative overflow-hidden rounded-2xl bg-gradient-to-r from-espresso-950 via-[#1C1512] to-tan-800 text-white py-2.5 px-3.5 sm:px-5 shadow-xs border border-gold/30 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 w-full min-w-0">
@@ -141,101 +164,212 @@
         <div class="lg:col-span-8 p-3.5 sm:p-5 rounded-2xl bg-white dark:bg-[#161210] border border-[#ECE6DE] dark:border-[#261E1A] shadow-card flex flex-col justify-between w-full min-w-0 overflow-hidden">
             
             <div>
-                <!-- Header with Clean Tab Selectors -->
+                <!-- Header with Clean Tab Selectors & Sliding Chevrons -->
                 <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 pb-3 border-b border-[#F0EAE1] dark:border-[#261E1A]">
                     
-                    <!-- Graph Title with Dynamic Icon -->
-                    <div class="flex items-center gap-2">
-                        <span class="w-2.5 h-2.5 rounded-full bg-tan-600 animate-pulse"></span>
-                        <h2 class="font-cinzel text-sm sm:text-base font-bold text-espresso-950 dark:text-white tracking-wide">
-                            <span x-show="activeChartTab === 'revenue'">Revenue & Sales Trajectory</span>
-                            <span x-show="activeChartTab === 'orders'" x-cloak>Orders & Fulfillment Flow</span>
-                            <span x-show="activeChartTab === 'payments'" x-cloak>Payment Methods & Cash Flow</span>
-                            <span x-show="activeChartTab === 'collections'" x-cloak>Collections Portfolio Share</span>
-                            <span x-show="activeChartTab === 'regions'" x-cloak>Regional Pakistani Distribution</span>
-                        </h2>
+                    <!-- Graph Title with Dynamic Icon and Slide Navigation -->
+                    <div class="flex items-center justify-between sm:justify-start gap-2.5">
+                        <div class="flex items-center gap-2">
+                            <span class="w-2.5 h-2.5 rounded-full bg-tan-600 animate-pulse"></span>
+                            <h2 class="font-cinzel text-sm sm:text-base font-bold text-espresso-950 dark:text-white tracking-wide">
+                                <span x-show="activeChartTab === 'revenue'">Revenue & Sales Trajectory</span>
+                                <span x-show="activeChartTab === 'orders'" x-cloak>Orders & Fulfillment Flow</span>
+                                <span x-show="activeChartTab === 'payments'" x-cloak>Payment Methods & Cash Flow</span>
+                                <span x-show="activeChartTab === 'collections'" x-cloak>Collections Portfolio Share</span>
+                                <span x-show="activeChartTab === 'regions'" x-cloak>Regional Pakistani Distribution</span>
+                            </h2>
+                        </div>
+
+                        <!-- Mobile Slide Arrows next to Title -->
+                        <div class="flex items-center gap-1 sm:hidden">
+                            <button 
+                                type="button" 
+                                @click="prevChart()" 
+                                class="w-7 h-7 rounded-lg bg-[#FAF8F5] dark:bg-[#201815] border border-[#EFE8DF] dark:border-[#2E241F] flex items-center justify-center text-espresso-900 dark:text-white hover:text-tan-600 transition-colors shadow-2xs"
+                                title="Previous Chart"
+                            >
+                                <i data-lucide="chevron-left" class="w-3.5 h-3.5"></i>
+                            </button>
+                            <button 
+                                type="button" 
+                                @click="nextChart()" 
+                                class="w-7 h-7 rounded-lg bg-[#FAF8F5] dark:bg-[#201815] border border-[#EFE8DF] dark:border-[#2E241F] flex items-center justify-center text-espresso-900 dark:text-white hover:text-tan-600 transition-colors shadow-2xs"
+                                title="Next Chart"
+                            >
+                                <i data-lucide="chevron-right" class="w-3.5 h-3.5"></i>
+                            </button>
+                        </div>
                     </div>
 
-                    <!-- Clean Graph Navigation Tabs -->
-                    <div class="flex items-center gap-1 p-1 rounded-xl bg-[#FAF8F5] dark:bg-[#201815] border border-[#EFE8DF] dark:border-[#2E241F] overflow-x-auto max-w-full flex-nowrap">
+                    <!-- Clean Graph Navigation Tabs with Sliding Controls -->
+                    <div class="flex items-center gap-1 w-full sm:w-auto">
+                        <!-- Desktop Prev Slide Button -->
                         <button 
                             type="button" 
-                            @click="activeChartTab = 'revenue'; switchChart('revenue')"
-                            :class="activeChartTab === 'revenue' ? 'bg-white dark:bg-[#2D221D] text-tan-700 dark:text-gold shadow-2xs font-bold' : 'text-gray-500 hover:text-espresso-900 dark:hover:text-white'"
-                            class="px-2.5 py-1 rounded-lg text-[11px] transition-all flex items-center gap-1.5 shrink-0"
+                            @click="prevChart()" 
+                            class="hidden sm:flex w-7 h-7 rounded-lg bg-[#FAF8F5] dark:bg-[#201815] border border-[#EFE8DF] dark:border-[#2E241F] items-center justify-center text-gray-500 hover:text-espresso-900 dark:hover:text-white hover:border-tan-400 transition-colors shrink-0 shadow-2xs active:scale-95"
+                            title="Previous Chart"
                         >
-                            <i data-lucide="trending-up" class="w-3 h-3"></i>
-                            <span>Revenue</span>
+                            <i data-lucide="chevron-left" class="w-3.5 h-3.5"></i>
                         </button>
 
-                        <button 
-                            type="button" 
-                            @click="activeChartTab = 'orders'; switchChart('orders')"
-                            :class="activeChartTab === 'orders' ? 'bg-white dark:bg-[#2D221D] text-tan-700 dark:text-gold shadow-2xs font-bold' : 'text-gray-500 hover:text-espresso-900 dark:hover:text-white'"
-                            class="px-2.5 py-1 rounded-lg text-[11px] transition-all flex items-center gap-1.5 shrink-0"
+                        <!-- Scrollable / Sliding Tabs Strip -->
+                        <div 
+                            class="flex items-center gap-1 p-1 rounded-xl bg-[#FAF8F5] dark:bg-[#201815] border border-[#EFE8DF] dark:border-[#2E241F] overflow-x-auto scrollbar-none flex-nowrap w-full sm:w-auto scroll-smooth"
                         >
-                            <i data-lucide="package-check" class="w-3 h-3"></i>
-                            <span>Orders</span>
-                        </button>
+                            <button 
+                                id="tab-btn-revenue"
+                                type="button" 
+                                @click="setChart('revenue')"
+                                :class="activeChartTab === 'revenue' ? 'bg-white dark:bg-[#2D221D] text-tan-700 dark:text-gold shadow-2xs font-bold' : 'text-gray-500 hover:text-espresso-900 dark:hover:text-white'"
+                                class="px-2.5 py-1 rounded-lg text-[11px] transition-all flex items-center gap-1.5 shrink-0"
+                            >
+                                <i data-lucide="trending-up" class="w-3 h-3"></i>
+                                <span>Revenue</span>
+                            </button>
 
-                        <button 
-                            type="button" 
-                            @click="activeChartTab = 'payments'; switchChart('payments')"
-                            :class="activeChartTab === 'payments' ? 'bg-white dark:bg-[#2D221D] text-tan-700 dark:text-gold shadow-2xs font-bold' : 'text-gray-500 hover:text-espresso-900 dark:hover:text-white'"
-                            class="px-2.5 py-1 rounded-lg text-[11px] transition-all flex items-center gap-1.5 shrink-0"
-                        >
-                            <i data-lucide="credit-card" class="w-3 h-3"></i>
-                            <span>Payments</span>
-                        </button>
+                            <button 
+                                id="tab-btn-orders"
+                                type="button" 
+                                @click="setChart('orders')"
+                                :class="activeChartTab === 'orders' ? 'bg-white dark:bg-[#2D221D] text-tan-700 dark:text-gold shadow-2xs font-bold' : 'text-gray-500 hover:text-espresso-900 dark:hover:text-white'"
+                                class="px-2.5 py-1 rounded-lg text-[11px] transition-all flex items-center gap-1.5 shrink-0"
+                            >
+                                <i data-lucide="package-check" class="w-3 h-3"></i>
+                                <span>Orders</span>
+                            </button>
 
-                        <button 
-                            type="button" 
-                            @click="activeChartTab = 'collections'; switchChart('collections')"
-                            :class="activeChartTab === 'collections' ? 'bg-white dark:bg-[#2D221D] text-tan-700 dark:text-gold shadow-2xs font-bold' : 'text-gray-500 hover:text-espresso-900 dark:hover:text-white'"
-                            class="px-2.5 py-1 rounded-lg text-[11px] transition-all flex items-center gap-1.5 shrink-0"
-                        >
-                            <i data-lucide="layers" class="w-3 h-3"></i>
-                            <span>Collections</span>
-                        </button>
+                            <button 
+                                id="tab-btn-payments"
+                                type="button" 
+                                @click="setChart('payments')"
+                                :class="activeChartTab === 'payments' ? 'bg-white dark:bg-[#2D221D] text-tan-700 dark:text-gold shadow-2xs font-bold' : 'text-gray-500 hover:text-espresso-900 dark:hover:text-white'"
+                                class="px-2.5 py-1 rounded-lg text-[11px] transition-all flex items-center gap-1.5 shrink-0"
+                            >
+                                <i data-lucide="credit-card" class="w-3 h-3"></i>
+                                <span>Payments</span>
+                            </button>
 
+                            <button 
+                                id="tab-btn-collections"
+                                type="button" 
+                                @click="setChart('collections')"
+                                :class="activeChartTab === 'collections' ? 'bg-white dark:bg-[#2D221D] text-tan-700 dark:text-gold shadow-2xs font-bold' : 'text-gray-500 hover:text-espresso-900 dark:hover:text-white'"
+                                class="px-2.5 py-1 rounded-lg text-[11px] transition-all flex items-center gap-1.5 shrink-0"
+                            >
+                                <i data-lucide="layers" class="w-3 h-3"></i>
+                                <span>Collections</span>
+                            </button>
+
+                            <button 
+                                id="tab-btn-regions"
+                                type="button" 
+                                @click="setChart('regions')"
+                                :class="activeChartTab === 'regions' ? 'bg-white dark:bg-[#2D221D] text-tan-700 dark:text-gold shadow-2xs font-bold' : 'text-gray-500 hover:text-espresso-900 dark:hover:text-white'"
+                                class="px-2.5 py-1 rounded-lg text-[11px] transition-all flex items-center gap-1.5 shrink-0"
+                            >
+                                <i data-lucide="map-pin" class="w-3 h-3"></i>
+                                <span>Cities</span>
+                            </button>
+                        </div>
+
+                        <!-- Desktop Next Slide Button -->
                         <button 
                             type="button" 
-                            @click="activeChartTab = 'regions'; switchChart('regions')"
-                            :class="activeChartTab === 'regions' ? 'bg-white dark:bg-[#2D221D] text-tan-700 dark:text-gold shadow-2xs font-bold' : 'text-gray-500 hover:text-espresso-900 dark:hover:text-white'"
-                            class="px-2.5 py-1 rounded-lg text-[11px] transition-all flex items-center gap-1.5 shrink-0"
+                            @click="nextChart()" 
+                            class="hidden sm:flex w-7 h-7 rounded-lg bg-[#FAF8F5] dark:bg-[#201815] border border-[#EFE8DF] dark:border-[#2E241F] items-center justify-center text-gray-500 hover:text-espresso-900 dark:hover:text-white hover:border-tan-400 transition-colors shrink-0 shadow-2xs active:scale-95"
+                            title="Next Chart"
                         >
-                            <i data-lucide="map-pin" class="w-3 h-3"></i>
-                            <span>Cities</span>
+                            <i data-lucide="chevron-right" class="w-3.5 h-3.5"></i>
                         </button>
                     </div>
 
                 </div>
 
-                <!-- Interactive Chart Canvas Area -->
-                <div class="relative w-full h-[240px] sm:h-[270px] mt-3 min-w-0 overflow-hidden">
-                    
+                <!-- Interactive Chart Canvas Area with Touch Swipe & Slide Controls -->
+                <div 
+                    class="relative w-full h-[240px] sm:h-[270px] mt-3 min-w-0 overflow-hidden group/chart"
+                    @touchstart="touchStartX = $event.changedTouches[0].screenX"
+                    @touchend="
+                        const diff = $event.changedTouches[0].screenX - touchStartX;
+                        if (diff < -40) nextChart();
+                        if (diff > 40) prevChart();
+                    "
+                >
+                    <!-- Quick Slide Hover Chevrons on Canvas Sides -->
+                    <button 
+                        type="button" 
+                        @click="prevChart()" 
+                        class="absolute left-1.5 top-1/2 -translate-y-1/2 z-20 w-8 h-8 rounded-full bg-white/90 dark:bg-[#1A1310]/90 hover:bg-white dark:hover:bg-[#281D17] text-espresso-900 dark:text-gold border border-tan-300 dark:border-[#38261E] shadow-md flex items-center justify-center transition-all opacity-0 group-hover/chart:opacity-90 active:scale-90"
+                        title="Slide to Previous Chart"
+                    >
+                        <i data-lucide="chevron-left" class="w-4 h-4"></i>
+                    </button>
+                    <button 
+                        type="button" 
+                        @click="nextChart()" 
+                        class="absolute right-1.5 top-1/2 -translate-y-1/2 z-20 w-8 h-8 rounded-full bg-white/90 dark:bg-[#1A1310]/90 hover:bg-white dark:hover:bg-[#281D17] text-espresso-900 dark:text-gold border border-tan-300 dark:border-[#38261E] shadow-md flex items-center justify-center transition-all opacity-0 group-hover/chart:opacity-90 active:scale-90"
+                        title="Slide to Next Chart"
+                    >
+                        <i data-lucide="chevron-right" class="w-4 h-4"></i>
+                    </button>
+
                     <!-- Graph 1: Revenue Trajectory -->
-                    <div x-show="activeChartTab === 'revenue'" class="w-full h-full">
+                    <div 
+                        x-show="activeChartTab === 'revenue'" 
+                        x-transition:enter="transition ease-out duration-250"
+                        x-transition:enter-start="opacity-0 translate-x-3"
+                        x-transition:enter-end="opacity-100 translate-x-0"
+                        class="w-full h-full"
+                    >
                         <canvas id="trajectoryChart"></canvas>
                     </div>
 
                     <!-- Graph 2: Orders Fulfillment -->
-                    <div x-show="activeChartTab === 'orders'" x-cloak class="w-full h-full">
+                    <div 
+                        x-show="activeChartTab === 'orders'" 
+                        x-cloak 
+                        x-transition:enter="transition ease-out duration-250"
+                        x-transition:enter-start="opacity-0 translate-x-3"
+                        x-transition:enter-end="opacity-100 translate-x-0"
+                        class="w-full h-full"
+                    >
                         <canvas id="ordersChart"></canvas>
                     </div>
 
                     <!-- Graph 3: Payment Breakdown -->
-                    <div x-show="activeChartTab === 'payments'" x-cloak class="w-full h-full">
+                    <div 
+                        x-show="activeChartTab === 'payments'" 
+                        x-cloak 
+                        x-transition:enter="transition ease-out duration-250"
+                        x-transition:enter-start="opacity-0 translate-x-3"
+                        x-transition:enter-end="opacity-100 translate-x-0"
+                        class="w-full h-full"
+                    >
                         <canvas id="paymentsChart"></canvas>
                     </div>
 
                     <!-- Graph 4: Collections Breakdown -->
-                    <div x-show="activeChartTab === 'collections'" x-cloak class="w-full h-full">
+                    <div 
+                        x-show="activeChartTab === 'collections'" 
+                        x-cloak 
+                        x-transition:enter="transition ease-out duration-250"
+                        x-transition:enter-start="opacity-0 translate-x-3"
+                        x-transition:enter-end="opacity-100 translate-x-0"
+                        class="w-full h-full"
+                    >
                         <canvas id="collectionsChart"></canvas>
                     </div>
 
                     <!-- Graph 5: Regional Cities -->
-                    <div x-show="activeChartTab === 'regions'" x-cloak class="w-full h-full">
+                    <div 
+                        x-show="activeChartTab === 'regions'" 
+                        x-cloak 
+                        x-transition:enter="transition ease-out duration-250"
+                        x-transition:enter-start="opacity-0 translate-x-3"
+                        x-transition:enter-end="opacity-100 translate-x-0"
+                        class="w-full h-full"
+                    >
                         <canvas id="regionsChart"></canvas>
                     </div>
 
@@ -309,40 +443,46 @@
                         </a>
                     </div>
 
+                    @php
+                        $codAmount = (int) ($paymentMethodsBreakdown['Cash on Delivery']['amount'] ?? 0);
+                        $onlineAmount = (int) (($paymentMethodsBreakdown['Meezan Bank IBFT']['amount'] ?? 0) + ($paymentMethodsBreakdown['Online Card']['amount'] ?? 0));
+                        $totalMethodAmount = $codAmount + $onlineAmount + (int) ($paymentMethodsBreakdown['VIP Concierge']['amount'] ?? 0);
+                        $codPct = $totalMethodAmount > 0 ? round(($codAmount / $totalMethodAmount) * 100) : 0;
+                        $onlinePct = $totalMethodAmount > 0 ? round(($onlineAmount / $totalMethodAmount) * 100) : 0;
+                    @endphp
+
                     <!-- Payment Distribution Quick Bars -->
                     <div class="space-y-2 pt-1">
                         <div class="flex items-center justify-between text-xs font-semibold text-espresso-900 dark:text-white">
                             <span>Cash on Delivery (COD)</span>
-                            <span class="font-mono text-tan-600 dark:text-gold-400">Rs. {{ number_format($paymentMethodsBreakdown['Cash on Delivery']['amount'] ?? 0) }}</span>
+                            <span class="font-mono text-tan-600 dark:text-gold-400">Rs. {{ number_format($codAmount) }}</span>
                         </div>
                         <div class="w-full h-1.5 rounded-full bg-[#FAF0E6] dark:bg-[#281F1B] overflow-hidden">
-                            <div class="h-full bg-tan-600 rounded-full" style="width: 72%"></div>
+                            <div class="h-full bg-tan-600 rounded-full transition-all duration-500" style="width: {{ $codPct }}%"></div>
                         </div>
 
                         <div class="flex items-center justify-between text-xs font-semibold text-espresso-900 dark:text-white pt-1">
                             <span>Meezan Bank IBFT / Online</span>
-                            <span class="font-mono text-emerald-600 dark:text-emerald-400">Rs. {{ number_format(($paymentMethodsBreakdown['Meezan Bank IBFT']['amount'] ?? 0) + ($paymentMethodsBreakdown['Online Card']['amount'] ?? 0)) }}</span>
+                            <span class="font-mono text-emerald-600 dark:text-emerald-400">Rs. {{ number_format($onlineAmount) }}</span>
                         </div>
                         <div class="w-full h-1.5 rounded-full bg-[#FAF0E6] dark:bg-[#281F1B] overflow-hidden">
-                            <div class="h-full bg-emerald-500 rounded-full" style="width: 28%"></div>
+                            <div class="h-full bg-emerald-500 rounded-full transition-all duration-500" style="width: {{ $onlinePct }}%"></div>
                         </div>
                     </div>
 
                     <!-- Regional Top Cities -->
                     <div class="pt-2 border-t border-[#F0EAE1] dark:border-[#261E1A] space-y-1.5 text-xs">
                         <div class="text-[10px] font-bold uppercase tracking-wider text-[#8F8379]">Top Dispatch Hubs</div>
-                        <div class="flex items-center justify-between text-[11px] text-[#6E6359] dark:text-[#C5B8AC]">
-                            <span>Lahore (DHA, Gulberg)</span>
-                            <span class="font-bold text-espresso-950 dark:text-white">45%</span>
-                        </div>
-                        <div class="flex items-center justify-between text-[11px] text-[#6E6359] dark:text-[#C5B8AC]">
-                            <span>Karachi (Clifton, Defence)</span>
-                            <span class="font-bold text-espresso-950 dark:text-white">28%</span>
-                        </div>
-                        <div class="flex items-center justify-between text-[11px] text-[#6E6359] dark:text-[#C5B8AC]">
-                            <span>Islamabad & Rawalpindi</span>
-                            <span class="font-bold text-espresso-950 dark:text-white">27%</span>
-                        </div>
+                        @forelse($regionalDistribution->take(3) as $hub)
+                            <div class="flex items-center justify-between text-[11px] text-[#6E6359] dark:text-[#C5B8AC]">
+                                <span>{{ $hub['city'] }}</span>
+                                <span class="font-bold text-espresso-950 dark:text-white">{{ $hub['share'] }}%</span>
+                            </div>
+                        @empty
+                            <div class="text-[11px] text-[#8F8379] italic py-1">
+                                No regional orders recorded yet
+                            </div>
+                        @endforelse
                     </div>
 
                 </div>
@@ -563,9 +703,10 @@ function initCharts() {
         revenueGradient.addColorStop(0.7, isDark ? 'rgba(197, 161, 107, 0.08)' : 'rgba(176, 125, 78, 0.08)');
         revenueGradient.addColorStop(1, 'rgba(176, 125, 78, 0.0)');
 
-        const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-        const revenueData = [19500, 22000, 25800, 19000, 24500, 23800, 27900, 26400, 31200, 32800, 34100, 34800];
-        const volumeData = [4, 5, 6, 4, 5, 5, 6, 6, 7, 8, 8, 9];
+        const trajectoryData = @json($monthlyTrajectory);
+        const months = trajectoryData.map(d => d.month);
+        const revenueData = trajectoryData.map(d => d.revenue);
+        const volumeData = trajectoryData.map(d => d.volume);
 
         charts.revenue = new Chart(trajectoryCtx, {
             type: 'line',
@@ -631,21 +772,26 @@ function initCharts() {
                         type: 'linear',
                         display: true,
                         position: 'left',
+                        beginAtZero: true,
+                        suggestedMax: 5000,
                         grid: { color: gridColor },
                         ticks: {
                             font: { family: 'Plus Jakarta Sans', size: 9 },
                             color: tickColor,
-                            callback: function(v) { return 'Rs. ' + (v / 1000) + 'k'; }
+                            callback: function(v) { return 'Rs. ' + v.toLocaleString(); }
                         }
                     },
                     y1: {
                         type: 'linear',
                         display: true,
                         position: 'right',
+                        beginAtZero: true,
+                        suggestedMax: 5,
                         grid: { drawOnChartArea: false },
                         ticks: {
                             font: { family: 'Plus Jakarta Sans', size: 9 },
                             color: isDark ? '#C5A16B' : '#B07D4E',
+                            stepSize: 1,
                             callback: function(v) { return v + ' pcs'; }
                         }
                     }
@@ -665,7 +811,7 @@ function initCharts() {
                 labels: ['Delivered & Completed', 'In Crafting / Processing', 'Pending Dispatch', 'Cancelled'],
                 datasets: [{
                     label: 'Orders Count',
-                    data: [{{ $orderStatusBreakdown['Delivered'] ?? 4 }}, {{ $orderStatusBreakdown['In Crafting'] ?? 4 }}, {{ $orderStatusBreakdown['Pending Dispatch'] ?? 3 }}, {{ $orderStatusBreakdown['Cancelled'] ?? 0 }}],
+                    data: [{{ $orderStatusBreakdown['Delivered'] ?? 0 }}, {{ $orderStatusBreakdown['In Crafting'] ?? 0 }}, {{ $orderStatusBreakdown['Pending Dispatch'] ?? 0 }}, {{ $orderStatusBreakdown['Cancelled'] ?? 0 }}],
                     backgroundColor: ['#16A34A', '#3B82F6', '#F59E0B', '#EF4444'],
                     borderRadius: 8,
                     barThickness: 28,
@@ -703,10 +849,10 @@ function initCharts() {
                 labels: ['Cash on Delivery (COD)', 'Meezan Bank (IBFT)', 'Credit/Debit Card', 'VIP Concierge'],
                 datasets: [{
                     data: [
-                        {{ $paymentMethodsBreakdown['Cash on Delivery']['count'] ?? 6 }},
-                        {{ $paymentMethodsBreakdown['Meezan Bank IBFT']['count'] ?? 3 }},
-                        {{ $paymentMethodsBreakdown['Online Card']['count'] ?? 1 }},
-                        {{ $paymentMethodsBreakdown['VIP Concierge']['count'] ?? 1 }}
+                        {{ $paymentMethodsBreakdown['Cash on Delivery']['count'] ?? 0 }},
+                        {{ $paymentMethodsBreakdown['Meezan Bank IBFT']['count'] ?? 0 }},
+                        {{ $paymentMethodsBreakdown['Online Card']['count'] ?? 0 }},
+                        {{ $paymentMethodsBreakdown['VIP Concierge']['count'] ?? 0 }}
                     ],
                     backgroundColor: isDark ? ['#C5A16B', '#976239', '#5E361A', '#DFC0A1'] : ['#976239', '#C5A16B', '#120E0C', '#B07D4E'],
                     borderWidth: 2,
@@ -829,7 +975,10 @@ function switchChart(tabName) {
             charts[tabName].resize();
             charts[tabName].update();
         }
-    }, 50);
+        if (window.lucide) {
+            lucide.createIcons();
+        }
+    }, 60);
 }
 </script>
 @endpush

@@ -45,13 +45,15 @@
                     "name": "By Zunash"
                 }
             },
+            @if(($product['reviews_count'] ?? 0) > 0)
             "aggregateRating": {
                 "@type": "AggregateRating",
-                "ratingValue": "{{ $product['rating'] ?? 4.9 }}",
-                "reviewCount": "{{ $product['reviews_count'] ?? 35 }}",
+                "ratingValue": "{{ $product['rating'] }}",
+                "reviewCount": "{{ $product['reviews_count'] }}",
                 "bestRating": "5",
                 "worstRating": "1"
-            }
+            },
+            @endif
         },
         {
             "@type": "BreadcrumbList",
@@ -290,14 +292,23 @@
 
                 <!-- Rating, Client Reviews & Stock Status -->
                 <div class="flex flex-wrap items-center gap-3 pt-1">
-                    <div class="flex items-center gap-1.5 text-gold">
-                        @for($i = 0; $i < 5; $i++)
-                            <i data-lucide="star" class="w-4 h-4 fill-gold"></i>
-                        @endfor
-                        <span class="text-xs font-bold text-espresso-900 ml-1">{{ $product['rating'] ?? 4.9 }}</span>
-                    </div>
-                    <span class="text-ivory-400">•</span>
-                    <a href="{{ route('reviews') }}" class="text-xs text-muted hover:text-gold-700 underline underline-offset-2 transition-colors">({{ $product['reviews_count'] ?? 35 }} client reviews)</a>
+                    @if(($product['reviews_count'] ?? 0) > 0)
+                        <div class="flex items-center gap-1.5 text-gold">
+                            @for($i = 0; $i < 5; $i++)
+                                <i data-lucide="star" class="w-4 h-4 {{ $i < round($product['rating'] ?? 5) ? 'fill-gold text-gold' : 'text-ivory-300' }}"></i>
+                            @endfor
+                            <span class="text-xs font-bold text-espresso-900 ml-1">{{ $product['rating'] }}</span>
+                        </div>
+                        <span class="text-ivory-400">•</span>
+                        <a href="{{ route('reviews') }}" class="text-xs text-muted hover:text-gold-700 underline underline-offset-2 transition-colors">({{ $product['reviews_count'] }} {{ Str::plural('client review', $product['reviews_count']) }})</a>
+                    @else
+                        <div class="flex items-center gap-1 text-ivory-300">
+                            @for($i = 0; $i < 5; $i++)
+                                <i data-lucide="star" class="w-3.5 h-3.5"></i>
+                            @endfor
+                        </div>
+                        <a href="{{ route('reviews') }}" class="text-xs text-muted hover:text-gold-700 transition-colors">No reviews yet — <span class="text-gold-700 underline">Leave a review</span></a>
+                    @endif
                     <span class="text-ivory-400">•</span>
                     <!-- Stock Status Badge -->
                     @if($isOutOfStock)
