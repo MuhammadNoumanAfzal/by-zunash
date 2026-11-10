@@ -32,13 +32,14 @@
             
             <!-- Search Input -->
             <div class="relative flex-1">
-                <i data-lucide="search" class="w-4 h-4 text-[#A89C91] absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none"></i>
+                <i data-lucide="search" class="w-4 h-4 text-[#A89C91] absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none"></i>
                 <input 
                     type="text" 
                     name="q" 
                     value="{{ request('q') }}" 
                     placeholder="Search collection name, tagline, or slug..." 
-                    class="w-full pl-9.5 pr-8 py-2 text-xs rounded-xl bg-[#FAF8F5] dark:bg-[#241D1A] border border-[#E0D7CB] dark:border-[#382D27] text-espresso-900 dark:text-white placeholder-[#A89C91] focus:outline-hidden focus:border-tan-500 transition-colors"
+                    style="padding-left: 2.5rem !important;"
+                    class="w-full pl-10 pr-8 py-2 text-xs rounded-xl bg-[#FAF8F5] dark:bg-[#241D1A] border border-[#E0D7CB] dark:border-[#382D27] text-espresso-900 dark:text-white placeholder-[#A89C91] focus:outline-hidden focus:border-tan-500 transition-colors"
                 >
                 @if(request('q'))
                     <a href="{{ route('admin.categories.index', request()->except('q')) }}" class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-200">
