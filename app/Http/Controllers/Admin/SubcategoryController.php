@@ -12,22 +12,34 @@ class SubcategoryController extends Controller
 {
     public function index(Request $request)
     {
-        $query = Subcategory::with('category');
+        $query = Subcategory::with('category')->withCount('products');
 
         if ($request->filled('q')) {
             $search = trim($request->input('q'));
-            $query->where('name', 'like', "%{$search}%")
-                  ->orWhere('description', 'like', "%{$search}%");
+            $query->where(function ($w) use ($search) {
+                $w->where('name', 'like', "%{$search}%")
+                  ->orWhere('slug', 'like', "%{$search}%");
+            });
         }
 
         if ($request->filled('category') && $request->input('category') !== 'all') {
             $query->where('category_id', $request->input('category'));
         }
 
-        $subcategories = $query->latest()->paginate(12)->withQueryString();
-        $categories = Category::orderBy('name')->get();
+        $sort = $request->input('sort', 'latest');
+        match ($sort) {
+            'oldest' => $query->oldest(),
+            'name_asc' => $query->orderBy('name', 'asc'),
+            'name_desc' => $query->orderBy('name', 'desc'),
+            'products_desc' => $query->orderBy('products_count', 'desc'),
+            default => $query->latest(),
+        };
 
-        return view('admin.subcategories.index', compact('subcategories', 'categories'));
+        $subcategories = $query->paginate(12)->withQueryString();
+        $categories = Category::orderBy('name')->get();
+        $totalSubcategories = Subcategory::count();
+
+        return view('admin.subcategories.index', compact('subcategories', 'categories', 'totalSubcategories'));
     }
 
     public function store(Request $request)
