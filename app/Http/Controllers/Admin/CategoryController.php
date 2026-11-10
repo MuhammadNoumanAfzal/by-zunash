@@ -15,14 +15,27 @@ class CategoryController extends Controller
 
         if ($request->filled('q')) {
             $search = trim($request->input('q'));
-            $query->where('name', 'like', "%{$search}%")
+            $query->where(function ($w) use ($search) {
+                $w->where('name', 'like', "%{$search}%")
                   ->orWhere('tagline', 'like', "%{$search}%")
                   ->orWhere('slug', 'like', "%{$search}%");
+            });
         }
 
-        $categories = $query->orderBy('sort_order')->get();
+        $sort = $request->input('sort', 'order');
+        match ($sort) {
+            'latest' => $query->latest(),
+            'oldest' => $query->oldest(),
+            'name_asc' => $query->orderBy('name', 'asc'),
+            'name_desc' => $query->orderBy('name', 'desc'),
+            'products_desc' => $query->orderBy('products_count', 'desc'),
+            default => $query->orderBy('sort_order')->latest(),
+        };
 
-        return view('admin.categories.index', compact('categories'));
+        $categories = $query->paginate(9)->withQueryString();
+        $totalCategories = Category::count();
+
+        return view('admin.categories.index', compact('categories', 'totalCategories'));
     }
 
     public function store(Request $request)

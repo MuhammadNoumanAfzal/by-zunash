@@ -26,9 +26,70 @@
         </button>
     </div>
 
+    <!-- Search & Filter Controls -->
+    <div class="bg-white dark:bg-[#1A1513] rounded-2xl border border-[#ECE6DE] dark:border-[#2C2420] p-3.5 sm:p-4 shadow-card">
+        <form action="{{ route('admin.categories.index') }}" method="GET" class="flex flex-col sm:flex-row sm:items-center gap-3">
+            
+            <!-- Search Input -->
+            <div class="relative flex-1">
+                <i data-lucide="search" class="w-4 h-4 text-[#A89C91] absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none"></i>
+                <input 
+                    type="text" 
+                    name="q" 
+                    value="{{ request('q') }}" 
+                    placeholder="Search collection name, tagline, or slug..." 
+                    class="w-full pl-9.5 pr-8 py-2 text-xs rounded-xl bg-[#FAF8F5] dark:bg-[#241D1A] border border-[#E0D7CB] dark:border-[#382D27] text-espresso-900 dark:text-white placeholder-[#A89C91] focus:outline-hidden focus:border-tan-500 transition-colors"
+                >
+                @if(request('q'))
+                    <a href="{{ route('admin.categories.index', request()->except('q')) }}" class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-200">
+                        <i data-lucide="x" class="w-3.5 h-3.5"></i>
+                    </a>
+                @endif
+            </div>
+
+            <!-- Sort By -->
+            <div class="w-full sm:w-52 shrink-0">
+                <select 
+                    name="sort" 
+                    onchange="this.form.submit()"
+                    class="w-full px-3 py-2 text-xs rounded-xl bg-[#FAF8F5] dark:bg-[#241D1A] border border-[#E0D7CB] dark:border-[#382D27] text-espresso-900 dark:text-white focus:outline-hidden focus:border-tan-500 cursor-pointer"
+                >
+                    <option value="order" {{ request('sort', 'order') === 'order' ? 'selected' : '' }}>Custom Atelier Order</option>
+                    <option value="latest" {{ request('sort') === 'latest' ? 'selected' : '' }}>Newest Created</option>
+                    <option value="oldest" {{ request('sort') === 'oldest' ? 'selected' : '' }}>Oldest Created</option>
+                    <option value="name_asc" {{ request('sort') === 'name_asc' ? 'selected' : '' }}>Name: A &rarr; Z</option>
+                    <option value="name_desc" {{ request('sort') === 'name_desc' ? 'selected' : '' }}>Name: Z &rarr; A</option>
+                    <option value="products_desc" {{ request('sort') === 'products_desc' ? 'selected' : '' }}>Most Articles</option>
+                </select>
+            </div>
+
+            <!-- Submit & Reset Buttons -->
+            <div class="flex items-center gap-2 shrink-0">
+                <button 
+                    type="submit" 
+                    class="px-4 py-2 rounded-xl bg-espresso-900 hover:bg-tan-600 text-white text-xs font-semibold shadow-2xs transition-colors flex items-center gap-1.5"
+                >
+                    <i data-lucide="filter" class="w-3.5 h-3.5"></i>
+                    <span>Filter</span>
+                </button>
+
+                @if(request()->hasAny(['q', 'sort']))
+                    <a 
+                        href="{{ route('admin.categories.index') }}" 
+                        class="px-3 py-2 rounded-xl text-xs font-medium text-gray-500 hover:text-espresso-900 dark:hover:text-white border border-[#E0D7CB] dark:border-[#382D27] hover:bg-gray-50 dark:hover:bg-[#241D1A] transition-colors"
+                        title="Clear all filters"
+                    >
+                        Reset
+                    </a>
+                @endif
+            </div>
+
+        </form>
+    </div>
+
     <!-- Category Grid Cards -->
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-        @foreach($categories as $category)
+        @forelse($categories as $category)
             <div class="bg-white dark:bg-[#1A1513] rounded-3xl border border-[#ECE6DE] dark:border-[#2C2420] shadow-card p-6 flex flex-col justify-between group hover:border-tan-500 transition-all duration-300">
                 <div>
                     <div class="flex items-center justify-between mb-4">
@@ -44,7 +105,7 @@
                         </span>
                     </div>
 
-                    <h2 class="font-cinzel text-xl font-bold text-espresso-950 dark:text-white group-hover:text-tan-600 transition-colors">
+                    <h2 class="font-bold text-xl text-espresso-950 dark:text-white group-hover:text-tan-600 transition-colors">
                         {{ $category->name }}
                     </h2>
                     <div class="font-mono text-[10px] text-gray-400 mt-0.5">
@@ -87,8 +148,28 @@
                     </div>
                 </div>
             </div>
-        @endforeach
+        @empty
+            <div class="col-span-full py-16 text-center bg-white dark:bg-[#1A1513] rounded-3xl border border-[#ECE6DE] dark:border-[#2C2420] p-8 shadow-card space-y-2">
+                <div class="w-12 h-12 rounded-full bg-tan-50 dark:bg-[#201815] text-tan-600 mx-auto flex items-center justify-center mb-2">
+                    <i data-lucide="search-x" class="w-6 h-6"></i>
+                </div>
+                <h3 class="font-bold text-sm text-espresso-950 dark:text-white">No collections found</h3>
+                <p class="text-xs text-gray-400 max-w-sm mx-auto">No categories matched your search query. Try clearing your filters or adding a new category.</p>
+                @if(request()->hasAny(['q', 'sort']))
+                    <a href="{{ route('admin.categories.index') }}" class="inline-block mt-3 px-4 py-2 rounded-xl bg-espresso-900 text-white text-xs font-semibold">
+                        Clear All Filters
+                    </a>
+                @endif
+            </div>
+        @endforelse
     </div>
+
+    <!-- Pagination Links -->
+    @if($categories->hasPages())
+        <div class="p-4 bg-white dark:bg-[#1A1513] rounded-2xl border border-[#ECE6DE] dark:border-[#2C2420] shadow-card">
+            {{ $categories->links() }}
+        </div>
+    @endif
 
 </div>
 
