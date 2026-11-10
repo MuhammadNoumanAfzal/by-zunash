@@ -33,25 +33,16 @@
         <div class="block sm:hidden divide-y divide-[#F0EAE1] dark:divide-[#28201C]">
             @forelse($subcategories as $subcat)
                 <div class="p-4 hover:bg-[#FAF8F5] dark:hover:bg-[#221B18] transition-colors space-y-2.5">
-                    <div class="flex items-start justify-between gap-2">
+                    <div class="flex items-center justify-between gap-2">
                         <div class="min-w-0 flex-1">
                             <h3 class="font-bold text-sm text-espresso-950 dark:text-white truncate">
                                 {{ $subcat->name }}
                             </h3>
-                            <div class="font-mono text-[10px] text-gray-400 mt-0.5 truncate">
-                                /{{ $subcat->slug }}
-                            </div>
                         </div>
                         <span class="px-2.5 py-0.5 rounded-full text-[10px] font-semibold bg-[#FAF6F2] dark:bg-[#2A1D1A] text-tan-700 dark:text-gold-300 border border-tan-200 dark:border-[#3E2A24] shrink-0">
                             {{ $subcat->category?->name ?? 'None' }}
                         </span>
                     </div>
-
-                    @if($subcat->description)
-                        <p class="text-xs text-[#7A6E64] dark:text-[#A89C91] line-clamp-2 leading-relaxed">
-                            {{ $subcat->description }}
-                        </p>
-                    @endif
 
                     <div class="pt-2 border-t border-[#F0EAE1] dark:border-[#28201C] flex items-center justify-end gap-2">
                         <button 
@@ -90,8 +81,6 @@
                     <tr class="text-[10px] font-bold uppercase tracking-wider text-[#8F8379] bg-[#FAF8F5] dark:bg-[#201A18] border-b border-[#ECE6DE] dark:border-[#2C2420]">
                         <th class="py-3 px-4 whitespace-nowrap">NAME</th>
                         <th class="py-3 px-4 whitespace-nowrap">PARENT COLLECTION</th>
-                        <th class="py-3 px-4 whitespace-nowrap">SLUG</th>
-                        <th class="py-3 px-4">DESCRIPTION</th>
                         <th class="py-3 px-4 text-right whitespace-nowrap">ACTIONS</th>
                     </tr>
                 </thead>
@@ -102,15 +91,9 @@
                                 {{ $subcat->name }}
                             </td>
                             <td class="py-3.5 px-4 whitespace-nowrap">
-                                <span class="px-2.5 py-0.5 rounded-full text-[10px] font-semibold bg-[#FAF6F2] text-tan-700 border border-tan-200">
+                                <span class="px-2.5 py-0.5 rounded-full text-[10px] font-semibold bg-[#FAF6F2] dark:bg-[#2A1D1A] text-tan-700 dark:text-gold-300 border border-tan-200 dark:border-[#3E2A24]">
                                     {{ $subcat->category?->name ?? 'None' }}
                                 </span>
-                            </td>
-                            <td class="py-3.5 px-4 font-mono text-[11px] text-gray-500 whitespace-nowrap">
-                                {{ $subcat->slug }}
-                            </td>
-                            <td class="py-3.5 px-4 text-gray-500 max-w-sm truncate">
-                                {{ $subcat->description ?: '—' }}
                             </td>
                             <td class="py-3.5 px-4 text-right whitespace-nowrap">
                                 <div class="inline-flex items-center gap-1.5 justify-end">
@@ -135,7 +118,7 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="5" class="py-8 text-center text-gray-400">
+                            <td colspan="3" class="py-8 text-center text-gray-400">
                                 No subcategories registered.
                             </td>
                         </tr>
@@ -175,11 +158,6 @@
             <div>
                 <label class="block text-xs font-semibold mb-1">Subcategory Name <span class="text-rose-500">*</span></label>
                 <input type="text" name="name" required placeholder="e.g. Formal Dress Belts" class="w-full px-3 py-2 text-xs rounded-xl bg-[#FAF8F5] dark:bg-[#241D1A] border border-[#E0D7CB] dark:border-[#3A2F29] text-espresso-900 dark:text-white focus:outline-hidden focus:border-tan-500">
-            </div>
-
-            <div>
-                <label class="block text-xs font-semibold mb-1">Description</label>
-                <input type="text" name="description" placeholder="Optional details..." class="w-full px-3 py-2 text-xs rounded-xl bg-[#FAF8F5] dark:bg-[#241D1A] border border-[#E0D7CB] dark:border-[#3A2F29] text-espresso-900 dark:text-white focus:outline-hidden focus:border-tan-500">
             </div>
 
             <div class="flex items-center justify-end gap-2 pt-3 border-t border-[#ECE6DE] dark:border-[#2C2420]">
@@ -222,11 +200,6 @@
                 <input type="text" id="edit_subcat_name" name="name" required class="w-full px-3 py-2 text-xs rounded-xl bg-[#FAF8F5] dark:bg-[#241D1A] border border-[#E0D7CB] dark:border-[#3A2F29] text-espresso-900 dark:text-white focus:outline-hidden focus:border-tan-500">
             </div>
 
-            <div>
-                <label class="block text-xs font-semibold mb-1">Description</label>
-                <input type="text" id="edit_subcat_description" name="description" class="w-full px-3 py-2 text-xs rounded-xl bg-[#FAF8F5] dark:bg-[#241D1A] border border-[#E0D7CB] dark:border-[#3A2F29] text-espresso-900 dark:text-white focus:outline-hidden focus:border-tan-500">
-            </div>
-
             <div class="flex items-center justify-end gap-2 pt-3 border-t border-[#ECE6DE] dark:border-[#2C2420]">
                 <button type="button" onclick="document.getElementById('editSubcatModal').close()" class="px-4 py-2 rounded-xl text-xs font-medium text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">
                     Cancel
@@ -245,7 +218,6 @@ function openEditSubcatModal(subcat) {
     document.getElementById('editSubcatForm').action = '/admin/subcategories/' + subcat.id;
     document.getElementById('edit_subcat_category_id').value = subcat.category_id || '';
     document.getElementById('edit_subcat_name').value = subcat.name || '';
-    document.getElementById('edit_subcat_description').value = subcat.description || '';
     document.getElementById('editSubcatModal').showModal();
 }
 
