@@ -8,8 +8,8 @@
     availability: '{{ old('availability', 'in_stock') }}',
     leadTime: '{{ old('lead_time', '') }}',
     colors: [
-        { name: 'Espresso & Obsidian Black', hex: '#24160F', stock: true, active: true },
-        { name: 'Cognac Tan & Coffee', hex: '#A87548', stock: true, active: true },
+        { name: 'Espresso & Obsidian Black', hex: '#24160F', stock: true, active: false },
+        { name: 'Cognac Tan & Coffee', hex: '#A87548', stock: true, active: false },
         { name: 'Midnight Espresso', hex: '#120E0C', stock: true, active: false },
         { name: 'Oxblood Burgundy', hex: '#581825', stock: true, active: false },
         { name: 'Saddle Brown', hex: '#5D3A1A', stock: true, active: false },
@@ -85,7 +85,7 @@
                         value="{{ old('name') }}" 
                         required 
                         placeholder="e.g. Signature Reversible Full-Grain Calfskin Belt"
-                        class="w-full px-3.5 py-2.5 text-xs rounded-xl bg-[#FAF8F5] dark:bg-[#241D1A] border border-[#E0D7CB] dark:border-[#3A2F29] text-espresso-900 dark:text-white focus:outline-hidden focus:border-tan-500"
+                        class="w-full px-3.5 py-2.5 text-xs rounded-xl bg-[#FAF8F5] dark:bg-[#241D1A] border border-[#E0D7CB] dark:border-[#3A2F29] text-espresso-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-[#6E645E] focus:outline-hidden focus:border-tan-500"
                     >
                 </div>
 
@@ -136,7 +136,7 @@
                         name="sku" 
                         value="{{ old('sku') }}" 
                         placeholder="BZ-BELT-001"
-                        class="w-full px-3.5 py-2.5 text-xs rounded-xl bg-[#FAF8F5] dark:bg-[#241D1A] border border-[#E0D7CB] dark:border-[#3A2F29] text-espresso-900 dark:text-white focus:outline-hidden focus:border-tan-500 font-mono uppercase"
+                        class="w-full px-3.5 py-2.5 text-xs rounded-xl bg-[#FAF8F5] dark:bg-[#241D1A] border border-[#E0D7CB] dark:border-[#3A2F29] text-espresso-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-[#6E645E] focus:outline-hidden focus:border-tan-500 font-mono uppercase"
                     >
                 </div>
 
@@ -150,7 +150,7 @@
                         name="badge" 
                         value="{{ old('badge') }}" 
                         placeholder="e.g. Bespoke Edition, 2-in-1 Reversible, Limited"
-                        class="w-full px-3.5 py-2.5 text-xs rounded-xl bg-[#FAF8F5] dark:bg-[#241D1A] border border-[#E0D7CB] dark:border-[#3A2F29] text-espresso-900 dark:text-white focus:outline-hidden focus:border-tan-500"
+                        class="w-full px-3.5 py-2.5 text-xs rounded-xl bg-[#FAF8F5] dark:bg-[#241D1A] border border-[#E0D7CB] dark:border-[#3A2F29] text-espresso-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-[#6E645E] focus:outline-hidden focus:border-tan-500"
                     >
                 </div>
             </div>
@@ -175,9 +175,10 @@
                         type="number" 
                         step="1" 
                         name="price" 
-                        value="{{ old('price', 4950) }}" 
+                        value="{{ old('price') }}" 
+                        placeholder="e.g. 4950"
                         required
-                        class="w-full px-3.5 py-2.5 text-xs rounded-xl bg-[#FAF8F5] dark:bg-[#241D1A] border border-[#E0D7CB] dark:border-[#3A2F29] text-espresso-900 dark:text-white focus:outline-hidden focus:border-tan-500 font-mono font-bold"
+                        class="w-full px-3.5 py-2.5 text-xs rounded-xl bg-[#FAF8F5] dark:bg-[#241D1A] border border-[#E0D7CB] dark:border-[#3A2F29] text-espresso-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-[#6E645E] focus:outline-hidden focus:border-tan-500 font-mono font-bold"
                     >
                 </div>
 
@@ -192,7 +193,7 @@
                         name="original_price" 
                         value="{{ old('original_price') }}" 
                         placeholder="e.g. 6500"
-                        class="w-full px-3.5 py-2.5 text-xs rounded-xl bg-[#FAF8F5] dark:bg-[#241D1A] border border-[#E0D7CB] dark:border-[#3A2F29] text-espresso-900 dark:text-white focus:outline-hidden focus:border-tan-500 font-mono"
+                        class="w-full px-3.5 py-2.5 text-xs rounded-xl bg-[#FAF8F5] dark:bg-[#241D1A] border border-[#E0D7CB] dark:border-[#3A2F29] text-espresso-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-[#6E645E] focus:outline-hidden focus:border-tan-500 font-mono"
                     >
                 </div>
 
@@ -204,10 +205,11 @@
                     <input 
                         type="number" 
                         name="stock_quantity" 
-                        value="{{ old('stock_quantity', 15) }}" 
+                        value="{{ old('stock_quantity') }}" 
+                        placeholder="e.g. 15"
                         required 
                         min="0"
-                        class="w-full px-3.5 py-2.5 text-xs rounded-xl bg-[#FAF8F5] dark:bg-[#241D1A] border border-[#E0D7CB] dark:border-[#3A2F29] text-espresso-900 dark:text-white focus:outline-hidden focus:border-tan-500 font-mono"
+                        class="w-full px-3.5 py-2.5 text-xs rounded-xl bg-[#FAF8F5] dark:bg-[#241D1A] border border-[#E0D7CB] dark:border-[#3A2F29] text-espresso-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-[#6E645E] focus:outline-hidden focus:border-tan-500 font-mono"
                     >
                 </div>
 
@@ -238,7 +240,7 @@
                         name="lead_time" 
                         x-model="leadTime"
                         placeholder="e.g. 7–10 Working Days or 2–3 Weeks"
-                        class="w-full px-3.5 py-2.5 text-xs rounded-xl bg-[#FAF8F5] dark:bg-[#241D1A] border border-[#E0D7CB] dark:border-[#3A2F29] text-espresso-900 dark:text-white focus:outline-hidden focus:border-tan-500"
+                        class="w-full px-3.5 py-2.5 text-xs rounded-xl bg-[#FAF8F5] dark:bg-[#241D1A] border border-[#E0D7CB] dark:border-[#3A2F29] text-espresso-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-[#6E645E] focus:outline-hidden focus:border-tan-500"
                         :class="availability === 'on_demand' ? 'border-amber-400 dark:border-amber-500/50 bg-amber-50/20' : ''"
                     >
                 </div>
@@ -251,7 +253,7 @@
                     </label>
 
                     <label class="inline-flex items-center gap-2 cursor-pointer text-xs font-medium text-espresso-900 dark:text-white">
-                        <input type="checkbox" name="is_new" value="1" {{ old('is_new', 1) ? 'checked' : '' }} class="rounded border-[#DFD6CB] text-tan-600 focus:ring-tan-500">
+                        <input type="checkbox" name="is_new" value="1" {{ old('is_new') ? 'checked' : '' }} class="rounded border-[#DFD6CB] text-tan-600 focus:ring-tan-500">
                         <span>Mark as New Arrival</span>
                     </label>
                 </div>
@@ -338,9 +340,9 @@
                     <input 
                         type="text" 
                         name="spec_material" 
-                        value="{{ old('spec_material', '100% Full-Grain Vegetable Tanned Calfskin') }}" 
+                        value="{{ old('spec_material') }}" 
                         placeholder="e.g. 100% Full-Grain Vegetable Tanned Calfskin"
-                        class="w-full px-3.5 py-2.5 text-xs rounded-xl bg-[#FAF8F5] dark:bg-[#241D1A] border border-[#E0D7CB] dark:border-[#3A2F29] text-espresso-900 dark:text-white focus:outline-hidden focus:border-tan-500"
+                        class="w-full px-3.5 py-2.5 text-xs rounded-xl bg-[#FAF8F5] dark:bg-[#241D1A] border border-[#E0D7CB] dark:border-[#3A2F29] text-espresso-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-[#6E645E] focus:outline-hidden focus:border-tan-500"
                     >
                 </div>
 
@@ -352,9 +354,9 @@
                     <input 
                         type="text" 
                         name="spec_hardware" 
-                        value="{{ old('spec_hardware', 'Solid Antique Brass Finish (360° Reversible Swivel)') }}" 
-                        placeholder="e.g. Solid Antique Brass Finish"
-                        class="w-full px-3.5 py-2.5 text-xs rounded-xl bg-[#FAF8F5] dark:bg-[#241D1A] border border-[#E0D7CB] dark:border-[#3A2F29] text-espresso-900 dark:text-white focus:outline-hidden focus:border-tan-500"
+                        value="{{ old('spec_hardware') }}" 
+                        placeholder="e.g. Solid Antique Brass Finish (360° Reversible Swivel)"
+                        class="w-full px-3.5 py-2.5 text-xs rounded-xl bg-[#FAF8F5] dark:bg-[#241D1A] border border-[#E0D7CB] dark:border-[#3A2F29] text-espresso-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-[#6E645E] focus:outline-hidden focus:border-tan-500"
                     >
                 </div>
 
@@ -366,9 +368,9 @@
                     <input 
                         type="text" 
                         name="spec_dimensions" 
-                        value="{{ old('spec_dimensions', '34 mm (1.35 inches) Width • 3.8 mm Thickness') }}" 
+                        value="{{ old('spec_dimensions') }}" 
                         placeholder="e.g. 34 mm Width • 3.8 mm Thickness"
-                        class="w-full px-3.5 py-2.5 text-xs rounded-xl bg-[#FAF8F5] dark:bg-[#241D1A] border border-[#E0D7CB] dark:border-[#3A2F29] text-espresso-900 dark:text-white focus:outline-hidden focus:border-tan-500"
+                        class="w-full px-3.5 py-2.5 text-xs rounded-xl bg-[#FAF8F5] dark:bg-[#241D1A] border border-[#E0D7CB] dark:border-[#3A2F29] text-espresso-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-[#6E645E] focus:outline-hidden focus:border-tan-500"
                     >
                 </div>
 
@@ -380,9 +382,9 @@
                     <input 
                         type="text" 
                         name="spec_sizes" 
-                        value="{{ old('spec_sizes', '30, 32, 34, 36, 38, 40, 42 inches') }}" 
+                        value="{{ old('spec_sizes') }}" 
                         placeholder="e.g. 30, 32, 34, 36, 38, 40, 42 inches"
-                        class="w-full px-3.5 py-2.5 text-xs rounded-xl bg-[#FAF8F5] dark:bg-[#241D1A] border border-[#E0D7CB] dark:border-[#3A2F29] text-espresso-900 dark:text-white focus:outline-hidden focus:border-tan-500"
+                        class="w-full px-3.5 py-2.5 text-xs rounded-xl bg-[#FAF8F5] dark:bg-[#241D1A] border border-[#E0D7CB] dark:border-[#3A2F29] text-espresso-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-[#6E645E] focus:outline-hidden focus:border-tan-500"
                     >
                 </div>
 
@@ -394,8 +396,9 @@
                     <input 
                         type="text" 
                         name="spec_care" 
-                        value="{{ old('spec_care', 'Wipe with soft cotton cloth; treat with neutral organic leather balm periodically') }}" 
-                        class="w-full px-3.5 py-2.5 text-xs rounded-xl bg-[#FAF8F5] dark:bg-[#241D1A] border border-[#E0D7CB] dark:border-[#3A2F29] text-espresso-900 dark:text-white focus:outline-hidden focus:border-tan-500"
+                        value="{{ old('spec_care') }}" 
+                        placeholder="e.g. Wipe with soft cotton cloth; treat with neutral organic leather balm periodically"
+                        class="w-full px-3.5 py-2.5 text-xs rounded-xl bg-[#FAF8F5] dark:bg-[#241D1A] border border-[#E0D7CB] dark:border-[#3A2F29] text-espresso-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-[#6E645E] focus:outline-hidden focus:border-tan-500"
                     >
                 </div>
             </div>
@@ -417,12 +420,12 @@
                 <textarea 
                     name="features_raw" 
                     rows="4" 
-                    placeholder="Reversible 360-degree swivel buckle in brushed antique brass
-100% full-grain calfskin with beveled, wax-burnished edges
-Width: 34mm (1.35 in) — fits formal and casual belt loops
-Reinforced double-core structure to prevent creasing or stretching
-Presented in an embossed By Zunash magnetic presentation box"
-                    class="w-full px-3.5 py-2.5 text-xs rounded-xl bg-[#FAF8F5] dark:bg-[#241D1A] border border-[#E0D7CB] dark:border-[#3A2F29] text-espresso-900 dark:text-white focus:outline-hidden focus:border-tan-500 font-mono leading-relaxed"
+                    placeholder="e.g.
+• 100% full-grain calfskin with beveled, wax-burnished edges
+• Solid antique brass hardware
+• Handcrafted reinforced core
+• Presented in signature By Zunash packaging"
+                    class="w-full px-3.5 py-2.5 text-xs rounded-xl bg-[#FAF8F5] dark:bg-[#241D1A] border border-[#E0D7CB] dark:border-[#3A2F29] text-espresso-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-[#6E645E] focus:outline-hidden focus:border-tan-500 font-mono leading-relaxed"
                 >{{ old('features_raw') }}</textarea>
             </div>
         </div>
@@ -444,8 +447,11 @@ Presented in an embossed By Zunash magnetic presentation box"
                     </label>
 
                     <div class="p-3.5 rounded-2xl bg-[#FAF8F5] dark:bg-[#201815] border border-dashed border-[#DFD6CB] dark:border-[#382D27] flex items-center gap-3.5">
-                        <div class="w-16 h-16 rounded-xl overflow-hidden bg-espresso-950/10 dark:bg-black/40 border border-[#E0D7CB] dark:border-[#382D27] shrink-0 flex items-center justify-center">
-                            <img id="prod_preview" src="{{ old('image', '/images/products/prod-reversible-belt.jpg') }}" alt="Preview" class="w-full h-full object-cover">
+                        <div class="w-16 h-16 rounded-xl overflow-hidden bg-[#F2EDE5] dark:bg-[#2A201C] border border-[#E0D7CB] dark:border-[#382D27] shrink-0 flex items-center justify-center relative">
+                            <img id="prod_preview" src="{{ old('image') }}" alt="Preview" class="w-full h-full object-cover {{ old('image') ? '' : 'hidden' }}">
+                            <div id="prod_preview_placeholder" class="{{ old('image') ? 'hidden' : 'flex' }} flex-col items-center justify-center text-gray-400 dark:text-gray-500">
+                                <i data-lucide="image" class="w-6 h-6"></i>
+                            </div>
                         </div>
 
                         <div class="flex-1 min-w-0">
@@ -466,10 +472,10 @@ Presented in an embossed By Zunash magnetic presentation box"
                             type="text" 
                             id="prod_image_url"
                             name="image" 
-                            value="{{ old('image', '/images/products/prod-reversible-belt.jpg') }}" 
+                            value="{{ old('image') }}" 
                             oninput="previewProductUrl(this.value)"
-                            placeholder="/images/products/prod-reversible-belt.jpg"
-                            class="w-full px-3.5 py-2 text-xs rounded-xl bg-[#FAF8F5] dark:bg-[#241D1A] border border-[#E0D7CB] dark:border-[#3A2F29] text-espresso-900 dark:text-white focus:outline-hidden focus:border-tan-500 font-mono"
+                            placeholder="e.g. /images/products/product-name.jpg or image URL"
+                            class="w-full px-3.5 py-2 text-xs rounded-xl bg-[#FAF8F5] dark:bg-[#241D1A] border border-[#E0D7CB] dark:border-[#3A2F29] text-espresso-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-[#6E645E] focus:outline-hidden focus:border-tan-500 font-mono"
                         >
                     </div>
                 </div>
@@ -483,10 +489,10 @@ Presented in an embossed By Zunash magnetic presentation box"
                     <textarea 
                         name="gallery_raw" 
                         rows="3" 
-                        placeholder="/images/hero/slide-belt.jpg
-/images/brand/stitch-detail.jpg
-/images/brand/artisan-craft.jpg"
-                        class="w-full px-3.5 py-2 text-xs rounded-xl bg-[#FAF8F5] dark:bg-[#241D1A] border border-[#E0D7CB] dark:border-[#3A2F29] text-espresso-900 dark:text-white focus:outline-hidden focus:border-tan-500 font-mono"
+                        placeholder="e.g.
+https://example.com/gallery-detail-1.jpg
+https://example.com/gallery-detail-2.jpg"
+                        class="w-full px-3.5 py-2 text-xs rounded-xl bg-[#FAF8F5] dark:bg-[#241D1A] border border-[#E0D7CB] dark:border-[#3A2F29] text-espresso-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-[#6E645E] focus:outline-hidden focus:border-tan-500 font-mono"
                     >{{ old('gallery_raw') }}</textarea>
                 </div>
 
@@ -499,8 +505,8 @@ Presented in an embossed By Zunash magnetic presentation box"
                         name="short_description" 
                         rows="2" 
                         required
-                        placeholder="Handcrafted in supple vegetable-tanned full-grain leather with a versatile dual-tone finish."
-                        class="w-full px-3.5 py-2 text-xs rounded-xl bg-[#FAF8F5] dark:bg-[#241D1A] border border-[#E0D7CB] dark:border-[#3A2F29] text-espresso-900 dark:text-white focus:outline-hidden focus:border-tan-500"
+                        placeholder="e.g. Handcrafted in supple vegetable-tanned full-grain leather with a versatile dual-tone finish."
+                        class="w-full px-3.5 py-2 text-xs rounded-xl bg-[#FAF8F5] dark:bg-[#241D1A] border border-[#E0D7CB] dark:border-[#3A2F29] text-espresso-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-[#6E645E] focus:outline-hidden focus:border-tan-500"
                     >{{ old('short_description') }}</textarea>
                 </div>
 
@@ -512,8 +518,8 @@ Presented in an embossed By Zunash magnetic presentation box"
                     <textarea 
                         name="description" 
                         rows="4" 
-                        placeholder="Detailed narrative describing the hide selection, vegetable tanning in wooden drums, edge burnishing, and heirloom durability..."
-                        class="w-full px-3.5 py-2 text-xs rounded-xl bg-[#FAF8F5] dark:bg-[#241D1A] border border-[#E0D7CB] dark:border-[#3A2F29] text-espresso-900 dark:text-white focus:outline-hidden focus:border-tan-500"
+                        placeholder="e.g. Detailed narrative describing hide selection, vegetable tanning, artisan edge burnishing, and heirloom durability..."
+                        class="w-full px-3.5 py-2 text-xs rounded-xl bg-[#FAF8F5] dark:bg-[#241D1A] border border-[#E0D7CB] dark:border-[#3A2F29] text-espresso-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-[#6E645E] focus:outline-hidden focus:border-tan-500"
                     >{{ old('description') }}</textarea>
                 </div>
             </div>
@@ -551,15 +557,37 @@ function previewProductImage(input) {
         const reader = new FileReader();
         reader.onload = function(e) {
             const img = document.getElementById('prod_preview');
-            if (img) img.src = e.target.result;
+            const placeholder = document.getElementById('prod_preview_placeholder');
+            if (img) {
+                img.src = e.target.result;
+                img.classList.remove('hidden');
+            }
+            if (placeholder) {
+                placeholder.classList.add('hidden');
+            }
         };
         reader.readAsDataURL(file);
     }
 }
 function previewProductUrl(url) {
     const img = document.getElementById('prod_preview');
-    if (img && url && url.trim().length > 0) {
-        img.src = url;
+    const placeholder = document.getElementById('prod_preview_placeholder');
+    if (url && url.trim().length > 0) {
+        if (img) {
+            img.src = url;
+            img.classList.remove('hidden');
+        }
+        if (placeholder) {
+            placeholder.classList.add('hidden');
+        }
+    } else {
+        if (img) {
+            img.src = '';
+            img.classList.add('hidden');
+        }
+        if (placeholder) {
+            placeholder.classList.remove('hidden');
+        }
     }
 }
 </script>

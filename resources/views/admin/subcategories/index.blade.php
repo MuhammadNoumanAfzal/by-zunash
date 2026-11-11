@@ -4,6 +4,7 @@
 
 @section('content')
 
+<div class="space-y-6">
 <div class="space-y-6" x-data="{
     searchQuery: '{{ addslashes(request('q', '')) }}',
     openDropdown: false,
@@ -57,16 +58,19 @@
         </button>
     </div>
 
+    <!-- Search & Filter Bar -->
     <!-- Search & Filter Bar with Instant Keystroke Suggestions -->
     <div class="bg-white dark:bg-[#1A1513] rounded-2xl border border-[#ECE6DE] dark:border-[#2C2420] p-3.5 sm:p-4 shadow-card">
         <form action="{{ route('admin.subcategories.index') }}" method="GET" class="flex flex-col lg:flex-row lg:items-center gap-3">
             
+            <!-- Search Input -->
             <!-- Live Search Input -->
             <div class="relative flex-1">
                 <i data-lucide="search" class="w-4 h-4 text-[#A89C91] absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none"></i>
                 <input 
                     type="text" 
                     name="q" 
+                    value="{{ request('q') }}" 
                     x-model="searchQuery"
                     @input="openDropdown = true"
                     @focus="if(searchQuery.trim()) openDropdown = true"
@@ -76,6 +80,11 @@
                     style="padding-left: 2.5rem !important;"
                     class="w-full pl-10 pr-8 py-2 text-xs rounded-xl bg-[#FAF8F5] dark:bg-[#241D1A] border border-[#E0D7CB] dark:border-[#382D27] text-espresso-900 dark:text-white placeholder-[#A89C91] focus:outline-hidden focus:border-tan-500 transition-colors"
                 >
+                @if(request('q'))
+                    <a href="{{ route('admin.subcategories.index', request()->except('q')) }}" class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-200">
+                        <i data-lucide="x" class="w-3.5 h-3.5"></i>
+                    </a>
+                @endif
                 <!-- Clear Button -->
                 <button 
                     type="button" 
@@ -178,6 +187,7 @@
         <!-- Mobile Clean Card View (Visible on screens < 640px) -->
         <div class="block sm:hidden divide-y divide-[#F0EAE1] dark:divide-[#28201C]">
             @forelse($subcategories as $subcat)
+                <div class="p-4 hover:bg-[#FAF8F5] dark:hover:bg-[#221B18] transition-colors space-y-2.5">
                 <div 
                     x-show="matches('{{ addslashes($subcat->name) }}', '{{ addslashes($subcat->category?->name ?? 'None') }}')"
                     class="p-4 hover:bg-[#FAF8F5] dark:hover:bg-[#221B18] transition-colors space-y-2.5"
@@ -263,6 +273,7 @@
                 </thead>
                 <tbody class="divide-y divide-[#F0EAE1] dark:divide-[#28201C]">
                     @forelse($subcategories as $subcat)
+                        <tr class="hover:bg-[#FAF8F5] dark:hover:bg-[#221B18] transition-colors">
                         <tr 
                             x-show="matches('{{ addslashes($subcat->name) }}', '{{ addslashes($subcat->category?->name ?? 'None') }}')"
                             class="hover:bg-[#FAF8F5] dark:hover:bg-[#221B18] transition-colors"

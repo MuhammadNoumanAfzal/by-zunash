@@ -4,6 +4,7 @@
 
 @section('content')
 
+<div class="space-y-6">
 <div class="space-y-6" x-data="{
     searchQuery: '{{ addslashes(request('q', '')) }}',
     openDropdown: false,
@@ -57,16 +58,19 @@
         </button>
     </div>
 
+    <!-- Search & Filter Controls -->
     <!-- Search & Filter Controls with Keystroke Suggestions -->
     <div class="bg-white dark:bg-[#1A1513] rounded-2xl border border-[#ECE6DE] dark:border-[#2C2420] p-3.5 sm:p-4 shadow-card">
         <form action="{{ route('admin.categories.index') }}" method="GET" class="flex flex-col sm:flex-row sm:items-center gap-3">
             
+            <!-- Search Input -->
             <!-- Live Search Input -->
             <div class="relative flex-1">
                 <i data-lucide="search" class="w-4 h-4 text-[#A89C91] absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none"></i>
                 <input 
                     type="text" 
                     name="q" 
+                    value="{{ request('q') }}" 
                     x-model="searchQuery"
                     @input="openDropdown = true"
                     @focus="if(searchQuery.trim()) openDropdown = true"
@@ -76,6 +80,11 @@
                     style="padding-left: 2.5rem !important;"
                     class="w-full pl-10 pr-8 py-2 text-xs rounded-xl bg-[#FAF8F5] dark:bg-[#241D1A] border border-[#E0D7CB] dark:border-[#382D27] text-espresso-900 dark:text-white placeholder-[#A89C91] focus:outline-hidden focus:border-tan-500 transition-colors"
                 >
+                @if(request('q'))
+                    <a href="{{ route('admin.categories.index', request()->except('q')) }}" class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-200">
+                        <i data-lucide="x" class="w-3.5 h-3.5"></i>
+                    </a>
+                @endif
                 <!-- Clear Button -->
                 <button 
                     type="button" 
@@ -160,6 +169,7 @@
     <!-- Category Grid Cards -->
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
         @forelse($categories as $category)
+            <div class="bg-white dark:bg-[#1A1513] rounded-3xl border border-[#ECE6DE] dark:border-[#2C2420] shadow-card p-6 flex flex-col justify-between group hover:border-tan-500 transition-all duration-300">
             <div 
                 x-show="matches('{{ addslashes($category->name) }}', '{{ addslashes($category->tagline ?? '') }}', '{{ addslashes($category->slug) }}')"
                 class="bg-white dark:bg-[#1A1513] rounded-3xl border border-[#ECE6DE] dark:border-[#2C2420] shadow-card p-6 flex flex-col justify-between group hover:border-tan-500 transition-all duration-300"

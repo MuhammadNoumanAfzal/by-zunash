@@ -624,6 +624,7 @@
                                             this.$nextTick(() => { if (window.lucide) lucide.createIcons(); });
                                         })
                                         .catch(() => { this.loading = false; });
+                                }, 220);
                                 }, 150);
                             }
                         }"
