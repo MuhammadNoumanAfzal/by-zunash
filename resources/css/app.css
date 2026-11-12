@@ -453,4 +453,55 @@ html.dark header div[x-show="collectionsOpen"] h4 {
   color: #F7F4EE !important;
 }
 
+/* ========================================================
+   MASS-MARKET COMPARISON CARD (Always Crisp Dark Text on Warm Light Surface)
+   ======================================================== */
+.mass-market-card,
+html.dark .mass-market-card {
+  background-color: #EDE8E1 !important;
+  border-color: #D5CDC2 !important;
+  color: #1A120B !important;
+}
+
+.mass-market-card h3,
+html.dark .mass-market-card h3 {
+  color: #120E0C !important;
+}
+
+.mass-market-card p,
+html.dark .mass-market-card p {
+  color: #5C4F45 !important;
+}
+
+.mass-market-card ul,
+.mass-market-card li,
+.mass-market-card span,
+html.dark .mass-market-card ul,
+html.dark .mass-market-card li,
+html.dark .mass-market-card span {
+  color: #2C221C !important;
+}
+
+.mass-market-card strong,
+html.dark .mass-market-card strong {
+  color: #120E0C !important;
+}
+
+.mass-market-card .badge,
+html.dark .mass-market-card .badge {
+  background-color: #DDD4C8 !important;
+  color: #4A3E37 !important;
+}
+
+.mass-market-card .badge i,
+html.dark .mass-market-card .badge i {
+  color: #786A5E !important;
+}
+
+.mass-market-card [data-lucide="x"],
+html.dark .mass-market-card [data-lucide="x"] {
+  color: #DC2626 !important;
+}
+
+
 

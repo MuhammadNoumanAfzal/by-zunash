@@ -378,32 +378,32 @@
                 </div>
 
                 <!-- Card 2: Mass Market "Genuine" / Bonded (Warm Light Card) -->
-                <div class="p-6 rounded-2xl bg-ivory-100/80 text-espresso-900 border border-ivory-300 relative">
-                    <div class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-stone-200 text-espresso-700 text-[10px] font-bold uppercase tracking-wider mb-3">
-                        <i data-lucide="alert-circle" class="w-3 h-3 text-stone-500"></i>
-                        <span>Mass-Market Retail</span>
+                <div class="mass-market-card p-6 rounded-2xl relative shadow-sm border border-[#D5CDC2]" style="background-color: #EDE8E1 !important; color: #1A120B !important;">
+                    <div class="badge inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider mb-3" style="background-color: #DDD4C8 !important; color: #4A3E37 !important;">
+                        <i data-lucide="alert-circle" class="w-3 h-3" style="color: #786A5E !important;"></i>
+                        <span style="color: #4A3E37 !important;">Mass-Market Retail</span>
                     </div>
-                    <h3 class="font-serif text-xl font-bold text-espresso-900 mb-1.5">"Genuine" & Bonded Leather</h3>
-                    <p class="text-xs text-muted leading-relaxed font-light mb-4">
+                    <h3 class="font-serif text-xl font-bold mb-1.5" style="color: #120E0C !important;">"Genuine" &amp; Bonded Leather</h3>
+                    <p class="text-xs leading-relaxed font-light mb-4" style="color: #5C4F45 !important;">
                         Made by pressing shredded leather dust with polyurethane plastic resin and stamping a fake print on top.
                     </p>
 
-                    <ul class="space-y-2.5 text-xs text-espresso-800">
-                        <li class="flex items-start gap-2">
-                            <i data-lucide="x" class="w-4 h-4 text-red-500 flex-shrink-0 mt-0.5"></i>
-                            <span><strong>Peels within 6–12 Months:</strong> Plastic laminate coating flakes off at flex points.</span>
+                    <ul class="space-y-2.5 text-xs" style="color: #2C221C !important;">
+                        <li class="flex items-start gap-2" style="color: #2C221C !important;">
+                            <i data-lucide="x" class="w-4 h-4 flex-shrink-0 mt-0.5" style="color: #DC2626 !important;"></i>
+                            <span style="color: #2C221C !important;"><strong style="color: #120E0C !important;">Peels within 6–12 Months:</strong> Plastic laminate coating flakes off at flex points.</span>
                         </li>
-                        <li class="flex items-start gap-2">
-                            <i data-lucide="x" class="w-4 h-4 text-red-500 flex-shrink-0 mt-0.5"></i>
-                            <span><strong>Zero Natural Patina:</strong> Turns discolored and sticky rather than enriching over time.</span>
+                        <li class="flex items-start gap-2" style="color: #2C221C !important;">
+                            <i data-lucide="x" class="w-4 h-4 flex-shrink-0 mt-0.5" style="color: #DC2626 !important;"></i>
+                            <span style="color: #2C221C !important;"><strong style="color: #120E0C !important;">Zero Natural Patina:</strong> Turns discolored and sticky rather than enriching over time.</span>
                         </li>
-                        <li class="flex items-start gap-2">
-                            <i data-lucide="x" class="w-4 h-4 text-red-500 flex-shrink-0 mt-0.5"></i>
-                            <span><strong>Chemical Odor:</strong> Smells of synthetic adhesives and petroleum solvents.</span>
+                        <li class="flex items-start gap-2" style="color: #2C221C !important;">
+                            <i data-lucide="x" class="w-4 h-4 flex-shrink-0 mt-0.5" style="color: #DC2626 !important;"></i>
+                            <span style="color: #2C221C !important;"><strong style="color: #120E0C !important;">Chemical Odor:</strong> Smells of synthetic adhesives and petroleum solvents.</span>
                         </li>
-                        <li class="flex items-start gap-2">
-                            <i data-lucide="x" class="w-4 h-4 text-red-500 flex-shrink-0 mt-0.5"></i>
-                            <span><strong>Weak Tear Resistance:</strong> Prone to tearing around belt holes and card banks.</span>
+                        <li class="flex items-start gap-2" style="color: #2C221C !important;">
+                            <i data-lucide="x" class="w-4 h-4 flex-shrink-0 mt-0.5" style="color: #DC2626 !important;"></i>
+                            <span style="color: #2C221C !important;"><strong style="color: #120E0C !important;">Weak Tear Resistance:</strong> Prone to tearing around belt holes and card banks.</span>
                         </li>
                     </ul>
                 </div>
