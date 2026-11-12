@@ -12,7 +12,7 @@
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
         <!-- Luxury Breadcrumb Stepper -->
-        <nav aria-label="Checkout Progress" class="max-w-xl mx-auto mb-10">
+        <nav aria-label="Checkout Progress" class="max-w-xl mx-auto mb-10 no-print" x-show="!orderPlaced">
             <div class="flex items-center justify-between text-xs font-semibold">
                 <!-- Step 1: Bag -->
                 <a href="{{ route('cart') }}" class="flex items-center gap-2 text-espresso-800 hover:text-gold transition-colors">
@@ -54,7 +54,7 @@
         </nav>
 
         <!-- Header -->
-        <div class="mb-10 text-center max-w-2xl mx-auto">
+        <div class="mb-10 text-center max-w-2xl mx-auto no-print" x-show="!orderPlaced">
             <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-50 text-emerald-800 text-[11px] uppercase tracking-widest font-semibold border border-emerald-200 mb-3 shadow-2xs">
                 <svg class="w-3.5 h-3.5 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
                 Guest Checkout • No Account Required
@@ -1242,12 +1242,15 @@ function checkoutForm() {
 
 <style>
 @media print {
-    header, footer, nav, .no-print, [x-show="!orderPlaced"], #cart-slideover-backdrop, #cart-drawer, .whatsapp-float, button.fixed {
+    header, footer, nav, .no-print, [x-show="!orderPlaced"], #cart-slideover-backdrop, #cart-drawer, .whatsapp-float, button.fixed, a.fixed, a[href*="wa.me"], a[href*="whatsapp"], div.fixed {
         display: none !important;
+        visibility: hidden !important;
     }
-    body {
+    body, html, main, .min-h-screen {
         background: #ffffff !important;
         color: #000000 !important;
+        padding: 0 !important;
+        margin: 0 !important;
     }
     .print-invoice {
         max-width: 100% !important;

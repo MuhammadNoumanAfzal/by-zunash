@@ -98,10 +98,16 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
-    <!-- Critical Alpine Cloak Protection (Prevents sidepane and drawer flash on navigation) -->
+    <!-- Critical Alpine Cloak Protection & Print Styling -->
     <style>
         [x-cloak] {
             display: none !important;
+        }
+        @media print {
+            .no-print, [no-print], .print\:hidden, a[href*="wa.me"], a[href*="whatsapp"] {
+                display: none !important;
+                visibility: hidden !important;
+            }
         }
     </style>
 
@@ -423,7 +429,7 @@
         href="https://wa.me/923214700545?text={{ urlencode('Assalam-o-Alaikum By Zunash Concierge! I would like assistance with an inquiry or order.') }}" 
         target="_blank" 
         rel="noopener noreferrer" 
-        class="fixed bottom-6 right-6 z-40 group flex items-center gap-2.5 p-3.5 sm:px-4 sm:py-3 bg-[#25D366] hover:bg-[#20ba59] text-white rounded-full shadow-2xl hover:shadow-[#25D366]/40 hover:scale-105 transition-all duration-300"
+        class="fixed bottom-6 right-6 z-40 group flex items-center gap-2.5 p-3.5 sm:px-4 sm:py-3 bg-[#25D366] hover:bg-[#20ba59] text-white rounded-full shadow-2xl hover:shadow-[#25D366]/40 hover:scale-105 transition-all duration-300 no-print print:hidden"
         aria-label="Chat with By Zunash Concierge on WhatsApp"
         title="Chat on WhatsApp (+92 321 4700545)"
     >
