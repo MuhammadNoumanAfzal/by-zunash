@@ -164,7 +164,7 @@ class ProductController extends Controller
         }
 
         $availability = $validated['availability'] ?? ($validated['stock_quantity'] > 0 ? 'in_stock' : 'out_of_stock');
-        $sku = !empty($validated['sku']) ? $validated['sku'] : ('BZ-' . strtoupper(substr($category->slug, 0, 3)) . '-' . rand(100, 999));
+        $sku = !empty($validated['sku']) ? trim(strtoupper($validated['sku'])) : $this->generateUniqueSku($category);
         $primaryImage = !empty($validated['image']) ? $validated['image'] : '/images/products/prod-reversible-belt.jpg';
 
         if ($request->hasFile('image_file')) {
@@ -311,7 +311,7 @@ class ProductController extends Controller
             'price' => $validated['price'],
             'original_price' => $validated['original_price'] ?? $product->original_price,
             'stock_quantity' => $validated['stock_quantity'],
-            'sku' => !empty($validated['sku']) ? $validated['sku'] : $product->sku,
+            'sku' => !empty($validated['sku']) ? trim(strtoupper($validated['sku'])) : ($product->sku ?: $this->generateUniqueSku($category)),
             'badge' => $validated['badge'] ?? $product->badge,
             'is_bestseller' => $request->boolean('is_bestseller'),
             'is_new' => $request->boolean('is_new'),
@@ -512,6 +512,23 @@ class ProductController extends Controller
         }
 
         return array_values(array_unique($gallery));
+    }
+
+    /**
+     * Generate unique sequential SKU (e.g. BZ-0001) that does not exist yet
+     */
+    protected function generateUniqueSku(?Category $category = null): string
+    {
+        $maxId = Product::max('id') ?? 0;
+        $num = $maxId + 1;
+        $candidate = 'BZ-' . str_pad($num, 4, '0', STR_PAD_LEFT);
+
+        while (Product::where('sku', $candidate)->exists()) {
+            $num++;
+            $candidate = 'BZ-' . str_pad($num, 4, '0', STR_PAD_LEFT);
+        }
+
+        return $candidate;
     }
 
     /**

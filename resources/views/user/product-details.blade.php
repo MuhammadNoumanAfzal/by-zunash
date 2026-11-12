@@ -25,7 +25,7 @@
                 @endif
             ],
             "description": "{{ addslashes(strip_tags($product['description'] ?? $product['short_description'])) }}",
-            "sku": "BZ-{{ str_pad($product['id'], 4, '0', STR_PAD_LEFT) }}",
+            "sku": "{{ $product['sku'] ?? ('BZ-' . str_pad($product['id'], 4, '0', STR_PAD_LEFT)) }}",
             "mpn": "BZ-{{ $product['id'] }}",
             "brand": {
                 "@type": "Brand",
@@ -279,8 +279,8 @@
                         <span class="text-xs uppercase tracking-widest text-gold-600 font-serif font-bold">
                             {{ $product['category_name'] }} • Pure Full-Grain
                         </span>
-                        <span class="text-[11px] font-mono text-muted uppercase tracking-wider bg-ivory-100 px-2 py-0.5 rounded border border-ivory-200">
-                            SKU: BZ-{{ str_pad($product['id'], 4, '0', STR_PAD_LEFT) }}
+                        <span class="text-[11px] font-mono text-muted uppercase tracking-wider bg-ivory-100 dark:bg-[#251E1A] dark:text-gray-300 px-2 py-0.5 rounded border border-ivory-200 dark:border-white/10">
+                            SKU: {{ $product['sku'] ?? ('BZ-' . str_pad($product['id'], 4, '0', STR_PAD_LEFT)) }}
                         </span>
                     </div>
 
