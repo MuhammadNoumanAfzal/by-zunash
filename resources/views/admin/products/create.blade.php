@@ -18,18 +18,27 @@
     ],
     customColorName: '',
     customColorHex: '#8B4513',
+    swatchFeedback: '',
     addCustomColor() {
-        if (!this.customColorName.trim()) return;
+        let name = this.customColorName ? this.customColorName.trim() : '';
+        if (!name) {
+            name = 'Custom Tone ' + (this.colors.length + 1) + ' (' + this.customColorHex.toUpperCase() + ')';
+        }
         this.colors.push({
-            name: this.customColorName.trim(),
+            name: name,
             hex: this.customColorHex,
             stock: true,
             active: true
         });
         this.customColorName = '';
+        this.swatchFeedback = 'Added: ' + name;
+        setTimeout(() => { this.swatchFeedback = ''; }, 3000);
     },
     removeColor(index) {
         this.colors.splice(index, 1);
+    },
+    toggleAll(select) {
+        this.colors.forEach(c => c.active = select);
     },
     get activeColorsJson() {
         return JSON.stringify(this.colors.filter(c => c.active).map(c => ({ name: c.name, hex: c.hex, stock: c.stock })));
@@ -269,26 +278,41 @@
                         Leather Tone & Swatch Variations
                     </h2>
                 </div>
-                <span class="text-[11px] text-[#8F8379]">Select or add tones for storefront swatches</span>
+                <div class="flex items-center gap-3">
+                    <span class="text-[11px] font-semibold text-tan-600 dark:text-gold-400" x-text="colors.filter(c => c.active).length + ' selected'"></span>
+                    <button type="button" @click="toggleAll(true)" class="text-[11px] text-gray-500 hover:text-tan-600 underline">Select All</button>
+                    <button type="button" @click="toggleAll(false)" class="text-[11px] text-gray-500 hover:text-tan-600 underline">Clear</button>
+                </div>
             </div>
 
             <!-- Active Swatch Tiles -->
             <div class="mt-4 space-y-4">
                 <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
-                    <template x-for="(color, idx) in colors" :key="idx">
+                    <template x-for="(color, idx) in colors" :key="color.name + '-' + idx">
                         <div 
-                            class="p-2.5 rounded-2xl border transition-all flex items-center justify-between gap-2.5"
-                            :class="color.active ? 'bg-[#FAF8F5] dark:bg-[#241D1A] border-tan-400 dark:border-gold-500/50 shadow-2xs' : 'bg-gray-50/50 dark:bg-[#1E1816]/50 border-gray-200 dark:border-gray-800 opacity-60'"
+                            class="p-2.5 rounded-2xl border transition-all flex items-center justify-between gap-2.5 cursor-pointer select-none"
+                            :class="color.active 
+                                ? 'bg-[#FAF8F5] dark:bg-[#2A201C] border-tan-500 dark:border-gold-500 ring-1 ring-tan-500/30 shadow-xs' 
+                                : 'bg-gray-50/60 dark:bg-[#1E1816]/60 border-gray-200 dark:border-gray-800 opacity-60 hover:opacity-90'"
+                            @click="if ($event.target.closest('button')) return; color.active = !color.active"
                         >
-                            <label class="flex items-center gap-2.5 cursor-pointer flex-1 min-w-0">
-                                <input type="checkbox" x-model="color.active" class="rounded border-gray-300 text-tan-600 focus:ring-tan-500 shrink-0">
-                                <span class="w-6 h-6 rounded-full border border-black/20 shrink-0 shadow-inner" :style="{ backgroundColor: color.hex }"></span>
+                            <div class="flex items-center gap-2.5 flex-1 min-w-0">
+                                <input 
+                                    type="checkbox" 
+                                    x-model="color.active" 
+                                    @click.stop 
+                                    class="rounded border-gray-300 dark:border-gray-600 text-tan-600 focus:ring-tan-500 shrink-0 cursor-pointer"
+                                >
+                                <span 
+                                    class="w-6 h-6 rounded-full border border-black/20 dark:border-white/30 shrink-0 shadow-xs ring-1 ring-black/10" 
+                                    :style="{ backgroundColor: color.hex }"
+                                ></span>
                                 <span class="text-xs font-semibold text-espresso-950 dark:text-white truncate" x-text="color.name"></span>
-                            </label>
+                            </div>
                             
                             <button 
                                 type="button" 
-                                @click="removeColor(idx)" 
+                                @click.stop="removeColor(idx)" 
                                 class="text-gray-400 hover:text-rose-500 p-1 rounded-md shrink-0 transition-colors"
                                 title="Remove Swatch"
                             >
@@ -299,25 +323,36 @@
                 </div>
 
                 <!-- Add Custom Swatch Input Row -->
-                <div class="p-3.5 rounded-2xl bg-[#FAF8F5] dark:bg-[#201A18] border border-[#E0D7CB] dark:border-[#342823] flex flex-wrap items-center gap-3">
-                    <div class="flex items-center gap-2 flex-1 min-w-[200px]">
-                        <input type="color" x-model="customColorHex" class="w-8 h-8 rounded-lg cursor-pointer border border-gray-300 dark:border-gray-700 p-0.5 bg-transparent shrink-0">
-                        <input 
-                            type="text" 
-                            x-model="customColorName" 
-                            placeholder="Add custom leather tone (e.g. Havana Chestnut)" 
-                            class="px-3 py-1.5 text-xs rounded-xl bg-white dark:bg-[#2A201C] border border-[#DFD6CB] dark:border-[#42322C] text-espresso-900 dark:text-white focus:outline-hidden w-full sm:w-64"
-                            @keydown.enter.prevent="addCustomColor()"
+                <div class="p-3.5 rounded-2xl bg-[#FAF8F5] dark:bg-[#201A18] border border-[#E0D7CB] dark:border-[#342823] space-y-2">
+                    <div class="flex flex-wrap items-center gap-3">
+                        <div class="flex items-center gap-2 flex-1 min-w-[220px]">
+                            <label class="relative cursor-pointer shrink-0" title="Click to pick custom color">
+                                <input type="color" x-model="customColorHex" class="w-9 h-9 rounded-xl cursor-pointer border border-gray-300 dark:border-gray-700 p-0.5 bg-transparent shrink-0">
+                            </label>
+                            <input 
+                                type="text" 
+                                x-model="customColorName" 
+                                placeholder="Enter leather tone name (e.g. Havana Chestnut, Navy Blue)" 
+                                class="px-3.5 py-2 text-xs rounded-xl bg-white dark:bg-[#2A201C] border border-[#DFD6CB] dark:border-[#42322C] text-espresso-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-[#6E645E] focus:outline-hidden focus:border-tan-500 w-full"
+                                @keydown.enter.prevent="addCustomColor()"
+                            >
+                        </div>
+
+                        <button 
+                            type="button" 
+                            @click="addCustomColor()" 
+                            class="px-4 py-2 text-xs font-semibold rounded-xl bg-tan-600 hover:bg-tan-700 active:scale-95 text-white transition-all flex items-center gap-1.5 shadow-2xs shrink-0"
                         >
+                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
+                            <span>Add Swatch</span>
+                        </button>
                     </div>
 
-                    <button 
-                        type="button" 
-                        @click="addCustomColor()" 
-                        class="px-3 py-1.5 text-xs font-semibold rounded-xl bg-tan-600 hover:bg-tan-700 text-white transition-colors flex items-center gap-1.5"
-                    >
-                        <span>Add Swatch</span>
-                    </button>
+                    <!-- Instant Feedback Message -->
+                    <div x-show="swatchFeedback" x-transition class="flex items-center gap-1.5 text-xs text-emerald-600 dark:text-emerald-400 font-medium pt-1">
+                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                        <span x-text="swatchFeedback"></span>
+                    </div>
                 </div>
             </div>
         </div>
