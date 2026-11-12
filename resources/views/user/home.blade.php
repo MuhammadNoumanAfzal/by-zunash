@@ -627,6 +627,7 @@
 <!-- ========================================================
      E. BESTSELLERS SECTION (With Scroll-Reveal)
      ======================================================== -->
+@if($bestsellers->isNotEmpty())
 <section class="pt-10 pb-16 lg:pt-12 lg:pb-20 bg-white dark:bg-[#161210] border-t border-b border-ivory-200 dark:border-white/10">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
@@ -660,6 +661,7 @@
 
     </div>
 </section>
+@endif
 
 <!-- ========================================================
      F. BRAND STORY (EDITORIAL ASYMMETRICAL ATELIER SECTION)

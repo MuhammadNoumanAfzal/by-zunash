@@ -520,20 +520,45 @@
                     </div>
                 </div>
 
-                <!-- Gallery Images (One per line) -->
+                <!-- Additional Atelier Gallery (Multi-upload & URLs) -->
                 <div>
                     <label class="block text-xs font-semibold text-espresso-900 dark:text-white mb-1.5 flex items-center justify-between">
-                        <span>Additional Atelier Gallery URLs</span>
-                        <span class="text-[11px] text-[#8F8379]">One URL per line</span>
+                        <span>Additional Atelier Gallery (Multiple Images)</span>
+                        <span class="text-[11px] text-[#8F8379]">Upload photos or add image paths</span>
                     </label>
-                    <textarea 
-                        name="gallery_raw" 
-                        rows="3" 
-                        placeholder="e.g.
-https://example.com/gallery-detail-1.jpg
-https://example.com/gallery-detail-2.jpg"
-                        class="w-full px-3.5 py-2 text-xs rounded-xl bg-[#FAF8F5] dark:bg-[#241D1A] border border-[#E0D7CB] dark:border-[#3A2F29] text-espresso-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-[#6E645E] focus:outline-hidden focus:border-tan-500 font-mono"
-                    >{{ old('gallery_raw') }}</textarea>
+
+                    <!-- Multi-Image Upload Box -->
+                    <div class="p-3.5 rounded-2xl bg-[#FAF8F5] dark:bg-[#201815] border border-dashed border-[#DFD6CB] dark:border-[#382D27]">
+                        <div class="flex flex-wrap items-center gap-3">
+                            <label class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-espresso-900 hover:bg-tan-600 text-white font-semibold text-xs cursor-pointer transition-colors shadow-2xs">
+                                <i data-lucide="upload-cloud" class="w-3.5 h-3.5 text-gold-400"></i>
+                                <span>Upload Images from Computer</span>
+                                <input type="file" name="gallery_files[]" multiple accept="image/*" class="hidden" onchange="previewGalleryFiles(this)">
+                            </label>
+                            <span class="text-[11px] text-[#8F8379]" id="gallery_upload_status">
+                                Select one or multiple photos (PNG, JPG, WEBP, AVIF up to 5MB each)
+                            </span>
+                        </div>
+
+                        <!-- Live Selected Files Preview Grid -->
+                        <div id="gallery_preview_grid" class="hidden mt-3 pt-3 border-t border-[#EAE3D9] dark:border-[#2E2420] grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-2.5">
+                            <!-- Injected dynamically via previewGalleryFiles -->
+                        </div>
+                    </div>
+
+                    <div class="mt-2.5">
+                        <label class="block text-[10px] text-gray-400 uppercase tracking-wider mb-0.5 flex items-center justify-between">
+                            <span>Or paste Additional Image URLs / Paths (One per line)</span>
+                            <span class="text-[10px] text-[#8F8379]">Optional</span>
+                        </label>
+                        <textarea 
+                            id="gallery_raw_input"
+                            name="gallery_raw" 
+                            rows="2" 
+                            placeholder="e.g. /images/products/detail-side.jpg or https://example.com/angle.jpg"
+                            class="w-full px-3.5 py-2 text-xs rounded-xl bg-[#FAF8F5] dark:bg-[#241D1A] border border-[#E0D7CB] dark:border-[#3A2F29] text-espresso-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-[#6E645E] focus:outline-hidden focus:border-tan-500 font-mono"
+                        >{{ old('gallery_raw') }}</textarea>
+                    </div>
                 </div>
 
                 <!-- Short Summary -->
@@ -648,6 +673,40 @@ function previewProductUrl(url) {
             placeholder.classList.remove('hidden');
         }
     }
+}
+function previewGalleryFiles(input) {
+    const grid = document.getElementById('gallery_preview_grid');
+    const status = document.getElementById('gallery_upload_status');
+    if (!grid) return;
+
+    if (!input.files || input.files.length === 0) {
+        grid.classList.add('hidden');
+        grid.innerHTML = '';
+        if (status) status.innerText = 'Select one or multiple photos (PNG, JPG, WEBP, AVIF up to 5MB each)';
+        return;
+    }
+
+    grid.innerHTML = '';
+    grid.classList.remove('hidden');
+    if (status) {
+        status.innerText = `${input.files.length} photo${input.files.length > 1 ? 's' : ''} ready to upload`;
+    }
+
+    Array.from(input.files).forEach((file) => {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            const card = document.createElement('div');
+            card.className = 'relative rounded-xl overflow-hidden bg-black/10 dark:bg-black/40 border border-[#E0D7CB] dark:border-[#3A2F29] aspect-square flex items-center justify-center';
+            card.innerHTML = `
+                <img src="${e.target.result}" alt="${file.name}" class="w-full h-full object-cover">
+                <span class="absolute bottom-1 right-1 bg-black/75 text-[9px] text-white px-1 py-0.5 rounded font-mono">
+                    ${Math.round(file.size / 1024)}KB
+                </span>
+            `;
+            grid.appendChild(card);
+        };
+        reader.readAsDataURL(file);
+    });
 }
 </script>
 @endpush

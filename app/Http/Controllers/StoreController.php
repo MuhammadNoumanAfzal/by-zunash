@@ -79,17 +79,12 @@ class StoreController extends Controller
         $products = $this->getProducts();
         $categories = $this->getCategories();
 
-        $featuredBestsellerIds = [1, 5, 9, 13, 2, 6, 10, 17];
-        $bestsellers = $products->whereIn('id', $featuredBestsellerIds)
-            ->sortBy(function ($p) use ($featuredBestsellerIds) {
-                return array_search($p['id'], $featuredBestsellerIds);
-            })
-            ->values();
+        // Only display products explicitly marked as Bestseller / Flagship collection
+        $bestsellers = $products->filter(function ($p) {
+            return !empty($p['is_bestseller']);
+        })->take(8)->values();
 
-        if ($bestsellers->count() < 8) {
-            $bestsellers = $products->take(8);
-        }
-        $newArrivals = $products->where('is_new', true)->take(4);
+        $newArrivals = $products->where('is_new', true)->take(4)->values();
         $testimonials = \App\Models\Review::where('status', 'published')->latest()->take(6)->get();
 
         return view('user.home', compact('bestsellers', 'newArrivals', 'categories', 'testimonials'));

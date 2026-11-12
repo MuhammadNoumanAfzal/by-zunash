@@ -131,6 +131,8 @@ class ProductController extends Controller
             'image' => 'nullable|string|max:255',
             'image_file' => 'nullable|image|mimes:jpeg,png,jpg,webp,gif,avif|max:5120',
             'gallery_raw' => 'nullable|string',
+            'gallery_files' => 'nullable|array',
+            'gallery_files.*' => 'nullable|image|mimes:jpeg,png,jpg,webp,gif,avif|max:5120',
             'features_raw' => 'nullable|string',
             'colors_json' => 'nullable|string',
             'spec_material' => 'nullable|string|max:255',
@@ -182,7 +184,7 @@ class ProductController extends Controller
         $colors = $this->parseColors($request);
         $features = $this->parseFeatures($request);
         $specifications = $this->parseSpecifications($request);
-        $gallery = $this->parseGallery($request, $primaryImage);
+        $gallery = $this->parseGallery($request, $primaryImage, null, $slug);
 
         Product::create([
             'name' => $validated['name'],
@@ -250,6 +252,8 @@ class ProductController extends Controller
             'image' => 'nullable|string|max:255',
             'image_file' => 'nullable|image|mimes:jpeg,png,jpg,webp,gif,avif|max:5120',
             'gallery_raw' => 'nullable|string',
+            'gallery_files' => 'nullable|array',
+            'gallery_files.*' => 'nullable|image|mimes:jpeg,png,jpg,webp,gif,avif|max:5120',
             'features_raw' => 'nullable|string',
             'colors_json' => 'nullable|string',
             'spec_material' => 'nullable|string|max:255',
@@ -292,7 +296,7 @@ class ProductController extends Controller
         $colors = $this->parseColors($request, $product->colors);
         $features = $this->parseFeatures($request, $product->features);
         $specifications = $this->parseSpecifications($request, $product->specifications);
-        $gallery = $this->parseGallery($request, $primaryImage, $product->gallery);
+        $gallery = $this->parseGallery($request, $primaryImage, $product->gallery, $product->slug);
 
         $product->update([
             'name' => $validated['name'],
@@ -440,35 +444,52 @@ class ProductController extends Controller
     }
 
     /**
-     * Parse gallery images.
+     * Parse gallery images from raw URLs and direct file uploads.
      */
-    protected function parseGallery(Request $request, string $primaryImage, ?array $fallback = null): array
+    protected function parseGallery(Request $request, string $primaryImage, ?array $fallback = null, string $slug = 'prod'): array
     {
+        $gallery = [];
+
+        // 1. Textarea URLs/Paths
         if ($request->filled('gallery_raw')) {
             $lines = preg_split('/\r\n|\r|\n/', trim($request->input('gallery_raw')));
-            $gallery = [];
             foreach ($lines as $line) {
                 $trimmed = trim($line);
                 if ($trimmed !== '') {
                     $gallery[] = $trimmed;
                 }
             }
-            if (!empty($gallery)) {
-                if (!in_array($primaryImage, $gallery)) {
-                    array_unshift($gallery, $primaryImage);
+        } elseif (!$request->has('gallery_raw') && !empty($fallback)) {
+            $gallery = $fallback;
+        }
+
+        // 2. Direct computer file uploads
+        if ($request->hasFile('gallery_files')) {
+            $destDir = public_path('images/products');
+            if (!file_exists($destDir)) {
+                @mkdir($destDir, 0755, true);
+            }
+
+            foreach ($request->file('gallery_files') as $idx => $file) {
+                if ($file && $file->isValid()) {
+                    $filename = 'prod-gallery-' . Str::slug($slug) . '-' . time() . '-' . ($idx + 1) . '-' . rand(10, 99) . '.' . $file->getClientOriginalExtension();
+                    $file->move($destDir, $filename);
+                    $gallery[] = '/images/products/' . $filename;
                 }
-                return array_values(array_unique($gallery));
             }
         }
 
-        if (!empty($fallback)) {
-            if (!in_array($primaryImage, $fallback)) {
-                array_unshift($fallback, $primaryImage);
-            }
-            return array_values(array_unique($fallback));
+        // 3. Fallback if empty and fallback exists
+        if (empty($gallery) && !empty($fallback) && !$request->has('gallery_raw')) {
+            $gallery = $fallback;
         }
 
-        return [$primaryImage];
+        // 4. Ensure primaryImage is always the first slide
+        if (!in_array($primaryImage, $gallery)) {
+            array_unshift($gallery, $primaryImage);
+        }
+
+        return array_values(array_unique($gallery));
     }
 
     /**

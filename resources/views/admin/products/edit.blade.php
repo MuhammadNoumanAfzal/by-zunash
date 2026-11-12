@@ -538,19 +538,75 @@
                     </div>
                 </div>
 
-                <!-- Additional Gallery Images -->
+                <!-- Additional Atelier Gallery (Multi-upload & URLs) -->
                 <div>
                     <label class="block text-xs font-semibold text-espresso-900 dark:text-white mb-1.5 flex items-center justify-between">
-                        <span>Additional Atelier Gallery URLs</span>
-                        <span class="text-[11px] text-[#8F8379]">One URL per line</span>
+                        <span>Additional Atelier Gallery (Multiple Images)</span>
+                        <span class="text-[11px] text-[#8F8379]">Upload photos or add image paths</span>
                     </label>
-                    <textarea 
-                        name="gallery_raw" 
-                        rows="3" 
-                        placeholder="/images/hero/slide-belt.jpg
+
+                    <!-- Multi-Image Upload Box -->
+                    <div class="p-3.5 rounded-2xl bg-[#FAF8F5] dark:bg-[#201815] border border-dashed border-[#DFD6CB] dark:border-[#382D27]">
+                        <div class="flex flex-wrap items-center gap-3">
+                            <label class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-espresso-900 hover:bg-tan-600 text-white font-semibold text-xs cursor-pointer transition-colors shadow-2xs">
+                                <i data-lucide="upload-cloud" class="w-3.5 h-3.5 text-gold-400"></i>
+                                <span>Upload Images from Computer</span>
+                                <input type="file" name="gallery_files[]" multiple accept="image/*" class="hidden" onchange="previewGalleryFiles(this)">
+                            </label>
+                            <span class="text-[11px] text-[#8F8379]" id="gallery_upload_status">
+                                Select one or multiple photos to add to gallery (PNG, JPG, WEBP, AVIF up to 5MB each)
+                            </span>
+                        </div>
+
+                        <!-- Live Selected Files Preview Grid -->
+                        <div id="gallery_preview_grid" class="hidden mt-3 pt-3 border-t border-[#EAE3D9] dark:border-[#2E2420] grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-2.5">
+                            <!-- Injected dynamically via previewGalleryFiles -->
+                        </div>
+                    </div>
+
+                    <!-- Current Existing Additional Gallery Thumbnails (if any) -->
+                    @php
+                        $existingAdditional = array_values(array_filter($galleryList, fn($img) => $img !== $product->image));
+                    @endphp
+                    @if(count($existingAdditional) > 0)
+                        <div class="mt-3 p-3 rounded-xl bg-[#FAF8F5] dark:bg-[#221B18] border border-[#E0D7CB] dark:border-[#382D27]">
+                            <div class="flex items-center justify-between mb-2">
+                                <span class="text-[11px] font-semibold text-espresso-900 dark:text-white flex items-center gap-1.5">
+                                    <i data-lucide="images" class="w-3.5 h-3.5 text-gold-500"></i>
+                                    <span>Current Additional Photos ({{ count($existingAdditional) }})</span>
+                                </span>
+                                <span class="text-[10px] text-[#8F8379]">Click &times; to remove from gallery</span>
+                            </div>
+                            <div class="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-2.5" id="existing_gallery_container">
+                                @foreach($existingAdditional as $idx => $imgUrl)
+                                    <div class="relative group rounded-xl overflow-hidden bg-black/10 dark:bg-black/40 border border-[#E0D7CB] dark:border-[#3A2F29] aspect-square" data-gallery-item="{{ $imgUrl }}">
+                                        <img src="{{ $imgUrl }}" alt="Gallery image {{ $idx + 1 }}" class="w-full h-full object-cover">
+                                        <button 
+                                            type="button" 
+                                            onclick="removeExistingGalleryImage('{{ addslashes($imgUrl) }}', this)" 
+                                            class="absolute top-1 right-1 w-5 h-5 rounded-full bg-rose-600/90 hover:bg-rose-600 text-white flex items-center justify-center text-xs shadow-md transition-transform hover:scale-110"
+                                            title="Remove image from gallery"
+                                        >&times;</button>
+                                    </div>
+                                @endforeach
+                            </div>
+                        </div>
+                    @endif
+
+                    <div class="mt-2.5">
+                        <label class="block text-[10px] text-gray-400 uppercase tracking-wider mb-0.5 flex items-center justify-between">
+                            <span>Or edit Image URLs / Existing Paths (One per line)</span>
+                            <span class="text-[10px] text-[#8F8379]">Synced with photos above</span>
+                        </label>
+                        <textarea 
+                            id="gallery_raw_input"
+                            name="gallery_raw" 
+                            rows="2" 
+                            placeholder="/images/hero/slide-belt.jpg
 /images/brand/stitch-detail.jpg"
-                        class="w-full px-3.5 py-2 text-xs rounded-xl bg-[#FAF8F5] dark:bg-[#241D1A] border border-[#E0D7CB] dark:border-[#3A2F29] text-espresso-900 dark:text-white focus:outline-hidden focus:border-tan-500 font-mono"
-                    >{{ old('gallery_raw', $galleryRaw) }}</textarea>
+                            class="w-full px-3.5 py-2 text-xs rounded-xl bg-[#FAF8F5] dark:bg-[#241D1A] border border-[#E0D7CB] dark:border-[#3A2F29] text-espresso-900 dark:text-white focus:outline-hidden focus:border-tan-500 font-mono"
+                        >{{ old('gallery_raw', $galleryRaw) }}</textarea>
+                    </div>
                 </div>
 
                 <!-- Short Summary -->
@@ -642,6 +698,55 @@ function previewProductUrl(url) {
     const img = document.getElementById('prod_preview');
     if (img && url && url.trim().length > 0) {
         img.src = url;
+    }
+}
+function previewGalleryFiles(input) {
+    const grid = document.getElementById('gallery_preview_grid');
+    const status = document.getElementById('gallery_upload_status');
+    if (!grid) return;
+
+    if (!input.files || input.files.length === 0) {
+        grid.classList.add('hidden');
+        grid.innerHTML = '';
+        if (status) status.innerText = 'Select one or multiple photos to add to gallery (PNG, JPG, WEBP, AVIF up to 5MB each)';
+        return;
+    }
+
+    grid.innerHTML = '';
+    grid.classList.remove('hidden');
+    if (status) {
+        status.innerText = `${input.files.length} photo${input.files.length > 1 ? 's' : ''} selected to add`;
+    }
+
+    Array.from(input.files).forEach((file) => {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            const card = document.createElement('div');
+            card.className = 'relative rounded-xl overflow-hidden bg-black/10 dark:bg-black/40 border border-[#E0D7CB] dark:border-[#3A2F29] aspect-square flex items-center justify-center';
+            card.innerHTML = `
+                <img src="${e.target.result}" alt="${file.name}" class="w-full h-full object-cover">
+                <span class="absolute bottom-1 right-1 bg-black/75 text-[9px] text-white px-1 py-0.5 rounded font-mono">
+                    ${Math.round(file.size / 1024)}KB
+                </span>
+            `;
+            grid.appendChild(card);
+        };
+        reader.readAsDataURL(file);
+    });
+}
+
+function removeExistingGalleryImage(url, btn) {
+    const rawInput = document.getElementById('gallery_raw_input');
+    if (rawInput) {
+        const lines = rawInput.value.split('\n').map(l => l.trim()).filter(l => l !== '' && l !== url);
+        rawInput.value = lines.join('\n');
+    }
+    const item = btn.closest('[data-gallery-item]');
+    if (item) {
+        item.style.transition = 'opacity 0.2s, transform 0.2s';
+        item.style.opacity = '0';
+        item.style.transform = 'scale(0.8)';
+        setTimeout(() => item.remove(), 200);
     }
 }
 </script>
