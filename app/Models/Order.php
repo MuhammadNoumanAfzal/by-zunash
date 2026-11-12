@@ -24,6 +24,7 @@ class Order extends Model
         'payment_details',
         'payment_status',
         'order_status',
+        'is_read',
         'courier_name',
         'tracking_number',
         'tracking_url',
@@ -41,8 +42,14 @@ class Order extends Model
         'discount' => 'float',
         'total' => 'float',
         'items' => 'array',
+        'is_read' => 'boolean',
         'dispatched_at' => 'datetime',
     ];
+
+    public function scopeUnread($query)
+    {
+        return $query->where('is_read', false);
+    }
 
     /**
      * Clean WhatsApp phone number in international format (e.g. 923214700545).

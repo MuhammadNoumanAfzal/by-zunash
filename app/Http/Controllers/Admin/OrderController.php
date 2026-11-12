@@ -39,11 +39,16 @@ class OrderController extends Controller
             });
         }
 
+        if ($request->filled('unread')) {
+            $query->where('is_read', false);
+        }
+
         $orders = $query->latest()->paginate(10)->withQueryString();
 
         $totalOrders = Order::count();
         $completedOrders = Order::where('order_status', 'completed')->count();
         $pendingOrders = Order::where('order_status', 'pending')->count();
+        $unreadOrders = Order::where('is_read', false)->count();
         $totalRevenue = Order::sum('total');
 
         return view('admin.orders.index', compact(
@@ -51,6 +56,7 @@ class OrderController extends Controller
             'totalOrders',
             'completedOrders',
             'pendingOrders',
+            'unreadOrders',
             'totalRevenue'
         ));
     }
@@ -60,7 +66,82 @@ class OrderController extends Controller
      */
     public function show(Order $order)
     {
+        if (!$order->is_read) {
+            $order->update(['is_read' => true]);
+        }
         return view('admin.orders.show', compact('order'));
+    }
+
+    /**
+     * Live API poll for new orders, unread count & notification toasts.
+     */
+    public function liveCheck(Request $request)
+    {
+        $unreadCount = Order::where('is_read', false)->count();
+        $lastSeenId = (int) $request->input('last_id', 0);
+
+        $newOrdersQuery = Order::query();
+        if ($lastSeenId > 0) {
+            $newOrdersQuery->where('id', '>', $lastSeenId);
+        }
+
+        $latestNew = $lastSeenId > 0 ? $newOrdersQuery->latest('id')->first() : null;
+
+        $recentUnread = Order::where('is_read', false)
+            ->latest('id')
+            ->limit(5)
+            ->get()
+            ->map(function ($ord) {
+                return [
+                    'id' => $ord->id,
+                    'order_number' => $ord->order_number,
+                    'customer_name' => $ord->customer_name,
+                    'city' => $ord->city,
+                    'total' => number_format($ord->total),
+                    'payment_method' => $ord->payment_method,
+                    'time_ago' => $ord->created_at->diffForHumans(),
+                    'url' => route('admin.orders.show', $ord),
+                ];
+            });
+
+        $maxId = (int) (Order::max('id') ?? 0);
+
+        return response()->json([
+            'unread_count' => $unreadCount,
+            'max_id' => $maxId,
+            'new_order' => $latestNew ? [
+                'id' => $latestNew->id,
+                'order_number' => $latestNew->order_number,
+                'customer_name' => $latestNew->customer_name,
+                'city' => $latestNew->city,
+                'total' => number_format($latestNew->total),
+                'payment_method' => $latestNew->payment_method,
+                'url' => route('admin.orders.show', $latestNew),
+            ] : null,
+            'recent_unread' => $recentUnread,
+        ]);
+    }
+
+    /**
+     * Mark all unread orders as read.
+     */
+    public function markAllRead(Request $request)
+    {
+        Order::where('is_read', false)->update(['is_read' => true]);
+        if ($request->wantsJson() || $request->ajax()) {
+            return response()->json(['success' => true]);
+        }
+        return back()->with('toast_success', 'All orders marked as read.');
+    }
+
+    /**
+     * Toggle read/unread flag for a single order.
+     */
+    public function toggleRead(Order $order)
+    {
+        $order->update(['is_read' => !$order->is_read]);
+        $status = $order->is_read ? 'read' : 'unread';
+        return back()->with('toast_success', "Order #{$order->order_number} marked as {$status}.");
     }
 
     /**

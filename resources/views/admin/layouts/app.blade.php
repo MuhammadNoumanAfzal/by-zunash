@@ -317,6 +317,11 @@
         productsOpen: false,
         dealsOpen: false,
         bulkOrdersOpen: false,
+        unreadOrdersCount: {{ \App\Models\Order::where('is_read', false)->count() }},
+        lastSeenOrderId: {{ \App\Models\Order::max('id') ?? 0 }},
+        recentUnreadOrders: [],
+        activeOrderToast: null,
+        toastTimer: null,
         toggleTheme() {
             this.theme = this.theme === 'light' ? 'dark' : 'light';
             localStorage.setItem('zunash_admin_theme', this.theme);
@@ -326,6 +331,83 @@
                 document.documentElement.classList.remove('dark');
             }
             window.dispatchEvent(new CustomEvent('themechanged', { detail: this.theme }));
+        },
+        playOrderChime() {
+            try {
+                const AudioCtx = window.AudioContext || window.webkitAudioContext;
+                if (!AudioCtx) return;
+                const ctx = new AudioCtx();
+                const now = ctx.currentTime;
+                // Tone 1: Luxury High Bell (587.33 Hz - D5)
+                const osc1 = ctx.createOscillator();
+                const gain1 = ctx.createGain();
+                osc1.type = 'sine';
+                osc1.frequency.setValueAtTime(587.33, now);
+                gain1.gain.setValueAtTime(0.18, now);
+                gain1.gain.exponentialRampToValueAtTime(0.001, now + 0.35);
+                osc1.connect(gain1);
+                gain1.connect(ctx.destination);
+                osc1.start(now);
+                osc1.stop(now + 0.35);
+
+                // Tone 2: Harmonic Chime (880 Hz - A5)
+                const osc2 = ctx.createOscillator();
+                const gain2 = ctx.createGain();
+                osc2.type = 'sine';
+                osc2.frequency.setValueAtTime(880, now + 0.12);
+                gain2.gain.setValueAtTime(0.22, now + 0.12);
+                gain2.gain.exponentialRampToValueAtTime(0.001, now + 0.65);
+                osc2.connect(gain2);
+                gain2.connect(ctx.destination);
+                osc2.start(now + 0.12);
+                osc2.stop(now + 0.65);
+            } catch(e) {}
+        },
+        pollNewOrders() {
+            fetch('{{ route('admin.orders.live-check') }}?last_id=' + this.lastSeenOrderId)
+                .then(res => res.json())
+                .then(data => {
+                    this.unreadOrdersCount = data.unread_count;
+                    if (data.recent_unread) {
+                        this.recentUnreadOrders = data.recent_unread;
+                    }
+                    if (data.max_id > this.lastSeenOrderId) {
+                        this.lastSeenOrderId = data.max_id;
+                    }
+                    if (data.new_order) {
+                        this.activeOrderToast = data.new_order;
+                        this.playOrderChime();
+                        clearTimeout(this.toastTimer);
+                        this.toastTimer = setTimeout(() => {
+                            this.activeOrderToast = null;
+                        }, 9000);
+                        if (window.lucide) {
+                            setTimeout(() => lucide.createIcons(), 50);
+                        }
+                    }
+                })
+                .catch(() => {});
+        },
+        markAllAsRead() {
+            fetch('{{ route('admin.orders.mark-all-read') }}', {
+                method: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                    'Accept': 'application/json'
+                }
+            })
+            .then(res => res.json())
+            .then(() => {
+                this.unreadOrdersCount = 0;
+                this.recentUnreadOrders = [];
+            })
+            .catch(() => {});
+        },
+        init() {
+            this.pollNewOrders();
+            setInterval(() => {
+                this.pollNewOrders();
+            }, 10000);
         }
     }"
     class="bg-[#FAF9F6] dark:bg-[#0D0A09] text-espresso-900 dark:text-[#F7F4EE] antialiased selection:bg-gold selection:text-espresso-950 min-h-screen flex flex-col transition-colors duration-200 w-full max-w-full overflow-x-hidden"
@@ -491,7 +573,10 @@
                 @endif
 
                 @if(auth('admin')->user()->hasPermission('orders'))
-                <!-- Store Orders -->
+                <!-- Store Orders (With Real-Time Unread Counter Badge) -->
+                @php
+                    $initialUnreadOrders = \App\Models\Order::where('is_read', false)->count();
+                @endphp
                 <div>
                     <button 
                         @click="bulkOrdersOpen = !bulkOrdersOpen" 
@@ -501,11 +586,28 @@
                             <i data-lucide="clipboard-list" class="w-4 h-4 text-[#9C8F85]"></i>
                             <span>Store Orders</span>
                         </div>
-                        <i data-lucide="chevron-down" class="w-3.5 h-3.5 transition-transform duration-200" :class="{ 'rotate-180': bulkOrdersOpen }"></i>
+                        <div class="flex items-center gap-1.5">
+                            <span 
+                                x-show="unreadOrdersCount > 0" 
+                                x-text="unreadOrdersCount + ' New'" 
+                                class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-500 text-white shadow-xs animate-pulse"
+                                style="{{ $initialUnreadOrders > 0 ? '' : 'display: none;' }}"
+                            >{{ $initialUnreadOrders > 0 ? $initialUnreadOrders . ' New' : '' }}</span>
+                            <i data-lucide="chevron-down" class="w-3.5 h-3.5 transition-transform duration-200" :class="{ 'rotate-180': bulkOrdersOpen }"></i>
+                        </div>
                     </button>
                     <div x-show="bulkOrdersOpen || {{ request()->routeIs('admin.orders*') ? 'true' : 'false' }}" x-cloak class="pl-9 pr-2 py-1 space-y-1">
-                        <a href="{{ route('admin.orders.index') }}" class="block py-1.5 text-xs {{ request()->routeIs('admin.orders.index') ? 'text-tan-700 font-bold' : 'text-[#7F746A] dark:text-[#9E9084] hover:text-tan-600' }}">
-                            • View Orders
+                        <a href="{{ route('admin.orders.index') }}" class="flex items-center justify-between py-1.5 text-xs {{ request()->routeIs('admin.orders.index') && !request()->has('unread') ? 'text-tan-700 font-bold' : 'text-[#7F746A] dark:text-[#9E9084] hover:text-tan-600' }}">
+                            <span>• View All Orders</span>
+                        </a>
+                        <a href="{{ route('admin.orders.index') }}?unread=1" class="flex items-center justify-between py-1.5 text-xs {{ request('unread') ? 'text-tan-700 font-bold' : 'text-[#7F746A] dark:text-[#9E9084] hover:text-tan-600' }}">
+                            <span class="flex items-center gap-1.5">
+                                • Unread Orders
+                                <span x-show="unreadOrdersCount > 0" class="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse"></span>
+                            </span>
+                            <span x-show="unreadOrdersCount > 0" class="px-1.5 py-0.2 rounded-full text-[9px] font-bold bg-amber-100 text-amber-800 dark:bg-amber-950/40 dark:text-amber-300 font-mono" x-text="unreadOrdersCount">
+                                {{ $initialUnreadOrders }}
+                            </span>
                         </a>
                         <a href="{{ route('admin.orders.index') }}?payment=BANK_TRANSFER" class="block py-1.5 text-xs text-[#7F746A] dark:text-[#9E9084] hover:text-tan-600">
                             • Bank Transfers & Invoices
@@ -935,6 +1037,93 @@
                         <span>Live Store</span>
                     </a>
 
+                    <!-- Live Order Notification Bell Dropdown -->
+                    <div class="relative" x-data="{ bellOpen: false }" @click.outside="bellOpen = false">
+                        <button 
+                            type="button"
+                            @click="bellOpen = !bellOpen; if(bellOpen) pollNewOrders()" 
+                            class="relative w-8 h-8 rounded-full border border-[#E0D7CB] dark:border-[#3A2F29] flex items-center justify-center text-gray-500 hover:text-gold-600 transition-colors"
+                            title="Order Notifications"
+                        >
+                            <i data-lucide="bell" class="w-3.5 h-3.5"></i>
+                            <span 
+                                x-show="unreadOrdersCount > 0" 
+                                x-cloak
+                                class="absolute -top-1 -right-1 min-w-[16px] h-4 px-1 rounded-full bg-amber-500 text-white text-[9px] font-extrabold flex items-center justify-center shadow-xs animate-pulse font-mono leading-none"
+                                x-text="unreadOrdersCount > 99 ? '99+' : unreadOrdersCount"
+                            ></span>
+                        </button>
+
+                        <!-- Notification Dropdown Menu -->
+                        <div 
+                            x-show="bellOpen" 
+                            x-cloak
+                            x-transition:enter="transition ease-out duration-150"
+                            x-transition:enter-start="opacity-0 scale-95 translate-y-2"
+                            x-transition:enter-end="opacity-100 scale-100 translate-y-0"
+                            class="absolute right-0 top-full mt-2 w-80 sm:w-96 bg-white dark:bg-[#1A1412] rounded-2xl shadow-2xl border border-[#ECE6DE] dark:border-[#2D231E] overflow-hidden z-50 text-espresso-900 dark:text-white"
+                        >
+                            <div class="px-4 py-3 bg-[#FAF8F5] dark:bg-[#201815] border-b border-[#ECE6DE] dark:border-[#2D231E] flex items-center justify-between">
+                                <div class="flex items-center gap-2">
+                                    <i data-lucide="bell" class="w-4 h-4 text-tan-600"></i>
+                                    <span class="font-cinzel text-xs font-bold uppercase tracking-wider">Order Notifications</span>
+                                    <span 
+                                        x-show="unreadOrdersCount > 0" 
+                                        class="px-1.5 py-0.2 rounded-full text-[9px] font-bold bg-amber-500 text-white font-mono"
+                                        x-text="unreadOrdersCount"
+                                    ></span>
+                                </div>
+                                <button 
+                                    type="button" 
+                                    x-show="unreadOrdersCount > 0"
+                                    @click="markAllAsRead()"
+                                    class="text-[10px] text-tan-600 dark:text-gold-400 hover:underline font-semibold"
+                                >
+                                    Mark all read
+                                </button>
+                            </div>
+
+                            <div class="divide-y divide-[#F0EAE1] dark:divide-[#28201C] max-h-80 overflow-y-auto">
+                                <template x-if="recentUnreadOrders.length === 0">
+                                    <div class="p-6 text-center text-xs text-muted">
+                                        <i data-lucide="check-check" class="w-6 h-6 mx-auto mb-1 text-emerald-600"></i>
+                                        <p class="font-semibold text-espresso-950 dark:text-white">All orders are reviewed!</p>
+                                        <p class="text-[10px] text-gray-400 mt-0.5">New incoming orders will trigger instant sound & alerts.</p>
+                                    </div>
+                                </template>
+
+                                <template x-for="item in recentUnreadOrders" :key="'notif-' + item.id">
+                                    <a 
+                                        :href="item.url" 
+                                        class="block p-3 hover:bg-[#FAF8F5] dark:hover:bg-[#251C18] transition-colors"
+                                    >
+                                        <div class="flex items-start justify-between gap-2">
+                                            <div class="min-w-0">
+                                                <div class="flex items-center gap-1.5">
+                                                    <span class="w-1.5 h-1.5 rounded-full bg-amber-500 shrink-0"></span>
+                                                    <span class="font-mono font-bold text-xs text-espresso-950 dark:text-white truncate" x-text="item.order_number"></span>
+                                                    <span class="text-[9px] uppercase px-1.5 py-0.2 rounded bg-tan-50 text-tan-700 dark:bg-tan-950/40 dark:text-gold font-bold" x-text="item.payment_method"></span>
+                                                </div>
+                                                <div class="text-xs font-semibold text-gray-700 dark:text-gray-300 mt-0.5" x-text="item.customer_name + ' • ' + item.city"></div>
+                                                <div class="text-[10px] text-gray-400 mt-0.5" x-text="item.time_ago"></div>
+                                            </div>
+                                            <div class="text-right shrink-0">
+                                                <span class="font-cinzel text-xs font-bold text-tan-600 dark:text-gold-400" x-text="'Rs. ' + item.total"></span>
+                                            </div>
+                                        </div>
+                                    </a>
+                                </template>
+                            </div>
+
+                            <div class="p-2.5 bg-gray-50 dark:bg-[#150F0D] text-center border-t border-[#ECE6DE] dark:border-[#2D231E]">
+                                <a href="{{ route('admin.orders.index') }}" class="text-xs font-bold text-tan-700 dark:text-gold hover:underline inline-flex items-center gap-1">
+                                    <span>Open Store Orders Dashboard</span>
+                                    <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
                     <!-- Dark / Light Theme Toggle -->
                     <button 
                         @click="toggleTheme()" 
@@ -1137,6 +1326,47 @@
             });
         });
     </script>
+
+    <!-- Real-Time Floating Order Toast Notification -->
+    <div 
+        x-show="activeOrderToast" 
+        x-cloak
+        x-transition:enter="transition ease-out duration-300 transform"
+        x-transition:enter-start="opacity-0 translate-y-4 scale-95 sm:translate-y-0 sm:translate-x-4"
+        x-transition:enter-end="opacity-100 translate-y-0 scale-100 sm:translate-x-0"
+        x-transition:leave="transition ease-in duration-200 transform"
+        x-transition:leave-start="opacity-100 scale-100"
+        x-transition:leave-end="opacity-0 scale-95"
+        class="fixed bottom-5 right-5 z-50 max-w-sm w-full bg-espresso-950 text-white rounded-2xl shadow-2xl border-2 border-gold/70 p-4 overflow-hidden"
+    >
+        <div class="absolute -top-10 -right-10 w-28 h-28 bg-gold/20 rounded-full blur-xl pointer-events-none"></div>
+        <div class="flex items-start gap-3 relative z-10">
+            <div class="w-10 h-10 rounded-xl bg-gold/20 border border-gold/50 text-gold flex items-center justify-center shrink-0 shadow-xs animate-bounce">
+                <i data-lucide="shopping-bag" class="w-5 h-5 text-gold"></i>
+            </div>
+            <div class="flex-1 min-w-0">
+                <div class="flex items-center justify-between gap-1">
+                    <span class="text-[10px] font-cinzel font-bold text-gold uppercase tracking-wider">🔔 New Order Placed!</span>
+                    <button @click="activeOrderToast = null" class="text-gray-400 hover:text-white p-0.5">
+                        <i data-lucide="x" class="w-3.5 h-3.5"></i>
+                    </button>
+                </div>
+                <div class="font-mono font-bold text-xs text-white mt-0.5" x-text="activeOrderToast?.order_number"></div>
+                <div class="text-xs text-[#E8D0BE] truncate" x-text="activeOrderToast?.customer_name + ' (' + activeOrderToast?.city + ')'"></div>
+                <div class="flex items-center justify-between mt-2 pt-2 border-t border-white/10">
+                    <span class="font-cinzel text-xs font-bold text-gold" x-text="'Rs. ' + activeOrderToast?.total"></span>
+                    <a 
+                        :href="activeOrderToast?.url" 
+                        @click="activeOrderToast = null"
+                        class="px-2.5 py-1 rounded-lg bg-gold hover:bg-gold-400 text-espresso-950 text-[11px] font-bold transition-colors flex items-center gap-1 shadow-xs"
+                    >
+                        <span>View Order</span>
+                        <i data-lucide="arrow-right" class="w-3 h-3"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
 
     @stack('scripts')
 

@@ -123,9 +123,12 @@ Route::prefix('admin')->name('admin.')->group(function () {
 
         // Store Orders & Printing
         Route::get('/orders', [AdminOrderController::class, 'index'])->name('orders.index');
+        Route::get('/orders/live-check', [AdminOrderController::class, 'liveCheck'])->name('orders.live-check');
+        Route::post('/orders/mark-all-read', [AdminOrderController::class, 'markAllRead'])->name('orders.mark-all-read');
         Route::get('/orders/print-report', [AdminOrderController::class, 'printReport'])->name('orders.print-report');
         Route::post('/orders/bulk-action', [AdminOrderController::class, 'bulkAction'])->name('orders.bulk-action');
         Route::post('/orders/{order}/courier', [AdminOrderController::class, 'updateCourier'])->name('orders.courier');
+        Route::post('/orders/{order}/toggle-read', [AdminOrderController::class, 'toggleRead'])->name('orders.toggle-read');
         Route::get('/orders/{order}', [AdminOrderController::class, 'show'])->name('orders.show');
         Route::post('/orders/{order}/status', [AdminOrderController::class, 'updateStatus'])->name('orders.update-status');
         Route::get('/orders/{order}/invoice', [AdminOrderController::class, 'invoice'])->name('orders.invoice');

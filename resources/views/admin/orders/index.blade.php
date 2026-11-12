@@ -61,22 +61,29 @@
         </div>
     </div>
 
-    <!-- 4 Stats Cards -->
-    <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
-        <a href="{{ route('admin.orders.index') }}" class="p-4 rounded-2xl bg-white dark:bg-[#1A1513] border border-[#ECE6DE] dark:border-[#2C2420] shadow-2xs hover:border-tan-500 transition-colors">
+    <!-- 5 Stats Cards -->
+    <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3.5">
+        <a href="{{ route('admin.orders.index') }}" class="p-4 rounded-2xl bg-white dark:bg-[#1A1513] border {{ !request()->hasAny(['unread', 'status', 'payment']) ? 'border-tan-500 ring-2 ring-tan-500/20' : 'border-[#ECE6DE] dark:border-[#2C2420]' }} shadow-2xs hover:border-tan-500 transition-colors">
             <div class="text-[10px] font-bold uppercase tracking-wider text-[#8F8379]">TOTAL ORDERS</div>
             <div class="font-cinzel text-2xl font-bold text-espresso-950 dark:text-white mt-1">{{ $totalOrders }}</div>
         </a>
-        <a href="{{ route('admin.orders.index', ['status' => 'completed']) }}" class="p-4 rounded-2xl bg-white dark:bg-[#1A1513] border border-[#ECE6DE] dark:border-[#2C2420] shadow-2xs hover:border-emerald-500 transition-colors">
-            <div class="text-[10px] font-bold uppercase tracking-wider text-emerald-600">DELIVERED & CLOSED</div>
-            <div class="font-cinzel text-2xl font-bold text-emerald-600 mt-1">{{ $completedOrders }}</div>
+        <a href="{{ route('admin.orders.index', ['unread' => 1]) }}" class="p-4 rounded-2xl bg-white dark:bg-[#1A1513] border {{ request('unread') ? 'border-amber-500 ring-2 ring-amber-400/20' : 'border-[#ECE6DE] dark:border-[#2C2420]' }} shadow-2xs hover:border-amber-500 transition-colors">
+            <div class="flex items-center justify-between">
+                <div class="text-[10px] font-bold uppercase tracking-wider text-amber-600">UNREAD NEW</div>
+                <span class="w-2 h-2 rounded-full bg-amber-500 animate-pulse"></span>
+            </div>
+            <div class="font-cinzel text-2xl font-bold text-amber-600 mt-1">{{ $unreadOrders }}</div>
         </a>
-        <a href="{{ route('admin.orders.index', ['status' => 'pending']) }}" class="p-4 rounded-2xl bg-white dark:bg-[#1A1513] border border-[#ECE6DE] dark:border-[#2C2420] shadow-2xs hover:border-amber-500 transition-colors">
+        <a href="{{ route('admin.orders.index', ['status' => 'pending']) }}" class="p-4 rounded-2xl bg-white dark:bg-[#1A1513] border {{ request('status') === 'pending' ? 'border-amber-500 ring-2 ring-amber-400/20' : 'border-[#ECE6DE] dark:border-[#2C2420]' }} shadow-2xs hover:border-amber-500 transition-colors">
             <div class="text-[10px] font-bold uppercase tracking-wider text-amber-600">PENDING DISPATCH</div>
             <div class="font-cinzel text-2xl font-bold text-amber-600 mt-1">{{ $pendingOrders }}</div>
         </a>
-        <a href="{{ route('admin.orders.index', ['payment' => 'COD']) }}" class="p-4 rounded-2xl bg-white dark:bg-[#1A1513] border border-[#ECE6DE] dark:border-[#2C2420] shadow-2xs hover:border-tan-500 transition-colors">
-            <div class="text-[10px] font-bold uppercase tracking-wider text-tan-600">CASH ON DELIVERY (COD)</div>
+        <a href="{{ route('admin.orders.index', ['status' => 'completed']) }}" class="p-4 rounded-2xl bg-white dark:bg-[#1A1513] border {{ request('status') === 'completed' ? 'border-emerald-500 ring-2 ring-emerald-400/20' : 'border-[#ECE6DE] dark:border-[#2C2420]' }} shadow-2xs hover:border-emerald-500 transition-colors">
+            <div class="text-[10px] font-bold uppercase tracking-wider text-emerald-600">DELIVERED & CLOSED</div>
+            <div class="font-cinzel text-2xl font-bold text-emerald-600 mt-1">{{ $completedOrders }}</div>
+        </a>
+        <a href="{{ route('admin.orders.index', ['payment' => 'COD']) }}" class="p-4 rounded-2xl bg-white dark:bg-[#1A1513] border {{ request('payment') === 'COD' ? 'border-tan-500 ring-2 ring-tan-500/20' : 'border-[#ECE6DE] dark:border-[#2C2420]' }} shadow-2xs hover:border-tan-500 transition-colors">
+            <div class="text-[10px] font-bold uppercase tracking-wider text-tan-600">CASH ON DELIVERY</div>
             <div class="font-cinzel text-2xl font-bold text-tan-600 mt-1">{{ \App\Models\Order::where('payment_method', 'COD')->count() }}</div>
         </a>
     </div>
@@ -222,9 +229,17 @@
                                 x-model="selectedOrders" 
                                 class="order-chk rounded border-[#DFD6CB] text-tan-600 focus:ring-tan-500"
                             >
-                            <span class="font-mono font-bold text-xs text-tan-600 dark:text-gold-400 truncate">
-                                {{ $order->order_number }}
-                            </span>
+                            <div class="flex items-center gap-1.5 min-w-0">
+                                @if(!$order->is_read)
+                                    <span class="w-2 h-2 rounded-full bg-amber-500 animate-pulse shrink-0" title="New Unread Order"></span>
+                                @endif
+                                <a href="{{ route('admin.orders.show', $order) }}" class="font-mono font-bold text-xs text-tan-600 dark:text-gold-400 truncate hover:underline">
+                                    {{ $order->order_number }}
+                                </a>
+                                @if(!$order->is_read)
+                                    <span class="px-1.5 py-0.2 rounded text-[9px] font-bold bg-amber-100 text-amber-800 dark:bg-amber-950/40 dark:text-amber-300">NEW</span>
+                                @endif
+                            </div>
                             @if($order->order_status === 'completed')
                                 <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-50 text-emerald-700 dark:bg-emerald-950/40 dark:text-emerald-300 border border-emerald-200 shrink-0">
                                     <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
@@ -346,9 +361,17 @@
                             </td>
 
                             <td class="py-3.5 px-3 font-mono font-bold text-tan-600 dark:text-gold-400 whitespace-nowrap">
-                                <a href="{{ route('admin.orders.show', $order) }}" class="hover:underline">
-                                    {{ $order->order_number }}
-                                </a>
+                                <div class="flex items-center gap-1.5">
+                                    @if(!$order->is_read)
+                                        <span class="w-2 h-2 rounded-full bg-amber-500 animate-pulse shrink-0" title="New Unread Order"></span>
+                                    @endif
+                                    <a href="{{ route('admin.orders.show', $order) }}" class="hover:underline">
+                                        {{ $order->order_number }}
+                                    </a>
+                                    @if(!$order->is_read)
+                                        <span class="px-1.5 py-0.2 rounded text-[9px] font-bold bg-amber-100 text-amber-800 dark:bg-amber-950/40 dark:text-amber-300">NEW</span>
+                                    @endif
+                                </div>
                             </td>
 
                             <td class="py-3.5 px-3">
