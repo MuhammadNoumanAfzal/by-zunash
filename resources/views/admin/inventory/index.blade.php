@@ -4,7 +4,7 @@
 
 @section('content')
 
-<div class="space-y-6" x-data="{ currentTab: 'catalogue', bespokeProduct: null, bespokeModalOpen: false }">
+<div class="space-y-6" x-data="{ currentTab: 'catalogue' }">
 
     <!-- Header & Navigation -->
     <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
@@ -367,16 +367,6 @@
                                                 Save
                                             </button>
                                         </form>
-
-                                        <!-- 1-Click Switch to Bespoke / Made-to-Order Modal Trigger -->
-                                        <button 
-                                            type="button"
-                                            @click="bespokeProduct = {{ json_encode(['id' => $product->id, 'name' => $product->name, 'sku' => $product->sku, 'lead_time' => $product->lead_time ?: '7–10 Working Days']) }}; document.getElementById('bespokeModal').showModal();"
-                                            class="p-1.5 text-tan-600 dark:text-gold-400 hover:bg-tan-50 dark:hover:bg-[#2A201C] rounded-lg transition-colors border border-tan-300/40"
-                                            title="Set Bespoke / Made-to-Order Lead Time"
-                                        >
-                                            <i data-lucide="clock" class="w-4 h-4"></i>
-                                        </button>
                                     </div>
                                 </td>
 
@@ -492,90 +482,6 @@
             </div>
         </div>
     </div>
-
-    <!-- Bespoke / Made-to-Order Lead Time Card Dialog -->
-    <dialog id="bespokeModal" class="rounded-3xl p-0 shadow-2xl">
-        <div class="p-6 sm:p-7">
-            <div class="flex items-center justify-between pb-3 border-b border-[#ECE6DE] dark:border-[#2C2420] mb-4">
-                <div class="flex items-center gap-2">
-                    <i data-lucide="clock" class="w-5 h-5 text-tan-600 dark:text-gold-400"></i>
-                    <h3 class="font-cinzel text-lg font-bold text-tan-600 dark:text-gold-400">Switch to Made-to-Order</h3>
-                </div>
-                <button type="button" onclick="document.getElementById('bespokeModal').close()" class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300">
-                    <i data-lucide="x" class="w-5 h-5"></i>
-                </button>
-            </div>
-
-            <form 
-                :action="bespokeProduct ? '{{ url('admin/inventory') }}/' + bespokeProduct.id + '/bespoke' : '#'" 
-                method="POST" 
-                class="space-y-4"
-            >
-                @csrf
-                
-                <div>
-                    <div class="text-xs font-bold text-espresso-950 dark:text-white" x-text="bespokeProduct ? bespokeProduct.name : ''"></div>
-                    <div class="text-[10px] text-gray-400 font-mono" x-text="bespokeProduct ? 'SKU: ' + bespokeProduct.sku : ''"></div>
-                </div>
-
-                <div>
-                    <label class="block text-xs font-semibold mb-1">Production Lead Time Preset</label>
-                    <div class="grid grid-cols-2 gap-2 mb-2">
-                        <button 
-                            type="button" 
-                            @click="$refs.leadTimeInput.value = '3–5 Working Days'" 
-                            class="px-2.5 py-1.5 rounded-xl border border-[#DFD6CB] dark:border-[#382D27] text-left text-[11px] hover:border-tan-500 hover:bg-[#FAF8F5] dark:hover:bg-[#201815] transition-colors"
-                        >
-                            3–5 Working Days
-                        </button>
-                        <button 
-                            type="button" 
-                            @click="$refs.leadTimeInput.value = '7–10 Working Days'" 
-                            class="px-2.5 py-1.5 rounded-xl border border-[#DFD6CB] dark:border-[#382D27] text-left text-[11px] hover:border-tan-500 hover:bg-[#FAF8F5] dark:hover:bg-[#201815] transition-colors"
-                        >
-                            7–10 Working Days (Standard)
-                        </button>
-                        <button 
-                            type="button" 
-                            @click="$refs.leadTimeInput.value = '2–3 Weeks Artisan Craft'" 
-                            class="px-2.5 py-1.5 rounded-xl border border-[#DFD6CB] dark:border-[#382D27] text-left text-[11px] hover:border-tan-500 hover:bg-[#FAF8F5] dark:hover:bg-[#201815] transition-colors"
-                        >
-                            2–3 Weeks Artisan Craft
-                        </button>
-                        <button 
-                            type="button" 
-                            @click="$refs.leadTimeInput.value = '3–4 Weeks Haute Leather'" 
-                            class="px-2.5 py-1.5 rounded-xl border border-[#DFD6CB] dark:border-[#382D27] text-left text-[11px] hover:border-tan-500 hover:bg-[#FAF8F5] dark:hover:bg-[#201815] transition-colors"
-                        >
-                            3–4 Weeks Haute Bespoke
-                        </button>
-                    </div>
-
-                    <input 
-                        type="text" 
-                        name="lead_time" 
-                        x-ref="leadTimeInput"
-                        x-bind:value="bespokeProduct ? bespokeProduct.lead_time : '7–10 Working Days'" 
-                        required 
-                        class="w-full px-3 py-2 text-xs rounded-xl bg-[#FAF8F5] dark:bg-[#241D1A] border border-[#E0D7CB] dark:border-[#3A2F29] text-espresso-900 dark:text-white focus:outline-hidden focus:border-tan-500"
-                        placeholder="e.g., 7–10 Working Days"
-                    >
-                    <p class="text-[10px] text-gray-400 mt-1">
-                        When enabled, shoppers can still order this item online with a "Made-to-Order" badge and the stated timeline.
-                    </p>
-                </div>
-
-                <div class="flex items-center justify-end gap-2 pt-3 border-t border-[#ECE6DE] dark:border-[#2C2420]">
-                    <button type="button" onclick="document.getElementById('bespokeModal').close()" class="px-4 py-2 rounded-xl text-xs font-medium text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">
-                        Cancel
-                    </button>
-                    <button type="submit" class="px-5 py-2 rounded-xl bg-tan-600 hover:bg-espresso-900 text-white font-semibold text-xs shadow-md transition-colors border border-gold-400/20">
-                        Confirm Bespoke Mode
-                    </button>
-                </div>
-            </form>
-        </div>
-    </dialog>
 
 </div>
 
