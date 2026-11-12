@@ -83,9 +83,11 @@ Route::prefix('admin')->name('admin.')->group(function () {
 
     // Protected Admin Panel Routes
     Route::middleware('admin.auth')->group(function () {
-        // Executive Dashboard
+        // Executive Dashboard & Live Notifications
         Route::get('/', [AdminDashboardController::class, 'index'])->name('dashboard');
         Route::get('/dashboard', [AdminDashboardController::class, 'index'])->name('dashboard.home');
+        Route::get('/notifications/live-check', [AdminDashboardController::class, 'liveNotifications'])->name('notifications.live-check');
+        Route::post('/notifications/mark-all-read', [AdminDashboardController::class, 'markAllNotificationsRead'])->name('notifications.mark-all-read');
 
         // Products Catalog
         Route::get('/products', [AdminProductController::class, 'index'])->name('products.index');

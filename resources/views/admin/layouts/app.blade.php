@@ -318,10 +318,16 @@
         dealsOpen: false,
         bulkOrdersOpen: false,
         unreadOrdersCount: {{ \App\Models\Order::where('is_read', false)->count() }},
+        unreadMessagesCount: {{ \App\Models\Inquiry::where('status', 'unread')->orWhere('is_read', false)->count() }},
+        pendingReviewsCount: {{ \App\Models\Review::where('status', 'pending')->count() }},
+        totalUnreadCount: {{ \App\Models\Order::where('is_read', false)->count() + \App\Models\Inquiry::where('status', 'unread')->orWhere('is_read', false)->count() + \App\Models\Review::where('status', 'pending')->count() }},
         lastSeenOrderId: {{ \App\Models\Order::max('id') ?? 0 }},
-        recentUnreadOrders: [],
-        activeOrderToast: null,
+        lastSeenInquiryId: {{ \App\Models\Inquiry::max('id') ?? 0 }},
+        lastSeenReviewId: {{ \App\Models\Review::max('id') ?? 0 }},
+        recentNotifications: { orders: [], inquiries: [], reviews: [] },
+        activeToast: null,
         toastTimer: null,
+        notifFilter: 'all',
         toggleTheme() {
             this.theme = this.theme === 'light' ? 'dark' : 'light';
             localStorage.setItem('zunash_admin_theme', this.theme);
@@ -332,7 +338,7 @@
             }
             window.dispatchEvent(new CustomEvent('themechanged', { detail: this.theme }));
         },
-        playOrderChime() {
+        playChime() {
             try {
                 const AudioCtx = window.AudioContext || window.webkitAudioContext;
                 if (!AudioCtx) return;
@@ -363,23 +369,29 @@
                 osc2.stop(now + 0.65);
             } catch(e) {}
         },
-        pollNewOrders() {
-            fetch('{{ route('admin.orders.live-check') }}?last_id=' + this.lastSeenOrderId)
+        pollAllNotifications() {
+            fetch('{{ route('admin.notifications.live-check') }}?last_order_id=' + this.lastSeenOrderId + '&last_inquiry_id=' + this.lastSeenInquiryId + '&last_review_id=' + this.lastSeenReviewId)
                 .then(res => res.json())
                 .then(data => {
-                    this.unreadOrdersCount = data.unread_count;
-                    if (data.recent_unread) {
-                        this.recentUnreadOrders = data.recent_unread;
-                    }
-                    if (data.max_id > this.lastSeenOrderId) {
-                        this.lastSeenOrderId = data.max_id;
-                    }
-                    if (data.new_order) {
-                        this.activeOrderToast = data.new_order;
-                        this.playOrderChime();
+                    this.totalUnreadCount = data.total_unread;
+                    this.unreadOrdersCount = data.unread_orders;
+                    this.unreadMessagesCount = data.unread_inquiries;
+                    this.pendingReviewsCount = data.pending_reviews;
+                    this.recentNotifications = {
+                        orders: data.orders || [],
+                        inquiries: data.inquiries || [],
+                        reviews: data.reviews || []
+                    };
+                    if (data.max_order_id > this.lastSeenOrderId) this.lastSeenOrderId = data.max_order_id;
+                    if (data.max_inquiry_id > this.lastSeenInquiryId) this.lastSeenInquiryId = data.max_inquiry_id;
+                    if (data.max_review_id > this.lastSeenReviewId) this.lastSeenReviewId = data.max_review_id;
+
+                    if (data.toast) {
+                        this.activeToast = data.toast;
+                        this.playChime();
                         clearTimeout(this.toastTimer);
                         this.toastTimer = setTimeout(() => {
-                            this.activeOrderToast = null;
+                            this.activeToast = null;
                         }, 9000);
                         if (window.lucide) {
                             setTimeout(() => lucide.createIcons(), 50);
@@ -389,7 +401,7 @@
                 .catch(() => {});
         },
         markAllAsRead() {
-            fetch('{{ route('admin.orders.mark-all-read') }}', {
+            fetch('{{ route('admin.notifications.mark-all-read') }}', {
                 method: 'POST',
                 headers: {
                     'X-CSRF-TOKEN': '{{ csrf_token() }}',
@@ -398,15 +410,18 @@
             })
             .then(res => res.json())
             .then(() => {
+                this.totalUnreadCount = 0;
                 this.unreadOrdersCount = 0;
-                this.recentUnreadOrders = [];
+                this.unreadMessagesCount = 0;
+                this.pendingReviewsCount = 0;
+                this.recentNotifications = { orders: [], inquiries: [], reviews: [] };
             })
             .catch(() => {});
         },
         init() {
-            this.pollNewOrders();
+            this.pollAllNotifications();
             setInterval(() => {
-                this.pollNewOrders();
+                this.pollAllNotifications();
             }, 10000);
         }
     }"
@@ -688,7 +703,7 @@
                 @if(auth('admin')->user()->hasPermission('messages'))
                 <!-- Customer Messages (Concierge) -->
                 @php
-                    $navUnreadMsgs = \App\Models\Inquiry::where('status', 'unread')->count();
+                    $navUnreadMsgs = \App\Models\Inquiry::where('status', 'unread')->orWhere('is_read', false)->count();
                 @endphp
                 <a 
                     href="{{ route('admin.messages.index') }}" 
@@ -698,22 +713,34 @@
                         <i data-lucide="message-square" class="w-4 h-4 text-[#9C8F85]"></i>
                         <span>Customer Messages</span>
                     </div>
-                    @if($navUnreadMsgs > 0)
-                        <span class="w-5 h-5 rounded-full bg-rose-500 text-white text-[10px] font-bold flex items-center justify-center">
-                            {{ $navUnreadMsgs }}
-                        </span>
-                    @endif
+                    <span 
+                        x-show="unreadMessagesCount > 0" 
+                        x-text="unreadMessagesCount + ' New'" 
+                        class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-rose-500 text-white shadow-xs animate-pulse"
+                        style="{{ $navUnreadMsgs > 0 ? '' : 'display: none;' }}"
+                    >{{ $navUnreadMsgs > 0 ? $navUnreadMsgs . ' New' : '' }}</span>
                 </a>
                 @endif
 
                 @if(auth('admin')->user()->hasPermission('reviews'))
-                <!-- Customer Reviews -->
+                <!-- Customer Reviews (With Pending Badge) -->
+                @php
+                    $navPendingReviews = \App\Models\Review::where('status', 'pending')->count();
+                @endphp
                 <a 
                     href="{{ route('admin.reviews.index') }}" 
-                    class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-medium transition-colors {{ request()->routeIs('admin.reviews*') ? 'bg-[#FAF4ED] dark:bg-[#251A14] text-tan-700 font-bold border-l-4 border-tan-600' : 'text-[#6C635B] dark:text-[#B3A69C] hover:bg-[#FAF9F6] dark:hover:bg-[#1C1613]' }}"
+                    class="flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-medium transition-colors {{ request()->routeIs('admin.reviews*') ? 'bg-[#FAF4ED] dark:bg-[#251A14] text-tan-700 font-bold border-l-4 border-tan-600' : 'text-[#6C635B] dark:text-[#B3A69C] hover:bg-[#FAF9F6] dark:hover:bg-[#1C1613]' }}"
                 >
-                    <i data-lucide="star" class="w-4 h-4 text-[#9C8F85]"></i>
-                    <span>Customer Reviews</span>
+                    <div class="flex items-center gap-3">
+                        <i data-lucide="star" class="w-4 h-4 text-[#9C8F85]"></i>
+                        <span>Customer Reviews</span>
+                    </div>
+                    <span 
+                        x-show="pendingReviewsCount > 0" 
+                        x-text="pendingReviewsCount + ' Pending'" 
+                        class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-500 text-white shadow-xs animate-pulse"
+                        style="{{ $navPendingReviews > 0 ? '' : 'display: none;' }}"
+                    >{{ $navPendingReviews > 0 ? $navPendingReviews . ' Pending' : '' }}</span>
                 </a>
                 @endif
 
@@ -1037,24 +1064,24 @@
                         <span>Live Store</span>
                     </a>
 
-                    <!-- Live Order Notification Bell Dropdown -->
+                    <!-- Live Multi-Module Notification Bell Dropdown -->
                     <div class="relative" x-data="{ bellOpen: false }" @click.outside="bellOpen = false">
                         <button 
                             type="button"
-                            @click="bellOpen = !bellOpen; if(bellOpen) pollNewOrders()" 
+                            @click="bellOpen = !bellOpen; if(bellOpen) pollAllNotifications()" 
                             class="relative w-8 h-8 rounded-full border border-[#E0D7CB] dark:border-[#3A2F29] flex items-center justify-center text-gray-500 hover:text-gold-600 transition-colors"
-                            title="Order Notifications"
+                            title="Atelier Notifications Hub"
                         >
                             <i data-lucide="bell" class="w-3.5 h-3.5"></i>
                             <span 
-                                x-show="unreadOrdersCount > 0" 
+                                x-show="totalUnreadCount > 0" 
                                 x-cloak
                                 class="absolute -top-1 -right-1 min-w-[16px] h-4 px-1 rounded-full bg-amber-500 text-white text-[9px] font-extrabold flex items-center justify-center shadow-xs animate-pulse font-mono leading-none"
-                                x-text="unreadOrdersCount > 99 ? '99+' : unreadOrdersCount"
+                                x-text="totalUnreadCount > 99 ? '99+' : totalUnreadCount"
                             ></span>
                         </button>
 
-                        <!-- Notification Dropdown Menu -->
+                        <!-- Notification Dropdown Menu with Filter Tabs -->
                         <div 
                             x-show="bellOpen" 
                             x-cloak
@@ -1063,19 +1090,20 @@
                             x-transition:enter-end="opacity-100 scale-100 translate-y-0"
                             class="absolute right-0 top-full mt-2 w-80 sm:w-96 bg-white dark:bg-[#1A1412] rounded-2xl shadow-2xl border border-[#ECE6DE] dark:border-[#2D231E] overflow-hidden z-50 text-espresso-900 dark:text-white"
                         >
+                            <!-- Header & Mark All Read -->
                             <div class="px-4 py-3 bg-[#FAF8F5] dark:bg-[#201815] border-b border-[#ECE6DE] dark:border-[#2D231E] flex items-center justify-between">
                                 <div class="flex items-center gap-2">
                                     <i data-lucide="bell" class="w-4 h-4 text-tan-600"></i>
-                                    <span class="font-cinzel text-xs font-bold uppercase tracking-wider">Order Notifications</span>
+                                    <span class="font-cinzel text-xs font-bold uppercase tracking-wider">Atelier Notifications</span>
                                     <span 
-                                        x-show="unreadOrdersCount > 0" 
+                                        x-show="totalUnreadCount > 0" 
                                         class="px-1.5 py-0.2 rounded-full text-[9px] font-bold bg-amber-500 text-white font-mono"
-                                        x-text="unreadOrdersCount"
+                                        x-text="totalUnreadCount"
                                     ></span>
                                 </div>
                                 <button 
                                     type="button" 
-                                    x-show="unreadOrdersCount > 0"
+                                    x-show="totalUnreadCount > 0"
                                     @click="markAllAsRead()"
                                     class="text-[10px] text-tan-600 dark:text-gold-400 hover:underline font-semibold"
                                 >
@@ -1083,41 +1111,131 @@
                                 </button>
                             </div>
 
+                            <!-- Filter Tabs: All, Orders, Messages, Reviews -->
+                            <div class="flex items-center border-b border-[#ECE6DE] dark:border-[#2D231E] bg-white dark:bg-[#161210] text-[11px] font-bold px-2">
+                                <button 
+                                    type="button" 
+                                    @click="notifFilter = 'all'" 
+                                    class="py-2 px-2.5 border-b-2 transition-colors"
+                                    :class="notifFilter === 'all' ? 'border-tan-600 text-tan-700 dark:text-gold' : 'border-transparent text-gray-500 hover:text-gray-900 dark:hover:text-white'"
+                                >
+                                    All (<span x-text="totalUnreadCount"></span>)
+                                </button>
+                                <button 
+                                    type="button" 
+                                    @click="notifFilter = 'orders'" 
+                                    class="py-2 px-2.5 border-b-2 transition-colors flex items-center gap-1"
+                                    :class="notifFilter === 'orders' ? 'border-tan-600 text-tan-700 dark:text-gold' : 'border-transparent text-gray-500 hover:text-gray-900 dark:hover:text-white'"
+                                >
+                                    <span>Orders</span>
+                                    <span x-show="unreadOrdersCount > 0" class="px-1 rounded-full text-[9px] bg-amber-100 text-amber-800" x-text="unreadOrdersCount"></span>
+                                </button>
+                                <button 
+                                    type="button" 
+                                    @click="notifFilter = 'messages'" 
+                                    class="py-2 px-2.5 border-b-2 transition-colors flex items-center gap-1"
+                                    :class="notifFilter === 'messages' ? 'border-tan-600 text-tan-700 dark:text-gold' : 'border-transparent text-gray-500 hover:text-gray-900 dark:hover:text-white'"
+                                >
+                                    <span>Messages</span>
+                                    <span x-show="unreadMessagesCount > 0" class="px-1 rounded-full text-[9px] bg-rose-100 text-rose-800" x-text="unreadMessagesCount"></span>
+                                </button>
+                                <button 
+                                    type="button" 
+                                    @click="notifFilter = 'reviews'" 
+                                    class="py-2 px-2.5 border-b-2 transition-colors flex items-center gap-1"
+                                    :class="notifFilter === 'reviews' ? 'border-tan-600 text-tan-700 dark:text-gold' : 'border-transparent text-gray-500 hover:text-gray-900 dark:hover:text-white'"
+                                >
+                                    <span>Reviews</span>
+                                    <span x-show="pendingReviewsCount > 0" class="px-1 rounded-full text-[9px] bg-amber-100 text-amber-800" x-text="pendingReviewsCount"></span>
+                                </button>
+                            </div>
+
+                            <!-- List Area -->
                             <div class="divide-y divide-[#F0EAE1] dark:divide-[#28201C] max-h-80 overflow-y-auto">
-                                <template x-if="recentUnreadOrders.length === 0">
+                                <template x-if="totalUnreadCount === 0">
                                     <div class="p-6 text-center text-xs text-muted">
                                         <i data-lucide="check-check" class="w-6 h-6 mx-auto mb-1 text-emerald-600"></i>
-                                        <p class="font-semibold text-espresso-950 dark:text-white">All orders are reviewed!</p>
-                                        <p class="text-[10px] text-gray-400 mt-0.5">New incoming orders will trigger instant sound & alerts.</p>
+                                        <p class="font-semibold text-espresso-950 dark:text-white">All caught up!</p>
+                                        <p class="text-[10px] text-gray-400 mt-0.5">New orders, contact messages, and reviews will notify you in real-time.</p>
                                     </div>
                                 </template>
 
-                                <template x-for="item in recentUnreadOrders" :key="'notif-' + item.id">
-                                    <a 
-                                        :href="item.url" 
-                                        class="block p-3 hover:bg-[#FAF8F5] dark:hover:bg-[#251C18] transition-colors"
-                                    >
-                                        <div class="flex items-start justify-between gap-2">
-                                            <div class="min-w-0">
-                                                <div class="flex items-center gap-1.5">
-                                                    <span class="w-1.5 h-1.5 rounded-full bg-amber-500 shrink-0"></span>
-                                                    <span class="font-mono font-bold text-xs text-espresso-950 dark:text-white truncate" x-text="item.order_number"></span>
-                                                    <span class="text-[9px] uppercase px-1.5 py-0.2 rounded bg-tan-50 text-tan-700 dark:bg-tan-950/40 dark:text-gold font-bold" x-text="item.payment_method"></span>
+                                <!-- Orders -->
+                                <template x-if="notifFilter === 'all' || notifFilter === 'orders'">
+                                    <div>
+                                        <template x-for="item in recentNotifications.orders" :key="'order-' + item.id">
+                                            <a :href="item.url" class="block p-3 hover:bg-[#FAF8F5] dark:hover:bg-[#251C18] transition-colors">
+                                                <div class="flex items-start justify-between gap-2">
+                                                    <div class="min-w-0">
+                                                        <div class="flex items-center gap-1.5">
+                                                            <span class="w-1.5 h-1.5 rounded-full bg-amber-500 shrink-0"></span>
+                                                            <span class="font-mono font-bold text-xs text-espresso-950 dark:text-white truncate" x-text="item.title"></span>
+                                                            <span class="text-[9px] uppercase px-1.5 py-0.2 rounded bg-amber-50 text-amber-800 font-bold">Order</span>
+                                                        </div>
+                                                        <div class="text-xs text-gray-700 dark:text-gray-300 mt-0.5" x-text="item.sub"></div>
+                                                        <div class="text-[10px] text-gray-400 mt-0.5" x-text="item.time"></div>
+                                                    </div>
+                                                    <div class="text-right shrink-0">
+                                                        <span class="font-cinzel text-xs font-bold text-tan-600 dark:text-gold-400" x-text="item.amount"></span>
+                                                    </div>
                                                 </div>
-                                                <div class="text-xs font-semibold text-gray-700 dark:text-gray-300 mt-0.5" x-text="item.customer_name + ' • ' + item.city"></div>
-                                                <div class="text-[10px] text-gray-400 mt-0.5" x-text="item.time_ago"></div>
-                                            </div>
-                                            <div class="text-right shrink-0">
-                                                <span class="font-cinzel text-xs font-bold text-tan-600 dark:text-gold-400" x-text="'Rs. ' + item.total"></span>
-                                            </div>
-                                        </div>
-                                    </a>
+                                            </a>
+                                        </template>
+                                    </div>
+                                </template>
+
+                                <!-- Messages -->
+                                <template x-if="notifFilter === 'all' || notifFilter === 'messages'">
+                                    <div>
+                                        <template x-for="item in recentNotifications.inquiries" :key="'inq-' + item.id">
+                                            <a :href="item.url" class="block p-3 hover:bg-[#FAF8F5] dark:hover:bg-[#251C18] transition-colors">
+                                                <div class="flex items-start justify-between gap-2">
+                                                    <div class="min-w-0">
+                                                        <div class="flex items-center gap-1.5">
+                                                            <span class="w-1.5 h-1.5 rounded-full bg-rose-500 shrink-0"></span>
+                                                            <span class="font-bold text-xs text-espresso-950 dark:text-white truncate" x-text="item.title"></span>
+                                                            <span class="text-[9px] uppercase px-1.5 py-0.2 rounded bg-rose-50 text-rose-800 font-bold">Message</span>
+                                                        </div>
+                                                        <div class="text-xs text-gray-600 dark:text-gray-300 mt-0.5 truncate" x-text="item.sub"></div>
+                                                        <div class="text-[10px] text-gray-400 mt-0.5" x-text="item.time"></div>
+                                                    </div>
+                                                    <div class="shrink-0 text-rose-600">
+                                                        <i data-lucide="message-square" class="w-4 h-4"></i>
+                                                    </div>
+                                                </div>
+                                            </a>
+                                        </template>
+                                    </div>
+                                </template>
+
+                                <!-- Reviews -->
+                                <template x-if="notifFilter === 'all' || notifFilter === 'reviews'">
+                                    <div>
+                                        <template x-for="item in recentNotifications.reviews" :key="'rev-' + item.id">
+                                            <a :href="item.url" class="block p-3 hover:bg-[#FAF8F5] dark:hover:bg-[#251C18] transition-colors">
+                                                <div class="flex items-start justify-between gap-2">
+                                                    <div class="min-w-0">
+                                                        <div class="flex items-center gap-1.5">
+                                                            <span class="w-1.5 h-1.5 rounded-full bg-amber-500 shrink-0"></span>
+                                                            <span class="font-bold text-xs text-espresso-950 dark:text-white truncate" x-text="item.title"></span>
+                                                            <span class="text-[9px] uppercase px-1.5 py-0.2 rounded bg-amber-50 text-amber-800 font-bold">Review</span>
+                                                        </div>
+                                                        <div class="text-xs text-gray-600 dark:text-gray-300 mt-0.5 truncate" x-text="item.sub"></div>
+                                                        <div class="text-[10px] text-gray-400 mt-0.5" x-text="item.time"></div>
+                                                    </div>
+                                                    <div class="shrink-0 text-amber-500">
+                                                        <i data-lucide="star" class="w-4 h-4"></i>
+                                                    </div>
+                                                </div>
+                                            </a>
+                                        </template>
+                                    </div>
                                 </template>
                             </div>
 
                             <div class="p-2.5 bg-gray-50 dark:bg-[#150F0D] text-center border-t border-[#ECE6DE] dark:border-[#2D231E]">
-                                <a href="{{ route('admin.orders.index') }}" class="text-xs font-bold text-tan-700 dark:text-gold hover:underline inline-flex items-center gap-1">
-                                    <span>Open Store Orders Dashboard</span>
+                                <a href="{{ route('admin.dashboard') }}" class="text-xs font-bold text-tan-700 dark:text-gold hover:underline inline-flex items-center gap-1">
+                                    <span>Control Center Overview</span>
                                     <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
                                 </a>
                             </div>
@@ -1327,9 +1445,9 @@
         });
     </script>
 
-    <!-- Real-Time Floating Order Toast Notification -->
+    <!-- Real-Time Multi-Module Floating Toast Notification -->
     <div 
-        x-show="activeOrderToast" 
+        x-show="activeToast" 
         x-cloak
         x-transition:enter="transition ease-out duration-300 transform"
         x-transition:enter-start="opacity-0 translate-y-4 scale-95 sm:translate-y-0 sm:translate-x-4"
@@ -1342,25 +1460,32 @@
         <div class="absolute -top-10 -right-10 w-28 h-28 bg-gold/20 rounded-full blur-xl pointer-events-none"></div>
         <div class="flex items-start gap-3 relative z-10">
             <div class="w-10 h-10 rounded-xl bg-gold/20 border border-gold/50 text-gold flex items-center justify-center shrink-0 shadow-xs animate-bounce">
-                <i data-lucide="shopping-bag" class="w-5 h-5 text-gold"></i>
+                <template x-if="activeToast?.type === 'order'">
+                    <i data-lucide="shopping-bag" class="w-5 h-5 text-gold"></i>
+                </template>
+                <template x-if="activeToast?.type === 'inquiry'">
+                    <i data-lucide="message-square" class="w-5 h-5 text-rose-400"></i>
+                </template>
+                <template x-if="activeToast?.type === 'review'">
+                    <i data-lucide="star" class="w-5 h-5 text-amber-400"></i>
+                </template>
             </div>
             <div class="flex-1 min-w-0">
                 <div class="flex items-center justify-between gap-1">
-                    <span class="text-[10px] font-cinzel font-bold text-gold uppercase tracking-wider">🔔 New Order Placed!</span>
-                    <button @click="activeOrderToast = null" class="text-gray-400 hover:text-white p-0.5">
+                    <span class="text-[10px] font-cinzel font-bold text-gold uppercase tracking-wider" x-text="activeToast?.title"></span>
+                    <button @click="activeToast = null" class="text-gray-400 hover:text-white p-0.5">
                         <i data-lucide="x" class="w-3.5 h-3.5"></i>
                     </button>
                 </div>
-                <div class="font-mono font-bold text-xs text-white mt-0.5" x-text="activeOrderToast?.order_number"></div>
-                <div class="text-xs text-[#E8D0BE] truncate" x-text="activeOrderToast?.customer_name + ' (' + activeOrderToast?.city + ')'"></div>
-                <div class="flex items-center justify-between mt-2 pt-2 border-t border-white/10">
-                    <span class="font-cinzel text-xs font-bold text-gold" x-text="'Rs. ' + activeOrderToast?.total"></span>
+                <div class="font-mono font-bold text-xs text-white mt-0.5" x-text="activeToast?.headline"></div>
+                <div class="text-xs text-[#E8D0BE] truncate" x-text="activeToast?.subtext"></div>
+                <div class="flex items-center justify-end mt-2 pt-2 border-t border-white/10">
                     <a 
-                        :href="activeOrderToast?.url" 
-                        @click="activeOrderToast = null"
+                        :href="activeToast?.url" 
+                        @click="activeToast = null"
                         class="px-2.5 py-1 rounded-lg bg-gold hover:bg-gold-400 text-espresso-950 text-[11px] font-bold transition-colors flex items-center gap-1 shadow-xs"
                     >
-                        <span>View Order</span>
+                        <span>View Details</span>
                         <i data-lucide="arrow-right" class="w-3 h-3"></i>
                     </a>
                 </div>

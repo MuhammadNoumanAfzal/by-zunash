@@ -168,4 +168,135 @@ class DashboardController extends Controller
             'regionalDistribution'
         ));
     }
+
+    /**
+     * Unified Live Notifications Poll for Orders, Inquiries, and Customer Reviews
+     */
+    public function liveNotifications(Request $request)
+    {
+        $lastOrderId = (int) $request->input('last_order_id', 0);
+        $lastInquiryId = (int) $request->input('last_inquiry_id', 0);
+        $lastReviewId = (int) $request->input('last_review_id', 0);
+
+        // Unread counts across all active modules
+        $unreadOrders = Order::where('is_read', false)->count();
+        $unreadInquiries = Inquiry::where('status', 'unread')->orWhere('is_read', false)->count();
+        $pendingReviews = \App\Models\Review::where('status', 'pending')->count();
+        $totalUnread = $unreadOrders + $unreadInquiries + $pendingReviews;
+
+        // Detect newest item for instant toast alert
+        $newOrder = null;
+        if ($lastOrderId > 0) {
+            $newOrder = Order::where('id', '>', $lastOrderId)->latest('id')->first();
+        }
+        $newInquiry = null;
+        if ($lastInquiryId > 0) {
+            $newInquiry = Inquiry::where('id', '>', $lastInquiryId)->latest('id')->first();
+        }
+        $newReview = null;
+        if ($lastReviewId > 0) {
+            $newReview = \App\Models\Review::where('id', '>', $lastReviewId)->latest('id')->first();
+        }
+
+        $toast = null;
+        if ($newOrder) {
+            $toast = [
+                'type' => 'order',
+                'title' => '🛍️ New Order Placed!',
+                'headline' => $newOrder->order_number . ' • Rs. ' . number_format($newOrder->total),
+                'subtext' => $newOrder->customer_name . ' (' . $newOrder->city . ')',
+                'url' => route('admin.orders.show', $newOrder),
+            ];
+        } elseif ($newInquiry) {
+            $toast = [
+                'type' => 'inquiry',
+                'title' => '💬 New Customer Message!',
+                'headline' => $newInquiry->subject ?: 'General Atelier Inquiry',
+                'subtext' => $newInquiry->name . ' (' . ($newInquiry->phone ?: $newInquiry->email) . ')',
+                'url' => route('admin.messages.index'),
+            ];
+        } elseif ($newReview) {
+            $toast = [
+                'type' => 'review',
+                'title' => '⭐ New Customer Review!',
+                'headline' => $newReview->rating . '★ on ' . ($newReview->product_name ?: 'Leather Article'),
+                'subtext' => 'by ' . $newReview->author . ' (' . $newReview->city . ')',
+                'url' => route('admin.reviews.index'),
+            ];
+        }
+
+        // Recent unread items for notification dropdown
+        $recentOrders = Order::where('is_read', false)
+            ->latest('id')
+            ->limit(4)
+            ->get()
+            ->map(fn($o) => [
+                'id' => $o->id,
+                'type' => 'order',
+                'title' => $o->order_number,
+                'sub' => $o->customer_name . ' • ' . $o->city,
+                'amount' => 'Rs. ' . number_format($o->total),
+                'time' => $o->created_at->diffForHumans(),
+                'url' => route('admin.orders.show', $o),
+            ]);
+
+        $recentInquiries = Inquiry::where(function($q) {
+                $q->where('status', 'unread')->orWhere('is_read', false);
+            })
+            ->latest('id')
+            ->limit(4)
+            ->get()
+            ->map(fn($m) => [
+                'id' => $m->id,
+                'type' => 'inquiry',
+                'title' => $m->name,
+                'sub' => $m->subject ?: \Illuminate\Support\Str::limit($m->message, 40),
+                'amount' => null,
+                'time' => $m->created_at->diffForHumans(),
+                'url' => route('admin.messages.index'),
+            ]);
+
+        $recentReviews = \App\Models\Review::where('status', 'pending')
+            ->latest('id')
+            ->limit(4)
+            ->get()
+            ->map(fn($r) => [
+                'id' => $r->id,
+                'type' => 'review',
+                'title' => $r->author . ' (' . $r->rating . '★)',
+                'sub' => $r->product_name ?: 'Atelier Creation',
+                'amount' => null,
+                'time' => $r->created_at->diffForHumans(),
+                'url' => route('admin.reviews.index'),
+            ]);
+
+        return response()->json([
+            'total_unread' => $totalUnread,
+            'unread_orders' => $unreadOrders,
+            'unread_inquiries' => $unreadInquiries,
+            'pending_reviews' => $pendingReviews,
+            'max_order_id' => (int) (Order::max('id') ?? 0),
+            'max_inquiry_id' => (int) (Inquiry::max('id') ?? 0),
+            'max_review_id' => (int) (\App\Models\Review::max('id') ?? 0),
+            'toast' => $toast,
+            'orders' => $recentOrders,
+            'inquiries' => $recentInquiries,
+            'reviews' => $recentReviews,
+        ]);
+    }
+
+    /**
+     * Mark all pending notifications across orders, inquiries, and reviews as read
+     */
+    public function markAllNotificationsRead(Request $request)
+    {
+        Order::where('is_read', false)->update(['is_read' => true]);
+        Inquiry::where('status', 'unread')->orWhere('is_read', false)->update(['status' => 'resolved', 'is_read' => true]);
+        \App\Models\Review::where('status', 'pending')->update(['status' => 'published']);
+
+        if ($request->wantsJson() || $request->ajax()) {
+            return response()->json(['success' => true]);
+        }
+        return back()->with('toast_success', 'All notifications marked as read.');
+    }
 }
