@@ -757,7 +757,7 @@
             <div class="flex items-center gap-2 sm:gap-4 border-b border-ivory-200 overflow-x-auto pb-px scrollbar-none">
                 <button 
                     type="button" 
-                    @click="activeTab = 'specifications'"
+                    @click="activeTab = 'specifications'; $nextTick(() => { if (window.lucide) lucide.createIcons(); })"
                     class="font-serif text-xs sm:text-sm uppercase tracking-widest pb-3.5 px-3 font-semibold transition-all relative whitespace-nowrap focus:outline-none"
                     :class="activeTab === 'specifications' ? 'text-espresso-950 border-b-2 border-gold font-bold' : 'text-muted hover:text-espresso-800'"
                 >
@@ -765,7 +765,7 @@
                 </button>
                 <button 
                     type="button" 
-                    @click="activeTab = 'description'"
+                    @click="activeTab = 'description'; $nextTick(() => { if (window.lucide) lucide.createIcons(); })"
                     class="font-serif text-xs sm:text-sm uppercase tracking-widest pb-3.5 px-3 font-semibold transition-all relative whitespace-nowrap focus:outline-none"
                     :class="activeTab === 'description' ? 'text-espresso-950 border-b-2 border-gold font-bold' : 'text-muted hover:text-espresso-800'"
                 >
@@ -773,7 +773,7 @@
                 </button>
                 <button 
                     type="button" 
-                    @click="activeTab = 'care'"
+                    @click="activeTab = 'care'; $nextTick(() => { if (window.lucide) lucide.createIcons(); })"
                     class="font-serif text-xs sm:text-sm uppercase tracking-widest pb-3.5 px-3 font-semibold transition-all relative whitespace-nowrap focus:outline-none"
                     :class="activeTab === 'care' ? 'text-espresso-950 border-b-2 border-gold font-bold' : 'text-muted hover:text-espresso-800'"
                 >
@@ -781,7 +781,7 @@
                 </button>
                 <button 
                     type="button" 
-                    @click="activeTab = 'shipping'"
+                    @click="activeTab = 'shipping'; $nextTick(() => { if (window.lucide) lucide.createIcons(); })"
                     class="font-serif text-xs sm:text-sm uppercase tracking-widest pb-3.5 px-3 font-semibold transition-all relative whitespace-nowrap focus:outline-none"
                     :class="activeTab === 'shipping' ? 'text-espresso-950 border-b-2 border-gold font-bold' : 'text-muted hover:text-espresso-800'"
                 >
@@ -831,77 +831,116 @@
                     </div>
                 </div>
 
-                <!-- Tab 2: Atelier Story (Clean & Easy Wording for Pakistani Shoppers) -->
-                <div x-show="activeTab === 'description'" x-cloak class="max-w-3xl text-sm text-espresso-800 dark:text-ivory-200 font-light leading-relaxed space-y-5">
+                <!-- Tab 2: Atelier Story (Clean, Centered & Easy Wording for Pakistani Shoppers) -->
+                <div x-show="activeTab === 'description'" x-cloak class="w-full max-w-5xl mx-auto text-sm text-espresso-800 dark:text-ivory-200 font-light leading-relaxed space-y-6">
                     @if(!empty($product['description']))
                         <div class="text-sm sm:text-base text-espresso-950 dark:text-white font-sans font-normal leading-relaxed prose dark:prose-invert max-w-none">
                             {!! $product['description'] !!}
                         </div>
                     @else
-                        <div class="space-y-3">
-                            <p class="text-base text-espresso-950 dark:text-white font-serif font-medium">
+                        <div class="space-y-3.5 bg-white dark:bg-[#1A1412] p-6 sm:p-8 rounded-3xl border border-[#E8DFD5] dark:border-[#2E241F] shadow-xs">
+                            <h3 class="text-lg sm:text-xl text-espresso-950 dark:text-white font-serif font-bold">
                                 Handcrafted with 100% Pure Genuine Cowhide Leather
-                            </p>
-                            <p class="text-muted dark:text-[#A89F95]">
+                            </h3>
+                            <p class="text-muted dark:text-[#A89F95] text-xs sm:text-sm leading-relaxed">
                                 Every By Zunash creation is individually cut, stitched, and finished by experienced leather craftsmen in Pakistan. We use only authentic full-grain leather — never synthetic rexine, bonded plastics, or artificial coatings. With everyday use, the natural leather softens and develops a rich natural shine that lasts for years.
                             </p>
                         </div>
                     @endif
 
                     <!-- Genuine Leather Guarantee Card (Easy Wording) -->
-                    <div class="p-4 rounded-2xl bg-ivory-100/90 dark:bg-[#201815] border border-gold/40 flex items-start gap-3.5 text-xs text-espresso-950 dark:text-white shadow-2xs">
-                        <i data-lucide="shield-check" class="w-5 h-5 text-gold-600 flex-shrink-0 mt-0.5"></i>
-                        <div class="space-y-1">
-                            <span class="font-bold text-espresso-950 dark:text-white">100% Asli Leather Guarantee</span>
-                            <p class="text-[11px] text-muted dark:text-[#A89F95] leading-relaxed">
+                    <div class="p-5 sm:p-6 rounded-3xl bg-ivory-100/90 dark:bg-[#201815] border border-gold/40 flex items-start gap-4 text-xs sm:text-sm text-espresso-950 dark:text-white shadow-2xs">
+                        <div class="w-11 h-11 rounded-2xl bg-gold/15 text-gold-700 dark:text-gold flex items-center justify-center shrink-0">
+                            <i data-lucide="shield-check" class="w-6 h-6"></i>
+                        </div>
+                        <div class="space-y-1.5 min-w-0">
+                            <span class="font-serif font-bold text-sm sm:text-base text-espresso-950 dark:text-white block">100% Asli Leather Guarantee</span>
+                            <p class="text-xs text-muted dark:text-[#A89F95] leading-relaxed">
                                 Natural leather textures and subtle grain variations are the authentic hallmark of pure real hide. Unlike synthetic rexine or plastic prints, no two original leather creations are identical.
                             </p>
                         </div>
                     </div>
                 </div>
 
-                <!-- Tab 3: Leather Care Guide (Modern Luxury Cards & Easy Wording) -->
-                <div x-show="activeTab === 'care'" x-cloak class="max-w-3xl text-xs text-espresso-800 dark:text-ivory-200 space-y-4 leading-relaxed">
-                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-3.5">
-                        <div class="p-4 rounded-2xl bg-ivory-50/80 dark:bg-[#1E1714] border border-ivory-300 dark:border-white/10 space-y-2">
-                            <div class="w-8 h-8 rounded-xl bg-tan-100 dark:bg-[#2B201B] text-tan-700 dark:text-gold flex items-center justify-center">
-                                <i data-lucide="sparkles" class="w-4 h-4"></i>
+                <!-- Tab 3: Leather Care Guide (Balanced Full Width Luxury Cards) -->
+                <div x-show="activeTab === 'care'" x-cloak class="w-full max-w-6xl mx-auto space-y-6">
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-5 lg:gap-6 w-full">
+                        
+                        <!-- 1. Daily Dusting -->
+                        <div class="bg-white dark:bg-[#1A1412] p-6 sm:p-7 rounded-3xl border border-[#E8DFD5] dark:border-[#2E241F] shadow-xs hover:shadow-md transition-all flex flex-col justify-between space-y-4">
+                            <div>
+                                <div class="flex items-center justify-between mb-4">
+                                    <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-tan-100 to-tan-200/80 dark:from-[#30221B] dark:to-[#221713] text-tan-800 dark:text-gold flex items-center justify-center shadow-2xs border border-tan-300/40 dark:border-gold/20">
+                                        <i data-lucide="sparkles" class="w-6 h-6 text-tan-700 dark:text-gold"></i>
+                                    </div>
+                                    <span class="px-2.5 py-1 rounded-full text-[10px] font-bold bg-[#FAF6F0] dark:bg-[#251C17] text-tan-800 dark:text-gold-300 border border-tan-200 dark:border-gold/20 font-mono">Routine Care</span>
+                                </div>
+                                <h4 class="font-serif font-bold text-espresso-950 dark:text-white text-base sm:text-lg mb-2">1. Daily Dusting</h4>
+                                <p class="text-xs sm:text-[13px] text-[#5C5046] dark:text-[#C5B8AC] leading-relaxed">
+                                    Gently wipe surface dust with a dry, soft cotton or microfiber cloth.
+                                </p>
                             </div>
-                            <h4 class="font-serif font-bold text-espresso-950 dark:text-white text-sm">1. Daily Dusting</h4>
-                            <p class="text-muted dark:text-[#A89F95] text-[11px] leading-relaxed">
-                                Gently wipe dust with a dry, soft cotton or microfiber cloth. Never use alcohol wipes, wet tissues, or dishwashing liquid.
-                            </p>
+                            <div class="pt-3 border-t border-[#F0EAE1] dark:border-white/5 text-[11px] text-rose-700 dark:text-rose-400 font-medium">
+                                ✕ Never use alcohol wipes, wet tissues, chemical cleaners, or soap.
+                            </div>
                         </div>
 
-                        <div class="p-4 rounded-2xl bg-ivory-50/80 dark:bg-[#1E1714] border border-ivory-300 dark:border-white/10 space-y-2">
-                            <div class="w-8 h-8 rounded-xl bg-tan-100 dark:bg-[#2B201B] text-tan-700 dark:text-gold flex items-center justify-center">
-                                <i data-lucide="droplet" class="w-4 h-4"></i>
+                        <!-- 2. Leather Conditioning -->
+                        <div class="bg-white dark:bg-[#1A1412] p-6 sm:p-7 rounded-3xl border border-[#E8DFD5] dark:border-[#2E241F] shadow-xs hover:shadow-md transition-all flex flex-col justify-between space-y-4">
+                            <div>
+                                <div class="flex items-center justify-between mb-4">
+                                    <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-amber-100 to-amber-200/80 dark:from-[#352516] dark:to-[#24170E] text-amber-800 dark:text-amber-400 flex items-center justify-center shadow-2xs border border-amber-300/40 dark:border-amber-500/20">
+                                        <svg class="w-6 h-6 text-amber-600 dark:text-amber-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                            <path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"></path>
+                                        </svg>
+                                    </div>
+                                    <span class="px-2.5 py-1 rounded-full text-[10px] font-bold bg-amber-50 dark:bg-[#251A10] text-amber-800 dark:text-amber-300 border border-amber-200 dark:border-amber-500/20 font-mono">Every 3–6 Mo</span>
+                                </div>
+                                <h4 class="font-serif font-bold text-espresso-950 dark:text-white text-base sm:text-lg mb-2">2. Conditioning</h4>
+                                <p class="text-xs sm:text-[13px] text-[#5C5046] dark:text-[#C5B8AC] leading-relaxed">
+                                    Apply a tiny pea-sized dab of neutral leather wax or balm occasionally to nourish the pure hide.
+                                </p>
                             </div>
-                            <h4 class="font-serif font-bold text-espresso-950 dark:text-white text-sm">2. Conditioning</h4>
-                            <p class="text-muted dark:text-[#A89F95] text-[11px] leading-relaxed">
-                                Every 3–6 months, apply a tiny pea-sized dab of neutral leather balm or wax to keep the real hide soft, shiny, and crack-free.
-                            </p>
+                            <div class="pt-3 border-t border-[#F0EAE1] dark:border-white/5 text-[11px] text-emerald-700 dark:text-emerald-400 font-medium">
+                                ✓ Keeps real leather supple, glossy, and crack-free in all seasons.
+                            </div>
                         </div>
 
-                        <div class="p-4 rounded-2xl bg-ivory-50/80 dark:bg-[#1E1714] border border-ivory-300 dark:border-white/10 space-y-2">
-                            <div class="w-8 h-8 rounded-xl bg-tan-100 dark:bg-[#2B201B] text-tan-700 dark:text-gold flex items-center justify-center">
-                                <i data-lucide="package" class="w-4 h-4"></i>
+                        <!-- 3. Safe Storage -->
+                        <div class="bg-white dark:bg-[#1A1412] p-6 sm:p-7 rounded-3xl border border-[#E8DFD5] dark:border-[#2E241F] shadow-xs hover:shadow-md transition-all flex flex-col justify-between space-y-4">
+                            <div>
+                                <div class="flex items-center justify-between mb-4">
+                                    <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-espresso-100 to-tan-100 dark:from-[#2B201B] dark:to-[#1F1714] text-espresso-800 dark:text-gold flex items-center justify-center shadow-2xs border border-espresso-200/40 dark:border-gold/20">
+                                        <svg class="w-6 h-6 text-espresso-800 dark:text-gold" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                            <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
+                                            <polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline>
+                                            <line x1="12" y1="22.08" x2="12" y2="12"></line>
+                                        </svg>
+                                    </div>
+                                    <span class="px-2.5 py-1 rounded-full text-[10px] font-bold bg-[#FAF6F0] dark:bg-[#251C17] text-tan-800 dark:text-gold-300 border border-tan-200 dark:border-gold/20 font-mono">Dust Protection</span>
+                                </div>
+                                <h4 class="font-serif font-bold text-espresso-950 dark:text-white text-base sm:text-lg mb-2">3. Proper Storage</h4>
+                                <p class="text-xs sm:text-[13px] text-[#5C5046] dark:text-[#C5B8AC] leading-relaxed">
+                                    Store inside the complimentary By Zunash breathable dust bag in a clean, dry cupboard.
+                                </p>
                             </div>
-                            <h4 class="font-serif font-bold text-espresso-950 dark:text-white text-sm">3. Proper Storage</h4>
-                            <p class="text-muted dark:text-[#A89F95] text-[11px] leading-relaxed">
-                                Store in the complimentary By Zunash dust pouch in a dry wardrobe. Keep away from extreme heat, direct hot sunlight, or damp areas.
-                            </p>
+                            <div class="pt-3 border-t border-[#F0EAE1] dark:border-white/5 text-[11px] text-[#8F8379] dark:text-[#A89F95] font-medium">
+                                Keep away from prolonged direct hot sunlight and damp areas.
+                            </div>
                         </div>
+
                     </div>
 
-                    <!-- Climate Care Tip -->
-                    <div class="p-3.5 rounded-xl bg-[#FAF8F5] dark:bg-[#1C1613] border border-[#E7DFD5] dark:border-white/10 flex items-start gap-2.5 text-[11px] text-espresso-900 dark:text-ivory">
-                        <i data-lucide="info" class="w-4 h-4 text-tan-600 dark:text-gold shrink-0 mt-0.5"></i>
-                        <span><strong>Quick Tip:</strong> Pure leather breathes naturally. If it gets wet in the rain, simply let it air dry at room temperature — never use a hair dryer or place it near a heater.</span>
+                    <!-- Climate Care Tip Banner -->
+                    <div class="p-4 sm:p-5 rounded-2xl bg-ivory-50/90 dark:bg-[#1C1613] border border-[#E7DFD5] dark:border-white/10 flex items-start sm:items-center gap-3.5 text-xs text-espresso-900 dark:text-ivory shadow-xs">
+                        <div class="w-8 h-8 rounded-xl bg-gold/15 text-gold-700 dark:text-gold flex items-center justify-center shrink-0">
+                            <i data-lucide="info" class="w-4 h-4"></i>
+                        </div>
+                        <span class="leading-relaxed"><strong>Pro-Tip for Pakistan Weather:</strong> Pure leather breathes naturally. If it gets wet in the rain, simply let it air dry naturally at room temperature — never use a hair dryer or place it near a heater.</span>
                     </div>
                 </div>
 
-                <!-- Tab 4: Delivery & Returns (Dynamic from Admin Store Settings) -->
+                <!-- Tab 4: Delivery & Returns (Centered Full-Width Balanced Luxury Cards) -->
                 @php
                     $delMetro = \App\Models\StoreSetting::get('delivery_timeline_metro', '24–48 Hours (Lahore, Karachi, Islamabad, Rawalpindi)');
                     $delOther = \App\Models\StoreSetting::get('delivery_timeline_other', '2–3 Business Days (Faisalabad, Multan, Sialkot, Peshawar & nationwide)');
@@ -912,65 +951,93 @@
                     $phone = \App\Models\StoreSetting::get('contact_phone', '+92 321 4700545');
                     $phoneClean = preg_replace('/[^0-9]/', '', $phone);
                 @endphp
-                <div x-show="activeTab === 'shipping'" x-cloak class="max-w-3xl space-y-4">
-                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-3.5">
+                <div x-show="activeTab === 'shipping'" x-cloak class="w-full max-w-6xl mx-auto space-y-6">
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-5 lg:gap-6 w-full">
                         
                         <!-- 1. Delivery Card -->
-                        <div class="p-4 rounded-2xl bg-ivory-50/80 dark:bg-[#1E1714] border border-ivory-300 dark:border-white/10 space-y-2">
-                            <div class="flex items-center justify-between">
-                                <div class="w-8 h-8 rounded-xl bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 flex items-center justify-center">
-                                    <i data-lucide="truck" class="w-4 h-4"></i>
+                        <div class="bg-white dark:bg-[#1A1412] p-6 sm:p-7 rounded-3xl border border-[#E8DFD5] dark:border-[#2E241F] shadow-xs hover:shadow-md transition-all flex flex-col justify-between space-y-4">
+                            <div>
+                                <div class="flex items-center justify-between mb-4">
+                                    <div class="w-12 h-12 rounded-2xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 flex items-center justify-center shadow-2xs border border-emerald-500/20">
+                                        <svg class="w-6 h-6 text-emerald-600 dark:text-emerald-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                            <rect x="1" y="3" width="15" height="13"></rect>
+                                            <polygon points="16 8 20 8 23 11 23 16 16 16 16 8"></polygon>
+                                            <circle cx="5.5" cy="18.5" r="2.5"></circle>
+                                            <circle cx="18.5" cy="18.5" r="2.5"></circle>
+                                        </svg>
+                                    </div>
+                                    <span class="px-2.5 py-1 rounded-full text-[10px] font-bold bg-emerald-500/15 text-emerald-800 dark:text-emerald-300 border border-emerald-500/20 font-mono">All Pakistan</span>
                                 </div>
-                                <span class="px-2 py-0.5 rounded-full text-[9px] font-bold bg-emerald-500/15 text-emerald-800 dark:text-emerald-300 border border-emerald-500/20">All Pakistan</span>
+                                <h4 class="font-serif font-bold text-espresso-950 dark:text-white text-base sm:text-lg mb-3">Express Courier</h4>
+                                <div class="text-xs sm:text-[13px] text-[#5C5046] dark:text-[#C5B8AC] space-y-2 leading-relaxed">
+                                    <div class="flex items-start gap-2">
+                                        <span class="text-emerald-600 font-bold shrink-0">•</span>
+                                        <div><strong class="text-espresso-950 dark:text-white">Major Metros:</strong> {{ $delMetro }}</div>
+                                    </div>
+                                    <div class="flex items-start gap-2">
+                                        <span class="text-emerald-600 font-bold shrink-0">•</span>
+                                        <div><strong class="text-espresso-950 dark:text-white">Other Cities:</strong> {{ $delOther }}</div>
+                                    </div>
+                                </div>
                             </div>
-                            <h4 class="font-serif font-bold text-espresso-950 dark:text-white text-sm">Express Courier</h4>
-                            <div class="text-[11px] text-muted dark:text-[#A89F95] space-y-1.5 leading-relaxed">
-                                <p><strong class="text-espresso-900 dark:text-white">Major Metros:</strong> {{ $delMetro }}</p>
-                                <p><strong class="text-espresso-900 dark:text-white">Other Cities:</strong> {{ $delOther }}</p>
-                                <p class="pt-1 text-[10px] text-[#8F8379]">{{ $delCouriers }}</p>
+                            <div class="pt-3 border-t border-[#F0EAE1] dark:border-white/5 text-[11px] text-[#8F8379] dark:text-[#A89F95]">
+                                {{ $delCouriers }}
                             </div>
                         </div>
 
                         <!-- 2. COD & Inspection Card -->
-                        <div class="p-4 rounded-2xl bg-ivory-50/80 dark:bg-[#1E1714] border border-ivory-300 dark:border-white/10 space-y-2">
-                            <div class="flex items-center justify-between">
-                                <div class="w-8 h-8 rounded-xl bg-amber-500/10 text-amber-700 dark:text-amber-400 flex items-center justify-center">
-                                    <i data-lucide="banknote" class="w-4 h-4"></i>
+                        <div class="bg-white dark:bg-[#1A1412] p-6 sm:p-7 rounded-3xl border border-[#E8DFD5] dark:border-[#2E241F] shadow-xs hover:shadow-md transition-all flex flex-col justify-between space-y-4">
+                            <div>
+                                <div class="flex items-center justify-between mb-4">
+                                    <div class="w-12 h-12 rounded-2xl bg-amber-500/10 text-amber-600 dark:text-amber-400 flex items-center justify-center shadow-2xs border border-amber-500/20">
+                                        <svg class="w-6 h-6 text-amber-600 dark:text-amber-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                            <rect x="2" y="6" width="20" height="12" rx="2"></rect>
+                                            <circle cx="12" cy="12" r="2"></circle>
+                                            <path d="M6 12h.01M18 12h.01"></path>
+                                        </svg>
+                                    </div>
+                                    <span class="px-2.5 py-1 rounded-full text-[10px] font-bold bg-amber-500/15 text-amber-800 dark:text-amber-300 border border-amber-500/20 font-mono">Doorstep COD</span>
                                 </div>
-                                <span class="px-2 py-0.5 rounded-full text-[9px] font-bold bg-amber-500/15 text-amber-800 dark:text-amber-300 border border-amber-500/20">Doorstep COD</span>
-                            </div>
-                            <h4 class="font-serif font-bold text-espresso-950 dark:text-white text-sm">Cash on Delivery</h4>
-                            <div class="text-[11px] text-muted dark:text-[#A89F95] space-y-1.5 leading-relaxed">
-                                <p>{{ $codNote }}</p>
-                                <p class="text-[10px] text-emerald-700 dark:text-emerald-400 font-semibold flex items-center gap-1">
-                                    <i data-lucide="check-circle" class="w-3 h-3"></i>
-                                    <span>Check before you pay</span>
+                                <h4 class="font-serif font-bold text-espresso-950 dark:text-white text-base sm:text-lg mb-3">Cash on Delivery</h4>
+                                <p class="text-xs sm:text-[13px] text-[#5C5046] dark:text-[#C5B8AC] leading-relaxed">
+                                    {{ $codNote }}
                                 </p>
+                            </div>
+                            <div class="pt-3 border-t border-[#F0EAE1] dark:border-white/5 text-[11px] text-emerald-700 dark:text-emerald-400 font-semibold flex items-center gap-1.5">
+                                <i data-lucide="check-circle" class="w-3.5 h-3.5 text-emerald-600"></i>
+                                <span>Check & inspect before you pay</span>
                             </div>
                         </div>
 
                         <!-- 3. 7-Day Exchange Card -->
-                        <div class="p-4 rounded-2xl bg-ivory-50/80 dark:bg-[#1E1714] border border-ivory-300 dark:border-white/10 space-y-2">
-                            <div class="flex items-center justify-between">
-                                <div class="w-8 h-8 rounded-xl bg-blue-500/10 text-blue-700 dark:text-blue-400 flex items-center justify-center">
-                                    <i data-lucide="rotate-ccw" class="w-4 h-4"></i>
+                        <div class="bg-white dark:bg-[#1A1412] p-6 sm:p-7 rounded-3xl border border-[#E8DFD5] dark:border-[#2E241F] shadow-xs hover:shadow-md transition-all flex flex-col justify-between space-y-4">
+                            <div>
+                                <div class="flex items-center justify-between mb-4">
+                                    <div class="w-12 h-12 rounded-2xl bg-blue-500/10 text-blue-600 dark:text-blue-400 flex items-center justify-center shadow-2xs border border-blue-500/20">
+                                        <svg class="w-6 h-6 text-blue-600 dark:text-blue-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                            <polyline points="1 4 1 10 7 10"></polyline>
+                                            <path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"></path>
+                                        </svg>
+                                    </div>
+                                    <span class="px-2.5 py-1 rounded-full text-[10px] font-bold bg-blue-500/15 text-blue-800 dark:text-blue-300 border border-blue-500/20 font-mono">Zero Risk</span>
                                 </div>
-                                <span class="px-2 py-0.5 rounded-full text-[9px] font-bold bg-blue-500/15 text-blue-800 dark:text-blue-300 border border-blue-500/20">Zero Risk</span>
+                                <h4 class="font-serif font-bold text-espresso-950 dark:text-white text-base sm:text-lg mb-3">{{ $exchDays }}</h4>
+                                <p class="text-xs sm:text-[13px] text-[#5C5046] dark:text-[#C5B8AC] leading-relaxed">
+                                    {{ $exchNote }}
+                                </p>
                             </div>
-                            <h4 class="font-serif font-bold text-espresso-950 dark:text-white text-sm">{{ $exchDays }}</h4>
-                            <div class="text-[11px] text-muted dark:text-[#A89F95] space-y-2 leading-relaxed">
-                                <p>{{ $exchNote }}</p>
-                                @if(!empty($phone))
+                            @if(!empty($phone))
+                                <div class="pt-3 border-t border-[#F0EAE1] dark:border-white/5">
                                     <a 
                                         href="https://wa.me/{{ $phoneClean }}?text={{ urlencode('Hello By Zunash Concierge, I would like to request an exchange for Product: ' . $product['name']) }}" 
                                         target="_blank"
-                                        class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[#25D366] hover:bg-[#20ba5a] text-white text-[11px] font-bold shadow-xs transition-colors"
+                                        class="inline-flex items-center justify-center gap-2 w-full py-2.5 px-4 rounded-xl bg-[#25D366] hover:bg-[#20ba5a] text-white text-xs font-bold shadow-xs hover:shadow transition-all group"
                                     >
-                                        <i data-lucide="message-circle" class="w-3.5 h-3.5"></i>
+                                        <i data-lucide="message-circle" class="w-4 h-4 transition-transform group-hover:scale-110"></i>
                                         <span>WhatsApp Concierge</span>
                                     </a>
-                                @endif
-                            </div>
+                                </div>
+                            @endif
                         </div>
 
                     </div>
