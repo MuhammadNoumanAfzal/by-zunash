@@ -334,15 +334,19 @@ html.dark .bg-white {
 
 html.dark .bg-ivory-50,
 html.dark .bg-ivory,
-html.dark .bg-ivory-100 {
-  background-color: #191310 !important;
+html.dark .bg-ivory-100,
+html.dark [class*="bg-ivory-50"],
+html.dark [class*="bg-ivory-100"] {
+  background-color: #1E1714 !important;
 }
 
-html.dark .bg-ivory-200 {
+html.dark .bg-ivory-200,
+html.dark [class*="bg-ivory-200"] {
   background-color: #241C18 !important;
 }
 
-html.dark .bg-ivory-300 {
+html.dark .bg-ivory-300,
+html.dark [class*="bg-ivory-300"] {
   background-color: #2F241F !important;
 }
 

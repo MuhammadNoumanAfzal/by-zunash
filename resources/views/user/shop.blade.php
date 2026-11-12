@@ -264,25 +264,25 @@
             <!-- STICKY Desktop Sidebar Filter Column (Elevated Distinct Card) -->
             <aside class="hidden lg:block w-72 xl:w-80 flex-shrink-0 sticky top-24 self-start max-h-[calc(100vh-6.5rem)] overflow-y-auto hide-scrollbar pb-10">
                 
-                <div class="bg-white rounded-2xl border border-ivory-300 shadow-sm overflow-hidden divide-y divide-ivory-200">
+                <div class="bg-white dark:bg-[#161210] rounded-2xl border border-ivory-300 dark:border-white/10 shadow-sm overflow-hidden divide-y divide-ivory-200 dark:divide-white/10">
                     
                     <!-- Sidebar Header Panel -->
-                    <div class="p-4 bg-ivory-100/90 flex items-center justify-between border-b border-ivory-300">
+                    <div class="p-4 bg-ivory-100/90 dark:bg-[#251E1A] flex items-center justify-between border-b border-ivory-300 dark:border-white/10">
                         <div class="flex items-center gap-2.5">
-                            <span class="w-7 h-7 rounded-lg bg-espresso-950 text-gold-400 flex items-center justify-center shadow-2xs">
+                            <span class="w-7 h-7 rounded-lg bg-espresso-950 dark:bg-black/60 text-gold-400 flex items-center justify-center shadow-2xs border border-gold/30">
                                 <i data-lucide="sliders" class="w-3.5 h-3.5"></i>
                             </span>
                             <div>
-                                <h2 class="font-serif text-sm font-bold text-espresso-950 tracking-wider uppercase leading-none">
+                                <h2 class="font-serif text-sm font-bold text-espresso-950 dark:text-ivory tracking-wider uppercase leading-none">
                                     Filter Catalog
                                 </h2>
-                                <span class="text-[10px] text-muted-dark font-sans leading-tight">Refine your selection</span>
+                                <span class="text-[10px] text-muted-dark dark:text-ivory-400 font-sans leading-tight">Refine your selection</span>
                             </div>
                         </div>
                         @if($hasActiveFilters)
                             <a 
                                 href="{{ route('shop') }}" 
-                                class="inline-flex items-center gap-1 text-[11px] font-sans uppercase tracking-wider text-red-600 hover:text-red-700 font-bold transition-colors bg-red-50 hover:bg-red-100 px-2 py-1 rounded"
+                                class="inline-flex items-center gap-1 text-[11px] font-sans uppercase tracking-wider text-red-600 hover:text-red-700 font-bold transition-colors bg-red-50 dark:bg-red-950/40 hover:bg-red-100 px-2 py-1 rounded"
                             >
                                 <i data-lucide="rotate-ccw" class="w-3 h-3"></i>
                                 <span>Reset</span>
@@ -527,20 +527,20 @@
                     </div>
 
                     <!-- Handcrafted Leather Guarantee Callout -->
-                    <div class="p-4 bg-ivory-100/70 space-y-2">
-                        <div class="flex items-center gap-2 text-gold-700 font-serif font-bold text-xs uppercase tracking-wider">
-                            <i data-lucide="shield-check" class="w-4 h-4 text-gold-600"></i>
+                    <div class="p-4 bg-ivory-100/70 dark:bg-[#1E1714] space-y-2 border-t border-ivory-300/80 dark:border-white/10">
+                        <div class="flex items-center gap-2 text-gold-700 dark:text-gold-400 font-serif font-bold text-xs uppercase tracking-wider">
+                            <i data-lucide="shield-check" class="w-4 h-4 text-gold-600 dark:text-gold-400"></i>
                             <span>Pure Hide Guarantee</span>
                         </div>
-                        <p class="text-[11px] text-muted-dark leading-relaxed font-sans">
+                        <p class="text-[11px] text-muted-dark dark:text-ivory-400 leading-relaxed font-sans">
                             Every creation is hand-crafted with 100% genuine top-grade Pakistani hides.
                         </p>
-                        <div class="pt-2 border-t border-ivory-300/80 flex items-center justify-between text-[10px] text-muted-dark font-sans font-medium">
+                        <div class="pt-2 border-t border-ivory-300/80 dark:border-white/10 flex items-center justify-between text-[10px] text-muted-dark dark:text-ivory-400 font-sans font-medium">
                             <span class="flex items-center gap-1">
-                                <i data-lucide="truck" class="w-3 h-3 text-gold-600"></i> Cash on Delivery
+                                <i data-lucide="truck" class="w-3 h-3 text-gold-600 dark:text-gold-400"></i> Cash on Delivery
                             </span>
                             <span class="flex items-center gap-1">
-                                <i data-lucide="refresh-cw" class="w-3 h-3 text-gold-600"></i> 7-Day Returns
+                                <i data-lucide="refresh-cw" class="w-3 h-3 text-gold-600 dark:text-gold-400"></i> 7-Day Returns
                             </span>
                         </div>
                     </div>
