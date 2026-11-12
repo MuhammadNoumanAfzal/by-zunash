@@ -246,7 +246,7 @@
                 @forelse($products as $product)
                     <tr class="hover:bg-[#FAF8F5]/80 dark:hover:bg-[#221B18] transition-colors">
                         
-                        <!-- Thumbnail & Info -->
+                        <!-- Thumbnail & Info (Clean Name & SKU) -->
                         <td class="py-3.5 px-4">
                             <div class="flex items-center gap-3">
                                 <img 
@@ -258,32 +258,9 @@
                                     <div class="font-bold text-espresso-950 dark:text-white truncate max-w-xs hover:text-tan-600 transition-colors">
                                         {{ $product->name }}
                                     </div>
-                                    <div class="flex items-center gap-2 mt-0.5">
-                                        <span class="font-mono text-[10px] font-semibold text-[#8F8379]">
-                                            {{ $product->sku }}
-                                        </span>
-                                        @if($product->badge)
-                                            <span class="px-1.5 py-0.2 rounded text-[9px] font-bold bg-[#FAF3F0] text-tan-700 border border-[#F3E3DC]">
-                                                {{ $product->badge }}
-                                            </span>
-                                        @endif
+                                    <div class="font-mono text-[10px] font-semibold text-[#8F8379] mt-0.5">
+                                        {{ $product->sku }}
                                     </div>
-
-                                    <!-- Variation Leather Swatches Preview -->
-                                    @if(is_array($product->colors) && count($product->colors) > 0)
-                                        <div class="flex items-center gap-1 mt-1.5" title="Available Leather Tones">
-                                            @foreach(array_slice($product->colors, 0, 5) as $col)
-                                                <span 
-                                                    class="w-3 h-3 rounded-full border border-black/20 shadow-2xs inline-block" 
-                                                    style="background-color: {{ $col['hex'] ?? '#8B4513' }};"
-                                                    title="{{ $col['name'] ?? '' }}"
-                                                ></span>
-                                            @endforeach
-                                            @if(count($product->colors) > 5)
-                                                <span class="text-[9px] text-[#8F8379] font-semibold font-mono">+{{ count($product->colors) - 5 }}</span>
-                                            @endif
-                                        </div>
-                                    @endif
                                 </div>
                             </div>
                         </td>
@@ -340,17 +317,35 @@
                             @endif
                         </td>
 
-                        <!-- Bestseller / New Pills -->
+                        <!-- Curation & Collection Flags -->
                         <td class="py-3.5 px-3">
-                            <div class="flex items-center gap-1">
+                            <div class="flex flex-wrap items-center gap-1.5 max-w-xs">
+                                @php
+                                    $hasCuration = $product->is_bestseller || $product->is_new || !empty($product->badge);
+                                @endphp
+
                                 @if($product->is_bestseller)
-                                    <span class="w-5 h-5 rounded-full bg-gold-400/20 text-tan-700 dark:text-gold-300 flex items-center justify-center font-bold text-[10px]" title="Bestseller Flagship">
-                                        ★
+                                    <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-amber-500/15 text-amber-800 dark:text-amber-300 border border-amber-500/30 shadow-2xs">
+                                        <span class="text-amber-500">★</span> Bestseller
                                     </span>
                                 @endif
+
                                 @if($product->is_new)
-                                    <span class="px-1.5 py-0.5 rounded text-[9px] font-bold bg-blue-50 text-blue-700 border border-blue-200">
-                                        NEW
+                                    <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-blue-500/15 text-blue-700 dark:text-blue-300 border border-blue-500/30 shadow-2xs">
+                                        New Arrival
+                                    </span>
+                                @endif
+
+                                @if(!empty($product->badge))
+                                    <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold bg-[#FAF3F0] dark:bg-[#2A1E18] text-tan-800 dark:text-gold-300 border border-[#F3E3DC] dark:border-[#3D2C24] shadow-2xs">
+                                        {{ $product->badge }}
+                                    </span>
+                                @endif
+
+                                @if(!$hasCuration)
+                                    <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-medium bg-[#F5F1EA] dark:bg-[#221B18] text-[#8F8379] dark:text-[#A89F95] border border-[#E7DFD5] dark:border-[#332822]">
+                                        <span class="w-1.5 h-1.5 rounded-full bg-[#8F8379]/50"></span>
+                                        Standard Piece
                                     </span>
                                 @endif
                             </div>
