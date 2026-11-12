@@ -15,9 +15,16 @@
         return $c;
     }, $existingColors);
 
-    $featuresRaw = is_array($product->features) ? implode("\n", $product->features) : '';
     $featuresList = is_array($product->features) ? $product->features : [];
-    $featuresHtml = !empty($featuresList) ? '<ul>' . implode('', array_map(fn($f) => '<li>' . e($f) . '</li>', $featuresList)) . '</ul>' : '';
+    $cleanFeatures = array_map(function ($f) {
+        $c = preg_replace('/<span[^>]*class=["\']ql-ui["\'][^>]*>.*?<\/span>/is', '', $f);
+        $c = preg_replace('/&lt;span[^>]*class=["\']ql-ui["\'][^>]*&gt;.*?&lt;\/span&gt;/is', '', $c);
+        $c = preg_replace('/^<span[^>]*><\/span>\s*/is', '', $c);
+        return trim(strip_tags($c, '<b><strong><i><em>'));
+    }, $featuresList);
+    $cleanFeatures = array_values(array_filter($cleanFeatures, fn($f) => $f !== ''));
+    $featuresRaw = implode("\n", $cleanFeatures);
+    $featuresHtml = !empty($cleanFeatures) ? '<ul>' . implode('', array_map(fn($f) => '<li>' . $f . '</li>', $cleanFeatures)) . '</ul>' : '';
     $galleryList = is_array($product->gallery) ? $product->gallery : [];
     // If first item matches product->image, show remaining in textarea
     $additionalGallery = array_filter($galleryList, fn($img) => $img !== $product->image);

@@ -1012,17 +1012,25 @@
                     }
                 });
 
+                const getCleanQuillHtml = () => {
+                    if (quill.getText().trim() === '') return '';
+                    let html = quill.root.innerHTML;
+                    if (html === '<p><br></p>') return '';
+                    // Strip Quill internal UI elements like <span class="ql-ui" contenteditable="false"></span>
+                    html = html.replace(/<span\s+class=["']ql-ui["'][^>]*>.*?<\/span>/gi, '');
+                    html = html.replace(/<span\s+class=["']ql-ui["'][^>]*\/>/gi, '');
+                    return html;
+                };
+
                 if (targetTextarea) {
                     quill.on('text-change', () => {
-                        const html = quill.root.innerHTML;
-                        targetTextarea.value = (html === '<p><br></p>' || quill.getText().trim() === '') ? '' : html;
+                        targetTextarea.value = getCleanQuillHtml();
                     });
 
                     const form = targetTextarea.closest('form');
                     if (form) {
                         form.addEventListener('submit', () => {
-                            const html = quill.root.innerHTML;
-                            targetTextarea.value = (html === '<p><br></p>' || quill.getText().trim() === '') ? '' : html;
+                            targetTextarea.value = getCleanQuillHtml();
                         });
                     }
                 }
