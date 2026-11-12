@@ -370,7 +370,6 @@
                     <th class="py-3 px-3">CATEGORY</th>
                     <th class="py-3 px-3">PRICE</th>
                     <th class="py-3 px-3">STOCK & STATUS</th>
-                    <th class="py-3 px-3">CURATION</th>
                     <th class="py-3 px-3">RATING</th>
                     <th class="py-3 px-4 text-right">ACTIONS</th>
                 </tr>
@@ -437,39 +436,6 @@
                             @endif
                         </td>
 
-                        <!-- Curation & Collection Flags -->
-                        <td class="py-3.5 px-3">
-                            <div class="flex flex-wrap items-center gap-1.5 max-w-xs">
-                                @php
-                                    $hasCuration = $product->is_bestseller || $product->is_new || !empty($product->badge);
-                                @endphp
-
-                                @if($product->is_bestseller)
-                                    <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-amber-500/15 text-amber-800 dark:text-amber-300 border border-amber-500/30 shadow-2xs">
-                                        <span class="text-amber-500">★</span> Bestseller
-                                    </span>
-                                @endif
-
-                                @if($product->is_new)
-                                    <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-blue-500/15 text-blue-700 dark:text-blue-300 border border-blue-500/30 shadow-2xs">
-                                        New Arrival
-                                    </span>
-                                @endif
-
-                                @if(!empty($product->badge))
-                                    <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold bg-[#FAF3F0] dark:bg-[#2A1E18] text-tan-800 dark:text-gold-300 border border-[#F3E3DC] dark:border-[#3D2C24] shadow-2xs">
-                                        {{ $product->badge }}
-                                    </span>
-                                @endif
-
-                                @if(!$hasCuration)
-                                    <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-medium bg-[#F5F1EA] dark:bg-[#221B18] text-[#8F8379] dark:text-[#A89F95] border border-[#E7DFD5] dark:border-[#332822]">
-                                        <span class="w-1.5 h-1.5 rounded-full bg-[#8F8379]/50"></span>
-                                        Standard Piece
-                                    </span>
-                                @endif
-                            </div>
-                        </td>
 
                         <!-- Rating -->
                         <td class="py-3.5 px-3">
