@@ -753,37 +753,37 @@
         <!-- Specifications, Narrative & Care Tabs -->
         <div class="mt-14 pt-10 border-t border-ivory-200">
             
-            <!-- Modern Tab Bar -->
-            <div class="flex items-center gap-2 sm:gap-4 border-b border-ivory-200 overflow-x-auto pb-px scrollbar-none">
+            <!-- Modern Tab Bar (Dark, Bold & High-Contrast) -->
+            <div class="flex items-center gap-2 sm:gap-4 border-b-2 border-[#E2D9CC] dark:border-white/10 overflow-x-auto pb-px scrollbar-none">
                 <button 
                     type="button" 
                     @click="activeTab = 'specifications'; $nextTick(() => { if (window.lucide) lucide.createIcons(); })"
-                    class="font-serif text-xs sm:text-sm uppercase tracking-widest pb-3.5 px-3 font-semibold transition-all relative whitespace-nowrap focus:outline-none"
-                    :class="activeTab === 'specifications' ? 'text-espresso-950 border-b-2 border-gold font-bold' : 'text-muted hover:text-espresso-800'"
+                    class="font-serif text-xs sm:text-sm uppercase tracking-wider pb-3.5 px-3.5 font-bold transition-all relative whitespace-nowrap focus:outline-none cursor-pointer"
+                    :class="activeTab === 'specifications' ? 'text-[#120B08] dark:text-white border-b-2 border-gold-600 font-black -mb-[2px]' : 'text-[#2D211A] dark:text-[#E8DCCF] hover:text-[#8C6B38] dark:hover:text-gold border-b-2 border-transparent'"
                 >
                     Craftsmanship & Specs
                 </button>
                 <button 
                     type="button" 
                     @click="activeTab = 'description'; $nextTick(() => { if (window.lucide) lucide.createIcons(); })"
-                    class="font-serif text-xs sm:text-sm uppercase tracking-widest pb-3.5 px-3 font-semibold transition-all relative whitespace-nowrap focus:outline-none"
-                    :class="activeTab === 'description' ? 'text-espresso-950 border-b-2 border-gold font-bold' : 'text-muted hover:text-espresso-800'"
+                    class="font-serif text-xs sm:text-sm uppercase tracking-wider pb-3.5 px-3.5 font-bold transition-all relative whitespace-nowrap focus:outline-none cursor-pointer"
+                    :class="activeTab === 'description' ? 'text-[#120B08] dark:text-white border-b-2 border-gold-600 font-black -mb-[2px]' : 'text-[#2D211A] dark:text-[#E8DCCF] hover:text-[#8C6B38] dark:hover:text-gold border-b-2 border-transparent'"
                 >
                     The Atelier Story
                 </button>
                 <button 
                     type="button" 
                     @click="activeTab = 'care'; $nextTick(() => { if (window.lucide) lucide.createIcons(); })"
-                    class="font-serif text-xs sm:text-sm uppercase tracking-widest pb-3.5 px-3 font-semibold transition-all relative whitespace-nowrap focus:outline-none"
-                    :class="activeTab === 'care' ? 'text-espresso-950 border-b-2 border-gold font-bold' : 'text-muted hover:text-espresso-800'"
+                    class="font-serif text-xs sm:text-sm uppercase tracking-wider pb-3.5 px-3.5 font-bold transition-all relative whitespace-nowrap focus:outline-none cursor-pointer"
+                    :class="activeTab === 'care' ? 'text-[#120B08] dark:text-white border-b-2 border-gold-600 font-black -mb-[2px]' : 'text-[#2D211A] dark:text-[#E8DCCF] hover:text-[#8C6B38] dark:hover:text-gold border-b-2 border-transparent'"
                 >
                     Leather Care Guide
                 </button>
                 <button 
                     type="button" 
                     @click="activeTab = 'shipping'; $nextTick(() => { if (window.lucide) lucide.createIcons(); })"
-                    class="font-serif text-xs sm:text-sm uppercase tracking-widest pb-3.5 px-3 font-semibold transition-all relative whitespace-nowrap focus:outline-none"
-                    :class="activeTab === 'shipping' ? 'text-espresso-950 border-b-2 border-gold font-bold' : 'text-muted hover:text-espresso-800'"
+                    class="font-serif text-xs sm:text-sm uppercase tracking-wider pb-3.5 px-3.5 font-bold transition-all relative whitespace-nowrap focus:outline-none cursor-pointer"
+                    :class="activeTab === 'shipping' ? 'text-[#120B08] dark:text-white border-b-2 border-gold-600 font-black -mb-[2px]' : 'text-[#2D211A] dark:text-[#E8DCCF] hover:text-[#8C6B38] dark:hover:text-gold border-b-2 border-transparent'"
                 >
                     Delivery & Returns
                 </button>

@@ -50,8 +50,8 @@
         <button 
             type="button" 
             @click="activeTab = 'all'"
-            :class="activeTab === 'all' ? 'bg-espresso-900 text-white shadow-2xs' : 'bg-white dark:bg-[#1E1714] text-muted hover:text-espresso-900 border border-[#ECE6DE] dark:border-[#261E1A]'"
-            class="px-3.5 py-1.5 rounded-xl text-xs font-semibold transition-all shrink-0 flex items-center gap-1.5"
+            :class="activeTab === 'all' ? 'bg-espresso-900 text-white shadow-2xs font-bold' : 'bg-white dark:bg-[#1E1714] text-espresso-900 dark:text-[#E8DCCF] font-bold hover:bg-tan-50 border border-[#D5CDC2] dark:border-[#261E1A]'"
+            class="px-3.5 py-1.5 rounded-xl text-xs transition-all shrink-0 flex items-center gap-1.5"
         >
             <i data-lucide="layers" class="w-3.5 h-3.5"></i>
             <span>All Records ({{ $totalMatches }})</span>
@@ -60,8 +60,8 @@
         <button 
             type="button" 
             @click="activeTab = 'products'"
-            :class="activeTab === 'products' ? 'bg-espresso-900 text-white shadow-2xs' : 'bg-white dark:bg-[#1E1714] text-muted hover:text-espresso-900 border border-[#ECE6DE] dark:border-[#261E1A]'"
-            class="px-3.5 py-1.5 rounded-xl text-xs font-semibold transition-all shrink-0 flex items-center gap-1.5"
+            :class="activeTab === 'products' ? 'bg-espresso-900 text-white shadow-2xs font-bold' : 'bg-white dark:bg-[#1E1714] text-espresso-900 dark:text-[#E8DCCF] font-bold hover:bg-tan-50 border border-[#D5CDC2] dark:border-[#261E1A]'"
+            class="px-3.5 py-1.5 rounded-xl text-xs transition-all shrink-0 flex items-center gap-1.5"
         >
             <i data-lucide="gem" class="w-3.5 h-3.5"></i>
             <span>Creations ({{ $products->count() }})</span>
@@ -70,8 +70,8 @@
         <button 
             type="button" 
             @click="activeTab = 'orders'"
-            :class="activeTab === 'orders' ? 'bg-espresso-900 text-white shadow-2xs' : 'bg-white dark:bg-[#1E1714] text-muted hover:text-espresso-900 border border-[#ECE6DE] dark:border-[#261E1A]'"
-            class="px-3.5 py-1.5 rounded-xl text-xs font-semibold transition-all shrink-0 flex items-center gap-1.5"
+            :class="activeTab === 'orders' ? 'bg-espresso-900 text-white shadow-2xs font-bold' : 'bg-white dark:bg-[#1E1714] text-espresso-900 dark:text-[#E8DCCF] font-bold hover:bg-tan-50 border border-[#D5CDC2] dark:border-[#261E1A]'"
+            class="px-3.5 py-1.5 rounded-xl text-xs transition-all shrink-0 flex items-center gap-1.5"
         >
             <i data-lucide="package" class="w-3.5 h-3.5"></i>
             <span>Orders ({{ $orders->count() }})</span>
@@ -80,8 +80,8 @@
         <button 
             type="button" 
             @click="activeTab = 'categories'"
-            :class="activeTab === 'categories' ? 'bg-espresso-900 text-white shadow-2xs' : 'bg-white dark:bg-[#1E1714] text-muted hover:text-espresso-900 border border-[#ECE6DE] dark:border-[#261E1A]'"
-            class="px-3.5 py-1.5 rounded-xl text-xs font-semibold transition-all shrink-0 flex items-center gap-1.5"
+            :class="activeTab === 'categories' ? 'bg-espresso-900 text-white shadow-2xs font-bold' : 'bg-white dark:bg-[#1E1714] text-espresso-900 dark:text-[#E8DCCF] font-bold hover:bg-tan-50 border border-[#D5CDC2] dark:border-[#261E1A]'"
+            class="px-3.5 py-1.5 rounded-xl text-xs transition-all shrink-0 flex items-center gap-1.5"
         >
             <i data-lucide="folder" class="w-3.5 h-3.5"></i>
             <span>Categories ({{ $categories->count() }})</span>
@@ -90,8 +90,8 @@
         <button 
             type="button" 
             @click="activeTab = 'subcategories'"
-            :class="activeTab === 'subcategories' ? 'bg-espresso-900 text-white shadow-2xs' : 'bg-white dark:bg-[#1E1714] text-muted hover:text-espresso-900 border border-[#ECE6DE] dark:border-[#261E1A]'"
-            class="px-3.5 py-1.5 rounded-xl text-xs font-semibold transition-all shrink-0 flex items-center gap-1.5"
+            :class="activeTab === 'subcategories' ? 'bg-espresso-900 text-white shadow-2xs font-bold' : 'bg-white dark:bg-[#1E1714] text-espresso-900 dark:text-[#E8DCCF] font-bold hover:bg-tan-50 border border-[#D5CDC2] dark:border-[#261E1A]'"
+            class="px-3.5 py-1.5 rounded-xl text-xs transition-all shrink-0 flex items-center gap-1.5"
         >
             <i data-lucide="git-branch" class="w-3.5 h-3.5"></i>
             <span>Subcategories ({{ $subcategories->count() }})</span>
@@ -100,9 +100,12 @@
         <button 
             type="button" 
             @click="activeTab = 'customers'"
-            :class="activeTab === 'customers' ? 'bg-espresso-900 text-white shadow-2xs' : 'bg-white dark:bg-[#1E1714] text-muted hover:text-espresso-900 border border-[#ECE6DE] dark:border-[#261E1A]'"
-            class="px-3.5 py-1.5 rounded-xl text-xs font-semibold transition-all shrink-0 flex items-center gap-1.5"
+            :class="activeTab === 'customers' ? 'bg-espresso-900 text-white shadow-2xs font-bold' : 'bg-white dark:bg-[#1E1714] text-espresso-900 dark:text-[#E8DCCF] font-bold hover:bg-tan-50 border border-[#D5CDC2] dark:border-[#261E1A]'"
+            class="px-3.5 py-1.5 rounded-xl text-xs transition-all shrink-0 flex items-center gap-1.5"
         >
+            <i data-lucide="users" class="w-3.5 h-3.5"></i>
+            <span>Patrons ({{ $customers->count() }})</span>
+        </button>
             <i data-lucide="users" class="w-3.5 h-3.5"></i>
             <span>Patrons ({{ $customers->count() }})</span>
         </button>
