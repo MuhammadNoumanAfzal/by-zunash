@@ -140,16 +140,25 @@
 
                     <!-- Deal Highlights / Perks -->
                     <div>
-                        <label class="block text-xs font-semibold text-espresso-900 dark:text-ivory-200 mb-1" for="highlights">
-                            Deal Highlights & Included Perks <span class="text-[10px] text-[#8F8379] font-normal">(One line per bullet point)</span>
+                        <label class="block text-xs font-semibold text-espresso-900 dark:text-ivory-200 mb-1 flex items-center justify-between" for="deal_highlights">
+                            <span>Deal Highlights & Included Perks</span>
+                            <span class="text-[10px] text-tan-600 dark:text-gold-400 font-semibold flex items-center gap-1">
+                                <i data-lucide="sparkles" class="w-3 h-3"></i> Rich Editor
+                            </span>
                         </label>
                         <textarea 
-                            id="highlights" 
+                            id="deal_highlights" 
                             name="highlights" 
-                            rows="3" 
-                            placeholder="100% Full-grain vegetable-tanned calfskin&#10;Hand-beveled and beeswax-burnished edges&#10;Complimentary rigid matte gift presentation box"
-                            class="w-full px-3.5 py-2.5 text-xs rounded-xl bg-[#FAF8F5] dark:bg-[#120E0C] border border-[#E0D7CB] dark:border-[#2C2420] text-espresso-900 dark:text-ivory focus:outline-hidden focus:border-tan-500"
+                            class="hidden"
                         >{{ old('highlights') }}</textarea>
+                        <div class="quill-wrapper rounded-2xl overflow-hidden border border-[#E0D7CB] dark:border-[#2C2420] bg-[#FAF8F5] dark:bg-[#120E0C]">
+                            <div 
+                                data-rich-editor="highlights" 
+                                data-target="#deal_highlights" 
+                                data-placeholder="e.g.&#10;• 100% Full-grain vegetable-tanned calfskin&#10;• Hand-beveled and beeswax-burnished edges&#10;• Complimentary rigid matte gift presentation box"
+                                style="min-height: 110px;"
+                            >{!! old('highlights') !!}</div>
+                        </div>
                     </div>
 
                 </div>

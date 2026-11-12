@@ -363,19 +363,41 @@ class ProductController extends Controller
     }
 
     /**
-     * Parse features from newline-delimited text.
+     * Parse features from newline-delimited text or HTML rich editor.
      */
     protected function parseFeatures(Request $request, ?array $fallback = null): array
     {
         if ($request->filled('features_raw')) {
-            $lines = preg_split('/\r\n|\r|\n/', trim($request->input('features_raw')));
+            $raw = trim($request->input('features_raw'));
             $features = [];
-            foreach ($lines as $line) {
-                $trimmed = trim(ltrim($line, " \t\n\r\0\x0B•-*"));
-                if ($trimmed !== '') {
-                    $features[] = $trimmed;
+
+            // If HTML containing <li> items from rich text editor
+            if (preg_match_all('/<li[^>]*>(.*?)<\/li>/is', $raw, $matches)) {
+                foreach ($matches[1] as $item) {
+                    $cleaned = trim(strip_tags($item, '<b><strong><i><em><span>'));
+                    $cleaned = trim(ltrim($cleaned, " \t\n\r\0\x0B•-*"));
+                    if ($cleaned !== '') {
+                        $features[] = $cleaned;
+                    }
+                }
+            } elseif (preg_match_all('/<p[^>]*>(.*?)<\/p>/is', $raw, $matches)) {
+                foreach ($matches[1] as $item) {
+                    $cleaned = trim(strip_tags($item, '<b><strong><i><em><span>'));
+                    $cleaned = trim(ltrim($cleaned, " \t\n\r\0\x0B•-*"));
+                    if ($cleaned !== '') {
+                        $features[] = $cleaned;
+                    }
+                }
+            } else {
+                $lines = preg_split('/\r\n|\r|\n/', strip_tags($raw));
+                foreach ($lines as $line) {
+                    $trimmed = trim(ltrim($line, " \t\n\r\0\x0B•-*"));
+                    if ($trimmed !== '') {
+                        $features[] = $trimmed;
+                    }
                 }
             }
+
             if (!empty($features)) {
                 return $features;
             }

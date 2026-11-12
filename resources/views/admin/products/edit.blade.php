@@ -16,6 +16,8 @@
     }, $existingColors);
 
     $featuresRaw = is_array($product->features) ? implode("\n", $product->features) : '';
+    $featuresList = is_array($product->features) ? $product->features : [];
+    $featuresHtml = !empty($featuresList) ? '<ul>' . implode('', array_map(fn($f) => '<li>' . e($f) . '</li>', $featuresList)) . '</ul>' : '';
     $galleryList = is_array($product->gallery) ? $product->gallery : [];
     // If first item matches product->image, show remaining in textarea
     $additionalGallery = array_filter($galleryList, fn($img) => $img !== $product->image);
@@ -468,15 +470,25 @@
                         Artisanal Highlights (Bullet Points)
                     </h2>
                 </div>
-                <span class="text-[11px] text-[#8F8379]">One highlight per line</span>
+                <span class="text-[10px] text-tan-600 dark:text-gold-400 font-semibold flex items-center gap-1">
+                    <i data-lucide="sparkles" class="w-3 h-3"></i> Rich Editor
+                </span>
             </div>
 
             <div class="mt-4">
                 <textarea 
                     name="features_raw" 
-                    rows="4" 
-                    class="w-full px-3.5 py-2.5 text-xs rounded-xl bg-[#FAF8F5] dark:bg-[#241D1A] border border-[#E0D7CB] dark:border-[#3A2F29] text-espresso-900 dark:text-white focus:outline-hidden focus:border-tan-500 font-mono leading-relaxed"
-                >{{ old('features_raw', $featuresRaw) }}</textarea>
+                    id="prod_edit_features_raw"
+                    class="hidden"
+                >{{ old('features_raw', $featuresHtml) }}</textarea>
+                <div class="quill-wrapper rounded-2xl overflow-hidden border border-[#E0D7CB] dark:border-[#3A2F29] bg-[#FAF8F5] dark:bg-[#241D1A]">
+                    <div 
+                        data-rich-editor="highlights" 
+                        data-target="#prod_edit_features_raw" 
+                        data-placeholder="Click the bullet icon above or type bullet points (e.g. 100% full-grain calfskin, solid antique brass hardware...)"
+                        style="min-height: 110px;"
+                    >{!! old('features_raw', $featuresHtml) !!}</div>
+                </div>
             </div>
         </div>
 

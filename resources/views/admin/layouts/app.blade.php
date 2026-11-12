@@ -983,6 +983,12 @@
                     ['link', 'clean']
                 ];
 
+                const highlightsToolbar = [
+                    [{ 'list': 'bullet' }, { 'list': 'ordered' }],
+                    ['bold', 'italic', 'underline'],
+                    ['clean']
+                ];
+
                 const fullToolbar = [
                     [{ 'header': [2, 3, false] }],
                     ['bold', 'italic', 'underline', 'strike'],
@@ -991,11 +997,18 @@
                     ['clean']
                 ];
 
+                let toolbarConfig = fullToolbar;
+                if (type === 'compact') {
+                    toolbarConfig = compactToolbar;
+                } else if (type === 'highlights') {
+                    toolbarConfig = highlightsToolbar;
+                }
+
                 const quill = new Quill(editorEl, {
                     theme: 'snow',
                     placeholder: placeholder,
                     modules: {
-                        toolbar: type === 'compact' ? compactToolbar : fullToolbar
+                        toolbar: toolbarConfig
                     }
                 });
 

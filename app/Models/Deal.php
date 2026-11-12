@@ -148,7 +148,22 @@ class Deal extends Model
             ];
         }
 
-        return array_values(array_filter(array_map('trim', explode("\n", str_replace("\r", "", $this->highlights)))));
+        $raw = $this->highlights;
+        if (preg_match_all('/<li[^>]*>(.*?)<\/li>/is', $raw, $matches)) {
+            $items = [];
+            foreach ($matches[1] as $item) {
+                $cleaned = trim(strip_tags($item, '<b><strong><i><em><span>'));
+                $cleaned = trim(ltrim($cleaned, " \t\n\r\0\x0B•-*"));
+                if ($cleaned !== '') {
+                    $items[] = $cleaned;
+                }
+            }
+            if (!empty($items)) {
+                return $items;
+            }
+        }
+
+        return array_values(array_filter(array_map('trim', explode("\n", str_replace("\r", "", strip_tags($this->highlights))))));
     }
 }
 

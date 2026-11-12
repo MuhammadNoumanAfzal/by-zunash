@@ -448,20 +448,25 @@
                         Artisanal Highlights (Bullet Points)
                     </h2>
                 </div>
-                <span class="text-[11px] text-[#8F8379]">One highlight per line</span>
+                <span class="text-[10px] text-tan-600 dark:text-gold-400 font-semibold flex items-center gap-1">
+                    <i data-lucide="sparkles" class="w-3 h-3"></i> Rich Editor
+                </span>
             </div>
 
             <div class="mt-4">
                 <textarea 
                     name="features_raw" 
-                    rows="4" 
-                    placeholder="e.g.
-• 100% full-grain calfskin with beveled, wax-burnished edges
-• Solid antique brass hardware
-• Handcrafted reinforced core
-• Presented in signature By Zunash packaging"
-                    class="w-full px-3.5 py-2.5 text-xs rounded-xl bg-[#FAF8F5] dark:bg-[#241D1A] border border-[#E0D7CB] dark:border-[#3A2F29] text-espresso-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-[#6E645E] focus:outline-hidden focus:border-tan-500 font-mono leading-relaxed"
+                    id="prod_features_raw"
+                    class="hidden"
                 >{{ old('features_raw') }}</textarea>
+                <div class="quill-wrapper rounded-2xl overflow-hidden border border-[#E0D7CB] dark:border-[#3A2F29] bg-[#FAF8F5] dark:bg-[#241D1A]">
+                    <div 
+                        data-rich-editor="highlights" 
+                        data-target="#prod_features_raw" 
+                        data-placeholder="Click the bullet icon above or type bullet points (e.g. 100% full-grain calfskin, solid antique brass hardware...)"
+                        style="min-height: 110px;"
+                    >{!! old('features_raw') !!}</div>
+                </div>
             </div>
         </div>
 
