@@ -117,16 +117,25 @@
 
                     <!-- Description -->
                     <div>
-                        <label class="block text-xs font-semibold text-espresso-900 dark:text-ivory-200 mb-1" for="description">
-                            Atelier Story & Description
+                        <label class="block text-xs font-semibold text-espresso-900 dark:text-ivory-200 mb-1 flex items-center justify-between" for="description">
+                            <span>Atelier Story & Description</span>
+                            <span class="text-[10px] text-tan-600 dark:text-gold-400 font-semibold flex items-center gap-1">
+                                <i data-lucide="sparkles" class="w-3 h-3"></i> Rich Editor
+                            </span>
                         </label>
                         <textarea 
-                            id="description" 
+                            id="deal_description" 
                             name="description" 
-                            rows="3" 
-                            placeholder="Describe why these pieces complement each other, their matching leather tones, and the exceptional value of this curated combination..."
-                            class="w-full px-3.5 py-2.5 text-xs rounded-xl bg-[#FAF8F5] dark:bg-[#120E0C] border border-[#E0D7CB] dark:border-[#2C2420] text-espresso-900 dark:text-ivory focus:outline-hidden focus:border-tan-500"
+                            class="hidden"
                         >{{ old('description') }}</textarea>
+                        <div class="quill-wrapper rounded-2xl overflow-hidden border border-[#E0D7CB] dark:border-[#2C2420] bg-[#FAF8F5] dark:bg-[#120E0C]">
+                            <div 
+                                data-rich-editor="full" 
+                                data-target="#deal_description" 
+                                data-placeholder="Describe why these pieces complement each other, their matching leather tones, and the exceptional value of this curated combination..."
+                                style="min-height: 120px;"
+                            >{!! old('description') !!}</div>
+                        </div>
                     </div>
 
                     <!-- Deal Highlights / Perks -->

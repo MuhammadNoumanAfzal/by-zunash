@@ -533,29 +533,48 @@ https://example.com/gallery-detail-2.jpg"
 
                 <!-- Short Summary -->
                 <div>
-                    <label class="block text-xs font-semibold text-espresso-900 dark:text-white mb-1.5">
-                        Short Summary (Catalog Cards & Meta) <span class="text-rose-500">*</span>
+                    <label class="block text-xs font-semibold text-espresso-900 dark:text-white mb-1.5 flex items-center justify-between">
+                        <span>Short Summary (Catalog Cards & Meta) <span class="text-rose-500">*</span></span>
+                        <span class="text-[10px] text-tan-600 dark:text-gold-400 font-semibold flex items-center gap-1">
+                            <i data-lucide="sparkles" class="w-3 h-3"></i> Rich Editor
+                        </span>
                     </label>
                     <textarea 
                         name="short_description" 
-                        rows="2" 
-                        required
-                        placeholder="e.g. Handcrafted in supple vegetable-tanned full-grain leather with a versatile dual-tone finish."
-                        class="w-full px-3.5 py-2 text-xs rounded-xl bg-[#FAF8F5] dark:bg-[#241D1A] border border-[#E0D7CB] dark:border-[#3A2F29] text-espresso-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-[#6E645E] focus:outline-hidden focus:border-tan-500"
+                        id="prod_short_desc"
+                        class="hidden"
                     >{{ old('short_description') }}</textarea>
+                    <div class="quill-wrapper rounded-2xl overflow-hidden border border-[#E0D7CB] dark:border-[#3A2F29] bg-[#FAF8F5] dark:bg-[#241D1A]">
+                        <div 
+                            data-rich-editor="compact" 
+                            data-target="#prod_short_desc" 
+                            data-placeholder="e.g. Handcrafted in supple vegetable-tanned full-grain leather with a versatile dual-tone finish..."
+                            style="min-height: 90px;"
+                        >{!! old('short_description') !!}</div>
+                    </div>
                 </div>
 
                 <!-- Full Craft Story -->
                 <div>
-                    <label class="block text-xs font-semibold text-espresso-900 dark:text-white mb-1.5">
-                        Full Atelier Craft Narrative & Heritage
+                    <label class="block text-xs font-semibold text-espresso-900 dark:text-white mb-1.5 flex items-center justify-between">
+                        <span>Full Atelier Craft Narrative & Heritage</span>
+                        <span class="text-[10px] text-tan-600 dark:text-gold-400 font-semibold flex items-center gap-1">
+                            <i data-lucide="sparkles" class="w-3 h-3"></i> Rich Editor
+                        </span>
                     </label>
                     <textarea 
                         name="description" 
-                        rows="4" 
-                        placeholder="e.g. Detailed narrative describing hide selection, vegetable tanning, artisan edge burnishing, and heirloom durability..."
-                        class="w-full px-3.5 py-2 text-xs rounded-xl bg-[#FAF8F5] dark:bg-[#241D1A] border border-[#E0D7CB] dark:border-[#3A2F29] text-espresso-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-[#6E645E] focus:outline-hidden focus:border-tan-500"
+                        id="prod_desc"
+                        class="hidden"
                     >{{ old('description') }}</textarea>
+                    <div class="quill-wrapper rounded-2xl overflow-hidden border border-[#E0D7CB] dark:border-[#3A2F29] bg-[#FAF8F5] dark:bg-[#241D1A]">
+                        <div 
+                            data-rich-editor="full" 
+                            data-target="#prod_desc" 
+                            data-placeholder="e.g. Detailed narrative describing hide selection, vegetable tanning, artisan edge burnishing, and heirloom durability..."
+                            style="min-height: 140px;"
+                        >{!! old('description') !!}</div>
+                    </div>
                 </div>
             </div>
         </div>

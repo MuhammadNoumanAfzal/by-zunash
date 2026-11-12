@@ -367,9 +367,9 @@
                 </div>
 
                 <!-- Short Narrative Summary -->
-                <p class="text-sm text-espresso-800 leading-relaxed font-light">
-                    {{ $product['short_description'] }}
-                </p>
+                <div class="text-sm text-espresso-800 leading-relaxed font-light prose prose-sm max-w-none">
+                    {!! $product['short_description'] !!}
+                </div>
 
                 <!-- VARIATION 1: Belt Size Selector (Interactive with Size Guide) -->
                 @if($isBelt)
@@ -835,9 +835,9 @@
 
                 <!-- Tab 2: Atelier Story -->
                 <div x-show="activeTab === 'description'" x-cloak class="max-w-3xl text-sm text-espresso-800 font-light leading-relaxed space-y-4">
-                    <p class="text-base text-espresso-950 font-serif font-medium leading-relaxed">
-                        {{ $product['description'] }}
-                    </p>
+                    <div class="text-base text-espresso-950 font-serif font-medium leading-relaxed prose max-w-none">
+                        {!! $product['description'] !!}
+                    </div>
                     <p>
                         Each piece by By Zunash is hand-selected from top-tier vegetable-tanned full-grain cattle hides. Rather than artificial vinyl coatings or synthetic corrected grains, our master artisans celebrate the authentic natural pore structure and depth of tone. Over time and wear, this pure hide will absorb natural oils, creating a lustrous patina distinct to your everyday journey.
                     </p>

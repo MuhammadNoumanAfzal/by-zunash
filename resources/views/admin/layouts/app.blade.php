@@ -104,6 +104,10 @@
     <!-- SweetAlert2 -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
+    <!-- Quill Rich Text Editor -->
+    <link href="https://cdn.jsdelivr.net/npm/quill@2.0.2/dist/quill.snow.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/quill@2.0.2/dist/quill.js"></script>
+
     <style>
         [x-cloak] { display: none !important; }
         body, button, input, select, textarea {
@@ -198,6 +202,107 @@
         @keyframes backdropFade {
             from { opacity: 0; }
             to { opacity: 1; }
+        }
+
+        /* ===== By Zunash Luxury Quill Editor Styling ===== */
+        .quill-wrapper {
+            transition: border-color 0.2s ease, box-shadow 0.2s ease;
+        }
+        .quill-wrapper:focus-within {
+            border-color: #A87548 !important;
+            box-shadow: 0 0 0 1px rgba(168, 117, 72, 0.25) !important;
+        }
+        .ql-toolbar.ql-snow {
+            border: none !important;
+            border-bottom: 1px solid #ECE6DE !important;
+            background-color: #F7F3EE;
+            padding: 8px 12px !important;
+            border-top-left-radius: 1rem;
+            border-top-right-radius: 1rem;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 2px;
+            align-items: center;
+        }
+        .dark .ql-toolbar.ql-snow {
+            border-bottom: 1px solid #2C2420 !important;
+            background-color: #1A1513;
+        }
+        .ql-container.ql-snow {
+            border: none !important;
+            font-family: inherit !important;
+            font-size: 0.8125rem !important; /* 13px */
+            border-bottom-left-radius: 1rem;
+            border-bottom-right-radius: 1rem;
+        }
+        .ql-editor {
+            color: #1A120B;
+            min-height: 95px;
+            padding: 12px 14px !important;
+            line-height: 1.6;
+        }
+        .dark .ql-editor {
+            color: #FAF8F5;
+        }
+        .ql-editor.ql-blank::before {
+            color: #A89C91 !important;
+            font-style: italic;
+            left: 14px !important;
+            right: 14px !important;
+        }
+        .dark .ql-editor.ql-blank::before {
+            color: #6E645E !important;
+        }
+        /* Toolbar icons color in dark mode */
+        .dark .ql-snow .ql-stroke {
+            stroke: #C9BDB3 !important;
+        }
+        .dark .ql-snow .ql-fill {
+            fill: #C9BDB3 !important;
+        }
+        .dark .ql-snow .ql-picker {
+            color: #C9BDB3 !important;
+        }
+        .dark .ql-snow .ql-picker-options {
+            background-color: #241D1A !important;
+            border-color: #3A2F29 !important;
+        }
+        /* Active / Hover icons in Tan & Gold */
+        .ql-snow.ql-toolbar button:hover,
+        .ql-snow .ql-toolbar button:hover,
+        .ql-snow.ql-toolbar button:focus,
+        .ql-snow .ql-toolbar button:focus,
+        .ql-snow.ql-toolbar button.ql-active,
+        .ql-snow .ql-toolbar button.ql-active {
+            color: #A87548 !important;
+        }
+        .ql-snow.ql-toolbar button:hover .ql-stroke,
+        .ql-snow .ql-toolbar button:hover .ql-stroke,
+        .ql-snow.ql-toolbar button.ql-active .ql-stroke,
+        .ql-snow .ql-toolbar button.ql-active .ql-stroke {
+            stroke: #A87548 !important;
+        }
+        .dark .ql-snow.ql-toolbar button:hover .ql-stroke,
+        .dark .ql-snow .ql-toolbar button:hover .ql-stroke,
+        .dark .ql-snow.ql-toolbar button.ql-active .ql-stroke,
+        .dark .ql-snow .ql-toolbar button.ql-active .ql-stroke {
+            stroke: #C5A16B !important;
+        }
+        .ql-snow.ql-toolbar button:hover .ql-fill,
+        .ql-snow .ql-toolbar button:hover .ql-fill,
+        .ql-snow.ql-toolbar button.ql-active .ql-fill,
+        .ql-snow .ql-toolbar button.ql-active .ql-fill {
+            fill: #A87548 !important;
+        }
+        .dark .ql-snow.ql-toolbar button:hover .ql-fill,
+        .dark .ql-snow .ql-toolbar button:hover .ql-fill,
+        .dark .ql-snow.ql-toolbar button.ql-active .ql-fill,
+        .dark .ql-snow .ql-toolbar button.ql-active .ql-fill {
+            fill: #C5A16B !important;
+        }
+        .ql-snow .ql-picker-label {
+            padding-left: 6px !important;
+            padding-right: 18px !important;
         }
     </style>
 
@@ -862,8 +967,58 @@
     @endif
 
     <script>
+        function initRichEditors() {
+            if (typeof Quill === 'undefined') return;
+
+            document.querySelectorAll('[data-rich-editor]:not(.ql-initialized)').forEach((editorEl) => {
+                editorEl.classList.add('ql-initialized');
+                const type = editorEl.getAttribute('data-rich-editor') || 'full';
+                const targetSelector = editorEl.getAttribute('data-target');
+                const placeholder = editorEl.getAttribute('data-placeholder') || 'Write your content here...';
+                const targetTextarea = targetSelector ? document.querySelector(targetSelector) : null;
+
+                const compactToolbar = [
+                    ['bold', 'italic', 'underline'],
+                    [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+                    ['link', 'clean']
+                ];
+
+                const fullToolbar = [
+                    [{ 'header': [2, 3, false] }],
+                    ['bold', 'italic', 'underline', 'strike'],
+                    [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+                    ['blockquote', 'link'],
+                    ['clean']
+                ];
+
+                const quill = new Quill(editorEl, {
+                    theme: 'snow',
+                    placeholder: placeholder,
+                    modules: {
+                        toolbar: type === 'compact' ? compactToolbar : fullToolbar
+                    }
+                });
+
+                if (targetTextarea) {
+                    quill.on('text-change', () => {
+                        const html = quill.root.innerHTML;
+                        targetTextarea.value = (html === '<p><br></p>' || quill.getText().trim() === '') ? '' : html;
+                    });
+
+                    const form = targetTextarea.closest('form');
+                    if (form) {
+                        form.addEventListener('submit', () => {
+                            const html = quill.root.innerHTML;
+                            targetTextarea.value = (html === '<p><br></p>' || quill.getText().trim() === '') ? '' : html;
+                        });
+                    }
+                }
+            });
+        }
+
         document.addEventListener('DOMContentLoaded', () => {
             lucide.createIcons();
+            initRichEditors();
 
             // Backdrop click closes dialog
             document.addEventListener('click', function(e) {

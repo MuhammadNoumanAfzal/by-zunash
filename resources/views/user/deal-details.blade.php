@@ -249,8 +249,8 @@
                     </div>
 
                     @if($deal->description)
-                        <div class="text-xs sm:text-sm text-espresso-800/80 dark:text-ivory-300 leading-relaxed font-light mb-5">
-                            {{ $deal->description }}
+                        <div class="text-xs sm:text-sm text-espresso-800/80 dark:text-ivory-300 leading-relaxed font-light mb-5 prose prose-sm max-w-none">
+                            {!! $deal->description !!}
                         </div>
                     @endif
 
