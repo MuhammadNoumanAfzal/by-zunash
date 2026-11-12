@@ -132,7 +132,8 @@
                 <div class="w-full sm:w-48">
                     <select 
                         name="category" 
-                        class="w-full px-3 py-2 text-xs rounded-xl bg-[#FAF8F5] dark:bg-[#241D1A] border border-[#E0D7CB] dark:border-[#382D27] text-espresso-900 dark:text-white focus:outline-hidden focus:border-tan-500"
+                        onchange="this.form.submit()"
+                        class="w-full px-3 py-2 text-xs rounded-xl bg-[#FAF8F5] dark:bg-[#241D1A] border border-[#E0D7CB] dark:border-[#382D27] text-espresso-900 dark:text-white focus:outline-hidden focus:border-tan-500 cursor-pointer"
                     >
                         <option value="all">All Collections</option>
                         @foreach($categories as $cat)
@@ -146,7 +147,8 @@
                 <div class="w-full sm:w-48">
                     <select 
                         name="status" 
-                        class="w-full px-3 py-2 text-xs rounded-xl bg-[#FAF8F5] dark:bg-[#241D1A] border border-[#E0D7CB] dark:border-[#382D27] text-espresso-900 dark:text-white focus:outline-hidden focus:border-tan-500"
+                        onchange="this.form.submit()"
+                        class="w-full px-3 py-2 text-xs rounded-xl bg-[#FAF8F5] dark:bg-[#241D1A] border border-[#E0D7CB] dark:border-[#382D27] text-espresso-900 dark:text-white focus:outline-hidden focus:border-tan-500 cursor-pointer"
                     >
                         <option value="all" {{ request('status') === 'all' ? 'selected' : '' }}>All Statuses</option>
                         <option value="adequate" {{ request('status') === 'adequate' ? 'selected' : '' }}>In Stock (>5 units)</option>

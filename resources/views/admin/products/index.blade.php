@@ -200,7 +200,8 @@
         <div class="lg:col-span-3">
             <select 
                 name="category" 
-                class="w-full px-3 py-2 text-xs rounded-xl bg-[#FAF8F5] dark:bg-[#241D1A] border border-[#E0D7CB] dark:border-[#382D27] text-espresso-900 dark:text-white focus:outline-hidden focus:border-tan-500"
+                onchange="this.form.submit()"
+                class="w-full px-3 py-2 text-xs rounded-xl bg-[#FAF8F5] dark:bg-[#241D1A] border border-[#E0D7CB] dark:border-[#382D27] text-espresso-900 dark:text-white focus:outline-hidden focus:border-tan-500 cursor-pointer"
             >
                 <option value="all">All Categories</option>
                 @foreach($categories as $cat)
@@ -215,7 +216,8 @@
         <div class="lg:col-span-2">
             <select 
                 name="stock" 
-                class="w-full px-3 py-2 text-xs rounded-xl bg-[#FAF8F5] dark:bg-[#241D1A] border border-[#E0D7CB] dark:border-[#382D27] text-espresso-900 dark:text-white focus:outline-hidden focus:border-tan-500"
+                onchange="this.form.submit()"
+                class="w-full px-3 py-2 text-xs rounded-xl bg-[#FAF8F5] dark:bg-[#241D1A] border border-[#E0D7CB] dark:border-[#382D27] text-espresso-900 dark:text-white focus:outline-hidden focus:border-tan-500 cursor-pointer"
             >
                 <option value="">Stock Status: All</option>
                 <option value="in_stock" {{ request('stock') === 'in_stock' ? 'selected' : '' }}>In Stock (>5)</option>
@@ -229,7 +231,8 @@
         <div class="lg:col-span-2">
             <select 
                 name="sort" 
-                class="w-full px-3 py-2 text-xs rounded-xl bg-[#FAF8F5] dark:bg-[#241D1A] border border-[#E0D7CB] dark:border-[#382D27] text-espresso-900 dark:text-white focus:outline-hidden focus:border-tan-500"
+                onchange="this.form.submit()"
+                class="w-full px-3 py-2 text-xs rounded-xl bg-[#FAF8F5] dark:bg-[#241D1A] border border-[#E0D7CB] dark:border-[#382D27] text-espresso-900 dark:text-white focus:outline-hidden focus:border-tan-500 cursor-pointer"
             >
                 <option value="latest" {{ request('sort') === 'latest' ? 'selected' : '' }}>Sort: Latest</option>
                 <option value="price_low" {{ request('sort') === 'price_low' ? 'selected' : '' }}>Price: Low to High</option>
@@ -350,8 +353,10 @@
                 </div>
             </div>
         @empty
-            <div class="py-8 text-center text-xs text-gray-400">
-                No creations found matching the selected filters.
+            <div class="py-12 text-center text-xs text-gray-400">
+                <i data-lucide="package-search" class="w-8 h-8 text-[#A89C91] mx-auto mb-2"></i>
+                <div class="font-bold text-espresso-950 dark:text-white">No creations match the selected filters.</div>
+                <a href="{{ route('admin.products.index') }}" class="inline-block mt-2 text-tan-600 dark:text-gold hover:underline font-bold">Reset All Filters &rarr;</a>
             </div>
         @endforelse
     </div>
@@ -511,8 +516,13 @@
                     </tr>
                 @empty
                     <tr>
-                        <td colspan="7" class="py-12 text-center text-gray-400">
-                            No products match your current filters. Try resetting search filters.
+                        <td colspan="7" class="py-14 text-center">
+                            <i data-lucide="package-search" class="w-9 h-9 text-[#A89C91] mx-auto mb-2.5"></i>
+                            <div class="text-xs font-bold text-espresso-950 dark:text-white">No creations match your current filters.</div>
+                            <p class="text-[11px] text-gray-400 mt-0.5">Try selecting another collection or clearing active filters.</p>
+                            <a href="{{ route('admin.products.index') }}" class="inline-block mt-3 px-3 py-1.5 rounded-xl bg-[#FAF8F5] dark:bg-[#201815] border border-[#DFD6CB] dark:border-[#382D27] text-xs font-bold text-espresso-900 dark:text-gold hover:bg-tan-50 transition-colors">
+                                Reset All Filters
+                            </a>
                         </td>
                     </tr>
                 @endforelse

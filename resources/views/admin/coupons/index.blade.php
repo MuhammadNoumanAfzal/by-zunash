@@ -74,7 +74,7 @@
             </div>
 
             <div class="lg:col-span-3">
-                <select name="status" class="w-full px-3 py-2 text-xs rounded-xl bg-[#FAF8F5] dark:bg-[#241D1A] border border-[#E0D7CB] dark:border-[#382D27] text-espresso-900 dark:text-white focus:outline-hidden focus:border-tan-500">
+                <select name="status" onchange="this.form.submit()" class="w-full px-3 py-2 text-xs rounded-xl bg-[#FAF8F5] dark:bg-[#241D1A] border border-[#E0D7CB] dark:border-[#382D27] text-espresso-900 dark:text-white focus:outline-hidden focus:border-tan-500 cursor-pointer">
                     <option value="all">Status: All Codes</option>
                     <option value="active" {{ request('status') === 'active' ? 'selected' : '' }}>Active & Usable</option>
                     <option value="inactive" {{ request('status') === 'inactive' ? 'selected' : '' }}>Inactive / Paused</option>
@@ -82,11 +82,16 @@
                 </select>
             </div>
 
-            <div class="sm:col-span-2 lg:col-span-1">
-                <button type="submit" class="w-full py-2 px-3 rounded-xl bg-espresso-900 hover:bg-tan-600 text-white font-semibold text-xs flex items-center justify-center gap-1.5 transition-colors">
+            <div class="sm:col-span-2 lg:col-span-1 flex items-center gap-1.5">
+                <button type="submit" class="flex-1 py-2 px-3 rounded-xl bg-espresso-900 hover:bg-tan-600 text-white font-semibold text-xs flex items-center justify-center gap-1.5 transition-colors" title="Apply Filter">
                     <i data-lucide="filter" class="w-3.5 h-3.5"></i>
                     <span class="sm:hidden lg:hidden">Filter</span>
                 </button>
+                @if(request()->hasAny(['q', 'status']))
+                    <a href="{{ route('admin.coupons.index') }}" class="w-9 h-9 shrink-0 rounded-xl border border-[#DFD6CB] dark:border-[#382D27] text-gray-500 hover:bg-gray-100 dark:hover:bg-[#241D1A] flex items-center justify-center transition-colors" title="Reset Filters">
+                        <i data-lucide="rotate-ccw" class="w-3.5 h-3.5"></i>
+                    </a>
+                @endif
             </div>
         </form>
     </div>

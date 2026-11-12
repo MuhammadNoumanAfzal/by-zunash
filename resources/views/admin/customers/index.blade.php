@@ -23,6 +23,42 @@
         </div>
     </div>
 
+    <!-- Filter Bar Card -->
+    <div class="p-4 rounded-2xl bg-white dark:bg-[#1A1513] border border-[#ECE6DE] dark:border-[#2C2420] shadow-2xs">
+        <form action="{{ route('admin.customers.index') }}" method="GET" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-12 gap-3">
+            <div class="lg:col-span-8 relative">
+                <i data-lucide="search" class="w-4 h-4 text-[#A89C91] absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none"></i>
+                <input 
+                    type="text" 
+                    name="q" 
+                    value="{{ request('q') }}"
+                    placeholder="Search by patron name, phone, email, or city..." 
+                    class="w-full pl-10 pr-3 py-2 text-xs rounded-xl bg-[#FAF8F5] dark:bg-[#241D1A] border border-[#E0D7CB] dark:border-[#382D27] text-espresso-900 dark:text-white focus:outline-hidden focus:border-tan-500 font-sans"
+                >
+            </div>
+
+            <div class="lg:col-span-3">
+                <select name="vip" onchange="this.form.submit()" class="w-full px-3 py-2 text-xs rounded-xl bg-[#FAF8F5] dark:bg-[#241D1A] border border-[#E0D7CB] dark:border-[#382D27] text-espresso-900 dark:text-white focus:outline-hidden focus:border-tan-500 cursor-pointer">
+                    <option value="all">Patron Tier: All</option>
+                    <option value="1" {{ request('vip') === '1' ? 'selected' : '' }}>VIP Patrons Only</option>
+                    <option value="0" {{ request('vip') === '0' ? 'selected' : '' }}>Standard Patrons</option>
+                </select>
+            </div>
+
+            <div class="sm:col-span-2 lg:col-span-1 flex items-center gap-1.5">
+                <button type="submit" class="flex-1 py-2 px-3 rounded-xl bg-espresso-900 hover:bg-tan-600 text-white font-semibold text-xs flex items-center justify-center gap-1.5 transition-colors" title="Apply Filter">
+                    <i data-lucide="filter" class="w-3.5 h-3.5"></i>
+                    <span class="sm:hidden lg:hidden">Filter</span>
+                </button>
+                @if(request()->hasAny(['q', 'vip']))
+                    <a href="{{ route('admin.customers.index') }}" class="w-9 h-9 shrink-0 rounded-xl border border-[#DFD6CB] dark:border-[#382D27] text-gray-500 hover:bg-gray-100 dark:hover:bg-[#241D1A] flex items-center justify-center transition-colors" title="Reset Filters">
+                        <i data-lucide="rotate-ccw" class="w-3.5 h-3.5"></i>
+                    </a>
+                @endif
+            </div>
+        </form>
+    </div>
+
     <!-- Customers Table & Mobile Cards -->
     <div class="rounded-3xl bg-white dark:bg-[#1A1513] border border-[#ECE6DE] dark:border-[#2C2420] shadow-card overflow-hidden">
         

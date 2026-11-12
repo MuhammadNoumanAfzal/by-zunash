@@ -69,7 +69,8 @@
             <div class="flex items-center gap-2 w-full sm:w-auto">
                 <select 
                     name="status" 
-                    class="flex-1 sm:w-auto py-2 px-3 text-xs rounded-xl bg-[#FAF8F5] dark:bg-[#120E0C] border border-[#E0D7CB] dark:border-[#2C2420] text-espresso-900 dark:text-ivory focus:outline-hidden focus:border-tan-500"
+                    onchange="this.form.submit()"
+                    class="flex-1 sm:w-auto py-2 px-3 text-xs rounded-xl bg-[#FAF8F5] dark:bg-[#120E0C] border border-[#E0D7CB] dark:border-[#2C2420] text-espresso-900 dark:text-ivory focus:outline-hidden focus:border-tan-500 cursor-pointer"
                 >
                     <option value="">All Statuses</option>
                     <option value="active" {{ request('status') === 'active' ? 'selected' : '' }}>Active Only</option>

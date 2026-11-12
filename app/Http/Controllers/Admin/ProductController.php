@@ -31,18 +31,32 @@ class ProductController extends Controller
 
         // Category filter
         if ($request->filled('category') && $request->input('category') !== 'all') {
-            $query->where('category_slug', $request->input('category'));
+            $catSlug = $request->input('category');
+            $query->where(function($q) use ($catSlug) {
+                $q->where('category_slug', $catSlug)
+                  ->orWhereHas('category', function($cq) use ($catSlug) {
+                      $cq->where('slug', $catSlug);
+                  });
+            });
         }
 
         // Stock status filter
-        if ($request->filled('stock')) {
+        if ($request->filled('stock') && $request->input('stock') !== '') {
             $stock = $request->input('stock');
             if ($stock === 'in_stock') {
-                $query->where('in_stock', true)->where('stock_quantity', '>', 5);
+                $query->where('stock_quantity', '>', 5)
+                      ->where('availability', '!=', 'out_of_stock')
+                      ->where('availability', '!=', 'on_demand');
             } elseif ($stock === 'low_stock') {
-                $query->where('stock_quantity', '<=', 5)->where('stock_quantity', '>', 0);
+                $query->where('stock_quantity', '<=', 5)
+                      ->where('stock_quantity', '>', 0)
+                      ->where('availability', '!=', 'out_of_stock');
             } elseif ($stock === 'out_of_stock') {
-                $query->where('stock_quantity', '<=', 0);
+                $query->where(function($q) {
+                    $q->where('stock_quantity', '<=', 0)
+                      ->orWhere('availability', 'out_of_stock')
+                      ->orWhere('in_stock', false);
+                });
             } elseif ($stock === 'on_demand') {
                 $query->where('availability', 'on_demand');
             }

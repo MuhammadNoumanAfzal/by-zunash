@@ -23,6 +23,51 @@
         </div>
     </div>
 
+    <!-- Filter Bar Card -->
+    <div class="p-4 rounded-2xl bg-white dark:bg-[#1A1513] border border-[#ECE6DE] dark:border-[#2C2420] shadow-2xs">
+        <form action="{{ route('admin.reviews.index') }}" method="GET" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-12 gap-3">
+            <div class="lg:col-span-6 relative">
+                <i data-lucide="search" class="w-4 h-4 text-[#A89C91] absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none"></i>
+                <input 
+                    type="text" 
+                    name="q" 
+                    value="{{ request('q') }}"
+                    placeholder="Search reviews by client name, product, city, comment..." 
+                    class="w-full pl-10 pr-3 py-2 text-xs rounded-xl bg-[#FAF8F5] dark:bg-[#241D1A] border border-[#E0D7CB] dark:border-[#382D27] text-espresso-900 dark:text-white focus:outline-hidden focus:border-tan-500"
+                >
+            </div>
+
+            <div class="lg:col-span-3">
+                <select name="rating" onchange="this.form.submit()" class="w-full px-3 py-2 text-xs rounded-xl bg-[#FAF8F5] dark:bg-[#241D1A] border border-[#E0D7CB] dark:border-[#382D27] text-espresso-900 dark:text-white focus:outline-hidden focus:border-tan-500 cursor-pointer">
+                    <option value="all">Rating: All Stars</option>
+                    <option value="5" {{ request('rating') === '5' ? 'selected' : '' }}>★ 5 Stars Only</option>
+                    <option value="4" {{ request('rating') === '4' ? 'selected' : '' }}>★ 4 Stars Only</option>
+                    <option value="3" {{ request('rating') === '3' ? 'selected' : '' }}>★ 3 Stars Only</option>
+                </select>
+            </div>
+
+            <div class="lg:col-span-2">
+                <select name="status" onchange="this.form.submit()" class="w-full px-3 py-2 text-xs rounded-xl bg-[#FAF8F5] dark:bg-[#241D1A] border border-[#E0D7CB] dark:border-[#382D27] text-espresso-900 dark:text-white focus:outline-hidden focus:border-tan-500 cursor-pointer">
+                    <option value="all">Status: All</option>
+                    <option value="published" {{ request('status') === 'published' ? 'selected' : '' }}>Published</option>
+                    <option value="pending" {{ request('status') === 'pending' ? 'selected' : '' }}>Pending</option>
+                </select>
+            </div>
+
+            <div class="sm:col-span-2 lg:col-span-1 flex items-center gap-1.5">
+                <button type="submit" class="flex-1 py-2 px-3 rounded-xl bg-espresso-900 hover:bg-tan-600 text-white font-semibold text-xs flex items-center justify-center gap-1.5 transition-colors" title="Apply Filter">
+                    <i data-lucide="filter" class="w-3.5 h-3.5"></i>
+                    <span class="sm:hidden lg:hidden">Filter</span>
+                </button>
+                @if(request()->hasAny(['q', 'rating', 'status']))
+                    <a href="{{ route('admin.reviews.index') }}" class="w-9 h-9 shrink-0 rounded-xl border border-[#DFD6CB] dark:border-[#382D27] text-gray-500 hover:bg-gray-100 dark:hover:bg-[#241D1A] flex items-center justify-center transition-colors" title="Reset Filters">
+                        <i data-lucide="rotate-ccw" class="w-3.5 h-3.5"></i>
+                    </a>
+                @endif
+            </div>
+        </form>
+    </div>
+
     <!-- Reviews Grid -->
     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
         @forelse($reviews as $review)
