@@ -705,7 +705,7 @@
                     <!-- Items in Cart (Modern Cards + Custom Clean Scrollbar) -->
                     <div class="space-y-3 max-h-80 overflow-y-auto pr-1.5 scrollbar-thin scrollbar-thumb-ivory-300">
                         <template x-for="item in $store.cart.items" :key="item.key">
-                            <div class="p-3 rounded-2xl bg-[#FAF7F2] border border-ivory-200/80 flex items-center gap-3.5 group hover:border-gold/30 transition-all shadow-2xs">
+                            <div class="p-3.5 rounded-2xl bg-[#FAF7F2] border border-ivory-200/80 flex items-start gap-3.5 group hover:border-gold/30 transition-all shadow-2xs">
                                 
                                 <img 
                                     :src="item.image" 
@@ -714,17 +714,49 @@
                                 >
                                 
                                 <div class="flex-1 min-w-0">
-                                    <h4 class="font-serif text-xs font-bold text-espresso-950 truncate leading-snug" x-text="item.name"></h4>
-                                    
-                                    <div class="mt-1 flex items-center gap-2 flex-wrap">
-                                        <span class="text-[10px] text-espresso-800 font-semibold bg-white px-2 py-0.5 rounded border border-ivory-200" x-show="item.variant" x-text="item.variant"></span>
-                                        <span class="text-[11px] text-muted font-light">Qty: <strong class="text-espresso-950 font-bold" x-text="item.quantity"></strong></span>
+                                    <div class="flex items-start justify-between gap-1">
+                                        <h4 class="font-serif text-xs font-bold text-espresso-950 truncate leading-snug" x-text="item.name"></h4>
+                                        <div class="font-serif text-xs sm:text-sm font-bold text-espresso-950 flex-shrink-0" x-text="'PKR ' + (item.price * item.quantity).toLocaleString()"></div>
                                     </div>
-                                </div>
+                                    
+                                    <div class="mt-1 flex items-center justify-between gap-2 flex-wrap">
+                                        <span class="text-[10px] text-espresso-800 font-semibold bg-white px-2 py-0.5 rounded border border-ivory-200" x-show="item.variant" x-text="item.variant"></span>
+                                        <span class="text-[10px] text-muted font-light" x-show="item.quantity > 1" x-text="'@ PKR ' + item.price.toLocaleString()"></span>
+                                    </div>
 
-                                <div class="text-right flex-shrink-0">
-                                    <div class="font-serif text-xs sm:text-sm font-bold text-espresso-950" x-text="'PKR ' + (item.price * item.quantity).toLocaleString()"></div>
-                                    <div class="text-[10px] text-muted font-light" x-show="item.quantity > 1" x-text="'@ PKR ' + item.price.toLocaleString()"></div>
+                                    <!-- Interactive Quantity Controls & Remove -->
+                                    <div class="mt-2.5 flex items-center justify-between pt-2 border-t border-ivory-200/80">
+                                        <div class="h-6 rounded-lg bg-white border border-ivory-300 shadow-2xs flex items-center overflow-hidden">
+                                            <button 
+                                                type="button" 
+                                                @click.stop="$store.cart.updateQuantity(item.key, item.quantity - 1)" 
+                                                class="w-6 h-full flex items-center justify-center hover:bg-ivory-100 text-espresso-800 transition-colors focus:outline-none cursor-pointer"
+                                                :disabled="item.quantity <= 1"
+                                                title="Decrease quantity"
+                                            >
+                                                <svg class="w-2.5 h-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                                            </button>
+                                            <span class="w-6 text-center text-xs font-bold text-espresso-950" x-text="item.quantity"></span>
+                                            <button 
+                                                type="button" 
+                                                @click.stop="$store.cart.updateQuantity(item.key, item.quantity + 1)" 
+                                                class="w-6 h-full flex items-center justify-center hover:bg-ivory-100 text-espresso-800 transition-colors focus:outline-none cursor-pointer"
+                                                title="Increase quantity"
+                                            >
+                                                <svg class="w-2.5 h-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                                            </button>
+                                        </div>
+
+                                        <button 
+                                            type="button" 
+                                            @click.stop="$store.cart.removeItem(item.key)" 
+                                            class="text-[11px] text-rose-600 hover:text-rose-700 font-semibold hover:underline flex items-center gap-1 cursor-pointer"
+                                            title="Remove item"
+                                        >
+                                            <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+                                            <span>Remove</span>
+                                        </button>
+                                    </div>
                                 </div>
 
                             </div>
