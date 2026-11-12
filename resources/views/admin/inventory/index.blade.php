@@ -211,10 +211,12 @@
                                     value="{{ $product->stock_quantity }}" 
                                     min="0"
                                     title="Units"
+                                    oninput="if(parseInt(this.value) > 0 && this.form.availability.value === 'out_of_stock') { this.form.availability.value = 'in_stock'; } else if(parseInt(this.value) === 0 && this.form.availability.value === 'in_stock') { this.form.availability.value = 'out_of_stock'; }"
                                     class="w-16 px-2 py-1.5 text-xs rounded-lg border border-[#DFD6CB] dark:border-[#382D27] bg-white dark:bg-[#2A201C] text-center font-mono font-bold text-espresso-900 dark:text-white"
                                 >
                                 <select 
                                     name="availability" 
+                                    onchange="if(this.value === 'out_of_stock') { this.form.stock_quantity.value = 0; } else if(this.value === 'in_stock' && parseInt(this.form.stock_quantity.value) === 0) { this.form.stock_quantity.value = 1; }"
                                     class="flex-1 min-w-0 px-2 py-1.5 text-xs rounded-lg border border-[#DFD6CB] dark:border-[#382D27] bg-white dark:bg-[#2A201C] text-espresso-900 dark:text-white"
                                 >
                                     <option value="in_stock" {{ $product->availability === 'in_stock' ? 'selected' : '' }}>In Stock</option>
@@ -346,12 +348,14 @@
                                                 value="{{ $product->stock_quantity }}" 
                                                 min="0"
                                                 title="Units count"
+                                                oninput="if(parseInt(this.value) > 0 && this.form.availability.value === 'out_of_stock') { this.form.availability.value = 'in_stock'; } else if(parseInt(this.value) === 0 && this.form.availability.value === 'in_stock') { this.form.availability.value = 'out_of_stock'; }"
                                                 class="w-14 px-1.5 py-1 text-xs rounded-lg border border-[#DFD6CB] dark:border-[#382D27] bg-[#FAF8F5] dark:bg-[#241D1A] text-center font-mono font-bold text-espresso-900 dark:text-white focus:outline-hidden focus:border-tan-500"
                                             >
 
                                             <!-- Availability Mode dropdown -->
                                             <select 
                                                 name="availability" 
+                                                onchange="if(this.value === 'out_of_stock') { this.form.stock_quantity.value = 0; } else if(this.value === 'in_stock' && parseInt(this.form.stock_quantity.value) === 0) { this.form.stock_quantity.value = 1; }"
                                                 class="px-2 py-1 text-[11px] rounded-lg border border-[#DFD6CB] dark:border-[#382D27] bg-[#FAF8F5] dark:bg-[#241D1A] text-espresso-900 dark:text-white focus:outline-hidden"
                                             >
                                                 <option value="in_stock" {{ $product->availability === 'in_stock' ? 'selected' : '' }}>In Stock</option>

@@ -99,19 +99,31 @@ class InventoryController extends Controller
         ]);
 
         $prevStock = $product->stock_quantity;
-        $newStock = $validated['stock_quantity'];
+        $newStock = (int) $validated['stock_quantity'];
         $diff = $newStock - $prevStock;
 
         $product->stock_quantity = $newStock;
         
-        if (!empty($validated['availability'])) {
-            $product->availability = $validated['availability'];
-        } else {
-            if ($newStock == 0 && $product->availability !== 'on_demand') {
-                $product->availability = 'out_of_stock';
-            } elseif ($newStock > 0 && $product->availability === 'out_of_stock') {
+        $chosenAvailability = $validated['availability'] ?? null;
+
+        if ($newStock == 0 && $chosenAvailability !== 'on_demand') {
+            $product->availability = 'out_of_stock';
+            $product->in_stock = false;
+        } elseif ($newStock > 0) {
+            // When replenished with positive units:
+            if ($chosenAvailability === 'on_demand') {
+                $product->availability = 'on_demand';
+                $product->in_stock = true;
+            } else {
+                // If it was out_of_stock or user left/submitted out_of_stock with quantity > 0, auto-switch to in_stock
                 $product->availability = 'in_stock';
+                $product->in_stock = true;
             }
+        } else {
+            if ($chosenAvailability) {
+                $product->availability = $chosenAvailability;
+            }
+            $product->in_stock = ($product->availability !== 'out_of_stock');
         }
 
         if ($request->has('lead_time')) {
