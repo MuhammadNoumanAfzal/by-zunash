@@ -74,25 +74,27 @@
             x-transition:enter="transition ease-out duration-500"
             x-transition:enter-start="opacity-0 translate-y-6 scale-98"
             x-transition:enter-end="opacity-100 translate-y-0 scale-100"
-            class="max-w-2xl mx-auto bg-white p-8 sm:p-12 rounded-3xl border border-gold/40 shadow-2xl text-center relative overflow-hidden"
+            class="max-w-2xl mx-auto bg-white p-6 sm:p-10 rounded-3xl border border-gold/40 shadow-2xl text-center relative overflow-hidden print-invoice"
         >
-            <div class="absolute -top-12 -right-12 w-40 h-40 bg-gold/10 rounded-full blur-2xl pointer-events-none"></div>
-            <div class="absolute -bottom-12 -left-12 w-40 h-40 bg-gold/10 rounded-full blur-2xl pointer-events-none"></div>
+            <div class="absolute -top-12 -right-12 w-40 h-40 bg-gold/10 rounded-full blur-2xl pointer-events-none no-print"></div>
+            <div class="absolute -bottom-12 -left-12 w-40 h-40 bg-gold/10 rounded-full blur-2xl pointer-events-none no-print"></div>
 
-            <div class="w-20 h-20 mx-auto mb-6 rounded-full bg-emerald-50 border-2 border-emerald-300 text-emerald-600 flex items-center justify-center shadow-lg ring-8 ring-emerald-50/50">
-                <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+            <div class="text-[11px] font-cinzel tracking-widest text-[#8F8379] font-bold uppercase mb-2">By Zunash Leather Atelier</div>
+
+            <div class="w-16 h-16 sm:w-20 sm:h-20 mx-auto mb-4 rounded-full bg-emerald-50 border-2 border-emerald-300 text-emerald-600 flex items-center justify-center shadow-lg ring-8 ring-emerald-50/50">
+                <svg class="w-8 h-8 sm:w-10 sm:h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
             </div>
             
             <span class="text-xs uppercase tracking-widest text-gold-700 font-serif font-bold">Alhamdulillah • Order Confirmed</span>
-            <h2 class="font-serif text-3xl sm:text-4xl font-bold text-espresso-950 mt-1 mb-2">
+            <h2 class="font-serif text-2xl sm:text-4xl font-bold text-espresso-950 mt-1 mb-2">
                 Shukriya, <span x-text="firstName" class="text-espresso-900"></span>!
             </h2>
             <p class="text-xs sm:text-sm text-muted mb-6 leading-relaxed max-w-lg mx-auto">
-                Your bespoke leather commission has been received with reference <strong class="text-espresso-950 font-mono bg-ivory-100 px-2 py-0.5 rounded border border-ivory-300" x-text="orderNumber"></strong>. Our client concierge will call or WhatsApp your contact number (<span class="font-semibold text-espresso-950" x-text="phone"></span>) before final courier handover.
+                Your bespoke leather commission has been received with reference <strong class="text-espresso-950 font-mono bg-ivory-100 px-2 py-0.5 rounded border border-ivory-300 select-all" x-text="orderNumber"></strong>. Our client concierge will call or WhatsApp your contact number (<span class="font-semibold text-espresso-950" x-text="phone"></span>) before courier dispatch.
             </p>
 
-            <div class="bg-[#FAF7F2] p-6 rounded-2xl border border-ivory-300 text-left text-xs text-espresso-800 space-y-3.5 mb-8 shadow-2xs">
-                <div class="flex justify-between items-center border-b border-ivory-200 pb-2.5">
+            <div class="bg-[#FAF7F2] p-5 sm:p-6 rounded-2xl border border-ivory-300 text-left text-xs text-espresso-800 space-y-3 mb-6 shadow-2xs">
+                <div class="flex justify-between items-center border-b border-ivory-200 pb-2">
                     <span class="text-muted">Payment Mode:</span>
                     <span class="font-bold text-espresso-950 flex items-center gap-1.5" x-text="{
                         'cod': 'Cash on Delivery (Nationwide COD)',
@@ -101,37 +103,101 @@
                         'easypaisa': 'EasyPaisa Mobile Account'
                     }[paymentMethod] || 'Cash on Delivery'"></span>
                 </div>
-                <div class="flex justify-between items-center border-b border-ivory-200 pb-2.5">
+
+                <div class="flex justify-between items-center border-b border-ivory-200 pb-2" x-show="transactionId">
+                    <span class="text-muted">Transaction ID:</span>
+                    <span class="font-mono font-bold text-espresso-950 select-all" x-text="transactionId"></span>
+                </div>
+
+                <div class="flex justify-between items-center border-b border-ivory-200 pb-2">
                     <span class="text-muted">Delivery Destination:</span>
                     <span class="font-bold text-espresso-950" x-text="city + ', Pakistan'"></span>
                 </div>
-                <div class="flex justify-between items-start border-b border-ivory-200 pb-2.5">
+
+                <div class="flex justify-between items-start border-b border-ivory-200 pb-2">
                     <span class="text-muted flex-shrink-0">Dispatch Address:</span>
                     <span class="font-semibold text-right max-w-xs text-espresso-950" x-text="address"></span>
                 </div>
-                <div class="flex justify-between items-center pt-1 font-serif text-sm font-bold text-espresso-950">
+
+                <div class="flex justify-between items-center border-b border-ivory-200 pb-2 font-serif text-sm font-bold text-espresso-950">
                     <span class="flex items-center gap-1.5 text-gold-700">
                         <svg class="w-4 h-4 text-gold-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><rect x="1" y="3" width="15" height="13"></rect><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"></polygon><circle cx="5.5" cy="18.5" r="2.5"></circle><circle cx="18.5" cy="18.5" r="2.5"></circle></svg>
                         Estimated Doorstep Arrival:
                     </span>
                     <span class="text-emerald-700 font-bold">2–4 Business Days</span>
                 </div>
+
+                <!-- Ordered Items Breakdown Table in Receipt -->
+                <div class="pt-2 divide-y divide-ivory-200" x-show="placedOrderItems && placedOrderItems.length > 0">
+                    <div class="text-[10px] font-bold uppercase tracking-wider text-[#8F8379] pb-2 flex justify-between">
+                        <span>Ordered Items Breakdown</span>
+                        <span x-text="placedOrderDate"></span>
+                    </div>
+
+                    <template x-for="item in placedOrderItems" :key="'placed-' + item.key">
+                        <div class="py-2.5 flex items-center justify-between text-xs">
+                            <div class="flex items-center gap-2.5 min-w-0">
+                                <img :src="item.image" class="w-10 h-10 object-cover rounded-lg border border-ivory-300 shrink-0">
+                                <div class="min-w-0">
+                                    <div class="font-bold text-espresso-950 truncate" x-text="item.name"></div>
+                                    <div class="text-[10px] text-muted flex items-center gap-1.5">
+                                        <span x-show="item.variant" x-text="item.variant"></span>
+                                        <span>•</span>
+                                        <span class="font-bold text-espresso-900" x-text="'Qty: ' + item.quantity"></span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="font-serif font-bold text-espresso-950 shrink-0" x-text="'PKR ' + (item.price * item.quantity).toLocaleString()"></div>
+                        </div>
+                    </template>
+
+                    <div class="pt-3 space-y-1.5 text-xs">
+                        <div class="flex justify-between text-muted">
+                            <span>Subtotal:</span>
+                            <span class="font-bold text-espresso-900" x-text="'PKR ' + Number(placedOrderSubtotal).toLocaleString()"></span>
+                        </div>
+                        <div class="flex justify-between text-emerald-700 font-semibold" x-show="placedOrderDiscount > 0">
+                            <span>Promo Discount:</span>
+                            <span x-text="'- PKR ' + Number(placedOrderDiscount).toLocaleString()"></span>
+                        </div>
+                        <div class="flex justify-between text-muted">
+                            <span>Tracked Delivery:</span>
+                            <span class="font-bold text-emerald-700">FREE</span>
+                        </div>
+                        <div class="flex justify-between pt-2 border-t border-ivory-300 font-serif text-sm font-bold text-espresso-950">
+                            <span>Grand Total:</span>
+                            <span class="text-tan-700 font-bold" x-text="'PKR ' + Number(placedOrderTotal).toLocaleString()"></span>
+                        </div>
+                    </div>
+                </div>
             </div>
 
-            <div class="flex flex-col sm:flex-row items-center justify-center gap-4">
+            <!-- Action Buttons: Print Slip, WhatsApp, Continue Shopping -->
+            <div class="flex flex-col sm:flex-row items-center justify-center gap-3 no-print">
+                <button 
+                    type="button" 
+                    @click="window.print()" 
+                    class="w-full sm:w-auto px-5 py-3 bg-tan-600 hover:bg-espresso-900 text-white text-xs uppercase tracking-widest font-bold rounded-xl shadow-md transition-all flex items-center justify-center gap-2 cursor-pointer border border-gold/30"
+                    title="Print or Save Order Invoice as PDF"
+                >
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"></polyline><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path><rect x="6" y="14" width="12" height="8"></rect></svg>
+                    <span>Print Order Receipt</span>
+                </button>
+
                 <a 
-                    href="https://wa.me/923214700545?text=Assalam%20o%20Alaikum%2C%20I%20have%20placed%20order%20reference%20" 
+                    :href="'https://wa.me/923214700545?text=' + encodeURIComponent('Assalam o Alaikum, I have placed order reference ' + orderNumber + '. Please confirm my order dispatch.')" 
                     target="_blank" 
-                    class="w-full sm:w-auto px-6 py-3.5 bg-emerald-700 hover:bg-emerald-800 text-white text-xs uppercase tracking-widest font-bold rounded-xl shadow-md transition-all flex items-center justify-center gap-2"
+                    class="w-full sm:w-auto px-5 py-3 bg-emerald-700 hover:bg-emerald-800 text-white text-xs uppercase tracking-widest font-bold rounded-xl shadow-md transition-all flex items-center justify-center gap-2"
                 >
                     <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.582 2.128 2.182-.573c.978.58 1.911.928 3.145.929 3.178 0 5.767-2.587 5.768-5.766.001-3.187-2.575-5.77-5.764-5.771zm3.392 8.244c-.144.405-.837.774-1.17.824-.299.045-.677.063-1.092-.069-.252-.08-.575-.187-.988-.365-1.739-.751-2.874-2.502-2.961-2.617-.087-.116-.708-.94-.708-1.793s.448-1.273.607-1.446c.159-.173.346-.217.462-.217l.332.007c.106.005.249-.04.39.298.144.347.491 1.2.534 1.287.043.087.072.188.014.303-.058.116-.087.188-.173.289l-.26.302c-.087.087-.179.182-.077.357.101.174.449.741.964 1.2 0.663.59 1.223.773 1.396.86.173.086.274.072.376-.044.101-.116.433-.506.549-.679.116-.173.231-.144.39-.086s1.011.477 1.184.564.289.13.332.202c.043.072.043.419-.101.824z"/></svg>
                     <span>WhatsApp Concierge</span>
                 </a>
+
                 <a 
                     href="{{ route('shop') }}" 
-                    class="w-full sm:w-auto px-6 py-3.5 bg-espresso hover:bg-chocolate-800 text-ivory text-xs uppercase tracking-widest font-semibold rounded-xl transition-all shadow-md border border-gold/30"
+                    class="w-full sm:w-auto px-5 py-3 bg-espresso hover:bg-chocolate-800 text-ivory text-xs uppercase tracking-widest font-semibold rounded-xl transition-all shadow-md border border-gold/30"
                 >
-                    Explore Atelier Catalog
+                    Continue Shopping
                 </a>
             </div>
         </div>
@@ -893,6 +959,13 @@ function checkoutForm() {
         error: '',
         isSubmitting: false,
 
+        // Placed Order Snapshot for Receipt / Print
+        placedOrderItems: [],
+        placedOrderTotal: 0,
+        placedOrderSubtotal: 0,
+        placedOrderDiscount: 0,
+        placedOrderDate: '',
+
         // Payment Proof & Screenshot State
         receiptFile: null,
         receiptFileName: '',
@@ -1121,6 +1194,14 @@ function checkoutForm() {
                 if (data.success) {
                     this.orderNumber = data.order_number;
                     localStorage.removeItem('bz_cart_token');
+
+                    // Save snapshot of order before clearing shopping bag
+                    this.placedOrderItems = JSON.parse(JSON.stringify(Alpine.store('cart').items || []));
+                    this.placedOrderTotal = this.calculatedTotal;
+                    this.placedOrderSubtotal = Alpine.store('cart').subtotal || 0;
+                    this.placedOrderDiscount = this.discountAmount || 0;
+                    this.placedOrderDate = new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
+
                     if (window.ZunashAlert) {
                         window.ZunashAlert.success(
                             'Order Placed Successfully!',
@@ -1145,6 +1226,11 @@ function checkoutForm() {
             .catch(() => {
                 this.isSubmitting = false;
                 this.orderNumber = 'BZ-' + Math.floor(100000 + Math.random() * 900000);
+                this.placedOrderItems = JSON.parse(JSON.stringify(Alpine.store('cart').items || []));
+                this.placedOrderTotal = this.calculatedTotal;
+                this.placedOrderSubtotal = Alpine.store('cart').subtotal || 0;
+                this.placedOrderDiscount = this.discountAmount || 0;
+                this.placedOrderDate = new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
                 this.orderPlaced = true;
                 Alpine.store('cart').clear();
                 window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -1153,5 +1239,24 @@ function checkoutForm() {
     };
 }
 </script>
+
+<style>
+@media print {
+    header, footer, nav, .no-print, [x-show="!orderPlaced"], #cart-slideover-backdrop, #cart-drawer, .whatsapp-float, button.fixed {
+        display: none !important;
+    }
+    body {
+        background: #ffffff !important;
+        color: #000000 !important;
+    }
+    .print-invoice {
+        max-width: 100% !important;
+        border: 1px solid #e5e5e5 !important;
+        box-shadow: none !important;
+        margin: 0 !important;
+        padding: 24px !important;
+    }
+}
+</style>
 @endpush
 @endsection
