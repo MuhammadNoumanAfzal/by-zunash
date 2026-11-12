@@ -331,15 +331,55 @@
     <!-- =========================================================================
          SECTION 4: CHAPTER III — CONSUMER CLARITY (Warm Light Cream Section)
          ========================================================================= -->
-    <div class="bg-white py-12 sm:py-16">
+    <style>
+        .mass-market-card,
+        html.dark .mass-market-card {
+            background-color: #EDE8E1 !important;
+            border-color: #D5CDC2 !important;
+        }
+        .mass-market-card,
+        .mass-market-card *,
+        html.dark .mass-market-card,
+        html.dark .mass-market-card * {
+            color: #1A120B !important;
+        }
+        .mass-market-card h3,
+        html.dark .mass-market-card h3 {
+            color: #120E0C !important;
+        }
+        .mass-market-card p,
+        html.dark .mass-market-card p {
+            color: #5C4F45 !important;
+        }
+        .mass-market-card li span,
+        html.dark .mass-market-card li span {
+            color: #2C221C !important;
+        }
+        .mass-market-card strong,
+        html.dark .mass-market-card strong {
+            color: #120E0C !important;
+        }
+        .mass-market-card .badge,
+        html.dark .mass-market-card .badge,
+        .mass-market-card .badge span,
+        html.dark .mass-market-card .badge span {
+            background-color: #DDD4C8 !important;
+            color: #4A3E37 !important;
+        }
+        .mass-market-card [data-lucide="x"],
+        html.dark .mass-market-card [data-lucide="x"] {
+            color: #DC2626 !important;
+        }
+    </style>
+    <div class="bg-white dark:bg-[#120B08] py-12 sm:py-16">
         <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
             
             <div class="text-center max-w-2xl mx-auto mb-10">
-                <span class="text-gold-700 text-xs uppercase tracking-widest font-serif font-bold">Chapter III • Consumer Clarity</span>
-                <h2 class="font-serif text-2xl sm:text-3xl font-bold text-espresso-950 mt-1">
+                <span class="text-gold-700 dark:text-gold text-xs uppercase tracking-widest font-serif font-bold">Chapter III • Consumer Clarity</span>
+                <h2 class="font-serif text-2xl sm:text-3xl font-bold text-espresso-950 dark:text-white mt-1">
                     Understanding True Leather Quality
                 </h2>
-                <p class="text-xs text-muted mt-1 font-light">
+                <p class="text-xs text-muted dark:text-ivory-300 mt-1 font-light">
                     Why "Genuine Leather" in big-box retail often disappoints, and why Full-Grain is the gold standard of heirloom luxury.
                 </p>
             </div>

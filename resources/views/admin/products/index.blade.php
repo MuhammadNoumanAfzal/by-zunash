@@ -285,15 +285,11 @@
                         </div>
 
                         <div class="flex items-center gap-1.5 mt-1 flex-wrap">
-                            <span class="font-mono text-[10px] text-gray-400">
-                                {{ $product->sku }}
-                            </span>
-                            <span class="text-gray-300">•</span>
-                            <span class="px-2 py-0.2 rounded-full text-[9px] font-semibold bg-[#F5F1EA] dark:bg-[#2A221E] text-espresso-800 dark:text-[#E8D0BE]">
+                            <span class="px-2 py-0.5 rounded-full text-[9px] font-semibold bg-[#F5F1EA] dark:bg-[#2A221E] text-espresso-800 dark:text-[#E8D0BE]">
                                 {{ $product->category_name ?: ucfirst($product->category_slug) }}
                             </span>
                             @if($product->badge)
-                                <span class="px-1.5 py-0.2 rounded text-[9px] font-bold bg-[#FAF3F0] text-tan-700 border border-[#F3E3DC]">
+                                <span class="px-1.5 py-0.5 rounded text-[9px] font-bold bg-[#FAF3F0] text-tan-700 border border-[#F3E3DC]">
                                     {{ $product->badge }}
                                 </span>
                             @endif
@@ -378,7 +374,7 @@
                 @forelse($products as $product)
                     <tr class="hover:bg-[#FAF8F5]/80 dark:hover:bg-[#221B18] transition-colors">
                         
-                        <!-- Thumbnail & Info (Clean Name & SKU) -->
+                        <!-- Thumbnail & Info (Product Name Only) -->
                         <td class="py-3.5 px-4">
                             <div class="flex items-center gap-3">
                                 <img 
@@ -390,35 +386,22 @@
                                     <div class="font-bold text-espresso-950 dark:text-white truncate max-w-xs hover:text-tan-600 transition-colors">
                                         {{ $product->name }}
                                     </div>
-                                    <div class="font-mono text-[10px] font-semibold text-[#8F8379] mt-0.5">
-                                        {{ $product->sku }}
-                                    </div>
                                 </div>
                             </div>
                         </td>
 
-                        <!-- Category -->
+                        <!-- Category (Category Only) -->
                         <td class="py-3.5 px-3">
                             <span class="px-2.5 py-1 rounded-full text-[10px] font-semibold bg-[#F5F1EA] dark:bg-[#2A221E] text-espresso-800 dark:text-[#E8D0BE]">
                                 {{ $product->category_name ?: ucfirst($product->category_slug) }}
                             </span>
-                            @if($product->subcategory)
-                                <div class="text-[10px] text-gray-500 dark:text-gray-400 font-medium mt-1">
-                                    {{ $product->subcategory->name }}
-                                </div>
-                            @endif
                         </td>
 
-                        <!-- Price -->
+                        <!-- Price (Current Price Only) -->
                         <td class="py-3.5 px-3">
                             <div class="font-cinzel font-bold text-sm text-espresso-950 dark:text-white">
                                 Rs. {{ number_format($product->price) }}
                             </div>
-                            @if($product->original_price)
-                                <div class="text-[10px] text-gray-400 line-through font-mono">
-                                    Rs. {{ number_format($product->original_price) }}
-                                </div>
-                            @endif
                         </td>
 
                         <!-- Stock & Status -->
@@ -485,10 +468,9 @@
 
                         <!-- Rating -->
                         <td class="py-3.5 px-3">
-                            <div class="flex items-center gap-1 font-semibold text-espresso-900 dark:text-white">
+                            <div class="flex items-center gap-1 font-semibold text-espresso-900 dark:text-white text-xs">
                                 <span class="text-amber-500">★</span>
                                 <span>{{ number_format($product->rating, 1) }}</span>
-                                <span class="text-[10px] text-gray-400">({{ $product->reviews_count }})</span>
                             </div>
                         </td>
 

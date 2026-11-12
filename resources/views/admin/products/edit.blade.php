@@ -17,8 +17,11 @@
 
     $featuresList = is_array($product->features) ? $product->features : [];
     $cleanFeatures = array_map(function ($f) {
-        $c = preg_replace('/<span[^>]*class=["\']ql-ui["\'][^>]*>.*?<\/span>/is', '', $f);
+        $c = html_entity_decode($f, ENT_QUOTES, 'UTF-8');
+        $c = preg_replace('/<span[^>]*class=["\']ql-ui["\'][^>]*>.*?<\/span>/is', '', $c);
+        $c = preg_replace('/<span[^>]*class=["\']ql-ui["\'][^>]*\/?>/is', '', $c);
         $c = preg_replace('/&lt;span[^>]*class=["\']ql-ui["\'][^>]*&gt;.*?&lt;\/span&gt;/is', '', $c);
+        $c = preg_replace('/<span\s+contenteditable=["\']false["\'][^>]*>.*?<\/span>/is', '', $c);
         $c = preg_replace('/^<span[^>]*><\/span>\s*/is', '', $c);
         return trim(strip_tags($c, '<b><strong><i><em>'));
     }, $featuresList);
