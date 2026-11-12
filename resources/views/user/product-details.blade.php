@@ -645,14 +645,14 @@
                     @endif
                 </div>
 
-                <!-- Doorstep Inspection & Authenticity Guarantee (Key Ad Trust Factor) -->
-                <div class="p-3.5 rounded-xl bg-ivory-100/80 border border-gold/40 text-xs space-y-1.5">
-                    <div class="flex items-center gap-2 font-bold text-espresso-950">
+                <!-- Doorstep Inspection & Authenticity Guarantee (Easy Wording for Pakistani Shoppers) -->
+                <div class="p-3.5 rounded-xl bg-ivory-100/90 dark:bg-[#201815] border border-gold/40 text-xs space-y-1.5 shadow-2xs">
+                    <div class="flex items-center gap-2 font-bold text-espresso-950 dark:text-white">
                         <i data-lucide="shield-check" class="w-4 h-4 text-gold-600"></i>
-                        <span>100% Full-Grain Hide • Open Parcel Inspection</span>
+                        <span>100% Pure Genuine Leather • Open Parcel Before Payment</span>
                     </div>
-                    <p class="text-[11px] text-muted leading-relaxed">
-                        Every piece is genuine drum-dyed full-grain leather. You can open and inspect the courier parcel at your doorstep before handing cash. If not 100% delighted, return it on the spot with zero hassle.
+                    <p class="text-[11px] text-muted dark:text-[#B0A59C] leading-relaxed">
+                        Every creation is crafted from 100% genuine full-grain leather. You can open and inspect your parcel at your doorstep before paying Cash on Delivery. If you are not completely satisfied, return it immediately on the spot with zero hassle.
                     </p>
                 </div>
 
@@ -809,79 +809,170 @@
                         </ul>
                     </div>
 
-                    <div class="bg-ivory-50/60 p-6 rounded-2xl border border-ivory-300">
-                        <h3 class="font-serif text-base font-bold text-espresso-950 mb-4 flex items-center gap-2">
+                    <div class="bg-ivory-50/60 dark:bg-[#1A1412] p-6 rounded-2xl border border-ivory-300 dark:border-white/10">
+                        <h3 class="font-serif text-base font-bold text-espresso-950 dark:text-white mb-4 flex items-center gap-2">
                             <i data-lucide="layers" class="w-4 h-4 text-gold-600"></i>
                             <span>Technical Specifications</span>
                         </h3>
-                        <dl class="divide-y divide-ivory-200 text-xs">
-                            @foreach($product['specifications'] as $key => $val)
-                                <div class="py-2.5 flex justify-between gap-4">
-                                    <dt class="text-muted font-medium uppercase tracking-wider">{{ $key }}</dt>
-                                    <dd class="text-espresso-900 font-semibold text-right">{{ $val }}</dd>
+                        @if(!empty($product['specifications']) && count($product['specifications']) > 0)
+                            <dl class="divide-y divide-ivory-200 dark:divide-white/10 text-xs">
+                                @foreach($product['specifications'] as $key => $val)
+                                    @if(!empty($val))
+                                        <div class="py-2.5 flex justify-between gap-4">
+                                            <dt class="text-muted font-medium uppercase tracking-wider">{{ $key }}</dt>
+                                            <dd class="text-espresso-900 dark:text-ivory font-semibold text-right">{{ $val }}</dd>
+                                        </div>
+                                    @endif
+                                @endforeach
+                            </dl>
+                        @else
+                            <p class="text-xs text-muted italic">Specifications will be updated soon for this creation.</p>
+                        @endif
+                    </div>
+                </div>
+
+                <!-- Tab 2: Atelier Story (Clean & Easy Wording for Pakistani Shoppers) -->
+                <div x-show="activeTab === 'description'" x-cloak class="max-w-3xl text-sm text-espresso-800 dark:text-ivory-200 font-light leading-relaxed space-y-5">
+                    @if(!empty($product['description']))
+                        <div class="text-sm sm:text-base text-espresso-950 dark:text-white font-sans font-normal leading-relaxed prose dark:prose-invert max-w-none">
+                            {!! $product['description'] !!}
+                        </div>
+                    @else
+                        <div class="space-y-3">
+                            <p class="text-base text-espresso-950 dark:text-white font-serif font-medium">
+                                Handcrafted with 100% Pure Genuine Cowhide Leather
+                            </p>
+                            <p class="text-muted dark:text-[#A89F95]">
+                                Every By Zunash creation is individually cut, stitched, and finished by experienced leather craftsmen in Pakistan. We use only authentic full-grain leather — never synthetic rexine, bonded plastics, or artificial coatings. With everyday use, the natural leather softens and develops a rich natural shine that lasts for years.
+                            </p>
+                        </div>
+                    @endif
+
+                    <!-- Genuine Leather Guarantee Card (Easy Wording) -->
+                    <div class="p-4 rounded-2xl bg-ivory-100/90 dark:bg-[#201815] border border-gold/40 flex items-start gap-3.5 text-xs text-espresso-950 dark:text-white shadow-2xs">
+                        <i data-lucide="shield-check" class="w-5 h-5 text-gold-600 flex-shrink-0 mt-0.5"></i>
+                        <div class="space-y-1">
+                            <span class="font-bold text-espresso-950 dark:text-white">100% Asli Leather Guarantee</span>
+                            <p class="text-[11px] text-muted dark:text-[#A89F95] leading-relaxed">
+                                Natural leather textures and subtle grain variations are the authentic hallmark of pure real hide. Unlike synthetic rexine or plastic prints, no two original leather creations are identical.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tab 3: Leather Care Guide (Modern Luxury Cards & Easy Wording) -->
+                <div x-show="activeTab === 'care'" x-cloak class="max-w-3xl text-xs text-espresso-800 dark:text-ivory-200 space-y-4 leading-relaxed">
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-3.5">
+                        <div class="p-4 rounded-2xl bg-ivory-50/80 dark:bg-[#1E1714] border border-ivory-300 dark:border-white/10 space-y-2">
+                            <div class="w-8 h-8 rounded-xl bg-tan-100 dark:bg-[#2B201B] text-tan-700 dark:text-gold flex items-center justify-center">
+                                <i data-lucide="sparkles" class="w-4 h-4"></i>
+                            </div>
+                            <h4 class="font-serif font-bold text-espresso-950 dark:text-white text-sm">1. Daily Dusting</h4>
+                            <p class="text-muted dark:text-[#A89F95] text-[11px] leading-relaxed">
+                                Gently wipe dust with a dry, soft cotton or microfiber cloth. Never use alcohol wipes, wet tissues, or dishwashing liquid.
+                            </p>
+                        </div>
+
+                        <div class="p-4 rounded-2xl bg-ivory-50/80 dark:bg-[#1E1714] border border-ivory-300 dark:border-white/10 space-y-2">
+                            <div class="w-8 h-8 rounded-xl bg-tan-100 dark:bg-[#2B201B] text-tan-700 dark:text-gold flex items-center justify-center">
+                                <i data-lucide="droplet" class="w-4 h-4"></i>
+                            </div>
+                            <h4 class="font-serif font-bold text-espresso-950 dark:text-white text-sm">2. Conditioning</h4>
+                            <p class="text-muted dark:text-[#A89F95] text-[11px] leading-relaxed">
+                                Every 3–6 months, apply a tiny pea-sized dab of neutral leather balm or wax to keep the real hide soft, shiny, and crack-free.
+                            </p>
+                        </div>
+
+                        <div class="p-4 rounded-2xl bg-ivory-50/80 dark:bg-[#1E1714] border border-ivory-300 dark:border-white/10 space-y-2">
+                            <div class="w-8 h-8 rounded-xl bg-tan-100 dark:bg-[#2B201B] text-tan-700 dark:text-gold flex items-center justify-center">
+                                <i data-lucide="package" class="w-4 h-4"></i>
+                            </div>
+                            <h4 class="font-serif font-bold text-espresso-950 dark:text-white text-sm">3. Proper Storage</h4>
+                            <p class="text-muted dark:text-[#A89F95] text-[11px] leading-relaxed">
+                                Store in the complimentary By Zunash dust pouch in a dry wardrobe. Keep away from extreme heat, direct hot sunlight, or damp areas.
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Climate Care Tip -->
+                    <div class="p-3.5 rounded-xl bg-[#FAF8F5] dark:bg-[#1C1613] border border-[#E7DFD5] dark:border-white/10 flex items-start gap-2.5 text-[11px] text-espresso-900 dark:text-ivory">
+                        <i data-lucide="info" class="w-4 h-4 text-tan-600 dark:text-gold shrink-0 mt-0.5"></i>
+                        <span><strong>Quick Tip:</strong> Pure leather breathes naturally. If it gets wet in the rain, simply let it air dry at room temperature — never use a hair dryer or place it near a heater.</span>
+                    </div>
+                </div>
+
+                <!-- Tab 4: Delivery & Returns (Dynamic from Admin Store Settings) -->
+                @php
+                    $delMetro = \App\Models\StoreSetting::get('delivery_timeline_metro', '24–48 Hours (Lahore, Karachi, Islamabad, Rawalpindi)');
+                    $delOther = \App\Models\StoreSetting::get('delivery_timeline_other', '2–3 Business Days (Faisalabad, Multan, Sialkot, Peshawar & nationwide)');
+                    $delCouriers = \App\Models\StoreSetting::get('delivery_courier_partners', 'Dispatched via TCS, Leopards & Trax with real-time SMS tracking updates.');
+                    $codNote = \App\Models\StoreSetting::get('cod_policy_note', 'Cash on Delivery available nationwide. You can open and inspect the courier parcel at your doorstep before paying cash. Direct bank transfer is also accepted.');
+                    $exchDays = \App\Models\StoreSetting::get('exchange_policy_days', '7-Day Size & Model Exchange');
+                    $exchNote = \App\Models\StoreSetting::get('exchange_policy_note', 'If your size or model needs an adjustment, simply WhatsApp our atelier concierge within 7 days of delivery. We will arrange a courier pickup and replacement promptly with zero hassle.');
+                    $phone = \App\Models\StoreSetting::get('contact_phone', '+92 321 4700545');
+                    $phoneClean = preg_replace('/[^0-9]/', '', $phone);
+                @endphp
+                <div x-show="activeTab === 'shipping'" x-cloak class="max-w-3xl space-y-4">
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-3.5">
+                        
+                        <!-- 1. Delivery Card -->
+                        <div class="p-4 rounded-2xl bg-ivory-50/80 dark:bg-[#1E1714] border border-ivory-300 dark:border-white/10 space-y-2">
+                            <div class="flex items-center justify-between">
+                                <div class="w-8 h-8 rounded-xl bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 flex items-center justify-center">
+                                    <i data-lucide="truck" class="w-4 h-4"></i>
                                 </div>
-                            @endforeach
-                            <div class="py-2.5 flex justify-between gap-4">
-                                <dt class="text-muted font-medium uppercase tracking-wider">Origin</dt>
-                                <dd class="text-espresso-900 font-semibold text-right">Handcrafted in Pakistan (Lahore & Karachi)</dd>
+                                <span class="px-2 py-0.5 rounded-full text-[9px] font-bold bg-emerald-500/15 text-emerald-800 dark:text-emerald-300 border border-emerald-500/20">All Pakistan</span>
                             </div>
-                            <div class="py-2.5 flex justify-between gap-4">
-                                <dt class="text-muted font-medium uppercase tracking-wider">Packaging</dt>
-                                <dd class="text-espresso-900 font-semibold text-right">Rigid Embossed Magnetic Gift Box & Dust Pouch</dd>
+                            <h4 class="font-serif font-bold text-espresso-950 dark:text-white text-sm">Express Courier</h4>
+                            <div class="text-[11px] text-muted dark:text-[#A89F95] space-y-1.5 leading-relaxed">
+                                <p><strong class="text-espresso-900 dark:text-white">Major Metros:</strong> {{ $delMetro }}</p>
+                                <p><strong class="text-espresso-900 dark:text-white">Other Cities:</strong> {{ $delOther }}</p>
+                                <p class="pt-1 text-[10px] text-[#8F8379]">{{ $delCouriers }}</p>
                             </div>
-                        </dl>
-                    </div>
-                </div>
-
-                <!-- Tab 2: Atelier Story -->
-                <div x-show="activeTab === 'description'" x-cloak class="max-w-3xl text-sm text-espresso-800 font-light leading-relaxed space-y-4">
-                    <div class="text-base text-espresso-950 font-serif font-medium leading-relaxed prose max-w-none">
-                        {!! $product['description'] !!}
-                    </div>
-                    <p>
-                        Each piece by By Zunash is hand-selected from top-tier vegetable-tanned full-grain cattle hides. Rather than artificial vinyl coatings or synthetic corrected grains, our master artisans celebrate the authentic natural pore structure and depth of tone. Over time and wear, this pure hide will absorb natural oils, creating a lustrous patina distinct to your everyday journey.
-                    </p>
-                    <div class="p-4 rounded-xl bg-ivory-100 border border-ivory-300 flex items-start gap-3 text-xs text-espresso-900">
-                        <i data-lucide="feather" class="w-4 h-4 text-gold-600 flex-shrink-0 mt-0.5"></i>
-                        <span><strong>Artisan Mark:</strong> Subtle tonal gradations and natural grain marks are uncompromised testaments of genuine full-grain leather, certifying that no two pieces are ever identical.</span>
-                    </div>
-                </div>
-
-                <!-- Tab 3: Leather Care Guide -->
-                <div x-show="activeTab === 'care'" x-cloak class="max-w-3xl text-xs text-espresso-800 space-y-4 leading-relaxed">
-                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                        <div class="p-4 rounded-xl bg-ivory-50 border border-ivory-300">
-                            <h4 class="font-serif font-bold text-espresso-950 text-sm mb-2">1. Routine Cleaning</h4>
-                            <p class="text-muted leading-relaxed">Gently wipe dust and surface debris using a dry, soft cotton or microfiber cloth. Avoid wet wipes or household chemicals.</p>
                         </div>
-                        <div class="p-4 rounded-xl bg-ivory-50 border border-ivory-300">
-                            <h4 class="font-serif font-bold text-espresso-950 text-sm mb-2">2. Conditioning</h4>
-                            <p class="text-muted leading-relaxed">Every 3–6 months, apply a pea-sized dab of natural neutral leather balm to restore moisture and protect the grain from drying.</p>
-                        </div>
-                        <div class="p-4 rounded-xl bg-ivory-50 border border-ivory-300">
-                            <h4 class="font-serif font-bold text-espresso-950 text-sm mb-2">3. Storage</h4>
-                            <p class="text-muted leading-relaxed">Store hanging or loosely coiled in the breathable By Zunash dust pouch. Keep away from prolonged direct heat or dampness.</p>
-                        </div>
-                    </div>
-                </div>
 
-                <!-- Tab 4: Delivery & Returns -->
-                <div x-show="activeTab === 'shipping'" x-cloak class="max-w-3xl text-xs text-espresso-800 space-y-4 leading-relaxed">
-                    <div class="p-4 rounded-xl bg-ivory-50 border border-ivory-300 space-y-3">
-                        <p><strong class="font-serif uppercase tracking-wider text-espresso-950">Nationwide Express Delivery:</strong></p>
-                        <p class="text-muted">
-                            • Major Metros (Lahore, Karachi, Islamabad, Rawalpindi): 24–48 hours.<br>
-                            • Other Regional Cities (Faisalabad, Multan, Peshawar, Sialkot, Gujranwala, Quetta): 2–3 business days.<br>
-                            • Real-time courier SMS tracking provided once dispatched.
-                        </p>
-                        <p><strong class="font-serif uppercase tracking-wider text-espresso-950">Doorstep Cash on Delivery:</strong></p>
-                        <p class="text-muted">
-                            Pay in cash to the courier representative after inspecting the parcel seal at your doorstep. Direct bank transfer is also accepted.
-                        </p>
-                        <p><strong class="font-serif uppercase tracking-wider text-espresso-950">7-Day Size & Model Exchange:</strong></p>
-                        <p class="text-muted">
-                            If your belt or accessory size needs an adjustment, simply WhatsApp our atelier concierge at <strong class="text-espresso-950">+92 321 4700545</strong> within 7 days of receiving your parcel. We will arrange a courier pickup and replacement promptly.
-                        </p>
+                        <!-- 2. COD & Inspection Card -->
+                        <div class="p-4 rounded-2xl bg-ivory-50/80 dark:bg-[#1E1714] border border-ivory-300 dark:border-white/10 space-y-2">
+                            <div class="flex items-center justify-between">
+                                <div class="w-8 h-8 rounded-xl bg-amber-500/10 text-amber-700 dark:text-amber-400 flex items-center justify-center">
+                                    <i data-lucide="banknote" class="w-4 h-4"></i>
+                                </div>
+                                <span class="px-2 py-0.5 rounded-full text-[9px] font-bold bg-amber-500/15 text-amber-800 dark:text-amber-300 border border-amber-500/20">Doorstep COD</span>
+                            </div>
+                            <h4 class="font-serif font-bold text-espresso-950 dark:text-white text-sm">Cash on Delivery</h4>
+                            <div class="text-[11px] text-muted dark:text-[#A89F95] space-y-1.5 leading-relaxed">
+                                <p>{{ $codNote }}</p>
+                                <p class="text-[10px] text-emerald-700 dark:text-emerald-400 font-semibold flex items-center gap-1">
+                                    <i data-lucide="check-circle" class="w-3 h-3"></i>
+                                    <span>Check before you pay</span>
+                                </p>
+                            </div>
+                        </div>
+
+                        <!-- 3. 7-Day Exchange Card -->
+                        <div class="p-4 rounded-2xl bg-ivory-50/80 dark:bg-[#1E1714] border border-ivory-300 dark:border-white/10 space-y-2">
+                            <div class="flex items-center justify-between">
+                                <div class="w-8 h-8 rounded-xl bg-blue-500/10 text-blue-700 dark:text-blue-400 flex items-center justify-center">
+                                    <i data-lucide="rotate-ccw" class="w-4 h-4"></i>
+                                </div>
+                                <span class="px-2 py-0.5 rounded-full text-[9px] font-bold bg-blue-500/15 text-blue-800 dark:text-blue-300 border border-blue-500/20">Zero Risk</span>
+                            </div>
+                            <h4 class="font-serif font-bold text-espresso-950 dark:text-white text-sm">{{ $exchDays }}</h4>
+                            <div class="text-[11px] text-muted dark:text-[#A89F95] space-y-2 leading-relaxed">
+                                <p>{{ $exchNote }}</p>
+                                @if(!empty($phone))
+                                    <a 
+                                        href="https://wa.me/{{ $phoneClean }}?text={{ urlencode('Hello By Zunash Concierge, I would like to request an exchange for Product: ' . $product['name']) }}" 
+                                        target="_blank"
+                                        class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[#25D366] hover:bg-[#20ba5a] text-white text-[11px] font-bold shadow-xs transition-colors"
+                                    >
+                                        <i data-lucide="message-circle" class="w-3.5 h-3.5"></i>
+                                        <span>WhatsApp Concierge</span>
+                                    </a>
+                                @endif
+                            </div>
+                        </div>
+
                     </div>
                 </div>
 

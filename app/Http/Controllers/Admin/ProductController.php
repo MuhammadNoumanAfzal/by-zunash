@@ -140,6 +140,8 @@ class ProductController extends Controller
             'spec_dimensions' => 'nullable|string|max:255',
             'spec_sizes' => 'nullable|string|max:255',
             'spec_care' => 'nullable|string|max:255',
+            'spec_origin' => 'nullable|string|max:255',
+            'spec_packaging' => 'nullable|string|max:255',
         ]);
 
         $category = null;
@@ -261,6 +263,8 @@ class ProductController extends Controller
             'spec_dimensions' => 'nullable|string|max:255',
             'spec_sizes' => 'nullable|string|max:255',
             'spec_care' => 'nullable|string|max:255',
+            'spec_origin' => 'nullable|string|max:255',
+            'spec_packaging' => 'nullable|string|max:255',
         ]);
 
         $category = null;
@@ -432,25 +436,22 @@ class ProductController extends Controller
     {
         $hasAnySpec = $request->filled('spec_material') || $request->filled('spec_hardware') ||
                       $request->filled('spec_dimensions') || $request->filled('spec_sizes') ||
-                      $request->filled('spec_care');
+                      $request->filled('spec_care') || $request->filled('spec_origin') ||
+                      $request->filled('spec_packaging');
 
         if ($hasAnySpec) {
             $specs = [];
             if ($request->filled('spec_material')) $specs['Material'] = trim($request->input('spec_material'));
             if ($request->filled('spec_hardware')) $specs['Hardware'] = trim($request->input('spec_hardware'));
-            if ($request->filled('spec_dimensions')) $specs['Width'] = trim($request->input('spec_dimensions'));
+            if ($request->filled('spec_dimensions')) $specs['Width & Dimensions'] = trim($request->input('spec_dimensions'));
             if ($request->filled('spec_sizes')) $specs['Available Sizes'] = trim($request->input('spec_sizes'));
             if ($request->filled('spec_care')) $specs['Care'] = trim($request->input('spec_care'));
+            if ($request->filled('spec_origin')) $specs['Origin'] = trim($request->input('spec_origin'));
+            if ($request->filled('spec_packaging')) $specs['Packaging'] = trim($request->input('spec_packaging'));
             return $specs;
         }
 
-        return $fallback ?? [
-            'Material' => '100% Full-Grain Vegetable Tanned Leather',
-            'Hardware' => 'Solid Antique Brass Finish',
-            'Width' => '34 mm (1.35 inches)',
-            'Available Sizes' => '30, 32, 34, 36, 38, 40, 42 inches',
-            'Care' => 'Wipe with soft cotton cloth; treat with neutral leather balm periodically',
-        ];
+        return $fallback ?? [];
     }
 
     /**

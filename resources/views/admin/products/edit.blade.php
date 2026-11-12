@@ -31,11 +31,13 @@
     $galleryRaw = implode("\n", $additionalGallery);
 
     $specs = is_array($product->specifications) ? $product->specifications : [];
-    $specMaterial = $specs['Material'] ?? '100% Full-Grain Vegetable Tanned Calfskin';
-    $specHardware = $specs['Hardware'] ?? 'Solid Antique Brass Finish';
-    $specDimensions = $specs['Width'] ?? ($specs['Dimensions'] ?? '34 mm (1.35 inches) Width');
-    $specSizes = $specs['Available Sizes'] ?? '30, 32, 34, 36, 38, 40, 42 inches';
-    $specCare = $specs['Care'] ?? 'Wipe with soft cotton cloth; treat with neutral organic leather balm periodically';
+    $specMaterial = $specs['Material'] ?? '';
+    $specHardware = $specs['Hardware'] ?? '';
+    $specDimensions = $specs['Width & Dimensions'] ?? ($specs['Width'] ?? ($specs['Dimensions'] ?? ''));
+    $specSizes = $specs['Available Sizes'] ?? '';
+    $specCare = $specs['Care'] ?? '';
+    $specOrigin = $specs['Origin'] ?? '';
+    $specPackaging = $specs['Packaging'] ?? '';
 @endphp
 
 <div class="max-w-4xl mx-auto space-y-6" x-data="{
@@ -462,7 +464,36 @@
                         type="text" 
                         name="spec_care" 
                         value="{{ old('spec_care', $specCare) }}" 
+                        placeholder="e.g. Wipe with soft cotton cloth; treat with neutral organic leather balm periodically"
                         class="w-full px-3.5 py-2.5 text-xs rounded-xl bg-[#FAF8F5] dark:bg-[#241D1A] border border-[#E0D7CB] dark:border-[#3A2F29] text-espresso-900 dark:text-white focus:outline-hidden focus:border-tan-500"
+                    >
+                </div>
+
+                <!-- Origin -->
+                <div>
+                    <label class="block text-xs font-semibold text-espresso-900 dark:text-white mb-1.5">
+                        Craft Origin (Optional)
+                    </label>
+                    <input 
+                        type="text" 
+                        name="spec_origin" 
+                        value="{{ old('spec_origin', $specOrigin) }}" 
+                        placeholder="e.g. Handcrafted in Pakistan (Lahore Workshop)"
+                        class="w-full px-3.5 py-2.5 text-xs rounded-xl bg-[#FAF8F5] dark:bg-[#241D1A] border border-[#E0D7CB] dark:border-[#3A2F29] text-espresso-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-[#6E645E] focus:outline-hidden focus:border-tan-500"
+                    >
+                </div>
+
+                <!-- Packaging -->
+                <div>
+                    <label class="block text-xs font-semibold text-espresso-900 dark:text-white mb-1.5">
+                        Packaging & Presentation (Optional)
+                    </label>
+                    <input 
+                        type="text" 
+                        name="spec_packaging" 
+                        value="{{ old('spec_packaging', $specPackaging) }}" 
+                        placeholder="e.g. By Zunash Magnetic Hard Box & Dust Pouch"
+                        class="w-full px-3.5 py-2.5 text-xs rounded-xl bg-[#FAF8F5] dark:bg-[#241D1A] border border-[#E0D7CB] dark:border-[#3A2F29] text-espresso-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-[#6E645E] focus:outline-hidden focus:border-tan-500"
                     >
                 </div>
             </div>
