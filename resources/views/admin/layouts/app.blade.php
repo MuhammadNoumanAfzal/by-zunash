@@ -709,11 +709,11 @@
                             searchQuery: '{{ request('q') }}',
                             open: false,
                             loading: false,
-                            results: { products: [], orders: [], categories: [], customers: [], total: 0 },
+                            results: { products: [], orders: [], categories: [], subcategories: [], customers: [], total: 0 },
                             timer: null,
                             search() {
                                 if (this.searchQuery.trim().length < 1) {
-                                    this.results = { products: [], orders: [], categories: [], customers: [], total: 0 };
+                                    this.results = { products: [], orders: [], categories: [], subcategories: [], customers: [], total: 0 };
                                     this.open = false;
                                     return;
                                 }
@@ -729,8 +729,7 @@
                                             this.$nextTick(() => { if (window.lucide) lucide.createIcons(); });
                                         })
                                         .catch(() => { this.loading = false; });
-                                }, 220);
-                                }, 150);
+                                }, 180);
                             }
                         }"
                         @click.outside="open = false"
@@ -828,6 +827,28 @@
                                 </div>
                             </div>
 
+                            <!-- Categories -->
+                            <div x-show="results.categories && results.categories.length > 0" class="p-2.5">
+                                <div class="px-2 py-1 text-[10px] font-bold uppercase tracking-wider text-tan-700 dark:text-gold flex items-center justify-between">
+                                    <span>Categories</span>
+                                    <span class="text-muted" x-text="results.categories.length + ' found'"></span>
+                                </div>
+                                <div class="space-y-1 mt-1">
+                                    <template x-for="cat in results.categories" :key="'cat-' + cat.id">
+                                        <a 
+                                            :href="cat.url" 
+                                            class="flex items-center justify-between gap-2 p-2 rounded-xl hover:bg-tan-50 dark:hover:bg-[#251C18] transition-colors"
+                                        >
+                                            <div class="flex items-center gap-2">
+                                                <i data-lucide="folder" class="w-3.5 h-3.5 text-tan-600"></i>
+                                                <span class="text-xs font-semibold text-espresso-950 dark:text-white" x-text="cat.name"></span>
+                                            </div>
+                                            <span class="text-[10px] text-muted font-mono" x-text="'/' + cat.slug"></span>
+                                        </a>
+                                    </template>
+                                </div>
+                            </div>
+
                             <!-- Subcategories -->
                             <div x-show="results.subcategories && results.subcategories.length > 0" class="p-2.5">
                                 <div class="px-2 py-1 text-[10px] font-bold uppercase tracking-wider text-tan-700 dark:text-gold flex items-center justify-between">
@@ -845,6 +866,31 @@
                                                 <span class="text-xs font-semibold text-espresso-950 dark:text-white" x-text="sub.name"></span>
                                             </div>
                                             <span class="text-[10px] text-muted font-medium" x-text="sub.category"></span>
+                                        </a>
+                                    </template>
+                                </div>
+                            </div>
+
+                            <!-- Customers / Patrons -->
+                            <div x-show="results.customers && results.customers.length > 0" class="p-2.5">
+                                <div class="px-2 py-1 text-[10px] font-bold uppercase tracking-wider text-tan-700 dark:text-gold flex items-center justify-between">
+                                    <span>Patrons / Customers</span>
+                                    <span class="text-muted" x-text="results.customers.length + ' found'"></span>
+                                </div>
+                                <div class="space-y-1 mt-1">
+                                    <template x-for="cust in results.customers" :key="'c-' + cust.id">
+                                        <a 
+                                            :href="cust.url" 
+                                            class="flex items-center justify-between gap-2 p-2 rounded-xl hover:bg-tan-50 dark:hover:bg-[#251C18] transition-colors"
+                                        >
+                                            <div class="flex items-center gap-2">
+                                                <i data-lucide="user" class="w-3.5 h-3.5 text-tan-600"></i>
+                                                <div>
+                                                    <span class="text-xs font-semibold text-espresso-950 dark:text-white" x-text="cust.name"></span>
+                                                    <span class="text-[10px] text-muted block" x-text="cust.email"></span>
+                                                </div>
+                                            </div>
+                                            <span class="text-[10px] text-muted font-mono" x-text="cust.phone"></span>
                                         </a>
                                     </template>
                                 </div>

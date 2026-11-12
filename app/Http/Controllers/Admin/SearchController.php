@@ -91,15 +91,17 @@ class SearchController extends Controller
         $products = Product::where('name', 'like', "%{$query}%")
             ->orWhere('sku', 'like', "%{$query}%")
             ->orWhere('category_name', 'like', "%{$query}%")
+            ->orWhere('category_slug', 'like', "%{$query}%")
+            ->orWhere('badge', 'like', "%{$query}%")
             ->latest()
-            ->take(5)
+            ->take(6)
             ->get()
             ->map(function ($p) {
                 return [
                     'id' => $p->id,
                     'name' => $p->name,
                     'sku' => $p->sku,
-                    'category' => $p->category_name,
+                    'category' => $p->category_name ?: ucfirst($p->category_slug),
                     'price' => 'Rs. ' . number_format($p->price),
                     'image' => $p->image ?: '/images/products/prod-reversible-belt.jpg',
                     'stock' => $p->stock_quantity,
@@ -128,8 +130,9 @@ class SearchController extends Controller
             });
 
         $categories = Category::where('name', 'like', "%{$query}%")
+            ->orWhere('slug', 'like', "%{$query}%")
             ->latest()
-            ->take(3)
+            ->take(4)
             ->get()
             ->map(function ($c) {
                 return [

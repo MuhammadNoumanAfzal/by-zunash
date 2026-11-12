@@ -52,16 +52,148 @@
 <div class="p-4 sm:p-5 rounded-2xl bg-white dark:bg-[#1A1513] border border-[#ECE6DE] dark:border-[#2C2420] shadow-2xs">
     <form action="{{ route('admin.products.index') }}" method="GET" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-12 gap-3">
         
-        <!-- Search -->
-        <div class="lg:col-span-3 relative">
+        <!-- Search with Instant Live Suggestions Dropdown -->
+        <div 
+            class="lg:col-span-3 relative"
+            x-data="{
+                query: '{{ request('q') }}',
+                open: false,
+                loading: false,
+                suggestions: { products: [], categories: [], total: 0 },
+                timer: null,
+                fetchSuggestions() {
+                    if (this.query.trim().length < 1) {
+                        this.suggestions = { products: [], categories: [], total: 0 };
+                        this.open = false;
+                        return;
+                    }
+                    this.loading = true;
+                    clearTimeout(this.timer);
+                    this.timer = setTimeout(() => {
+                        fetch('{{ route('admin.search.live') }}?q=' + encodeURIComponent(this.query))
+                            .then(res => res.json())
+                            .then(data => {
+                                this.suggestions = data;
+                                this.open = (data.products && data.products.length > 0) || (data.categories && data.categories.length > 0);
+                                this.loading = false;
+                                this.$nextTick(() => { if (window.lucide) lucide.createIcons(); });
+                            })
+                            .catch(() => { this.loading = false; });
+                    }, 180);
+                },
+                selectProduct(name) {
+                    this.query = name;
+                    this.open = false;
+                    this.$el.closest('form').submit();
+                },
+                selectCategory(slug) {
+                    const select = this.$el.closest('form').querySelector('select[name=category]');
+                    if (select) {
+                        select.value = slug;
+                    }
+                    this.open = false;
+                    this.$el.closest('form').submit();
+                }
+            }"
+            @click.outside="open = false"
+            @keydown.escape="open = false"
+        >
             <i data-lucide="search" class="w-4 h-4 text-[#A89C91] absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none"></i>
             <input 
                 type="text" 
                 name="q" 
-                value="{{ request('q') }}"
+                x-model="query"
+                @input="fetchSuggestions()"
+                @focus="if (query.trim().length >= 1 && suggestions.total > 0) open = true"
                 placeholder="Search by name, SKU, category..." 
-                class="w-full pl-9 pr-3 py-2 text-xs rounded-xl bg-[#FAF8F5] dark:bg-[#241D1A] border border-[#E0D7CB] dark:border-[#382D27] text-espresso-900 dark:text-white focus:outline-hidden focus:border-tan-500"
+                autocomplete="off"
+                class="w-full pl-9 pr-8 py-2 text-xs rounded-xl bg-[#FAF8F5] dark:bg-[#241D1A] border border-[#E0D7CB] dark:border-[#382D27] text-espresso-900 dark:text-white focus:outline-hidden focus:border-tan-500 font-sans"
             >
+            <!-- Loading indicator / Clear button -->
+            <div class="absolute right-2.5 top-1/2 -translate-y-1/2 flex items-center">
+                <template x-if="loading">
+                    <svg class="animate-spin h-3.5 w-3.5 text-tan-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path>
+                    </svg>
+                </template>
+                <template x-if="!loading && query.length > 0">
+                    <button type="button" @click="query = ''; suggestions = { products: [], categories: [], total: 0 }; open = false;" class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-200">
+                        <i data-lucide="x" class="w-3.5 h-3.5"></i>
+                    </button>
+                </template>
+            </div>
+
+            <!-- Instant Table Suggestions Dropdown -->
+            <div 
+                x-show="open && query.trim().length >= 1"
+                x-cloak
+                x-transition:enter="transition ease-out duration-150"
+                x-transition:enter-start="opacity-0 translate-y-1"
+                x-transition:enter-end="opacity-100 translate-y-0"
+                class="absolute left-0 right-0 top-full mt-1.5 bg-white dark:bg-[#1A1412] rounded-2xl shadow-xl border border-[#ECE6DE] dark:border-[#2D231E] overflow-hidden z-50 max-h-72 overflow-y-auto scrollbar-thin divide-y divide-gray-100 dark:divide-white/5"
+            >
+                <!-- Suggested Products -->
+                <template x-if="suggestions.products && suggestions.products.length > 0">
+                    <div class="p-2">
+                        <div class="px-2 py-1 text-[9px] font-bold uppercase tracking-wider text-tan-700 dark:text-gold flex items-center justify-between">
+                            <span>Matching Creations</span>
+                            <span class="text-[#8F8379]" x-text="suggestions.products.length + ' found'"></span>
+                        </div>
+                        <template x-for="item in suggestions.products" :key="'sp-' + item.id">
+                            <div 
+                                @click="selectProduct(item.name)"
+                                class="flex items-center justify-between gap-2.5 p-2 rounded-xl hover:bg-tan-50 dark:hover:bg-[#251C18] cursor-pointer transition-colors group"
+                            >
+                                <div class="flex items-center gap-2.5 min-w-0">
+                                    <img :src="item.image" :alt="item.name" class="w-8 h-8 rounded-lg object-cover shrink-0 border border-black/10">
+                                    <div class="min-w-0">
+                                        <div class="text-xs font-semibold text-espresso-950 dark:text-white truncate group-hover:text-tan-700" x-text="item.name"></div>
+                                        <div class="text-[10px] text-[#8F8379] font-mono flex items-center gap-1.5">
+                                            <span x-text="item.sku"></span>
+                                            <span>•</span>
+                                            <span x-text="item.category"></span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <span class="text-xs font-bold font-mono text-tan-700 dark:text-gold shrink-0" x-text="item.price"></span>
+                            </div>
+                        </template>
+                    </div>
+                </template>
+
+                <!-- Suggested Categories -->
+                <template x-if="suggestions.categories && suggestions.categories.length > 0">
+                    <div class="p-2 bg-[#FAF8F5] dark:bg-[#16100E]">
+                        <div class="px-2 py-1 text-[9px] font-bold uppercase tracking-wider text-tan-700 dark:text-gold">
+                            Filter by Category
+                        </div>
+                        <template x-for="cat in suggestions.categories" :key="'sc-' + cat.id">
+                            <div 
+                                @click="selectCategory(cat.slug)"
+                                class="flex items-center justify-between p-1.5 px-2 rounded-lg hover:bg-tan-100 dark:hover:bg-[#2A201C] cursor-pointer text-xs font-semibold text-espresso-900 dark:text-white"
+                            >
+                                <span class="flex items-center gap-1.5">
+                                    <i data-lucide="folder" class="w-3.5 h-3.5 text-tan-600"></i>
+                                    <span x-text="cat.name"></span>
+                                </span>
+                                <span class="text-[10px] text-[#8F8379] font-mono">Apply filter &rarr;</span>
+                            </div>
+                        </template>
+                    </div>
+                </template>
+
+                <!-- Filter button footer -->
+                <div class="p-2 bg-gray-50 dark:bg-[#140F0D] text-center">
+                    <button 
+                        type="submit" 
+                        class="w-full py-1 text-[11px] font-bold text-tan-700 dark:text-gold hover:underline flex items-center justify-center gap-1"
+                    >
+                        <span>Filter table for "<span x-text="query"></span>"</span>
+                        <i data-lucide="arrow-right" class="w-3 h-3"></i>
+                    </button>
+                </div>
+            </div>
         </div>
 
         <!-- Category Filter -->
