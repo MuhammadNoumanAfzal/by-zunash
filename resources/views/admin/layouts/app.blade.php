@@ -1052,9 +1052,12 @@
 
                 // Pre-clean editor container HTML before initializing Quill
                 let rawHtml = editorEl.innerHTML;
-                rawHtml = rawHtml.replace(/(&lt;|<)span[^>]*class=["']ql-ui["'][^>]*(&gt;|>)(.*?(&lt;|<)\/span(&gt;|>))?/gi, '');
-                rawHtml = rawHtml.replace(/(&lt;|<)span\s+contenteditable=["']false["'][^>]*(&gt;|>)(.*?(&lt;|<)\/span(&gt;|>))?/gi, '');
-                rawHtml = rawHtml.replace(/(&lt;|<)span[^>]*class=["']ql-ui["'][^>]*\/(&gt;|>)/gi, '');
+                rawHtml = rawHtml.replace(/<span[^>]*class=["']ql-ui["'][^>]*>.*?<\/span>/gi, '')
+                                 .replace(/<span[^>]*class=["']ql-ui["'][^>]*\/?>/gi, '')
+                                 .replace(/&lt;span[^&]*class=["']ql-ui["'][^&]*&gt;.*?&lt;\/span&gt;/gi, '')
+                                 .replace(/&lt;span[^&]*class=["']ql-ui["'][^&]*\/&gt;/gi, '')
+                                 .replace(/&lt;span[^&]*contenteditable=["']false["'][^&]*&gt;.*?&lt;\/span&gt;/gi, '')
+                                 .replace(/<span[^>]*contenteditable=["']false["'][^>]*>.*?<\/span>/gi, '');
                 editorEl.innerHTML = rawHtml;
 
                 const quill = new Quill(editorEl, {
@@ -1065,33 +1068,38 @@
                     }
                 });
 
-                // Post-clean DOM text nodes to strip any literal escaped markup
-                const cleanEditorDom = () => {
-                    quill.root.querySelectorAll('span.ql-ui').forEach(el => el.remove());
+                // Post-clean DOM text nodes to strip any literal escaped markup string without removing Quill's active list elements
+                const cleanEditorTextNodes = () => {
                     const walker = document.createTreeWalker(quill.root, NodeFilter.SHOW_TEXT, null, false);
                     let node;
                     while (node = walker.nextNode()) {
-                        if (node.nodeValue && (node.nodeValue.includes('span class="ql-ui"') || node.nodeValue.includes('ql-ui'))) {
-                            node.nodeValue = node.nodeValue.replace(/<span\s+class=["']ql-ui["'][^>]*>.*?<\/span>/gi, '')
-                                                           .replace(/<span\s+class=["']ql-ui["'][^>]*\/>/gi, '')
-                                                           .replace(/<span[^>]*><\/span>/gi, '')
+                        if (node.nodeValue && (node.nodeValue.includes('ql-ui') || node.nodeValue.includes('span class='))) {
+                            node.nodeValue = node.nodeValue.replace(/<span[^>]*>.*?<\/span>/gi, '')
+                                                           .replace(/&lt;span.*?&lt;\/span&gt;/gi, '')
+                                                           .replace(/<span[^>]*\/>/gi, '')
+                                                           .replace(/<span[^>]*>/gi, '')
+                                                           .replace(/<\/span>/gi, '')
+                                                           .replace(/&lt;span[^&]*&gt;/gi, '')
+                                                           .replace(/&lt;\/span&gt;/gi, '')
+                                                           .replace(/ql-ui/gi, '')
+                                                           .replace(/contenteditable=["']false["']/gi, '')
                                                            .trim();
                         }
                     }
                 };
-                cleanEditorDom();
+                cleanEditorTextNodes();
 
                 const getCleanQuillHtml = () => {
                     if (quill.getText().trim() === '') return '';
                     let html = quill.root.innerHTML;
                     if (html === '<p><br></p>') return '';
                     // Strip Quill internal UI elements like <span class="ql-ui" contenteditable="false"></span>
-                    html = html.replace(/<span\s+class=["']ql-ui["'][^>]*>.*?<\/span>/gi, '');
-                    html = html.replace(/<span\s+class=["']ql-ui["'][^>]*\/>/gi, '');
-                    html = html.replace(/&lt;span\s+class=["']ql-ui["'][^>]*&gt;.*?&lt;\/span&gt;/gi, '');
-                    html = html.replace(/&lt;span\s+class=["']ql-ui["'][^>]*\/&gt;/gi, '');
-                    html = html.replace(/<span\s+contenteditable=["']false["'][^>]*>.*?<\/span>/gi, '');
-                    html = html.replace(/&lt;span\s+contenteditable=["']false["'][^>]*&gt;.*?&lt;\/span&gt;/gi, '');
+                    html = html.replace(/<span\s+class=["']ql-ui["'][^>]*>.*?<\/span>/gi, '')
+                               .replace(/<span\s+class=["']ql-ui["'][^>]*\/>/gi, '')
+                               .replace(/<span\s+contenteditable=["']false["'][^>]*>.*?<\/span>/gi, '')
+                               .replace(/&lt;span[^&]*class=["']ql-ui["'][^&]*&gt;.*?&lt;\/span&gt;/gi, '')
+                               .replace(/&lt;span[^&]*class=["']ql-ui["'][^&]*\/&gt;/gi, '')
+                               .replace(/&lt;span[^&]*contenteditable=["']false["'][^&]*&gt;.*?&lt;\/span&gt;/gi, '');
                     return html;
                 };
 

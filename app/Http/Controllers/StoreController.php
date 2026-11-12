@@ -518,7 +518,9 @@ class StoreController extends Controller
             'postal_code' => 'nullable|string|max:20',
             'order_notes' => 'nullable|string|max:500',
             'payment_method' => 'nullable|string|max:50',
-            'items' => 'required|array',
+            'transaction_id' => 'nullable|string|max:100',
+            'payment_receipt_file' => 'nullable|file|mimes:jpeg,png,jpg,webp,pdf|max:10240',
+            'items' => 'required',
             'subtotal' => 'required|numeric',
             'total' => 'required|numeric',
         ]);
@@ -535,6 +537,33 @@ class StoreController extends Controller
             }
         }
 
+        // Handle Payment Receipt Screenshot Upload
+        $paymentReceipt = null;
+        if ($request->hasFile('payment_receipt_file')) {
+            $file = $request->file('payment_receipt_file');
+            $dir = public_path('images/receipts');
+            if (!file_exists($dir)) {
+                @mkdir($dir, 0755, true);
+            }
+            $filename = 'proof-' . $orderNumber . '-' . time() . '.' . $file->getClientOriginalExtension();
+            $file->move($dir, $filename);
+            $paymentReceipt = '/images/receipts/' . $filename;
+        }
+
+        $rawMethod = strtolower($request->input('payment_method', 'cod'));
+        $paymentMethodFormatted = match($rawMethod) {
+            'bank', 'ibft' => 'BANK_TRANSFER',
+            'jazzcash' => 'JAZZCASH',
+            'easypaisa' => 'EASYPAISA',
+            default => 'COD',
+        };
+
+        $rawItems = $request->input('items');
+        $itemsArray = is_string($rawItems) ? json_decode($rawItems, true) : $rawItems;
+        if (!is_array($itemsArray)) {
+            $itemsArray = [];
+        }
+
         $order = \App\Models\Order::create([
             'order_number' => $orderNumber,
             'customer_name' => $fullName,
@@ -544,14 +573,16 @@ class StoreController extends Controller
             'city' => $validated['city'],
             'postal_code' => $validated['postal_code'] ?? null,
             'order_notes' => $validated['order_notes'] ?? null,
-            'payment_method' => strtoupper($validated['payment_method'] ?? 'COD'),
+            'payment_method' => $paymentMethodFormatted,
+            'payment_receipt' => $paymentReceipt,
+            'transaction_id' => $request->input('transaction_id'),
             'payment_status' => 'pending',
             'order_status' => 'pending',
             'subtotal' => $validated['subtotal'],
             'shipping_fee' => 0.00,
             'discount' => $discount,
             'total' => $validated['total'],
-            'items' => $validated['items'],
+            'items' => $itemsArray,
         ]);
 
         // Customer auto sync
@@ -565,8 +596,8 @@ class StoreController extends Controller
         $customer->save();
 
         // Inventory Stock Deduction & Audit Trail Logging
-        if (is_array($validated['items'])) {
-            foreach ($validated['items'] as $it) {
+        if (is_array($itemsArray)) {
+            foreach ($itemsArray as $it) {
                 $qty = (int)($it['quantity'] ?? $it['qty'] ?? 1);
                 $prod = null;
                 if (!empty($it['id'])) {

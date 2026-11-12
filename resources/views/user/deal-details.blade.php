@@ -312,12 +312,12 @@
                     </a>
 
                     <!-- Doorstep Inspection & Authenticity Guarantee -->
-                    <div class="p-3.5 rounded-xl bg-ivory-100/90 dark:bg-white/5 border border-gold/40 text-xs space-y-1">
-                        <div class="flex items-center gap-2 font-bold text-espresso-950 dark:text-white">
-                            <i data-lucide="shield-check" class="w-4 h-4 text-gold-600"></i>
+                    <div class="p-4 rounded-2xl bg-[#F7F2EB] dark:bg-white/5 border-2 border-tan-400/60 dark:border-gold/40 text-xs space-y-1.5 shadow-2xs">
+                        <div class="flex items-center gap-2 font-bold text-sm text-espresso-950 dark:text-white">
+                            <i data-lucide="shield-check" class="w-4 h-4 text-tan-700 dark:text-gold shrink-0"></i>
                             <span>100% Full-Grain Hide • Open Parcel Inspection</span>
                         </div>
-                        <p class="text-[11px] text-[#8F8379] dark:text-[#A09387] leading-relaxed">
+                        <p class="text-xs text-espresso-900 dark:text-stone-100 font-medium leading-relaxed">
                             Open and inspect both leather creations at your doorstep before handing payment to the rider. Cash on Delivery supported nationwide.
                         </p>
                     </div>

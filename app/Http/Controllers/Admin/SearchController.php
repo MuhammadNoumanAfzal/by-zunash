@@ -64,10 +64,8 @@ class SearchController extends Controller
                 ->get();
         }
 
-        $totalMatches = $products->count() + $orders->count() + $categories->count() + $customers->count();
         $totalMatches = $products->count() + $orders->count() + $categories->count() + $subcategories->count() + $customers->count();
 
-        return view('admin.search', compact('query', 'products', 'orders', 'categories', 'customers', 'totalMatches'));
         return view('admin.search', compact('query', 'products', 'orders', 'categories', 'subcategories', 'customers', 'totalMatches'));
     }
 
@@ -174,7 +172,6 @@ class SearchController extends Controller
                 ];
             });
 
-        $total = $products->count() + $orders->count() + $categories->count() + $customers->count();
         $total = $products->count() + $orders->count() + $categories->count() + $subcategories->count() + $customers->count();
 
         return response()->json([

@@ -165,6 +165,182 @@
             </div>
         </div>
 
+        <!-- Section 3: Pakistani Payment Gateways & Accounts (COD, IBFT, JazzCash, EasyPaisa) -->
+        <div class="p-6 rounded-3xl bg-white dark:bg-[#1A1513] border border-[#ECE6DE] dark:border-[#2C2420] shadow-card space-y-6">
+            <div class="flex items-center justify-between pb-3 border-b border-[#F0EAE1] dark:border-[#2C2420]">
+                <div>
+                    <h2 class="font-cinzel text-base font-bold text-espresso-950 dark:text-white">
+                        Checkout Payment Methods & Accounts
+                    </h2>
+                    <p class="text-xs text-[#8F8379] dark:text-[#A09387] mt-0.5">
+                        Enable or disable payment options on the checkout page and configure your bank & mobile wallet credentials.
+                    </p>
+                </div>
+                <div class="flex items-center gap-1.5">
+                    <span class="px-2.5 py-1 rounded-full text-[10px] font-bold bg-gold/15 text-gold-700 dark:text-gold border border-gold/30">
+                        Pakistan Gateways
+                    </span>
+                </div>
+            </div>
+
+            <!-- Method 1: Cash on Delivery (COD) -->
+            <div class="p-4 rounded-2xl bg-[#FAF8F5] dark:bg-[#201815] border border-[#E8DFD5] dark:border-[#2E241F] space-y-4">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center gap-2.5">
+                        <div class="w-8 h-8 rounded-lg bg-emerald-500/15 text-emerald-700 dark:text-emerald-400 flex items-center justify-center font-bold text-xs border border-emerald-500/30">
+                            COD
+                        </div>
+                        <div>
+                            <div class="font-bold text-xs text-espresso-950 dark:text-white">Cash on Delivery (Nationwide COD)</div>
+                            <div class="text-[10px] text-gray-400">Collect cash upon doorstep delivery after parcel inspection</div>
+                        </div>
+                    </div>
+                    <label class="relative inline-flex items-center cursor-pointer">
+                        <input type="checkbox" name="payment_cod_enabled" value="1" class="sr-only peer" {{ ($settings['payment_cod_enabled'] ?? '1') === '1' ? 'checked' : '' }}>
+                        <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-emerald-600"></div>
+                        <span class="ml-2 text-xs font-semibold text-espresso-900 dark:text-white">Active</span>
+                    </label>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2 border-t border-[#E8DFD5] dark:border-white/5">
+                    <div>
+                        <label class="block text-[11px] font-semibold text-[#6E645E] dark:text-[#C5B8AC] mb-1">Method Display Title</label>
+                        <input type="text" name="payment_cod_title" value="{{ $settings['payment_cod_title'] ?? 'Cash on Delivery (Nationwide COD)' }}" class="w-full px-3 py-1.5 text-xs rounded-xl bg-white dark:bg-[#16100E] border border-[#DCD3C7] dark:border-[#382D27] text-espresso-900 dark:text-white">
+                    </div>
+                    <div>
+                        <label class="block text-[11px] font-semibold text-[#6E645E] dark:text-[#C5B8AC] mb-1">Instruction Subtitle</label>
+                        <input type="text" name="payment_cod_desc" value="{{ $settings['payment_cod_desc'] ?? 'Pay in cash to the registered courier representative upon doorstep delivery after physical parcel inspection.' }}" class="w-full px-3 py-1.5 text-xs rounded-xl bg-white dark:bg-[#16100E] border border-[#DCD3C7] dark:border-[#382D27] text-espresso-900 dark:text-white">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Method 2: Direct Bank Transfer / IBFT -->
+            <div class="p-4 rounded-2xl bg-[#FAF8F5] dark:bg-[#201815] border border-[#E8DFD5] dark:border-[#2E241F] space-y-4">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center gap-2.5">
+                        <div class="w-8 h-8 rounded-lg bg-blue-500/15 text-blue-700 dark:text-blue-400 flex items-center justify-center font-bold text-xs border border-blue-500/30">
+                            IBFT
+                        </div>
+                        <div>
+                            <div class="font-bold text-xs text-espresso-950 dark:text-white">Direct Bank Transfer / Instant IBFT</div>
+                            <div class="text-[10px] text-gray-400">Receive payment directly into your corporate bank account</div>
+                        </div>
+                    </div>
+                    <label class="relative inline-flex items-center cursor-pointer">
+                        <input type="checkbox" name="payment_bank_enabled" value="1" class="sr-only peer" {{ ($settings['payment_bank_enabled'] ?? '1') === '1' ? 'checked' : '' }}>
+                        <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
+                        <span class="ml-2 text-xs font-semibold text-espresso-900 dark:text-white">Active</span>
+                    </label>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 pt-2 border-t border-[#E8DFD5] dark:border-white/5">
+                    <div>
+                        <label class="block text-[11px] font-semibold text-[#6E645E] dark:text-[#C5B8AC] mb-1">Bank Name</label>
+                        <input type="text" name="payment_bank_name" value="{{ $settings['payment_bank_name'] ?? 'Meezan Bank Limited' }}" placeholder="e.g. Meezan Bank / HBL / Alfalah" class="w-full px-3 py-1.5 text-xs rounded-xl bg-white dark:bg-[#16100E] border border-[#DCD3C7] dark:border-[#382D27] text-espresso-900 dark:text-white">
+                    </div>
+                    <div>
+                        <label class="block text-[11px] font-semibold text-[#6E645E] dark:text-[#C5B8AC] mb-1">Account Title</label>
+                        <input type="text" name="payment_bank_account_title" value="{{ $settings['payment_bank_account_title'] ?? 'BY ZUNASH LEATHER ATELIER' }}" placeholder="e.g. BY ZUNASH" class="w-full px-3 py-1.5 text-xs rounded-xl bg-white dark:bg-[#16100E] border border-[#DCD3C7] dark:border-[#382D27] text-espresso-900 dark:text-white">
+                    </div>
+                    <div>
+                        <label class="block text-[11px] font-semibold text-[#6E645E] dark:text-[#C5B8AC] mb-1">Account Number (Optional)</label>
+                        <input type="text" name="payment_bank_account_number" value="{{ $settings['payment_bank_account_number'] ?? '02010108924519' }}" placeholder="e.g. 02010108924519" class="w-full px-3 py-1.5 text-xs rounded-xl bg-white dark:bg-[#16100E] border border-[#DCD3C7] dark:border-[#382D27] text-espresso-900 dark:text-white font-mono">
+                    </div>
+                    <div class="sm:col-span-2">
+                        <label class="block text-[11px] font-semibold text-[#6E645E] dark:text-[#C5B8AC] mb-1">IBAN Coordinates (Full 24-character IBAN)</label>
+                        <input type="text" name="payment_bank_iban" value="{{ $settings['payment_bank_iban'] ?? 'PK64MEZN0002010108924519' }}" placeholder="e.g. PK64MEZN0002010108924519" class="w-full px-3 py-1.5 text-xs rounded-xl bg-white dark:bg-[#16100E] border border-[#DCD3C7] dark:border-[#382D27] text-espresso-900 dark:text-white font-mono uppercase">
+                    </div>
+                    <div>
+                        <label class="block text-[11px] font-semibold text-[#6E645E] dark:text-[#C5B8AC] mb-1">Method Display Title</label>
+                        <input type="text" name="payment_bank_title" value="{{ $settings['payment_bank_title'] ?? 'Direct Bank Transfer / Instant IBFT' }}" class="w-full px-3 py-1.5 text-xs rounded-xl bg-white dark:bg-[#16100E] border border-[#DCD3C7] dark:border-[#382D27] text-espresso-900 dark:text-white">
+                    </div>
+                    <div class="sm:col-span-2 lg:col-span-3">
+                        <label class="block text-[11px] font-semibold text-[#6E645E] dark:text-[#C5B8AC] mb-1">Client Transfer Instructions</label>
+                        <input type="text" name="payment_bank_instructions" value="{{ $settings['payment_bank_instructions'] ?? 'Transfer directly from your banking app. Please attach the transaction receipt / screenshot below.' }}" class="w-full px-3 py-1.5 text-xs rounded-xl bg-white dark:bg-[#16100E] border border-[#DCD3C7] dark:border-[#382D27] text-espresso-900 dark:text-white">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Method 3: JazzCash Mobile Account -->
+            <div class="p-4 rounded-2xl bg-[#FAF8F5] dark:bg-[#201815] border border-[#E8DFD5] dark:border-[#2E241F] space-y-4">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center gap-2.5">
+                        <div class="w-8 h-8 rounded-lg bg-amber-500/15 text-amber-700 dark:text-amber-400 flex items-center justify-center font-bold text-xs border border-amber-500/30">
+                            JC
+                        </div>
+                        <div>
+                            <div class="font-bold text-xs text-espresso-950 dark:text-white">JazzCash Mobile Account</div>
+                            <div class="text-[10px] text-gray-400">Receive instant mobile payments via JazzCash App or USSD</div>
+                        </div>
+                    </div>
+                    <label class="relative inline-flex items-center cursor-pointer">
+                        <input type="checkbox" name="payment_jazzcash_enabled" value="1" class="sr-only peer" {{ ($settings['payment_jazzcash_enabled'] ?? '1') === '1' ? 'checked' : '' }}>
+                        <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-amber-600"></div>
+                        <span class="ml-2 text-xs font-semibold text-espresso-900 dark:text-white">Active</span>
+                    </label>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-2 border-t border-[#E8DFD5] dark:border-white/5">
+                    <div>
+                        <label class="block text-[11px] font-semibold text-[#6E645E] dark:text-[#C5B8AC] mb-1">JazzCash Account Title</label>
+                        <input type="text" name="payment_jazzcash_account_title" value="{{ $settings['payment_jazzcash_account_title'] ?? 'By Zunash Leather Atelier' }}" placeholder="e.g. By Zunash" class="w-full px-3 py-1.5 text-xs rounded-xl bg-white dark:bg-[#16100E] border border-[#DCD3C7] dark:border-[#382D27] text-espresso-900 dark:text-white">
+                    </div>
+                    <div>
+                        <label class="block text-[11px] font-semibold text-[#6E645E] dark:text-[#C5B8AC] mb-1">JazzCash Mobile Number</label>
+                        <input type="text" name="payment_jazzcash_number" value="{{ $settings['payment_jazzcash_number'] ?? '03001234567' }}" placeholder="03001234567" class="w-full px-3 py-1.5 text-xs rounded-xl bg-white dark:bg-[#16100E] border border-[#DCD3C7] dark:border-[#382D27] text-espresso-900 dark:text-white font-mono">
+                    </div>
+                    <div>
+                        <label class="block text-[11px] font-semibold text-[#6E645E] dark:text-[#C5B8AC] mb-1">Method Display Title</label>
+                        <input type="text" name="payment_jazzcash_title" value="{{ $settings['payment_jazzcash_title'] ?? 'JazzCash Mobile Account' }}" class="w-full px-3 py-1.5 text-xs rounded-xl bg-white dark:bg-[#16100E] border border-[#DCD3C7] dark:border-[#382D27] text-espresso-900 dark:text-white">
+                    </div>
+                    <div class="sm:col-span-3">
+                        <label class="block text-[11px] font-semibold text-[#6E645E] dark:text-[#C5B8AC] mb-1">Client Instructions</label>
+                        <input type="text" name="payment_jazzcash_instructions" value="{{ $settings['payment_jazzcash_instructions'] ?? 'Send payment to our JazzCash number and attach the transaction screenshot below.' }}" class="w-full px-3 py-1.5 text-xs rounded-xl bg-white dark:bg-[#16100E] border border-[#DCD3C7] dark:border-[#382D27] text-espresso-900 dark:text-white">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Method 4: EasyPaisa Mobile Account -->
+            <div class="p-4 rounded-2xl bg-[#FAF8F5] dark:bg-[#201815] border border-[#E8DFD5] dark:border-[#2E241F] space-y-4">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center gap-2.5">
+                        <div class="w-8 h-8 rounded-lg bg-teal-500/15 text-teal-700 dark:text-teal-400 flex items-center justify-center font-bold text-xs border border-teal-500/30">
+                            EP
+                        </div>
+                        <div>
+                            <div class="font-bold text-xs text-espresso-950 dark:text-white">EasyPaisa Mobile Account</div>
+                            <div class="text-[10px] text-gray-400">Receive instant payments via EasyPaisa App or USSD</div>
+                        </div>
+                    </div>
+                    <label class="relative inline-flex items-center cursor-pointer">
+                        <input type="checkbox" name="payment_easypaisa_enabled" value="1" class="sr-only peer" {{ ($settings['payment_easypaisa_enabled'] ?? '1') === '1' ? 'checked' : '' }}>
+                        <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-teal-600"></div>
+                        <span class="ml-2 text-xs font-semibold text-espresso-900 dark:text-white">Active</span>
+                    </label>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-2 border-t border-[#E8DFD5] dark:border-white/5">
+                    <div>
+                        <label class="block text-[11px] font-semibold text-[#6E645E] dark:text-[#C5B8AC] mb-1">EasyPaisa Account Title</label>
+                        <input type="text" name="payment_easypaisa_account_title" value="{{ $settings['payment_easypaisa_account_title'] ?? 'By Zunash Leather Atelier' }}" placeholder="e.g. By Zunash" class="w-full px-3 py-1.5 text-xs rounded-xl bg-white dark:bg-[#16100E] border border-[#DCD3C7] dark:border-[#382D27] text-espresso-900 dark:text-white">
+                    </div>
+                    <div>
+                        <label class="block text-[11px] font-semibold text-[#6E645E] dark:text-[#C5B8AC] mb-1">EasyPaisa Mobile Number</label>
+                        <input type="text" name="payment_easypaisa_number" value="{{ $settings['payment_easypaisa_number'] ?? '03451234567' }}" placeholder="03451234567" class="w-full px-3 py-1.5 text-xs rounded-xl bg-white dark:bg-[#16100E] border border-[#DCD3C7] dark:border-[#382D27] text-espresso-900 dark:text-white font-mono">
+                    </div>
+                    <div>
+                        <label class="block text-[11px] font-semibold text-[#6E645E] dark:text-[#C5B8AC] mb-1">Method Display Title</label>
+                        <input type="text" name="payment_easypaisa_title" value="{{ $settings['payment_easypaisa_title'] ?? 'EasyPaisa Mobile Account' }}" class="w-full px-3 py-1.5 text-xs rounded-xl bg-white dark:bg-[#16100E] border border-[#DCD3C7] dark:border-[#382D27] text-espresso-900 dark:text-white">
+                    </div>
+                    <div class="sm:col-span-3">
+                        <label class="block text-[11px] font-semibold text-[#6E645E] dark:text-[#C5B8AC] mb-1">Client Instructions</label>
+                        <input type="text" name="payment_easypaisa_instructions" value="{{ $settings['payment_easypaisa_instructions'] ?? 'Send payment to our EasyPaisa number and attach the transaction screenshot below.' }}" class="w-full px-3 py-1.5 text-xs rounded-xl bg-white dark:bg-[#16100E] border border-[#DCD3C7] dark:border-[#382D27] text-espresso-900 dark:text-white">
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
         <div class="pt-4 border-t border-[#F0EAE1] dark:border-[#2C2420] flex justify-end">
             <button type="submit" class="px-6 py-2.5 rounded-xl bg-espresso-900 hover:bg-tan-600 text-white font-semibold text-xs shadow-md transition-colors border border-gold-400/20">
                 Save By Zunash Settings

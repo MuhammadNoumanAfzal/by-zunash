@@ -111,8 +111,9 @@
                     <option value="all">Payment Method: All</option>
                     <option value="COD" {{ request('payment') === 'COD' ? 'selected' : '' }}>Cash on Delivery (COD)</option>
                     <option value="BANK_TRANSFER" {{ request('payment') === 'BANK_TRANSFER' ? 'selected' : '' }}>Bank Transfer (IBFT)</option>
+                    <option value="JAZZCASH" {{ request('payment') === 'JAZZCASH' ? 'selected' : '' }}>JazzCash</option>
+                    <option value="EASYPAISA" {{ request('payment') === 'EASYPAISA' ? 'selected' : '' }}>EasyPaisa</option>
                     <option value="CREDIT_CARD" {{ request('payment') === 'CREDIT_CARD' ? 'selected' : '' }}>Card Online</option>
-                    <option value="VIP_CONCIERGE" {{ request('payment') === 'VIP_CONCIERGE' ? 'selected' : '' }}>VIP Concierge Invoice</option>
                 </select>
             </div>
 
@@ -256,8 +257,12 @@
                             <div class="font-bold text-espresso-950 dark:text-white truncate">
                                 {{ $order->customer_name }}
                             </div>
-                            <div class="text-[11px] text-gray-400 truncate">
-                                {{ $order->city }} • {{ $order->created_at ? $order->created_at->format('M d, Y') : '—' }}
+                            <div class="text-[11px] text-gray-400 truncate flex items-center gap-1.5 flex-wrap mt-0.5">
+                                <span>{{ $order->city }} • {{ $order->created_at ? $order->created_at->format('M d, Y') : '—' }}</span>
+                                <span class="px-1.5 py-0.2 rounded text-[9px] font-bold bg-[#FAF8F5] text-espresso-900 border border-gray-200">{{ $order->payment_method }}</span>
+                                @if($order->payment_receipt)
+                                    <a href="{{ $order->payment_receipt }}" target="_blank" class="text-[9px] font-bold text-emerald-700 bg-emerald-50 border border-emerald-200 px-1 py-0.2 rounded">Proof</a>
+                                @endif
                             </div>
                             @if($order->courier_name)
                                 <div class="text-[10px] text-emerald-600 font-semibold mt-0.5">
@@ -364,23 +369,47 @@
                             </td>
 
                             <td class="py-3.5 px-3">
-                                @if($order->payment_method === 'COD')
-                                    <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-[#FFF7E8] text-tan-700 border border-[#FDE68A]">
-                                        COD
-                                    </span>
-                                @elseif($order->payment_method === 'BANK_TRANSFER')
-                                    <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-[#EFF6FF] text-[#2563EB] border border-[#BFDBFE]">
-                                        MEEZAN IBFT
-                                    </span>
-                                @elseif($order->payment_method === 'CREDIT_CARD')
-                                    <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-[#F3F4F6] text-[#4B5563] border border-[#E5E7EB]">
-                                        CARD
-                                    </span>
-                                @else
-                                    <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-[#FDF9F5] text-tan-700 border border-tan-200">
-                                        {{ $order->payment_method }}
-                                    </span>
-                                @endif
+                                <div>
+                                    @if($order->payment_method === 'COD')
+                                        <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-[#FFF7E8] text-tan-700 border border-[#FDE68A] inline-block">
+                                            COD
+                                        </span>
+                                    @elseif($order->payment_method === 'BANK_TRANSFER')
+                                        <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-[#EFF6FF] text-[#2563EB] border border-[#BFDBFE] inline-block">
+                                            IBFT
+                                        </span>
+                                    @elseif($order->payment_method === 'JAZZCASH')
+                                        <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-amber-500/15 text-amber-800 dark:text-amber-300 border border-amber-500/30 inline-block">
+                                            JazzCash
+                                        </span>
+                                    @elseif($order->payment_method === 'EASYPAISA')
+                                        <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-50 text-emerald-800 dark:bg-emerald-950/40 dark:text-emerald-300 border border-emerald-300 inline-block">
+                                            EasyPaisa
+                                        </span>
+                                    @else
+                                        <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-[#FDF9F5] text-tan-700 border border-tan-200 inline-block">
+                                            {{ $order->payment_method }}
+                                        </span>
+                                    @endif
+
+                                    @if($order->transaction_id)
+                                        <div class="text-[9px] font-mono text-[#8F8379] mt-0.5 truncate max-w-[120px]" title="Transaction ID: {{ $order->transaction_id }}">
+                                            TID: {{ $order->transaction_id }}
+                                        </div>
+                                    @endif
+
+                                    @if($order->payment_receipt)
+                                        <a 
+                                            href="{{ $order->payment_receipt }}" 
+                                            target="_blank" 
+                                            class="inline-flex items-center gap-1 mt-1 px-1.5 py-0.5 rounded text-[9px] font-bold bg-emerald-100/80 hover:bg-emerald-200 text-emerald-900 border border-emerald-300 transition-colors"
+                                            title="View Payment Proof Screenshot"
+                                        >
+                                            <i data-lucide="image" class="w-2.5 h-2.5"></i>
+                                            <span>Proof Attached</span>
+                                        </a>
+                                    @endif
+                                </div>
                             </td>
 
                             <td class="py-3.5 px-3">

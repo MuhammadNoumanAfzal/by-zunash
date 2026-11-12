@@ -645,14 +645,14 @@
                     @endif
                 </div>
 
-                <!-- Doorstep Inspection & Authenticity Guarantee (Easy Wording for Pakistani Shoppers) -->
-                <div class="p-3.5 rounded-xl bg-ivory-100/90 dark:bg-[#201815] border border-gold/40 text-xs space-y-1.5 shadow-2xs">
-                    <div class="flex items-center gap-2 font-bold text-espresso-950 dark:text-white">
-                        <i data-lucide="shield-check" class="w-4 h-4 text-gold-600"></i>
-                        <span>100% Pure Genuine Leather • Open Parcel Before Payment</span>
+                <!-- Doorstep Inspection & Authenticity Guarantee (Bold & High Contrast for Pakistani Shoppers) -->
+                <div class="p-4 rounded-2xl bg-[#F7F2EB] dark:bg-[#201815] border-2 border-tan-400/60 dark:border-gold/40 text-xs space-y-1.5 shadow-2xs">
+                    <div class="flex items-center gap-2 font-bold text-sm text-espresso-950 dark:text-white">
+                        <i data-lucide="shield-check" class="w-4 h-4 text-tan-700 dark:text-gold shrink-0"></i>
+                        <span>100% Full-Grain Hide • Open Parcel Inspection</span>
                     </div>
-                    <p class="text-[11px] text-muted dark:text-[#B0A59C] leading-relaxed">
-                        Every creation is crafted from 100% genuine full-grain leather. You can open and inspect your parcel at your doorstep before paying Cash on Delivery. If you are not completely satisfied, return it immediately on the spot with zero hassle.
+                    <p class="text-xs text-espresso-900 dark:text-stone-100 font-medium leading-relaxed">
+                        Every piece is genuine drum-dyed full-grain leather. You can open and inspect the courier parcel at your doorstep before handing cash. If not 100% delighted, return it on the spot with zero hassle.
                     </p>
                 </div>
 
@@ -890,9 +890,7 @@
                             <div>
                                 <div class="flex items-center justify-between mb-4">
                                     <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-amber-100 to-amber-200/80 dark:from-[#352516] dark:to-[#24170E] text-amber-800 dark:text-amber-400 flex items-center justify-center shadow-2xs border border-amber-300/40 dark:border-amber-500/20">
-                                        <svg class="w-6 h-6 text-amber-600 dark:text-amber-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                            <path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"></path>
-                                        </svg>
+                                        <i data-lucide="droplet" class="w-6 h-6 text-amber-700 dark:text-amber-400"></i>
                                     </div>
                                     <span class="px-2.5 py-1 rounded-full text-[10px] font-bold bg-amber-50 dark:bg-[#251A10] text-amber-800 dark:text-amber-300 border border-amber-200 dark:border-amber-500/20 font-mono">Every 3–6 Mo</span>
                                 </div>
@@ -911,11 +909,7 @@
                             <div>
                                 <div class="flex items-center justify-between mb-4">
                                     <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-espresso-100 to-tan-100 dark:from-[#2B201B] dark:to-[#1F1714] text-espresso-800 dark:text-gold flex items-center justify-center shadow-2xs border border-espresso-200/40 dark:border-gold/20">
-                                        <svg class="w-6 h-6 text-espresso-800 dark:text-gold" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                            <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
-                                            <polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline>
-                                            <line x1="12" y1="22.08" x2="12" y2="12"></line>
-                                        </svg>
+                                        <i data-lucide="box" class="w-6 h-6 text-espresso-800 dark:text-gold"></i>
                                     </div>
                                     <span class="px-2.5 py-1 rounded-full text-[10px] font-bold bg-[#FAF6F0] dark:bg-[#251C17] text-tan-800 dark:text-gold-300 border border-tan-200 dark:border-gold/20 font-mono">Dust Protection</span>
                                 </div>

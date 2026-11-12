@@ -21,6 +21,8 @@ class OrderController extends Controller
                 $q->where('order_number', 'like', "%{$search}%")
                   ->orWhere('customer_name', 'like', "%{$search}%")
                   ->orWhere('customer_email', 'like', "%{$search}%")
+                  ->orWhere('customer_phone', 'like', "%{$search}%")
+                  ->orWhere('transaction_id', 'like', "%{$search}%")
                   ->orWhere('city', 'like', "%{$search}%");
             });
         }
@@ -30,7 +32,11 @@ class OrderController extends Controller
         }
 
         if ($request->filled('payment') && $request->input('payment') !== 'all') {
-            $query->where('payment_method', $request->input('payment'));
+            $pay = $request->input('payment');
+            $query->where(function($q) use ($pay) {
+                $q->where('payment_method', $pay)
+                  ->orWhere('payment_method', strtoupper($pay));
+            });
         }
 
         $orders = $query->latest()->paginate(10)->withQueryString();
@@ -240,6 +246,8 @@ class OrderController extends Controller
                 $q->where('order_number', 'like', "%{$search}%")
                   ->orWhere('customer_name', 'like', "%{$search}%")
                   ->orWhere('customer_email', 'like', "%{$search}%")
+                  ->orWhere('customer_phone', 'like', "%{$search}%")
+                  ->orWhere('transaction_id', 'like', "%{$search}%")
                   ->orWhere('city', 'like', "%{$search}%");
             });
         }
@@ -249,7 +257,11 @@ class OrderController extends Controller
         }
 
         if ($request->filled('payment') && $request->input('payment') !== 'all') {
-            $query->where('payment_method', $request->input('payment'));
+            $pay = $request->input('payment');
+            $query->where(function($q) use ($pay) {
+                $q->where('payment_method', $pay)
+                  ->orWhere('payment_method', strtoupper($pay));
+            });
         }
 
         $orders = $query->latest()->get();

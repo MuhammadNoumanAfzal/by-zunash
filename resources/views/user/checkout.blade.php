@@ -94,7 +94,12 @@
             <div class="bg-[#FAF7F2] p-6 rounded-2xl border border-ivory-300 text-left text-xs text-espresso-800 space-y-3.5 mb-8 shadow-2xs">
                 <div class="flex justify-between items-center border-b border-ivory-200 pb-2.5">
                     <span class="text-muted">Payment Mode:</span>
-                    <span class="font-bold text-espresso-950 flex items-center gap-1.5" x-text="paymentMethod === 'cod' ? 'Cash on Delivery (Nationwide COD)' : 'Direct Bank Transfer (IBFT)'"></span>
+                    <span class="font-bold text-espresso-950 flex items-center gap-1.5" x-text="{
+                        'cod': 'Cash on Delivery (Nationwide COD)',
+                        'bank': 'Direct Bank Transfer (Instant IBFT)',
+                        'jazzcash': 'JazzCash Mobile Account',
+                        'easypaisa': 'EasyPaisa Mobile Account'
+                    }[paymentMethod] || 'Cash on Delivery'"></span>
                 </div>
                 <div class="flex justify-between items-center border-b border-ivory-200 pb-2.5">
                     <span class="text-muted">Delivery Destination:</span>
@@ -315,9 +320,18 @@
                         </div>
                     </div>
 
+                    @php
+                        $codActive = ($storeSettings['payment_cod_enabled'] ?? '1') === '1';
+                        $bankActive = ($storeSettings['payment_bank_enabled'] ?? '1') === '1';
+                        $jazzcashActive = ($storeSettings['payment_jazzcash_enabled'] ?? '1') === '1';
+                        $easypaisaActive = ($storeSettings['payment_easypaisa_enabled'] ?? '1') === '1';
+                        $defaultPaymentMethod = $codActive ? 'cod' : ($bankActive ? 'bank' : ($jazzcashActive ? 'jazzcash' : ($easypaisaActive ? 'easypaisa' : 'cod')));
+                    @endphp
+
                     <div class="space-y-3.5">
                         
-                        <!-- Cash on Delivery -->
+                        <!-- 1. Cash on Delivery (COD) -->
+                        @if($codActive)
                         <label 
                             class="flex items-start gap-4 p-4 sm:p-5 rounded-2xl border-2 cursor-pointer transition-all relative overflow-hidden"
                             :class="paymentMethod === 'cod' ? 'border-gold bg-[#FAF7F2] ring-2 ring-gold/20 shadow-xs' : 'border-ivory-300 hover:border-ivory-400 bg-white'"
@@ -337,19 +351,21 @@
                                         <div class="w-7 h-7 rounded-lg bg-gold/15 text-gold-700 flex items-center justify-center border border-gold/30">
                                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><rect x="2" y="6" width="20" height="12" rx="2"></rect><circle cx="12" cy="12" r="2"></circle><path d="M6 12h.01M18 12h.01"></path></svg>
                                         </div>
-                                        <span class="font-serif text-sm sm:text-base font-bold text-espresso-950">Cash on Delivery (Nationwide COD)</span>
+                                        <span class="font-serif text-sm sm:text-base font-bold text-espresso-950">{{ $storeSettings['payment_cod_title'] ?? 'Cash on Delivery (Nationwide COD)' }}</span>
                                     </div>
                                     <span class="inline-block px-2 py-0.5 rounded text-[10px] font-bold text-emerald-800 bg-emerald-50 border border-emerald-200">
                                         Zero Advance Fee
                                     </span>
                                 </div>
                                 <p class="text-xs text-muted leading-relaxed mt-1.5 pl-9 font-light">
-                                    Pay in cash to the registered courier representative upon doorstep delivery after physical parcel inspection.
+                                    {{ $storeSettings['payment_cod_desc'] ?? 'Pay in cash to the registered courier representative upon doorstep delivery after physical parcel inspection.' }}
                                 </p>
                             </div>
                         </label>
+                        @endif
 
-                        <!-- Direct Bank Transfer -->
+                        <!-- 2. Direct Bank Transfer (IBFT) -->
+                        @if($bankActive)
                         <label 
                             class="flex items-start gap-4 p-4 sm:p-5 rounded-2xl border-2 cursor-pointer transition-all relative overflow-hidden"
                             :class="paymentMethod === 'bank' ? 'border-gold bg-[#FAF7F2] ring-2 ring-gold/20 shadow-xs' : 'border-ivory-300 hover:border-ivory-400 bg-white'"
@@ -366,43 +382,56 @@
                             <div class="flex-1">
                                 <div class="flex items-center justify-between gap-2 flex-wrap">
                                     <div class="flex items-center gap-2">
-                                        <div class="w-7 h-7 rounded-lg bg-gold/15 text-gold-700 flex items-center justify-center border border-gold/30">
+                                        <div class="w-7 h-7 rounded-lg bg-blue-50 text-blue-700 flex items-center justify-center border border-blue-200">
                                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path d="M3 21h18M3 10h18M5 10v11M19 10v11M9 10v11M15 10v11M12 2l10 5H2l10-5z"></path></svg>
                                         </div>
-                                        <span class="font-serif text-sm sm:text-base font-bold text-espresso-950">Direct Bank Transfer / Instant IBFT</span>
+                                        <span class="font-serif text-sm sm:text-base font-bold text-espresso-950">{{ $storeSettings['payment_bank_title'] ?? 'Direct Bank Transfer / Instant IBFT' }}</span>
                                     </div>
-                                    <span class="inline-block px-2 py-0.5 rounded text-[10px] font-semibold text-espresso-800 bg-white border border-ivory-300">
-                                        Meezan / HBL / Alfalah
+                                    <span class="inline-block px-2 py-0.5 rounded text-[10px] font-semibold text-blue-800 bg-blue-50 border border-blue-200">
+                                        {{ $storeSettings['payment_bank_name'] ?? 'Meezan Bank Limited' }}
                                     </span>
                                 </div>
                                 <p class="text-xs text-muted leading-relaxed mt-1.5 pl-9 font-light">
-                                    Transfer directly from your banking app. Corporate coordinates provided upon order confirmation.
+                                    {{ $storeSettings['payment_bank_instructions'] ?? 'Transfer directly from your banking app. Corporate coordinates provided below.' }}
                                 </p>
 
                                 <!-- Expandable IBFT Details when Bank selected -->
                                 <div 
                                     x-show="paymentMethod === 'bank'" 
                                     x-transition:enter="transition ease-out duration-300"
-                                    x-transition:enter-start="opacity-0 -translate-y-2"
-                                    x-transition:enter-end="opacity-100 translate-y-0"
                                     class="mt-4 pt-4 border-t border-ivory-200 pl-9 space-y-2 text-xs"
                                 >
-                                    <div class="bg-white p-3.5 rounded-xl border border-ivory-300 space-y-1.5 shadow-2xs">
+                                    <div class="bg-white p-3.5 rounded-xl border border-ivory-300 space-y-2 shadow-2xs">
                                         <div class="flex justify-between items-center text-[11px]">
                                             <span class="text-muted">Corporate Bank:</span>
-                                            <span class="font-bold text-espresso-950">Meezan Bank Limited</span>
+                                            <span class="font-bold text-espresso-950">{{ $storeSettings['payment_bank_name'] ?? 'Meezan Bank Limited' }}</span>
                                         </div>
                                         <div class="flex justify-between items-center text-[11px]">
                                             <span class="text-muted">Account Title:</span>
-                                            <span class="font-bold text-espresso-950">BY ZUNASH LEATHER ATELIER</span>
+                                            <span class="font-bold text-espresso-950">{{ $storeSettings['payment_bank_account_title'] ?? 'BY ZUNASH LEATHER ATELIER' }}</span>
                                         </div>
+                                        @if(!empty($storeSettings['payment_bank_account_number']))
+                                        <div class="flex justify-between items-center text-[11px]">
+                                            <span class="text-muted">Account Number:</span>
+                                            <div class="flex items-center gap-1.5">
+                                                <span class="font-mono font-bold text-espresso-950 select-all">{{ $storeSettings['payment_bank_account_number'] }}</span>
+                                                <button 
+                                                    type="button" 
+                                                    @click.stop="copyText('{{ $storeSettings['payment_bank_account_number'] }}')" 
+                                                    class="px-1.5 py-0.5 bg-ivory-100 hover:bg-gold/20 text-[10px] font-semibold text-espresso-800 rounded border border-ivory-300 transition-colors"
+                                                >
+                                                    Copy
+                                                </button>
+                                            </div>
+                                        </div>
+                                        @endif
                                         <div class="flex justify-between items-center text-[11px] pt-1 border-t border-ivory-200">
                                             <span class="text-muted">IBAN Coordinates:</span>
                                             <div class="flex items-center gap-1.5">
-                                                <span class="font-mono font-bold text-espresso-950 select-all">PK64MEZN0002010108924519</span>
+                                                <span class="font-mono font-bold text-espresso-950 select-all">{{ $storeSettings['payment_bank_iban'] ?? 'PK64MEZN0002010108924519' }}</span>
                                                 <button 
                                                     type="button" 
-                                                    @click.stop="copyIban()" 
+                                                    @click.stop="copyText('{{ $storeSettings['payment_bank_iban'] ?? 'PK64MEZN0002010108924519' }}')" 
                                                     class="px-1.5 py-0.5 bg-ivory-100 hover:bg-gold/20 text-[10px] font-semibold text-espresso-800 rounded border border-ivory-300 transition-colors"
                                                 >
                                                     Copy
@@ -410,12 +439,208 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <p class="text-[11px] text-muted font-light italic">
-                                        * Please share the IBFT transaction screenshot with our concierge via WhatsApp after placing the order.
-                                    </p>
                                 </div>
                             </div>
                         </label>
+                        @endif
+
+                        <!-- 3. JazzCash Mobile Account -->
+                        @if($jazzcashActive)
+                        <label 
+                            class="flex items-start gap-4 p-4 sm:p-5 rounded-2xl border-2 cursor-pointer transition-all relative overflow-hidden"
+                            :class="paymentMethod === 'jazzcash' ? 'border-amber-500 bg-[#FAF7F2] ring-2 ring-amber-500/20 shadow-xs' : 'border-ivory-300 hover:border-ivory-400 bg-white'"
+                        >
+                            <div class="pt-0.5">
+                                <input 
+                                    type="radio" 
+                                    name="payment_method" 
+                                    value="jazzcash" 
+                                    x-model="paymentMethod" 
+                                    class="w-4 h-4 text-amber-600 border-ivory-300 focus:ring-amber-500"
+                                >
+                            </div>
+                            <div class="flex-1">
+                                <div class="flex items-center justify-between gap-2 flex-wrap">
+                                    <div class="flex items-center gap-2">
+                                        <div class="w-7 h-7 rounded-lg bg-amber-500/15 text-amber-700 flex items-center justify-center font-bold text-xs border border-amber-500/30">
+                                            JC
+                                        </div>
+                                        <span class="font-serif text-sm sm:text-base font-bold text-espresso-950">{{ $storeSettings['payment_jazzcash_title'] ?? 'JazzCash Mobile Account' }}</span>
+                                    </div>
+                                    <span class="inline-block px-2 py-0.5 rounded text-[10px] font-bold text-amber-800 bg-amber-50 border border-amber-200">
+                                        JazzCash Instant
+                                    </span>
+                                </div>
+                                <p class="text-xs text-muted leading-relaxed mt-1.5 pl-9 font-light">
+                                    {{ $storeSettings['payment_jazzcash_instructions'] ?? 'Send money to our JazzCash mobile account and upload the transaction receipt below.' }}
+                                </p>
+
+                                <!-- Expandable JazzCash Details when selected -->
+                                <div 
+                                    x-show="paymentMethod === 'jazzcash'" 
+                                    x-transition:enter="transition ease-out duration-300"
+                                    class="mt-4 pt-4 border-t border-ivory-200 pl-9 space-y-2 text-xs"
+                                >
+                                    <div class="bg-white p-3.5 rounded-xl border border-ivory-300 space-y-2 shadow-2xs">
+                                        <div class="flex justify-between items-center text-[11px]">
+                                            <span class="text-muted">Account Title:</span>
+                                            <span class="font-bold text-espresso-950">{{ $storeSettings['payment_jazzcash_account_title'] ?? 'By Zunash Leather Atelier' }}</span>
+                                        </div>
+                                        <div class="flex justify-between items-center text-[11px] pt-1 border-t border-ivory-200">
+                                            <span class="text-muted">JazzCash Mobile Number:</span>
+                                            <div class="flex items-center gap-1.5">
+                                                <span class="font-mono font-bold text-espresso-950 select-all">{{ $storeSettings['payment_jazzcash_number'] ?? '03001234567' }}</span>
+                                                <button 
+                                                    type="button" 
+                                                    @click.stop="copyText('{{ $storeSettings['payment_jazzcash_number'] ?? '03001234567' }}')" 
+                                                    class="px-1.5 py-0.5 bg-ivory-100 hover:bg-amber-100 text-[10px] font-semibold text-espresso-800 rounded border border-ivory-300 transition-colors"
+                                                >
+                                                    Copy
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </label>
+                        @endif
+
+                        <!-- 4. EasyPaisa Mobile Account -->
+                        @if($easypaisaActive)
+                        <label 
+                            class="flex items-start gap-4 p-4 sm:p-5 rounded-2xl border-2 cursor-pointer transition-all relative overflow-hidden"
+                            :class="paymentMethod === 'easypaisa' ? 'border-teal-500 bg-[#FAF7F2] ring-2 ring-teal-500/20 shadow-xs' : 'border-ivory-300 hover:border-ivory-400 bg-white'"
+                        >
+                            <div class="pt-0.5">
+                                <input 
+                                    type="radio" 
+                                    name="payment_method" 
+                                    value="easypaisa" 
+                                    x-model="paymentMethod" 
+                                    class="w-4 h-4 text-teal-600 border-ivory-300 focus:ring-teal-500"
+                                >
+                            </div>
+                            <div class="flex-1">
+                                <div class="flex items-center justify-between gap-2 flex-wrap">
+                                    <div class="flex items-center gap-2">
+                                        <div class="w-7 h-7 rounded-lg bg-teal-500/15 text-teal-700 flex items-center justify-center font-bold text-xs border border-teal-500/30">
+                                            EP
+                                        </div>
+                                        <span class="font-serif text-sm sm:text-base font-bold text-espresso-950">{{ $storeSettings['payment_easypaisa_title'] ?? 'EasyPaisa Mobile Account' }}</span>
+                                    </div>
+                                    <span class="inline-block px-2 py-0.5 rounded text-[10px] font-bold text-teal-800 bg-teal-50 border border-teal-200">
+                                        EasyPaisa Instant
+                                    </span>
+                                </div>
+                                <p class="text-xs text-muted leading-relaxed mt-1.5 pl-9 font-light">
+                                    {{ $storeSettings['payment_easypaisa_instructions'] ?? 'Send money to our EasyPaisa mobile account and upload the transaction receipt below.' }}
+                                </p>
+
+                                <!-- Expandable EasyPaisa Details when selected -->
+                                <div 
+                                    x-show="paymentMethod === 'easypaisa'" 
+                                    x-transition:enter="transition ease-out duration-300"
+                                    class="mt-4 pt-4 border-t border-ivory-200 pl-9 space-y-2 text-xs"
+                                >
+                                    <div class="bg-white p-3.5 rounded-xl border border-ivory-300 space-y-2 shadow-2xs">
+                                        <div class="flex justify-between items-center text-[11px]">
+                                            <span class="text-muted">Account Title:</span>
+                                            <span class="font-bold text-espresso-950">{{ $storeSettings['payment_easypaisa_account_title'] ?? 'By Zunash Leather Atelier' }}</span>
+                                        </div>
+                                        <div class="flex justify-between items-center text-[11px] pt-1 border-t border-ivory-200">
+                                            <span class="text-muted">EasyPaisa Mobile Number:</span>
+                                            <div class="flex items-center gap-1.5">
+                                                <span class="font-mono font-bold text-espresso-950 select-all">{{ $storeSettings['payment_easypaisa_number'] ?? '03451234567' }}</span>
+                                                <button 
+                                                    type="button" 
+                                                    @click.stop="copyText('{{ $storeSettings['payment_easypaisa_number'] ?? '03451234567' }}')" 
+                                                    class="px-1.5 py-0.5 bg-ivory-100 hover:bg-teal-100 text-[10px] font-semibold text-espresso-800 rounded border border-ivory-300 transition-colors"
+                                                >
+                                                    Copy
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </label>
+                        @endif
+
+                        <!-- Advance Payment Screenshot / Receipt Upload Container -->
+                        <div 
+                            x-show="['bank', 'jazzcash', 'easypaisa'].includes(paymentMethod)" 
+                            x-transition:enter="transition ease-out duration-300"
+                            class="p-4 sm:p-5 rounded-2xl bg-[#FAF8F5] dark:bg-[#1C1613] border-2 border-tan-400/50 dark:border-tan-600/30 space-y-3.5 shadow-2xs"
+                        >
+                            <div class="flex items-center gap-2.5">
+                                <div class="w-8 h-8 rounded-xl bg-tan-600 text-white flex items-center justify-center font-bold text-xs shrink-0 shadow-2xs">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
+                                </div>
+                                <div>
+                                    <div class="text-xs sm:text-sm font-bold text-espresso-950 dark:text-white">Upload Payment Screenshot / Receipt Proof</div>
+                                    <div class="text-[11px] text-[#6E645E] dark:text-[#A89C91]">Attach your transaction receipt to guarantee immediate dispatch priority</div>
+                                </div>
+                            </div>
+
+                            <!-- File Upload Area with Drag & Drop -->
+                            <div class="relative border-2 border-dashed border-[#D5CDC2] dark:border-[#382D27] rounded-xl p-4 text-center hover:border-gold transition-colors bg-white dark:bg-[#16100E]">
+                                <input 
+                                    type="file" 
+                                    id="receiptFileInput"
+                                    accept="image/jpeg,image/png,image/webp,image/jpg,application/pdf" 
+                                    @change="handleReceiptUpload($event)"
+                                    class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
+                                >
+                                
+                                <template x-if="!receiptPreview">
+                                    <div class="space-y-1.5 pointer-events-none py-1">
+                                        <svg class="w-7 h-7 mx-auto text-tan-600 dark:text-gold" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg>
+                                        <div class="text-xs font-bold text-espresso-900 dark:text-white">Click or drag payment screenshot here</div>
+                                        <div class="text-[10px] text-gray-400">JPG, PNG, WEBP or PDF receipt (Max 10 MB)</div>
+                                    </div>
+                                </template>
+
+                                <template x-if="receiptPreview">
+                                    <div class="flex items-center justify-between gap-3">
+                                        <div class="flex items-center gap-3 min-w-0">
+                                            <template x-if="receiptPreview !== 'pdf'">
+                                                <img :src="receiptPreview" class="w-14 h-14 object-cover rounded-xl border border-gray-200 dark:border-white/10 shrink-0">
+                                            </template>
+                                            <template x-if="receiptPreview === 'pdf'">
+                                                <div class="w-14 h-14 rounded-xl bg-red-100 text-red-600 flex items-center justify-center font-bold text-xs shrink-0">PDF</div>
+                                            </template>
+                                            <div class="text-left min-w-0">
+                                                <div class="text-xs font-bold text-espresso-950 dark:text-white truncate" x-text="receiptFileName"></div>
+                                                <div class="text-[11px] text-emerald-600 font-semibold flex items-center gap-1 mt-0.5">
+                                                    <span>✓</span>
+                                                    <span>Screenshot Attached</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <button 
+                                            type="button" 
+                                            @click.stop="removeReceipt()"
+                                            class="px-2.5 py-1 text-xs font-bold text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/30 rounded-lg border border-rose-200 transition-colors z-20"
+                                        >
+                                            Change
+                                        </button>
+                                    </div>
+                                </template>
+                            </div>
+
+                            <!-- Optional Transaction ID / TID -->
+                            <div>
+                                <label class="block text-[11px] font-semibold text-espresso-900 dark:text-white mb-1">
+                                    Transaction ID / Reference Number (From SMS or Banking App)
+                                </label>
+                                <input 
+                                    type="text" 
+                                    x-model="transactionId" 
+                                    placeholder="e.g. TID-98421035 or TRX-54019"
+                                    class="w-full px-3.5 py-2 text-xs rounded-xl bg-white dark:bg-[#16100E] border border-[#D5CDC2] dark:border-[#382D27] text-espresso-900 dark:text-white font-mono placeholder:text-gray-400 focus:outline-hidden focus:border-gold"
+                                >
+                            </div>
+                        </div>
 
                     </div>
                 </div>
@@ -630,11 +855,52 @@ function checkoutForm() {
         city: 'Lahore',
         postalCode: '',
         orderNotes: '',
-        paymentMethod: 'cod',
+        paymentMethod: '{{ $defaultPaymentMethod ?? 'cod' }}',
         orderPlaced: false,
         orderNumber: '',
         error: '',
         isSubmitting: false,
+
+        // Payment Proof & Screenshot State
+        receiptFile: null,
+        receiptFileName: '',
+        receiptPreview: null,
+        transactionId: '',
+
+        handleReceiptUpload(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            this.receiptFile = file;
+            this.receiptFileName = file.name;
+            if (file.type === 'application/pdf') {
+                this.receiptPreview = 'pdf';
+            } else if (file.type.startsWith('image/')) {
+                const reader = new FileReader();
+                reader.onload = (e) => { this.receiptPreview = e.target.result; };
+                reader.readAsDataURL(file);
+            } else {
+                this.receiptPreview = 'file';
+            }
+        },
+
+        removeReceipt() {
+            this.receiptFile = null;
+            this.receiptFileName = '';
+            this.receiptPreview = null;
+            const input = document.getElementById('receiptFileInput');
+            if (input) input.value = '';
+        },
+
+        copyText(text) {
+            if (navigator.clipboard) {
+                navigator.clipboard.writeText(text);
+                if (window.ZunashAlert) {
+                    window.ZunashAlert.toast('Copied: ' + text, 'success');
+                } else {
+                    alert('Copied to clipboard: ' + text);
+                }
+            }
+        },
 
         // Abandoned cart tracking state
         cartToken: localStorage.getItem('bz_cart_token') || ('bz_' + Math.random().toString(36).substring(2, 12)),
@@ -788,28 +1054,34 @@ function checkoutForm() {
             
             this.isSubmitting = true;
 
+            const formData = new FormData();
+            formData.append('_token', '{{ csrf_token() }}');
+            formData.append('first_name', this.firstName);
+            formData.append('last_name', this.lastName);
+            formData.append('email', this.email || (this.phone.replace(/[^0-9]/g, '') + '@byzunash.store'));
+            formData.append('phone', this.phone);
+            formData.append('address', this.address);
+            formData.append('city', this.city);
+            formData.append('postal_code', this.postalCode || '');
+            formData.append('order_notes', this.orderNotes || '');
+            formData.append('payment_method', this.paymentMethod);
+            formData.append('transaction_id', this.transactionId || '');
+            if (this.receiptFile) {
+                formData.append('payment_receipt_file', this.receiptFile);
+            }
+            formData.append('coupon_code', this.couponCode || '');
+            formData.append('discount', this.discountAmount || 0);
+            formData.append('items', JSON.stringify(Alpine.store('cart').items));
+            formData.append('subtotal', Alpine.store('cart').subtotal);
+            formData.append('total', this.calculatedTotal);
+
             fetch('{{ route('checkout.process') }}', {
                 method: 'POST',
                 headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                    'Accept': 'application/json'
                 },
-                body: JSON.stringify({
-                    first_name: this.firstName,
-                    last_name: this.lastName,
-                    email: this.email || (this.phone.replace(/[^0-9]/g, '') + '@byzunash.store'),
-                    phone: this.phone,
-                    address: this.address,
-                    city: this.city,
-                    postal_code: this.postalCode,
-                    order_notes: this.orderNotes,
-                    payment_method: this.paymentMethod,
-                    coupon_code: this.couponCode,
-                    discount: this.discountAmount,
-                    items: Alpine.store('cart').items,
-                    subtotal: Alpine.store('cart').subtotal,
-                    total: this.calculatedTotal
-                })
+                body: formData
             })
             .then(res => res.json())
             .then(data => {

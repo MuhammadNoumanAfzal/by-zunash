@@ -16,7 +16,18 @@ class SettingController extends Controller
 
     public function update(Request $request)
     {
-        $data = $request->except(['_token', '_method']);
+        $checkboxKeys = [
+            'payment_cod_enabled',
+            'payment_bank_enabled',
+            'payment_jazzcash_enabled',
+            'payment_easypaisa_enabled',
+        ];
+
+        foreach ($checkboxKeys as $cb) {
+            StoreSetting::set($cb, $request->has($cb) ? '1' : '0');
+        }
+
+        $data = $request->except(array_merge(['_token', '_method'], $checkboxKeys));
 
         foreach ($data as $key => $value) {
             StoreSetting::set($key, $value);

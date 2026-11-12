@@ -392,11 +392,13 @@ class ProductController extends Controller
         if ($request->filled('features_raw')) {
             $raw = trim($request->input('features_raw'));
             // Strip any Quill internal UI spans or encoded entities
-            $raw = preg_replace('/<span[^>]*class=["\']ql-ui["\'][^>]*>.*?<\/span>/is', '', $raw);
-            $raw = preg_replace('/<span[^>]*class=["\']ql-ui["\'][^>]*\/?>/is', '', $raw);
-            $raw = preg_replace('/&lt;span[^>]*class=["\']ql-ui["\'][^>]*&gt;.*?&lt;\/span&gt;/is', '', $raw);
-            $raw = preg_replace('/<span\s+contenteditable=["\']false["\'][^>]*>.*?<\/span>/is', '', $raw);
-            $raw = preg_replace('/&lt;span\s+contenteditable=["\']false["\'][^>]*&gt;.*?&lt;\/span&gt;/is', '', $raw);
+            $raw = preg_replace('/<span[^>]*>.*?<\/span>/is', '', $raw);
+            $raw = preg_replace('/&lt;span.*?&lt;\/span&gt;/is', '', $raw);
+            $raw = preg_replace('/<span[^>]*\/?>/is', '', $raw);
+            $raw = preg_replace('/&lt;span[^\&]*\/&gt;/is', '', $raw);
+            $raw = preg_replace('/&lt;span[^\&]*&gt;/is', '', $raw);
+            $raw = preg_replace('/&lt;\/span&gt;/is', '', $raw);
+            $raw = str_ireplace(['ql-ui', 'contenteditable="false"', 'contenteditable=\'false\''], '', $raw);
 
             $features = [];
 
@@ -404,11 +406,13 @@ class ProductController extends Controller
             if (preg_match_all('/<li[^>]*>(.*?)<\/li>/is', $raw, $matches)) {
                 foreach ($matches[1] as $item) {
                     $cleaned = html_entity_decode($item, ENT_QUOTES, 'UTF-8');
-                    $cleaned = preg_replace('/<span[^>]*class=["\']ql-ui["\'][^>]*>.*?<\/span>/is', '', $cleaned);
-                    $cleaned = preg_replace('/<span[^>]*class=["\']ql-ui["\'][^>]*\/?>/is', '', $cleaned);
-                    $cleaned = preg_replace('/&lt;span[^>]*class=["\']ql-ui["\'][^>]*&gt;.*?&lt;\/span&gt;/is', '', $cleaned);
-                    $cleaned = preg_replace('/<span\s+contenteditable=["\']false["\'][^>]*>.*?<\/span>/is', '', $cleaned);
-                    $cleaned = preg_replace('/^<span[^>]*><\/span>\s*/is', '', $cleaned);
+                    $cleaned = preg_replace('/<span[^>]*>.*?<\/span>/is', '', $cleaned);
+                    $cleaned = preg_replace('/&lt;span.*?&lt;\/span&gt;/is', '', $cleaned);
+                    $cleaned = preg_replace('/<span[^>]*\/?>/is', '', $cleaned);
+                    $cleaned = preg_replace('/&lt;span[^\&]*\/&gt;/is', '', $cleaned);
+                    $cleaned = preg_replace('/&lt;span[^\&]*&gt;/is', '', $cleaned);
+                    $cleaned = preg_replace('/&lt;\/span&gt;/is', '', $cleaned);
+                    $cleaned = str_ireplace(['ql-ui', 'contenteditable="false"', 'contenteditable=\'false\''], '', $cleaned);
                     $cleaned = trim(strip_tags($cleaned, '<b><strong><i><em>'));
                     $cleaned = trim(ltrim($cleaned, " \t\n\r\0\x0B•-*"));
                     if ($cleaned !== '') {
@@ -418,10 +422,13 @@ class ProductController extends Controller
             } elseif (preg_match_all('/<p[^>]*>(.*?)<\/p>/is', $raw, $matches)) {
                 foreach ($matches[1] as $item) {
                     $cleaned = html_entity_decode($item, ENT_QUOTES, 'UTF-8');
-                    $cleaned = preg_replace('/<span[^>]*class=["\']ql-ui["\'][^>]*>.*?<\/span>/is', '', $cleaned);
-                    $cleaned = preg_replace('/<span[^>]*class=["\']ql-ui["\'][^>]*\/?>/is', '', $cleaned);
-                    $cleaned = preg_replace('/&lt;span[^>]*class=["\']ql-ui["\'][^>]*&gt;.*?&lt;\/span&gt;/is', '', $cleaned);
-                    $cleaned = preg_replace('/<span\s+contenteditable=["\']false["\'][^>]*>.*?<\/span>/is', '', $cleaned);
+                    $cleaned = preg_replace('/<span[^>]*>.*?<\/span>/is', '', $cleaned);
+                    $cleaned = preg_replace('/&lt;span.*?&lt;\/span&gt;/is', '', $cleaned);
+                    $cleaned = preg_replace('/<span[^>]*\/?>/is', '', $cleaned);
+                    $cleaned = preg_replace('/&lt;span[^\&]*\/&gt;/is', '', $cleaned);
+                    $cleaned = preg_replace('/&lt;span[^\&]*&gt;/is', '', $cleaned);
+                    $cleaned = preg_replace('/&lt;\/span&gt;/is', '', $cleaned);
+                    $cleaned = str_ireplace(['ql-ui', 'contenteditable="false"', 'contenteditable=\'false\''], '', $cleaned);
                     $cleaned = trim(strip_tags($cleaned, '<b><strong><i><em>'));
                     $cleaned = trim(ltrim($cleaned, " \t\n\r\0\x0B•-*"));
                     if ($cleaned !== '') {
@@ -531,16 +538,29 @@ class ProductController extends Controller
     /**
      * Generate unique sequential SKU (e.g. BZ-0001) that does not exist yet
      */
+    /**
+     * Generate a unique luxury SKU based on category and random identifier (e.g. BZ-LEA-439).
+     */
     protected function generateUniqueSku(?Category $category = null): string
     {
-        $maxId = Product::max('id') ?? 0;
-        $num = $maxId + 1;
-        $candidate = 'BZ-' . str_pad($num, 4, '0', STR_PAD_LEFT);
-
-        while (Product::where('sku', $candidate)->exists()) {
-            $num++;
-            $candidate = 'BZ-' . str_pad($num, 4, '0', STR_PAD_LEFT);
+        $catCode = 'LEA';
+        if ($category && !empty($category->slug)) {
+            $cleaned = strtoupper(preg_replace('/[^a-zA-Z]/', '', $category->slug));
+            if (strlen($cleaned) >= 3) {
+                $catCode = substr($cleaned, 0, 3);
+            }
         }
+
+        $attempts = 0;
+        do {
+            $num = rand(101, 989);
+            $candidate = "BZ-{$catCode}-{$num}";
+            $attempts++;
+            if ($attempts > 50) {
+                $candidate = "BZ-{$catCode}-" . time();
+                break;
+            }
+        } while (Product::where('sku', $candidate)->exists());
 
         return $candidate;
     }
