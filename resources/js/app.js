@@ -239,20 +239,88 @@ Alpine.store('theme', {
 // ========================================================
 // ALPINE CART STORE
 // ========================================================
+function getNormalizedCartItems() {
+    try {
+        const raw = JSON.parse(localStorage.getItem('byzunash_cart') || '[]');
+        if (!Array.isArray(raw)) return [];
+        const merged = [];
+        for (const item of raw) {
+            const resolvedVar = (item.variant || '').trim();
+            const existing = merged.find(m => m.id === item.id && ((m.variant || '').trim()) === resolvedVar);
+            if (existing) {
+                existing.quantity = (parseInt(existing.quantity, 10) || 1) + (parseInt(item.quantity, 10) || 1);
+            } else {
+                merged.push({
+                    ...item,
+                    key: `${item.id}-${resolvedVar || 'default'}`,
+                    quantity: Math.max(1, parseInt(item.quantity, 10) || 1)
+                });
+            }
+        }
+        return merged;
+    } catch (e) {
+        return [];
+    }
+}
+
 Alpine.store('cart', {
-    items: JSON.parse(localStorage.getItem('byzunash_cart') || '[]'),
+    items: getNormalizedCartItems(),
     isOpen: false,
+
+    init() {
+        this.deduplicate();
+    },
 
     save() {
         localStorage.setItem('byzunash_cart', JSON.stringify(this.items));
     },
 
+    deduplicate() {
+        const merged = [];
+        for (const item of this.items) {
+            const resolvedVar = (item.variant || '').trim();
+            const existing = merged.find(m => m.id === item.id && ((m.variant || '').trim()) === resolvedVar);
+            if (existing) {
+                existing.quantity = (parseInt(existing.quantity, 10) || 1) + (parseInt(item.quantity, 10) || 1);
+            } else {
+                merged.push({
+                    ...item,
+                    key: `${item.id}-${resolvedVar || 'default'}`,
+                    quantity: Math.max(1, parseInt(item.quantity, 10) || 1)
+                });
+            }
+        }
+        this.items = merged;
+        this.save();
+    },
+
     addItem(product, variant = null, quantity = 1, showPrompt = false) {
-        const itemKey = `${product.id}-${variant || 'default'}`;
-        const existing = this.items.find(item => item.key === itemKey);
+        const qty = Math.max(1, parseInt(quantity, 10) || 1);
+
+        // Normalize / resolve variant name consistently
+        let resolvedVariant = variant;
+        if (!resolvedVariant && product.colors && product.colors.length > 0) {
+            resolvedVariant = typeof product.colors[0] === 'string' ? product.colors[0] : (product.colors[0]?.name || null);
+        }
+        resolvedVariant = resolvedVariant ? String(resolvedVariant).trim() : null;
+
+        const itemKey = `${product.id}-${resolvedVariant || 'default'}`;
+
+        // Match existing item by key OR by product id + identical variant
+        const existing = this.items.find(item => {
+            if (item.key === itemKey) return true;
+            if (item.id === product.id) {
+                const itemVar = (item.variant || '').trim();
+                const targetVar = (resolvedVariant || '').trim();
+                return itemVar === targetVar;
+            }
+            return false;
+        });
 
         if (existing) {
-            existing.quantity += quantity;
+            existing.quantity = (parseInt(existing.quantity, 10) || 0) + qty;
+            existing.key = itemKey;
+            if (resolvedVariant) existing.variant = resolvedVariant;
         } else {
             this.items.push({
                 key: itemKey,
@@ -262,8 +330,8 @@ Alpine.store('cart', {
                 originalPrice: product.original_price ? Number(product.original_price) : null,
                 image: product.image,
                 category: product.category_name || product.category,
-                variant: variant || (product.colors && product.colors[0]?.name) || null,
-                quantity: quantity
+                variant: resolvedVariant,
+                quantity: qty
             });
         }
         this.save();
