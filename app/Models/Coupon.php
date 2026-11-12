@@ -35,6 +35,23 @@ class Coupon extends Model
     ];
 
     /**
+     * Scope only currently active, unexpired, and unexhausted coupons.
+     */
+    public function scopeActive($query)
+    {
+        return $query->where('is_active', true)
+            ->where(function ($q) {
+                $q->whereNull('starts_at')->orWhere('starts_at', '<=', now());
+            })
+            ->where(function ($q) {
+                $q->whereNull('expires_at')->orWhere('expires_at', '>=', now());
+            })
+            ->where(function ($q) {
+                $q->whereNull('usage_limit')->orWhereColumn('used_count', '<', 'usage_limit');
+            });
+    }
+
+    /**
      * Check if coupon has expired.
      */
     public function getIsExpiredAttribute(): bool

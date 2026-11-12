@@ -580,7 +580,7 @@
                         <span>Inventory & Stock</span>
                     </div>
                     @if($navLowStock > 0)
-                        <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-[#FBF1E6] text-tan-700 border border-[#F3D7BD]">
+                        <span class="whitespace-nowrap shrink-0 px-2 py-0.5 rounded-full text-[10px] font-bold bg-[#FBF1E6] text-tan-700 border border-[#F3D7BD]">
                             {{ $navLowStock }} Low
                         </span>
                     @endif
@@ -645,7 +645,7 @@
                         <span>Abandoned Carts</span>
                     </div>
                     @if($navPendingAbandoned > 0)
-                        <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-50 text-amber-700 dark:bg-amber-950/40 dark:text-amber-300 border border-amber-200">
+                        <span class="whitespace-nowrap shrink-0 px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-50 text-amber-800 dark:bg-amber-950/40 dark:text-amber-300 border border-amber-200">
                             {{ $navPendingAbandoned }} Drop-offs
                         </span>
                     @endif
@@ -655,7 +655,7 @@
                 @if(auth('admin')->user()->hasPermission('coupons'))
                 <!-- Coupons & Promo Codes -->
                 @php
-                    $navActiveCoupons = \App\Models\Coupon::where('is_active', true)->where(function ($q) { $q->whereNull('expires_at')->orWhere('expires_at', '>=', now()); })->count();
+                    $navActiveCoupons = \App\Models\Coupon::active()->count();
                 @endphp
                 <a 
                     href="{{ route('admin.coupons.index') }}" 
@@ -666,7 +666,7 @@
                         <span>Coupons & Promos</span>
                     </div>
                     @if($navActiveCoupons > 0)
-                        <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-[#FAF4ED] text-tan-700 border border-tan-300">
+                        <span class="whitespace-nowrap shrink-0 px-2 py-0.5 rounded-full text-[10px] font-bold bg-[#FAF4ED] dark:bg-[#251A14] text-tan-700 dark:text-gold border border-tan-300 dark:border-tan-700/50">
                             {{ $navActiveCoupons }} Active
                         </span>
                     @endif

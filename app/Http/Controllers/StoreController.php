@@ -534,6 +534,10 @@ class StoreController extends Controller
             $coupon = \App\Models\Coupon::where('code', $code)->first();
             if ($coupon) {
                 $coupon->increment('used_count');
+                $fresh = $coupon->fresh();
+                if ($fresh->usage_limit !== null && $fresh->used_count >= $fresh->usage_limit) {
+                    $fresh->update(['is_active' => false]);
+                }
             }
         }
 

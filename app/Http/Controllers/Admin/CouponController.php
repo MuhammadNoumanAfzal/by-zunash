@@ -25,11 +25,7 @@ class CouponController extends Controller
 
         if ($request->filled('status') && $request->input('status') !== 'all') {
             if ($request->input('status') === 'active') {
-                $query->where('is_active', true)
-                      ->where(function ($q) {
-                          $q->whereNull('expires_at')
-                            ->orWhere('expires_at', '>=', now());
-                      });
+                $query->active();
             } elseif ($request->input('status') === 'inactive') {
                 $query->where('is_active', false);
             } elseif ($request->input('status') === 'expired') {
@@ -41,10 +37,7 @@ class CouponController extends Controller
         $coupons = $query->latest()->paginate(12)->withQueryString();
 
         // Key stats
-        $totalActive = Coupon::where('is_active', true)
-            ->where(function ($q) {
-                $q->whereNull('expires_at')->orWhere('expires_at', '>=', now());
-            })->count();
+        $totalActive = Coupon::active()->count();
 
         $totalRedemptions = Coupon::sum('used_count');
         $expiringSoon = Coupon::where('is_active', true)
