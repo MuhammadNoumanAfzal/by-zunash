@@ -312,9 +312,9 @@
     x-data="{ 
         sidebarOpen: false,
         theme: document.documentElement.classList.contains('dark') ? 'dark' : 'light',
-        categoriesOpen: false,
-        subcategoriesOpen: false,
-        productsOpen: false,
+        categoriesOpen: {{ request()->routeIs('admin.categories*') ? 'true' : 'false' }},
+        subcategoriesOpen: {{ request()->routeIs('admin.subcategories*') ? 'true' : 'false' }},
+        productsOpen: {{ request()->routeIs('admin.products*') ? 'true' : 'false' }},
         dealsOpen: false,
         bulkOrdersOpen: false,
         unreadOrdersCount: {{ \App\Models\Order::where('is_read', false)->count() }},
@@ -435,19 +435,46 @@
             :class="sidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'"
             class="fixed inset-y-0 left-0 z-50 w-64 bg-white dark:bg-[#161210] border-r border-[#ECE6DE] dark:border-[#261E1A] transition-transform duration-300 ease-in-out flex flex-col justify-between shadow-xs"
         >
-            <!-- Top Logo & Brand Identity -->
-            <div class="px-6 py-5 border-b border-[#ECE6DE] dark:border-[#261E1A] flex items-center justify-between">
+            <!-- Top Logo & Brand Identity (Original Authentic By Zunash Luxury Emblem) -->
+            <div class="px-5 py-4 border-b border-[#ECE6DE] dark:border-[#261E1A] flex items-center justify-between">
                 <a href="{{ route('admin.dashboard') }}" class="flex items-center gap-3 group">
-                    <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-espresso-900 via-espresso-800 to-tan-700 text-gold flex items-center justify-center shadow-md border border-gold/40 group-hover:scale-105 transition-transform duration-300">
-                        <span class="font-cinzel text-base font-bold tracking-wider text-gold">Z</span>
+                    <!-- Monogram Emblem (Exact Storefront Vector Mark) -->
+                    <div class="relative flex items-center justify-center w-10 h-10 rounded-full bg-gradient-to-br from-espresso-900 via-chocolate-800 to-espresso-950 border border-gold/40 shadow-sm text-gold shrink-0 group-hover:scale-105 group-hover:border-gold transition-all duration-300">
+                        <svg viewBox="0 0 100 100" class="w-6 h-6 fill-none stroke-current" stroke-linecap="round" stroke-linejoin="round">
+                            <!-- Background subtle ring -->
+                            <circle cx="50" cy="50" r="38" stroke="currentColor" stroke-width="1.5" stroke-dasharray="2 3" opacity="0.6"/>
+                            <!-- Antique Gold Intertwined Loop -->
+                            <ellipse cx="50" cy="50" rx="34" ry="18" transform="rotate(-30 50 50)" stroke="url(#adminSidebarGoldGrad)" stroke-width="2.5" fill="none" opacity="0.85"/>
+                            <!-- Luxury Serif Z -->
+                            <path d="M30 30 H68 L32 70 H70" stroke="url(#adminSidebarGoldGradLight)" stroke-width="7" stroke-linecap="square"/>
+                            <defs>
+                                <linearGradient id="adminSidebarGoldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                                    <stop offset="0%" stop-color="#E4D5B1" />
+                                    <stop offset="50%" stop-color="#C5A16B" />
+                                    <stop offset="100%" stop-color="#94703B" />
+                                </linearGradient>
+                                <linearGradient id="adminSidebarGoldGradLight" x1="0%" y1="0%" x2="100%" y2="100%">
+                                    <stop offset="0%" stop-color="#FFFFFF" />
+                                    <stop offset="40%" stop-color="#E4D5B1" />
+                                    <stop offset="100%" stop-color="#C5A16B" />
+                                </linearGradient>
+                            </defs>
+                        </svg>
                     </div>
-                    <div>
-                        <div class="font-cinzel text-base font-bold tracking-widest text-espresso-900 dark:text-[#E8D0BE] uppercase leading-none">
-                            BY ZUNASH
+
+                    <!-- Typographic Brand Lockup -->
+                    <div class="flex flex-col">
+                        <div class="flex items-center gap-1.5 -mb-0.5">
+                            <span class="h-[0.5px] w-2.5 bg-gold/80"></span>
+                            <span class="text-[8px] tracking-[0.28em] uppercase font-cinzel font-semibold text-gold-600 dark:text-gold-400">BY</span>
+                            <span class="h-[0.5px] w-2.5 bg-gold/80"></span>
                         </div>
-                        <div class="text-[9px] font-bold tracking-widest uppercase text-gold-600 dark:text-gold-light mt-1">
+                        <span class="font-cinzel tracking-[0.22em] text-[15px] font-bold uppercase leading-none text-espresso-950 dark:text-[#E8D0BE] group-hover:text-gold transition-colors">
+                            ZUNASH
+                        </span>
+                        <span class="text-[8px] font-bold tracking-[0.16em] uppercase text-tan-600 dark:text-gold/80 mt-1">
                             ATELIER CONTROL
-                        </div>
+                        </span>
                     </div>
                 </a>
 
@@ -475,16 +502,16 @@
                 <div>
                     <button 
                         @click="categoriesOpen = !categoriesOpen" 
-                        class="w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-medium text-[#6C635B] dark:text-[#B3A69C] hover:bg-[#FAF9F6] dark:hover:bg-[#1C1613] hover:text-tan-700 transition-colors"
+                        class="w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-medium transition-colors {{ request()->routeIs('admin.categories*') ? 'bg-[#FAF4ED] dark:bg-[#251A14] text-tan-700 dark:text-gold font-bold border-l-4 border-tan-600 dark:border-gold' : 'text-[#6C635B] dark:text-[#B3A69C] hover:bg-[#FAF9F6] dark:hover:bg-[#1C1613] hover:text-tan-700' }}"
                     >
                         <div class="flex items-center gap-3">
-                            <i data-lucide="layers" class="w-4 h-4 text-[#9C8F85]"></i>
+                            <i data-lucide="layers" class="w-4 h-4 {{ request()->routeIs('admin.categories*') ? 'text-tan-600 dark:text-gold' : 'text-[#9C8F85]' }}"></i>
                             <span>Categories</span>
                         </div>
                         <i data-lucide="chevron-down" class="w-3.5 h-3.5 transition-transform duration-200" :class="{ 'rotate-180': categoriesOpen }"></i>
                     </button>
-                    <div x-show="categoriesOpen || {{ request()->routeIs('admin.categories*') ? 'true' : 'false' }}" x-cloak class="pl-9 pr-2 py-1 space-y-1">
-                        <a href="{{ route('admin.categories.index') }}" class="block py-1.5 text-xs text-[#7F746A] dark:text-[#9E9084] hover:text-tan-600 transition-colors">
+                    <div x-show="categoriesOpen" x-cloak class="pl-9 pr-2 py-1 space-y-1">
+                        <a href="{{ route('admin.categories.index') }}" class="block py-1.5 text-xs transition-colors {{ request()->routeIs('admin.categories.index') ? 'font-bold text-tan-700 dark:text-gold' : 'text-[#7F746A] dark:text-[#9E9084] hover:text-tan-600' }}">
                             • View Categories
                         </a>
                         <a href="{{ route('admin.categories.index') }}#add-category" class="block py-1.5 text-xs text-[#7F746A] dark:text-[#9E9084] hover:text-tan-600 transition-colors">
@@ -499,16 +526,16 @@
                 <div>
                     <button 
                         @click="subcategoriesOpen = !subcategoriesOpen" 
-                        class="w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-medium text-[#6C635B] dark:text-[#B3A69C] hover:bg-[#FAF9F6] dark:hover:bg-[#1C1613] hover:text-tan-700 transition-colors"
+                        class="w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-medium transition-colors {{ request()->routeIs('admin.subcategories*') ? 'bg-[#FAF4ED] dark:bg-[#251A14] text-tan-700 dark:text-gold font-bold border-l-4 border-tan-600 dark:border-gold' : 'text-[#6C635B] dark:text-[#B3A69C] hover:bg-[#FAF9F6] dark:hover:bg-[#1C1613] hover:text-tan-700' }}"
                     >
                         <div class="flex items-center gap-3">
-                            <i data-lucide="git-branch" class="w-4 h-4 text-[#9C8F85]"></i>
+                            <i data-lucide="git-branch" class="w-4 h-4 {{ request()->routeIs('admin.subcategories*') ? 'text-tan-600 dark:text-gold' : 'text-[#9C8F85]' }}"></i>
                             <span>Subcategories</span>
                         </div>
                         <i data-lucide="chevron-down" class="w-3.5 h-3.5 transition-transform duration-200" :class="{ 'rotate-180': subcategoriesOpen }"></i>
                     </button>
-                    <div x-show="subcategoriesOpen || {{ request()->routeIs('admin.subcategories*') ? 'true' : 'false' }}" x-cloak class="pl-9 pr-2 py-1 space-y-1">
-                        <a href="{{ route('admin.subcategories.index') }}" class="block py-1.5 text-xs text-[#7F746A] dark:text-[#9E9084] hover:text-tan-600 transition-colors">
+                    <div x-show="subcategoriesOpen" x-cloak class="pl-9 pr-2 py-1 space-y-1">
+                        <a href="{{ route('admin.subcategories.index') }}" class="block py-1.5 text-xs transition-colors {{ request()->routeIs('admin.subcategories.index') ? 'font-bold text-tan-700 dark:text-gold' : 'text-[#7F746A] dark:text-[#9E9084] hover:text-tan-600' }}">
                             • View Subcategories
                         </a>
                         <a href="{{ route('admin.subcategories.index') }}#add-subcat" class="block py-1.5 text-xs text-[#7F746A] dark:text-[#9E9084] hover:text-tan-600 transition-colors">

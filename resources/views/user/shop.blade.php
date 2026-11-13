@@ -176,7 +176,7 @@
 
             <!-- Active Filter Badges Bar (Visible when any filter is active) -->
             @php
-                $hasActiveFilters = ($activeCategory !== 'all') || request('min_price') || request('max_price') || request('tag') || request('q') || request('availability');
+                $hasActiveFilters = ($activeCategory !== 'all') || request('subcategory') || request('min_price') || request('max_price') || request('tag') || request('q') || request('availability');
             @endphp
             @if($hasActiveFilters)
                 <div class="flex items-center gap-2 flex-wrap pt-1 text-xs font-sans">
@@ -184,10 +184,31 @@
 
                     @if($activeCategory !== 'all' && isset($categories[$activeCategory]))
                         <a 
-                            href="{{ route('shop', array_filter(array_merge(request()->query(), ['category' => null, 'page' => 1]))) }}" 
+                            href="{{ route('shop', array_filter(array_merge(request()->query(), ['category' => null, 'subcategory' => null, 'page' => 1]))) }}" 
                             class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-espresso-950 text-ivory text-xs font-medium shadow-2xs hover:bg-gold-600 hover:text-espresso-950 transition-colors"
                         >
                             <span>Collection: {{ $categories[$activeCategory]['name'] }}</span>
+                            <i data-lucide="x" class="w-3 h-3"></i>
+                        </a>
+                    @endif
+
+                    @if(request('subcategory'))
+                        @php
+                            $activeSubcatName = null;
+                            foreach($categories as $cItem) {
+                                foreach($cItem['subcategories'] ?? [] as $subItem) {
+                                    if ($subItem['slug'] === request('subcategory')) {
+                                        $activeSubcatName = $subItem['name'];
+                                        break 2;
+                                    }
+                                }
+                            }
+                        @endphp
+                        <a 
+                            href="{{ route('shop', array_filter(array_merge(request()->query(), ['subcategory' => null, 'page' => 1]))) }}" 
+                            class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-tan-700 text-ivory text-xs font-medium shadow-2xs hover:bg-espresso-950 transition-colors"
+                        >
+                            <span>Silhouette: {{ $activeSubcatName ?? ucfirst(str_replace('-', ' ', request('subcategory'))) }}</span>
                             <i data-lucide="x" class="w-3 h-3"></i>
                         </a>
                     @endif
@@ -318,18 +339,38 @@
                                     $cCount = $categoryCounts[$slug] ?? $cat['count'] ?? 4;
                                     $isCatActive = ($activeCategory === $slug);
                                 @endphp
-                                <a 
-                                    href="{{ route('shop', array_filter(array_merge(request()->query(), ['category' => $slug, 'page' => 1]))) }}"
-                                    class="w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-medium transition-all text-left border {{ $isCatActive ? 'bg-espresso-950 text-ivory font-bold border-espresso-950 shadow-xs' : 'text-espresso-800 border-transparent hover:bg-ivory-100 hover:text-espresso-950' }}"
-                                >
-                                    <span class="flex items-center gap-2.5">
-                                        <span class="w-2 h-2 rounded-full {{ $isCatActive ? 'bg-gold-400' : 'bg-ivory-400' }}"></span>
-                                        <span>{{ $cat['name'] }}</span>
-                                    </span>
-                                    <span class="text-[11px] px-2 py-0.5 rounded-full {{ $isCatActive ? 'bg-white/20 text-ivory font-semibold' : 'bg-ivory-100 text-espresso-900' }}">
-                                        {{ $cCount }}
-                                    </span>
-                                </a>
+                                <div>
+                                    <a 
+                                        href="{{ route('shop', array_filter(array_merge(request()->query(), ['category' => $slug, 'subcategory' => null, 'page' => 1]))) }}"
+                                        class="w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-medium transition-all text-left border {{ $isCatActive ? 'bg-espresso-950 text-ivory font-bold border-espresso-950 shadow-xs' : 'text-espresso-800 border-transparent hover:bg-ivory-100 hover:text-espresso-950' }}"
+                                    >
+                                        <span class="flex items-center gap-2.5">
+                                            <span class="w-2 h-2 rounded-full {{ $isCatActive ? 'bg-gold-400' : 'bg-ivory-400' }}"></span>
+                                            <span>{{ $cat['name'] }}</span>
+                                        </span>
+                                        <span class="text-[11px] px-2 py-0.5 rounded-full {{ $isCatActive ? 'bg-white/20 text-ivory font-semibold' : 'bg-ivory-100 text-espresso-900' }}">
+                                            {{ $cCount }}
+                                        </span>
+                                    </a>
+
+                                    <!-- Subcategories list for this category -->
+                                    @if(!empty($cat['subcategories']) && ($isCatActive || request('subcategory')))
+                                        <div class="pl-4 pr-1 py-1.5 space-y-1 my-1 border-l-2 border-gold/40 ml-4">
+                                            @foreach($cat['subcategories'] as $sub)
+                                                @php
+                                                    $isSubActive = (request('subcategory') === $sub['slug']);
+                                                @endphp
+                                                <a 
+                                                    href="{{ route('shop', array_filter(array_merge(request()->query(), ['category' => $slug, 'subcategory' => ($isSubActive ? null : $sub['slug']), 'page' => 1]))) }}"
+                                                    class="flex items-center justify-between py-1 px-2.5 rounded-lg text-[11px] transition-colors {{ $isSubActive ? 'bg-tan-700 text-white font-bold shadow-2xs' : 'text-espresso-700 hover:text-gold-700 hover:bg-ivory-100' }}"
+                                                >
+                                                    <span class="truncate">↳ {{ $sub['name'] }}</span>
+                                                    <span class="text-[10px] opacity-75">({{ $sub['count'] }})</span>
+                                                </a>
+                                            @endforeach
+                                        </div>
+                                    @endif
+                                </div>
                             @endforeach
                         </div>
                     </div>

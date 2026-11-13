@@ -381,6 +381,11 @@
                 <input type="text" name="name" required placeholder="e.g. Formal Dress Belts" class="w-full px-3 py-2 text-xs rounded-xl bg-[#FAF8F5] dark:bg-[#241D1A] border border-[#E0D7CB] dark:border-[#3A2F29] text-espresso-900 dark:text-white focus:outline-hidden focus:border-tan-500">
             </div>
 
+            <div>
+                <label class="block text-xs font-semibold mb-1">Description (Optional)</label>
+                <textarea name="description" rows="2" placeholder="Brief notes on silhouette or cut..." class="w-full px-3 py-2 text-xs rounded-xl bg-[#FAF8F5] dark:bg-[#241D1A] border border-[#E0D7CB] dark:border-[#3A2F29] text-espresso-900 dark:text-white focus:outline-hidden focus:border-tan-500"></textarea>
+            </div>
+
             <div class="flex items-center justify-end gap-2 pt-3 border-t border-[#ECE6DE] dark:border-[#2C2420]">
                 <button type="button" onclick="document.getElementById('addSubcatModal').close()" class="px-4 py-2 rounded-xl text-xs font-medium text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">
                     Cancel
@@ -421,6 +426,11 @@
                 <input type="text" id="edit_subcat_name" name="name" required class="w-full px-3 py-2 text-xs rounded-xl bg-[#FAF8F5] dark:bg-[#241D1A] border border-[#E0D7CB] dark:border-[#3A2F29] text-espresso-900 dark:text-white focus:outline-hidden focus:border-tan-500">
             </div>
 
+            <div>
+                <label class="block text-xs font-semibold mb-1">Description (Optional)</label>
+                <textarea id="edit_subcat_description" name="description" rows="2" class="w-full px-3 py-2 text-xs rounded-xl bg-[#FAF8F5] dark:bg-[#241D1A] border border-[#E0D7CB] dark:border-[#3A2F29] text-espresso-900 dark:text-white focus:outline-hidden focus:border-tan-500"></textarea>
+            </div>
+
             <div class="flex items-center justify-end gap-2 pt-3 border-t border-[#ECE6DE] dark:border-[#2C2420]">
                 <button type="button" onclick="document.getElementById('editSubcatModal').close()" class="px-4 py-2 rounded-xl text-xs font-medium text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">
                     Cancel
@@ -439,6 +449,7 @@ function openEditSubcatModal(subcat) {
     document.getElementById('editSubcatForm').action = '/admin/subcategories/' + subcat.id;
     document.getElementById('edit_subcat_category_id').value = subcat.category_id || '';
     document.getElementById('edit_subcat_name').value = subcat.name || '';
+    document.getElementById('edit_subcat_description').value = subcat.description || '';
     document.getElementById('editSubcatModal').showModal();
 }
 

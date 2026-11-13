@@ -148,8 +148,11 @@
         <div>
             <!-- Category Tag -->
             <div class="flex items-center justify-between gap-1 mb-1">
-                <span class="text-[10px] uppercase tracking-[0.16em] text-gold-700 font-semibold font-sans block">
+                <span class="text-[10px] uppercase tracking-[0.16em] text-gold-700 font-semibold font-sans block truncate">
                     {{ $product['category_name'] ?? $product['category'] }}
+                    @if(!empty($product['subcategory_name']))
+                        <span class="text-gray-400 font-normal">/</span> {{ $product['subcategory_name'] }}
+                    @endif
                 </span>
                 @if($isOutOfStock)
                     <span class="text-[10px] font-bold text-rose-700 uppercase tracking-wider font-sans">

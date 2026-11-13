@@ -113,6 +113,29 @@
         </div>
     </div>
 
+    @if(isset($subcategories) && $subcategories->isNotEmpty())
+    <!-- Subcategory Silhouettes Tabs -->
+    <div class="bg-white border-b border-ivory-200/80 py-2.5">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-start sm:justify-center gap-2 overflow-x-auto hide-scrollbar">
+            <span class="text-[11px] font-bold uppercase tracking-wider text-muted-dark mr-1 shrink-0">Silhouettes:</span>
+            <a 
+                href="{{ route('category', $category['slug']) }}" 
+                class="px-3 py-1 rounded-full text-xs font-medium transition-colors whitespace-nowrap shrink-0 {{ ($activeSubcategory ?? 'all') === 'all' ? 'bg-espresso-950 text-white font-semibold' : 'bg-ivory-100 text-espresso-800 hover:bg-ivory-200' }}"
+            >
+                All ({{ $subcategories->sum('products_count') }})
+            </a>
+            @foreach($subcategories as $sub)
+                <a 
+                    href="{{ route('category', ['slug' => $category['slug'], 'subcategory' => $sub->slug]) }}" 
+                    class="px-3 py-1 rounded-full text-xs font-medium transition-colors whitespace-nowrap shrink-0 {{ ($activeSubcategory ?? '') === $sub->slug ? 'bg-gold-600 text-espresso-950 font-bold shadow-xs' : 'bg-ivory-100 text-espresso-800 hover:bg-ivory-200' }}"
+                >
+                    {{ $sub->name }} ({{ $sub->products_count }})
+                </a>
+            @endforeach
+        </div>
+    </div>
+    @endif
+
     <!-- Products Grid -->
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-14">
         <div class="mb-6 sm:mb-8 flex flex-col sm:flex-row sm:items-center justify-between gap-2">

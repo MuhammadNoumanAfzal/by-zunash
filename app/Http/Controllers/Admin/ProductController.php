@@ -40,6 +40,20 @@ class ProductController extends Controller
             });
         }
 
+        // Subcategory filter
+        if ($request->filled('subcategory') && $request->input('subcategory') !== 'all') {
+            $subVal = $request->input('subcategory');
+            $query->where(function($q) use ($subVal) {
+                if (is_numeric($subVal)) {
+                    $q->where('subcategory_id', $subVal);
+                } else {
+                    $q->whereHas('subcategory', function($sq) use ($subVal) {
+                        $sq->where('slug', $subVal);
+                    });
+                }
+            });
+        }
+
         // Stock status filter
         if ($request->filled('stock') && $request->input('stock') !== '') {
             $stock = $request->input('stock');
@@ -94,6 +108,7 @@ class ProductController extends Controller
 
         $products = $query->paginate(10)->withQueryString();
         $categories = Category::orderBy('name')->get();
+        $subcategories = Subcategory::with('category')->orderBy('name')->get();
 
         // Key stats for top pills
         $totalCount = Product::count();
@@ -104,6 +119,7 @@ class ProductController extends Controller
         return view('admin.products.index', compact(
             'products',
             'categories',
+            'subcategories',
             'totalCount',
             'activeCount',
             'lowStockCount',

@@ -153,7 +153,7 @@
                                             <ul class="space-y-1 text-xs">
                                                 @foreach($cat->subcategories->take(4) as $sub)
                                                     <li>
-                                                        <a href="{{ route('shop', ['category' => $cat->slug]) }}" class="text-espresso-800 dark:text-ivory-200 hover:text-gold-600 hover:bg-ivory-50 dark:hover:bg-white/5 px-2 py-1.5 rounded font-medium transition-all block">
+                                                        <a href="{{ route('shop', ['category' => $cat->slug, 'subcategory' => $sub->slug]) }}" class="text-espresso-800 dark:text-ivory-200 hover:text-gold-600 hover:bg-ivory-50 dark:hover:bg-white/5 px-2 py-1.5 rounded font-medium transition-all block">
                                                             {{ $sub->name }}
                                                         </a>
                                                     </li>
@@ -583,7 +583,7 @@
                                         <ul class="pl-2 space-y-1.5 text-xs text-muted dark:text-ivory-300">
                                             @foreach($cat->subcategories as $sub)
                                                 <li>
-                                                    <a href="{{ route('shop', ['category' => $cat->slug]) }}" @click="mobileMenuOpen = false" class="hover:text-gold-600 block py-0.5">
+                                                    <a href="{{ route('shop', ['category' => $cat->slug, 'subcategory' => $sub->slug]) }}" @click="mobileMenuOpen = false" class="hover:text-gold-600 block py-0.5">
                                                         {{ $sub->name }}
                                                     </a>
                                                 </li>

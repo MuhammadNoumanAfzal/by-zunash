@@ -197,7 +197,7 @@
         </div>
 
         <!-- Category Filter -->
-        <div class="lg:col-span-3">
+        <div class="lg:col-span-2">
             <select 
                 name="category" 
                 onchange="this.form.submit()"
@@ -207,6 +207,22 @@
                 @foreach($categories as $cat)
                     <option value="{{ $cat->slug }}" {{ request('category') === $cat->slug ? 'selected' : '' }}>
                         {{ $cat->name }}
+                    </option>
+                @endforeach
+            </select>
+        </div>
+
+        <!-- Subcategory Filter -->
+        <div class="lg:col-span-2">
+            <select 
+                name="subcategory" 
+                onchange="this.form.submit()"
+                class="w-full px-3 py-2 text-xs rounded-xl bg-[#FAF8F5] dark:bg-[#241D1A] border border-[#E0D7CB] dark:border-[#382D27] text-espresso-900 dark:text-white focus:outline-hidden focus:border-tan-500 cursor-pointer"
+            >
+                <option value="all">All Subcategories</option>
+                @foreach($subcategories as $sub)
+                    <option value="{{ $sub->id }}" {{ (string) request('subcategory') === (string) $sub->id ? 'selected' : '' }}>
+                        {{ $sub->name }} ({{ $sub->category->name ?? '' }})
                     </option>
                 @endforeach
             </select>
@@ -243,7 +259,7 @@
         </div>
 
         <!-- Submit & Reset Buttons -->
-        <div class="sm:col-span-2 lg:col-span-2 flex items-center gap-1.5">
+        <div class="sm:col-span-2 lg:col-span-1 flex items-center gap-1.5">
             <button 
                 type="submit" 
                 class="flex-1 min-w-0 py-2 px-3 rounded-xl bg-espresso-900 hover:bg-tan-600 text-white font-semibold text-xs transition-colors flex items-center justify-center gap-1.5 shadow-2xs"
@@ -291,6 +307,11 @@
                             <span class="px-2 py-0.5 rounded-full text-[9px] font-semibold bg-[#F5F1EA] dark:bg-[#2A221E] text-espresso-800 dark:text-[#E8D0BE]">
                                 {{ $product->category_name ?: ucfirst($product->category_slug) }}
                             </span>
+                            @if($product->subcategory)
+                                <span class="px-2 py-0.5 rounded-full text-[9px] font-semibold bg-tan-50 dark:bg-[#2D201A] text-tan-700 dark:text-gold-300 border border-tan-200 dark:border-[#3D2B24]">
+                                    {{ $product->subcategory->name }}
+                                </span>
+                            @endif
                             @if($product->badge)
                                 <span class="px-1.5 py-0.5 rounded text-[9px] font-bold bg-[#FAF3F0] text-tan-700 border border-[#F3E3DC]">
                                     {{ $product->badge }}
@@ -394,11 +415,18 @@
                             </div>
                         </td>
 
-                        <!-- Category (Category Only) -->
+                        <!-- Category & Subcategory -->
                         <td class="py-3.5 px-3">
-                            <span class="px-2.5 py-1 rounded-full text-[10px] font-semibold bg-[#F5F1EA] dark:bg-[#2A221E] text-espresso-800 dark:text-[#E8D0BE]">
-                                {{ $product->category_name ?: ucfirst($product->category_slug) }}
-                            </span>
+                            <div class="flex flex-col gap-1 items-start">
+                                <span class="px-2.5 py-1 rounded-full text-[10px] font-semibold bg-[#F5F1EA] dark:bg-[#2A221E] text-espresso-800 dark:text-[#E8D0BE]">
+                                    {{ $product->category_name ?: ucfirst($product->category_slug) }}
+                                </span>
+                                @if($product->subcategory)
+                                    <span class="text-[10px] font-medium text-tan-700 dark:text-gold-400 pl-1 flex items-center gap-1">
+                                        <span class="text-gray-400">↳</span> {{ $product->subcategory->name }}
+                                    </span>
+                                @endif
+                            </div>
                         </td>
 
                         <!-- Price (Current Price Only) -->

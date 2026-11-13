@@ -98,6 +98,28 @@
                     >
                 </div>
 
+            <div 
+                class="col-span-1 sm:col-span-2 grid grid-cols-1 sm:grid-cols-2 gap-4"
+                x-data="{
+                    categoryId: '{{ old('category_id', '') }}',
+                    subcategoryId: '{{ old('subcategory_id', '') }}',
+                    allSubs: [
+                        @foreach($subcategories as $s)
+                            { id: {{ $s->id }}, name: '{{ addslashes($s->name) }}', category_id: {{ $s->category_id }} },
+                        @endforeach
+                    ],
+                    get filteredSubs() {
+                        if (!this.categoryId) return [];
+                        return this.allSubs.filter(s => s.category_id == this.categoryId);
+                    },
+                    onCategoryChange() {
+                        const valid = this.filteredSubs.some(s => s.id == this.subcategoryId);
+                        if (!valid) {
+                            this.subcategoryId = '';
+                        }
+                    }
+                }"
+            >
                 <!-- Category -->
                 <div>
                     <label class="block text-xs font-semibold text-espresso-900 dark:text-white mb-1.5">
@@ -105,35 +127,45 @@
                     </label>
                     <select 
                         name="category_id" 
+                        x-model="categoryId"
+                        @change="onCategoryChange()"
                         required
                         class="w-full px-3.5 py-2.5 text-xs rounded-xl bg-[#FAF8F5] dark:bg-[#241D1A] border border-[#E0D7CB] dark:border-[#3A2F29] text-espresso-900 dark:text-white focus:outline-hidden focus:border-tan-500"
                     >
                         <option value="">Select Primary Collection</option>
                         @foreach($categories as $cat)
-                            <option value="{{ $cat->id }}" {{ old('category_id') == $cat->id ? 'selected' : '' }}>
+                            <option value="{{ $cat->id }}">
                                 {{ $cat->name }}
                             </option>
                         @endforeach
                     </select>
                 </div>
 
-                <!-- Subcategory -->
+                <!-- Subcategory (Reactive Dependent Dropdown) -->
                 <div>
-                    <label class="block text-xs font-semibold text-espresso-900 dark:text-white mb-1.5">
-                        Subcategory (Optional)
-                    </label>
+                    <div class="flex items-center justify-between mb-1.5">
+                        <label class="block text-xs font-semibold text-espresso-900 dark:text-white">
+                            Subcategory (Optional)
+                        </label>
+                        <a href="{{ route('admin.subcategories.index') }}#add-subcat" target="_blank" class="text-[10px] text-tan-600 hover:text-tan-700 font-semibold flex items-center gap-0.5">
+                            <span>+ New Subcategory</span>
+                        </a>
+                    </div>
                     <select 
                         name="subcategory_id" 
+                        x-model="subcategoryId"
                         class="w-full px-3.5 py-2.5 text-xs rounded-xl bg-[#FAF8F5] dark:bg-[#241D1A] border border-[#E0D7CB] dark:border-[#3A2F29] text-espresso-900 dark:text-white focus:outline-hidden focus:border-tan-500"
                     >
-                        <option value="">No Subcategory</option>
-                        @foreach($subcategories as $sub)
-                            <option value="{{ $sub->id }}" {{ old('subcategory_id') == $sub->id ? 'selected' : '' }}>
-                                {{ $sub->name }} ({{ $sub->category->name ?? '' }})
-                            </option>
-                        @endforeach
+                        <option value="">No Subcategory / General Piece</option>
+                        <template x-for="sub in filteredSubs" :key="sub.id">
+                            <option :value="sub.id" x-text="sub.name" :selected="sub.id == subcategoryId"></option>
+                        </template>
                     </select>
+                    <p class="text-[10px] text-[#8F8379] mt-1" x-show="categoryId && filteredSubs.length === 0">
+                        No subcategories defined for this collection yet.
+                    </p>
                 </div>
+            </div>
 
                 <!-- SKU -->
                 <div>

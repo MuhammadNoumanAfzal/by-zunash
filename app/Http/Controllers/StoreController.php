@@ -13,7 +13,7 @@ class StoreController extends Controller
      */
     protected function getProducts(): Collection
     {
-        $dbProducts = \App\Models\Product::all();
+        $dbProducts = \App\Models\Product::with(['category', 'subcategory'])->get();
         if ($dbProducts->isNotEmpty()) {
             return $dbProducts->map(function ($p) {
                 return [
@@ -22,6 +22,9 @@ class StoreController extends Controller
                     'name' => $p->name,
                     'category' => $p->category_slug,
                     'category_name' => $p->category_name,
+                    'subcategory_id' => $p->subcategory_id,
+                    'subcategory_name' => $p->subcategory?->name,
+                    'subcategory_slug' => $p->subcategory?->slug,
                     'price' => (float) $p->price,
                     'original_price' => $p->original_price ? (float) $p->original_price : null,
                     'badge' => $p->badge,
@@ -52,7 +55,10 @@ class StoreController extends Controller
      */
     protected function getCategories(): array
     {
-        $dbCategories = \App\Models\Category::withCount('products')->orderBy('sort_order')->get();
+        $dbCategories = \App\Models\Category::with(['subcategories' => function($q) {
+            $q->withCount('products')->orderBy('name');
+        }])->withCount('products')->orderBy('sort_order')->get();
+
         if ($dbCategories->isNotEmpty()) {
             $result = [];
             foreach ($dbCategories as $cat) {
@@ -63,6 +69,14 @@ class StoreController extends Controller
                     'tagline' => $cat->tagline,
                     'image' => $cat->image,
                     'count' => $cat->products_count,
+                    'subcategories' => $cat->subcategories->map(function ($s) {
+                        return [
+                            'id' => $s->id,
+                            'name' => $s->name,
+                            'slug' => $s->slug,
+                            'count' => $s->products_count,
+                        ];
+                    })->toArray(),
                 ];
             }
             return $result;
@@ -109,6 +123,12 @@ class StoreController extends Controller
             if ($catSlug !== 'all') {
                 $products = $products->where('category', $catSlug);
             }
+        }
+
+        // Filter by subcategory
+        if ($request->filled('subcategory') && $request->input('subcategory') !== 'all') {
+            $subSlug = $request->input('subcategory');
+            $products = $products->where('subcategory_slug', $subSlug);
         }
 
         // Filter by price range
@@ -192,6 +212,7 @@ class StoreController extends Controller
         }
 
         $activeCategory = $request->input('category', 'all');
+        $activeSubcategory = $request->input('subcategory', 'all');
 
         // Pagination: Exactly 12 items per page
         $perPage = 12;
@@ -217,6 +238,7 @@ class StoreController extends Controller
             'products' => $paginatedProducts,
             'categories' => $categories,
             'activeCategory' => $activeCategory,
+            'activeSubcategory' => $activeSubcategory,
             'categoryCounts' => $categoryCounts,
             'totalAllCount' => $totalAllCount,
             'filteredTotal' => $totalItems,
@@ -227,7 +249,7 @@ class StoreController extends Controller
     /**
      * Category page
      */
-    public function category($slug)
+    public function category($slug, Request $request)
     {
         $categories = $this->getCategories();
 
@@ -238,7 +260,17 @@ class StoreController extends Controller
         $category = $categories[$slug];
         $products = $this->getProducts()->where('category', $slug);
 
-        return view('user.category', compact('category', 'products', 'categories'));
+        $activeSubcategory = $request->input('subcategory', 'all');
+        if ($activeSubcategory !== 'all') {
+            $products = $products->where('subcategory_slug', $activeSubcategory);
+        }
+
+        $subcategories = \App\Models\Subcategory::where('category_id', $category['id'])
+            ->withCount('products')
+            ->orderBy('name')
+            ->get();
+
+        return view('user.category', compact('category', 'products', 'categories', 'subcategories', 'activeSubcategory'));
     }
 
     /**
