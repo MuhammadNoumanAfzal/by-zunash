@@ -84,7 +84,7 @@
             this.stopAutoplay();
             this.autoplayTimer = setInterval(() => {
                 this.next();
-            }, 6000);
+            }, 9000);
         },
         stopAutoplay() {
             if (this.autoplayTimer) {
@@ -93,7 +93,7 @@
             }
         }
     }"
-    x-init="startAutoplay()"
+    x-init="setTimeout(() => { startAutoplay(); }, 5000)"
     @mouseenter="stopAutoplay()"
     @mouseleave="startAutoplay()"
     @touchstart.passive="handleTouchStart($event)"
@@ -110,6 +110,7 @@
     >
         <!-- Background Image with Ken-Burns slow motion zoom -->
         <picture>
+            <source media="(max-width: 640px)" srcset="{{ asset('images/hero/slide-bag-mobile.webp') }}" type="image/webp">
             <source srcset="{{ asset('images/hero/slide-bag.webp') }}" type="image/webp">
             <img 
                 src="{{ asset('images/hero/slide-bag.jpg') }}" 
@@ -203,6 +204,7 @@
     >
         <!-- Background Image with Ken-Burns slow motion zoom -->
         <picture>
+            <source media="(max-width: 640px)" srcset="{{ asset('images/hero/slide-belt-mobile.webp') }}" type="image/webp">
             <source srcset="{{ asset('images/hero/slide-belt.webp') }}" type="image/webp">
             <img 
                 src="{{ asset('images/hero/slide-belt.jpg') }}" 
@@ -295,6 +297,7 @@
     >
         <!-- Background Image with Ken-Burns slow motion zoom -->
         <picture>
+            <source media="(max-width: 640px)" srcset="{{ asset('images/hero/slide-wallet-mobile.webp') }}" type="image/webp">
             <source srcset="{{ asset('images/hero/slide-wallet.webp') }}" type="image/webp">
             <img 
                 src="{{ asset('images/hero/slide-wallet.jpg') }}" 
@@ -931,9 +934,9 @@
                         <!-- Belt Preview -->
                         <div class="relative aspect-square rounded-xl overflow-hidden bg-black/40 border border-white/10 group-hover:border-gold/30 transition-all">
                             <picture>
-                                <source srcset="{{ asset('images/products/prod-reversible-belt.webp') }}" type="image/webp">
+                                <source srcset="{{ asset('images/products/prod-reversible-belt-thumb.webp') }}" type="image/webp">
                                 <img 
-                                    src="{{ asset('images/products/prod-reversible-belt.jpg') }}" 
+                                    src="{{ asset('images/products/prod-reversible-belt-thumb.jpg') }}" 
                                     alt="Reversible Belt in Gift Set" 
                                     width="300"
                                     height="300"
@@ -950,9 +953,9 @@
                         <!-- Wallet Preview -->
                         <div class="relative aspect-square rounded-xl overflow-hidden bg-black/40 border border-white/10 group-hover:border-gold/30 transition-all">
                             <picture>
-                                <source srcset="{{ asset('images/products/prod-bifold-wallet.webp') }}" type="image/webp">
+                                <source srcset="{{ asset('images/products/prod-bifold-wallet-thumb.webp') }}" type="image/webp">
                                 <img 
-                                    src="{{ asset('images/products/prod-bifold-wallet.jpg') }}" 
+                                    src="{{ asset('images/products/prod-bifold-wallet-thumb.jpg') }}" 
                                     alt="Heritage Bifold Wallet in Gift Set" 
                                     width="300"
                                     height="300"
