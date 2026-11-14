@@ -34,6 +34,17 @@
                 </select>
             </form>
 
+            <!-- Daily Closing Summary PDF Quick Button -->
+            <a 
+                href="{{ route('admin.analytics.daily-closing') }}" 
+                target="_blank"
+                class="px-3.5 py-1.5 rounded-xl bg-tan-600 hover:bg-tan-700 text-white font-semibold text-xs flex items-center gap-1.5 transition-colors shadow-2xs"
+                title="Open Day-End Sales & Cashier Closing Summary (PDF / Print Z-Report)"
+            >
+                <i data-lucide="printer" class="w-3.5 h-3.5"></i>
+                <span>Daily Closing (PDF)</span>
+            </a>
+
             <!-- One-Click Export Trigger Button -->
             <button 
                 type="button" 
@@ -41,7 +52,7 @@
                 class="px-3.5 py-1.5 rounded-xl bg-espresso-900 hover:bg-tan-600 text-white font-semibold text-xs flex items-center gap-1.5 transition-colors shadow-2xs border border-gold-400/20"
             >
                 <i data-lucide="download" class="w-3.5 h-3.5 text-gold-400"></i>
-                <span>One-Click Export</span>
+                <span>Export Reports (PDF / CSV)</span>
             </button>
         </div>
     </div>
@@ -372,11 +383,80 @@
 
             <div class="space-y-4">
                 
-                <!-- Option 1: Monthly Orders CSV -->
+                <!-- Option 1: Daily Closing Sales & Cashier Audit Summary (PDF & CSV) -->
+                <div class="p-4 rounded-2xl bg-amber-50/50 dark:bg-[#2A1E14] border border-amber-300/60 dark:border-amber-700/40 space-y-3">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <div class="font-bold text-xs text-espresso-950 dark:text-white flex items-center gap-1.5">
+                                <span class="w-2 h-2 rounded-full bg-amber-500"></span>
+                                <span>1. Daily Sales & Cashier Closing (Z-Report)</span>
+                            </div>
+                            <div class="text-[10px] text-gray-500 dark:text-gray-400 mt-0.5">
+                                Complete day-end reconciliation: Gross sales, COGS, Net profit, COD vs Bank breakdown, and itemized pieces sold.
+                            </div>
+                        </div>
+                    </div>
+
+                    <div 
+                        class="flex flex-col sm:flex-row items-stretch sm:items-center gap-2"
+                        x-data="{ closingDate: '{{ date('Y-m-d') }}' }"
+                    >
+                        <input 
+                            type="date" 
+                            x-model="closingDate"
+                            class="px-2.5 py-1.5 text-xs rounded-xl border border-amber-300 dark:border-amber-700 bg-white dark:bg-[#1E1612] text-espresso-900 dark:text-white font-mono"
+                        >
+                        <a 
+                            :href="'{{ route('admin.analytics.daily-closing') }}?date=' + closingDate"
+                            target="_blank"
+                            class="py-1.5 px-3.5 rounded-xl bg-tan-600 hover:bg-tan-700 text-white font-bold text-xs transition-colors flex items-center justify-center gap-1.5 shadow-xs"
+                        >
+                            <i data-lucide="printer" class="w-3.5 h-3.5"></i>
+                            <span>Print / Save PDF</span>
+                        </a>
+                        <a 
+                            :href="'{{ route('admin.analytics.daily-closing.csv') }}?date=' + closingDate"
+                            class="py-1.5 px-3 rounded-xl bg-emerald-700 hover:bg-emerald-800 text-white font-semibold text-xs transition-colors flex items-center justify-center gap-1.5"
+                        >
+                            <i data-lucide="download" class="w-3.5 h-3.5"></i>
+                            <span>Export CSV</span>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Option 2: Executive Period Sales Report (PDF) -->
+                <div class="p-4 rounded-2xl bg-[#FAF8F5] dark:bg-[#201815] border border-[#E0D7CB] dark:border-[#382D27] space-y-2.5">
+                    <div>
+                        <div class="font-bold text-xs text-espresso-950 dark:text-white">2. Executive Sales & Margin Report (PDF)</div>
+                        <div class="text-[10px] text-gray-400">High-resolution printable executive dossier with KPIs and order ledger</div>
+                    </div>
+
+                    <form action="{{ route('admin.analytics.sales-report.pdf') }}" method="GET" target="_blank" class="flex items-center gap-2">
+                        <select 
+                            name="timeframe" 
+                            class="px-2.5 py-1.5 text-xs rounded-xl border border-[#DFD6CB] dark:border-[#382D27] bg-white dark:bg-[#28201C] text-espresso-900 dark:text-white focus:outline-hidden"
+                        >
+                            <option value="today">Today</option>
+                            <option value="yesterday">Yesterday</option>
+                            <option value="this_week">This Week</option>
+                            <option value="this_month" selected>This Month ({{ date('F') }})</option>
+                            <option value="this_year">Fiscal Year {{ date('Y') }}</option>
+                        </select>
+                        <button 
+                            type="submit" 
+                            class="flex-1 py-1.5 px-3 rounded-xl bg-espresso-900 hover:bg-tan-600 text-white font-semibold text-xs transition-colors flex items-center justify-center gap-1.5"
+                        >
+                            <i data-lucide="file-text" class="w-3.5 h-3.5 text-gold-400"></i>
+                            <span>Generate PDF Report</span>
+                        </button>
+                    </form>
+                </div>
+
+                <!-- Option 3: Monthly Orders CSV -->
                 <div class="p-4 rounded-2xl bg-[#FAF8F5] dark:bg-[#201815] border border-[#E0D7CB] dark:border-[#382D27] space-y-2.5">
                     <div class="flex items-center justify-between">
                         <div>
-                            <div class="font-bold text-xs text-espresso-950 dark:text-white">1. Monthly Orders Ledger (CSV)</div>
+                            <div class="font-bold text-xs text-espresso-950 dark:text-white">3. Monthly Orders Ledger (CSV)</div>
                             <div class="text-[10px] text-gray-400">Clean order breakdown with clients, cities, courier tracking, and totals</div>
                         </div>
                     </div>
@@ -393,14 +473,14 @@
                             class="flex-1 py-1.5 px-3 rounded-xl bg-espresso-900 hover:bg-tan-600 text-white font-semibold text-xs transition-colors flex items-center justify-center gap-1.5"
                         >
                             <i data-lucide="file-spreadsheet" class="w-3.5 h-3.5"></i>
-                            <span>Download Month Orders</span>
+                            <span>Download Month CSV</span>
                         </button>
                     </form>
                 </div>
 
-                <!-- Option 2: Tax & Fiscal Summary -->
+                <!-- Option 4: Tax & Fiscal Summary -->
                 <div class="p-4 rounded-2xl bg-[#FAF8F5] dark:bg-[#201815] border border-[#E0D7CB] dark:border-[#382D27] space-y-2.5">
-                    <div class="font-bold text-xs text-espresso-950 dark:text-white">2. Tax & PRA Fiscal Summary (CSV)</div>
+                    <div class="font-bold text-xs text-espresso-950 dark:text-white">4. Tax & PRA Fiscal Summary (CSV)</div>
                     <div class="text-[10px] text-gray-400">12-month taxable revenue, gross sales, and PRA 5% withholding schedule</div>
 
                     <form action="{{ route('admin.analytics.export.tax') }}" method="GET" class="flex items-center gap-2">
@@ -421,10 +501,10 @@
                     </form>
                 </div>
 
-                <!-- Option 3: Inventory Valuation -->
+                <!-- Option 5: Inventory Valuation -->
                 <div class="p-4 rounded-2xl bg-[#FAF8F5] dark:bg-[#201815] border border-[#E0D7CB] dark:border-[#382D27] flex items-center justify-between">
                     <div>
-                        <div class="font-bold text-xs text-espresso-950 dark:text-white">3. Inventory Capital Valuation (CSV)</div>
+                        <div class="font-bold text-xs text-espresso-950 dark:text-white">5. Inventory Capital Valuation (CSV)</div>
                         <div class="text-[10px] text-gray-400">Live capital locked in stock per SKU and slow-moving warnings</div>
                     </div>
                     <a 

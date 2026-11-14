@@ -169,6 +169,9 @@ Route::prefix('admin')->name('admin.')->group(function () {
 
         // Financial Export & Analytics Dashboard
         Route::get('/analytics', [AdminAnalyticsController::class, 'index'])->name('analytics.index');
+        Route::get('/analytics/daily-closing', [AdminAnalyticsController::class, 'dailyClosing'])->name('analytics.daily-closing');
+        Route::get('/analytics/daily-closing/csv', [AdminAnalyticsController::class, 'exportDailyClosingCsv'])->name('analytics.daily-closing.csv');
+        Route::get('/analytics/sales-report/pdf', [AdminAnalyticsController::class, 'salesReportPdf'])->name('analytics.sales-report.pdf');
         Route::get('/analytics/export/orders', [AdminAnalyticsController::class, 'exportOrders'])->name('analytics.export.orders');
         Route::get('/analytics/export/tax', [AdminAnalyticsController::class, 'exportTaxSummary'])->name('analytics.export.tax');
         Route::get('/analytics/export/inventory', [AdminAnalyticsController::class, 'exportAgingInventory'])->name('analytics.export.inventory');

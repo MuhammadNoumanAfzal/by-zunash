@@ -394,5 +394,284 @@ class AnalyticsController extends Controller
 
         return new StreamedResponse($callback, 200, $headers);
     }
+
+    /**
+     * Printable & PDF Daily Closing Summary (Z-Report)
+     */
+    public function dailyClosing(Request $request)
+    {
+        $dateInput = $request->input('date', now()->toDateString());
+        $closingDate = Carbon::parse($dateInput)->startOfDay();
+        $closingDateEnd = Carbon::parse($dateInput)->endOfDay();
+
+        $orders = Order::whereBetween('created_at', [$closingDate, $closingDateEnd])
+            ->orderBy('created_at', 'asc')
+            ->get();
+
+        // Financial Totals
+        $ordersCount = $orders->count();
+        $grossSales = (float) $orders->sum('total');
+        $totalDiscount = (float) $orders->sum('discount');
+        $subtotal = (float) $orders->sum('subtotal');
+        $shippingCollected = (float) $orders->sum('shipping_fee');
+
+        $totalCogs = 0;
+        $totalNetProfit = 0;
+        foreach ($orders as $o) {
+            $totalCogs += $o->total_cost;
+            $totalNetProfit += $o->net_profit;
+        }
+
+        $grossMarginPercent = $grossSales > 0 ? round(($totalNetProfit / $grossSales) * 100, 1) : 0;
+        $aov = $ordersCount > 0 ? round($grossSales / $ordersCount) : 0;
+
+        // Payment Channel Breakdown
+        $paymentMethods = [
+            'cod' => ['label' => 'Cash on Delivery (Nationwide COD)', 'count' => 0, 'amount' => 0],
+            'bank' => ['label' => 'Direct Bank Transfer (Instant IBFT)', 'count' => 0, 'amount' => 0],
+            'jazzcash' => ['label' => 'JazzCash Mobile Account', 'count' => 0, 'amount' => 0],
+            'easypaisa' => ['label' => 'EasyPaisa Mobile Account', 'count' => 0, 'amount' => 0],
+        ];
+
+        $paymentStatusSummary = [
+            'paid' => ['count' => 0, 'amount' => 0],
+            'pending' => ['count' => 0, 'amount' => 0],
+        ];
+
+        foreach ($orders as $o) {
+            $method = strtolower($o->payment_method ?? 'cod');
+            if (!isset($paymentMethods[$method])) {
+                $paymentMethods[$method] = ['label' => ucfirst($method), 'count' => 0, 'amount' => 0];
+            }
+            $paymentMethods[$method]['count']++;
+            $paymentMethods[$method]['amount'] += $o->total;
+
+            $pStatus = strtolower($o->payment_status ?? 'pending');
+            if ($pStatus === 'paid') {
+                $paymentStatusSummary['paid']['count']++;
+                $paymentStatusSummary['paid']['amount'] += $o->total;
+            } else {
+                $paymentStatusSummary['pending']['count']++;
+                $paymentStatusSummary['pending']['amount'] += $o->total;
+            }
+        }
+
+        // Fulfillment Breakdown
+        $fulfillmentSummary = [
+            'pending' => $orders->whereIn('order_status', ['pending', 'placed', 'processing', 'in_production'])->count(),
+            'dispatched' => $orders->where('order_status', 'dispatched')->count(),
+            'completed' => $orders->whereIn('order_status', ['completed', 'delivered'])->count(),
+            'returned' => $orders->where('order_status', 'returned')->count(),
+            'cancelled' => $orders->where('order_status', 'cancelled')->count(),
+        ];
+
+        // Itemized Articles / Creations Sold Today
+        $itemsSold = [];
+        $totalUnitsSold = 0;
+        foreach ($orders as $o) {
+            if (is_array($o->items)) {
+                foreach ($o->items as $item) {
+                    $itemKey = ($item['id'] ?? 'item') . '-' . ($item['variant'] ?? ($item['color'] ?? 'default'));
+                    $qty = (int)($item['quantity'] ?? $item['qty'] ?? 1);
+                    $price = (float)($item['price'] ?? 0);
+                    $cost = (float)($item['cost_price'] ?? 0);
+                    if ($cost <= 0 && !empty($item['id'])) {
+                        $prod = Product::find($item['id']);
+                        if ($prod && $prod->cost_price > 0) $cost = (float)$prod->cost_price;
+                    }
+                    if ($cost <= 0) $cost = round($price * 0.40, 2);
+
+                    if (!isset($itemsSold[$itemKey])) {
+                        $itemsSold[$itemKey] = [
+                            'name' => $item['name'] ?? 'Bespoke Item',
+                            'variant' => $item['variant'] ?? ($item['color'] ?? '-'),
+                            'sku' => $item['sku'] ?? 'N/A',
+                            'quantity' => 0,
+                            'unit_price' => $price,
+                            'unit_cost' => $cost,
+                            'total_sales' => 0,
+                            'total_profit' => 0,
+                        ];
+                    }
+
+                    $itemsSold[$itemKey]['quantity'] += $qty;
+                    $itemsSold[$itemKey]['total_sales'] += ($price * $qty);
+                    $itemsSold[$itemKey]['total_profit'] += (($price - $cost) * $qty);
+                    $totalUnitsSold += $qty;
+                }
+            }
+        }
+
+        $totalReturnLoss = (float) $orders->where('order_status', 'returned')->sum('return_courier_charge');
+
+        return view('admin.analytics.daily-closing-pdf', compact(
+            'closingDate',
+            'orders',
+            'ordersCount',
+            'grossSales',
+            'totalDiscount',
+            'subtotal',
+            'shippingCollected',
+            'totalCogs',
+            'totalNetProfit',
+            'grossMarginPercent',
+            'aov',
+            'paymentMethods',
+            'paymentStatusSummary',
+            'fulfillmentSummary',
+            'itemsSold',
+            'totalUnitsSold',
+            'totalReturnLoss'
+        ));
+    }
+
+    /**
+     * Download Clean Daily Closing Summary CSV
+     */
+    public function exportDailyClosingCsv(Request $request)
+    {
+        $dateInput = $request->input('date', now()->toDateString());
+        $closingDate = Carbon::parse($dateInput)->startOfDay();
+        $closingDateEnd = Carbon::parse($dateInput)->endOfDay();
+
+        $orders = Order::whereBetween('created_at', [$closingDate, $closingDateEnd])
+            ->orderBy('created_at', 'asc')
+            ->get();
+
+        $fileName = 'byzunash_daily_closing_' . $closingDate->format('Y-m-d') . '.csv';
+
+        $headers = [
+            'Content-Type' => 'text/csv; charset=UTF-8',
+            'Content-Disposition' => "attachment; filename=\"{$fileName}\"",
+            'Pragma' => 'no-cache',
+            'Cache-Control' => 'must-revalidate, post-check=0, pre-check=0',
+            'Expires' => '0',
+        ];
+
+        $callback = function () use ($orders, $closingDate) {
+            $handle = fopen('php://output', 'w');
+            fprintf($handle, chr(0xEF) . chr(0xBB) . chr(0xBF));
+
+            // Section 1: Closing Summary Meta
+            fputcsv($handle, ['BY ZUNASH LEATHER ATELIER - DAILY SALES & CASHIER CLOSING REPORT']);
+            fputcsv($handle, ['Closing Date', $closingDate->format('d F Y (l)')]);
+            fputcsv($handle, ['Generated At', now()->format('Y-m-d H:i:s')]);
+            fputcsv($handle, ['Total Orders Booked', $orders->count()]);
+            fputcsv($handle, ['Gross Revenue (PKR)', number_format((float)$orders->sum('total'), 2, '.', '')]);
+            fputcsv($handle, ['Discounts Given (PKR)', number_format((float)$orders->sum('discount'), 2, '.', '')]);
+            fputcsv($handle, ['Total COGS / Product Cost (PKR)', number_format((float)$orders->sum(fn($o) => $o->total_cost), 2, '.', '')]);
+            fputcsv($handle, ['Net Retained Profit (PKR)', number_format((float)$orders->sum(fn($o) => $o->net_profit), 2, '.', '')]);
+            fputcsv($handle, []);
+
+            // Section 2: Detailed Orders Table
+            fputcsv($handle, [
+                'Order #',
+                'Time',
+                'Customer Name',
+                'Phone',
+                'City',
+                'Payment Mode',
+                'Payment Status',
+                'Order Status',
+                'Courier / Tracking',
+                'Subtotal (PKR)',
+                'Discount (PKR)',
+                'Total (PKR)',
+                'Cost (PKR)',
+                'Net Profit (PKR)',
+            ]);
+
+            foreach ($orders as $order) {
+                fputcsv($handle, [
+                    $order->order_number,
+                    $order->created_at->format('H:i:s'),
+                    $order->customer_name,
+                    $order->customer_phone,
+                    $order->city,
+                    strtoupper($order->payment_method),
+                    strtoupper($order->payment_status),
+                    strtoupper($order->order_status),
+                    ($order->courier_name ? $order->courier_name . ': ' : '') . ($order->tracking_number ?: 'N/A'),
+                    number_format($order->subtotal, 2, '.', ''),
+                    number_format($order->discount, 2, '.', ''),
+                    number_format($order->total, 2, '.', ''),
+                    number_format($order->total_cost, 2, '.', ''),
+                    number_format($order->net_profit, 2, '.', ''),
+                ]);
+            }
+
+            fclose($handle);
+        };
+
+        return new StreamedResponse($callback, 200, $headers);
+    }
+
+    /**
+     * Printable & PDF Comprehensive Sales & Profit Report
+     */
+    public function salesReportPdf(Request $request)
+    {
+        $timeframe = $request->input('timeframe', 'this_month');
+        $startDateInput = $request->input('start_date');
+        $endDateInput = $request->input('end_date');
+
+        $query = Order::query();
+        $reportTitle = 'Executive Sales & Profit Report';
+
+        if ($timeframe === 'today') {
+            $query->whereDate('created_at', now()->toDateString());
+            $periodLabel = 'Today (' . now()->format('d M Y') . ')';
+        } elseif ($timeframe === 'yesterday') {
+            $query->whereDate('created_at', now()->subDay()->toDateString());
+            $periodLabel = 'Yesterday (' . now()->subDay()->format('d M Y') . ')';
+        } elseif ($timeframe === 'this_week') {
+            $query->where('created_at', '>=', now()->startOfWeek());
+            $periodLabel = 'This Week (' . now()->startOfWeek()->format('d M') . ' – ' . now()->format('d M Y') . ')';
+        } elseif ($timeframe === 'this_month') {
+            $month = $request->input('month', date('Y-m'));
+            $start = Carbon::parse($month)->startOfMonth();
+            $end = Carbon::parse($month)->endOfMonth();
+            $query->whereBetween('created_at', [$start, $end]);
+            $periodLabel = 'Month of ' . $start->format('F Y');
+        } elseif ($timeframe === 'this_year') {
+            $query->where('created_at', '>=', now()->startOfYear());
+            $periodLabel = 'Year ' . now()->format('Y');
+        } elseif ($timeframe === 'custom' && $startDateInput && $endDateInput) {
+            $start = Carbon::parse($startDateInput)->startOfDay();
+            $end = Carbon::parse($endDateInput)->endOfDay();
+            $query->whereBetween('created_at', [$start, $end]);
+            $periodLabel = $start->format('d M Y') . ' to ' . $end->format('d M Y');
+        } else {
+            $query->where('created_at', '>=', now()->startOfMonth());
+            $periodLabel = 'Month of ' . now()->format('F Y');
+        }
+
+        $orders = $query->orderBy('created_at', 'asc')->get();
+
+        $ordersCount = $orders->count();
+        $grossSales = (float) $orders->sum('total');
+        $totalDiscount = (float) $orders->sum('discount');
+        $totalCogs = 0;
+        $totalNetProfit = 0;
+        foreach ($orders as $o) {
+            $totalCogs += $o->total_cost;
+            $totalNetProfit += $o->net_profit;
+        }
+        $marginPercent = $grossSales > 0 ? round(($totalNetProfit / $grossSales) * 100, 1) : 0;
+        $aov = $ordersCount > 0 ? round($grossSales / $ordersCount) : 0;
+
+        return view('admin.analytics.sales-report-pdf', compact(
+            'orders',
+            'periodLabel',
+            'reportTitle',
+            'ordersCount',
+            'grossSales',
+            'totalDiscount',
+            'totalCogs',
+            'totalNetProfit',
+            'marginPercent',
+            'aov'
+        ));
+    }
 }
 

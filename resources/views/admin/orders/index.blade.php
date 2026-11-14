@@ -46,6 +46,16 @@
 
         <div class="flex items-center gap-2 flex-wrap">
             <a 
+                href="{{ route('admin.analytics.daily-closing') }}" 
+                target="_blank"
+                class="px-3.5 py-1.5 rounded-xl bg-tan-600 hover:bg-tan-700 text-white text-xs font-bold shadow-2xs transition-all flex items-center gap-1.5"
+                title="View & Print Today's Daily Closing Sales Summary (Z-Report PDF)"
+            >
+                <i data-lucide="file-check" class="w-3.5 h-3.5"></i>
+                <span>Daily Closing (PDF)</span>
+            </a>
+
+            <a 
                 href="{{ route('admin.orders.print-report', request()->query()) }}" 
                 target="_blank"
                 class="px-3.5 py-1.5 rounded-xl bg-white dark:bg-[#1A1513] border border-[#ECE6DE] dark:border-[#2C2420] text-xs font-semibold text-espresso-950 dark:text-white hover:border-tan-500 shadow-2xs transition-colors flex items-center gap-1.5"

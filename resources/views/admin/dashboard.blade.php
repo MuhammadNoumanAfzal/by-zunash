@@ -131,6 +131,27 @@
                     </form>
                 </div>
 
+                <!-- Daily Closing & PDF Reports Buttons -->
+                <a 
+                    href="{{ route('admin.analytics.daily-closing') }}" 
+                    target="_blank"
+                    class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-tan-600 hover:bg-tan-700 text-white text-xs font-bold shadow-xs active:scale-95 transition-all"
+                    title="Open Day-End Sales & Cashier Closing Summary (Z-Report PDF/Print)"
+                >
+                    <i data-lucide="printer" class="w-3.5 h-3.5"></i>
+                    <span>Daily Closing (PDF)</span>
+                </a>
+
+                <a 
+                    href="{{ route('admin.analytics.sales-report.pdf', ['timeframe' => $timeframe, 'start_date' => $customStart, 'end_date' => $customEnd]) }}" 
+                    target="_blank"
+                    class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-gray-300 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-[#201814] text-espresso-950 dark:text-white text-xs font-semibold shadow-2xs active:scale-95 transition-all"
+                    title="Print / Save period executive sales PDF"
+                >
+                    <i data-lucide="file-text" class="w-3.5 h-3.5 text-tan-600"></i>
+                    <span>Sales Report (PDF)</span>
+                </a>
+
                 <!-- One-Click Export CSV Button -->
                 <a 
                     href="{{ route('admin.analytics.export.orders', ['timeframe' => $timeframe, 'start_date' => $customStart, 'end_date' => $customEnd]) }}" 
@@ -138,7 +159,7 @@
                     title="Export full breakdown with Profit, COGS and COD Returns"
                 >
                     <i data-lucide="download" class="w-3.5 h-3.5"></i>
-                    <span>Export Sales & Profit CSV</span>
+                    <span>Export CSV</span>
                 </a>
             </div>
         </div>
