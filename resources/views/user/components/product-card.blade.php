@@ -77,6 +77,7 @@
             type="button"
             @click.stop="$store.wishlist.toggle(product)"
             class="absolute top-3 right-3 z-10 w-9 h-9 rounded-full bg-white/90 backdrop-blur-md border border-ivory-300 flex items-center justify-center text-espresso-900 transition-all duration-200 hover:scale-110 hover:bg-white shadow-xs focus:outline-none"
+            aria-label="Save to wishlist"
             :aria-label="$store.wishlist.has(product.id) ? 'Remove from wishlist' : 'Save to wishlist'"
         >
             <i 
@@ -157,6 +158,7 @@
                 <button 
                     type="button" 
                     @click.stop="$store.cart.addItem(product)"
+                    aria-label="Quick Add to Bag"
                     class="w-full py-2 px-3 bg-espresso-950/95 backdrop-blur-sm text-ivory text-[11px] uppercase tracking-widest font-semibold rounded-lg shadow-lg hover:bg-gold-500 hover:text-espresso-950 active:scale-95 transition-all flex items-center justify-center gap-1.5 border border-gold/40"
                 >
                     <i data-lucide="shopping-bag" class="w-3.5 h-3.5"></i>

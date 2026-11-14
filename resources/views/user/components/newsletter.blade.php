@@ -81,6 +81,7 @@
                                 type="email" 
                                 x-model="email" 
                                 placeholder="Enter your email address" 
+                                aria-label="Email address for atelier newsletter"
                                 class="w-full px-4 py-3 bg-transparent text-ivory placeholder-ivory-400/60 focus:outline-none text-sm"
                                 required
                             >

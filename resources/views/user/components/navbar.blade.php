@@ -103,6 +103,7 @@
                         @click="toggleCollections()"
                         class="text-xs uppercase tracking-widest font-medium transition-colors duration-200 flex items-center gap-1.5 py-5 focus:outline-none"
                         :class="collectionsOpen || {{ request()->is('category*') ? 'true' : 'false' }} ? 'text-gold-600 font-semibold' : 'text-espresso-800 dark:text-ivory-200 hover:text-gold-600 dark:hover:text-gold'"
+                        aria-label="Toggle collections menu"
                         aria-expanded="collectionsOpen"
                     >
                         <span>Collections</span>
@@ -336,6 +337,7 @@
                     type="button" 
                     @click="$store.theme.toggle()" 
                     class="p-2 text-espresso-900 dark:text-ivory-200 hover:text-gold dark:hover:text-gold transition-colors focus:outline-none rounded-full hidden md:inline-flex"
+                    aria-label="Toggle light or dark theme"
                     :aria-label="$store.theme.current === 'dark' ? 'Switch to Light Theme' : 'Switch to Dark Atelier Theme'"
                     :title="$store.theme.current === 'dark' ? 'Switch to Light Theme' : 'Switch to Dark Atelier Theme'"
                 >
@@ -371,6 +373,7 @@
                     name="q" 
                     x-model="searchQuery" 
                     @input="onSearchInput()"
+                    aria-label="Search fine leather catalog"
                     placeholder="Search fine leather belts, wallets, handbags, and accessories..." 
                     class="w-full pl-12 pr-28 py-3.5 bg-white dark:bg-[#161210] border border-ivory-300 dark:border-white/10 rounded-xl text-sm text-espresso-900 dark:text-ivory-100 placeholder-muted focus:outline-none focus:ring-2 focus:ring-gold/60 focus:border-gold shadow-xs"
                     autofocus

@@ -384,6 +384,7 @@
                         type="button" 
                         @click="goTo(idx)" 
                         class="group py-2 px-0.5 sm:px-1 focus:outline-none"
+                        aria-label="Slide indicator"
                         :aria-label="'Go to slide ' + (idx + 1)"
                     >
                         <div class="h-1 rounded-full overflow-hidden transition-all duration-300"

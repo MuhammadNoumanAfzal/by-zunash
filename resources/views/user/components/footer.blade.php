@@ -12,10 +12,10 @@
                 </p>
                 <div class="mt-6 flex items-center space-x-4 text-gold-200">
                     <span class="text-xs uppercase tracking-widest font-serif">Connect With Us:</span>
-                    <a href="https://instagram.com" target="_blank" rel="noopener" class="w-8 h-8 rounded-full bg-espresso-900 border border-gold/30 flex items-center justify-center hover:bg-gold hover:text-espresso-950 transition-colors" title="Instagram">
+                    <a href="https://instagram.com" target="_blank" rel="noopener" aria-label="Follow By Zunash on Instagram" class="w-8 h-8 rounded-full bg-espresso-900 border border-gold/30 flex items-center justify-center hover:bg-gold hover:text-espresso-950 transition-colors" title="Instagram">
                         <i data-lucide="share-2" class="w-3.5 h-3.5"></i>
                     </a>
-                    <a href="https://facebook.com" target="_blank" rel="noopener" class="w-8 h-8 rounded-full bg-espresso-900 border border-gold/30 flex items-center justify-center hover:bg-gold hover:text-espresso-950 transition-colors" title="Facebook">
+                    <a href="https://facebook.com" target="_blank" rel="noopener" aria-label="Follow By Zunash on Facebook" class="w-8 h-8 rounded-full bg-espresso-900 border border-gold/30 flex items-center justify-center hover:bg-gold hover:text-espresso-950 transition-colors" title="Facebook">
                         <i data-lucide="external-link" class="w-3.5 h-3.5"></i>
                     </a>
                 </div>
