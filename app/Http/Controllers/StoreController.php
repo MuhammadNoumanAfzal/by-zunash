@@ -594,10 +594,26 @@ class StoreController extends Controller
             default => 'COD',
         };
 
+        $shippingFee = (float)($request->input('shipping_fee', 0));
+
         $rawItems = $request->input('items');
         $itemsArray = is_string($rawItems) ? json_decode($rawItems, true) : $rawItems;
         if (!is_array($itemsArray)) {
             $itemsArray = [];
+        }
+
+        // Enforce Per-Product Payment Restrictions
+        $itemProductIds = array_filter(array_column($itemsArray, 'id'));
+        if (!empty($itemProductIds)) {
+            $hasPrepaidOnly = \App\Models\Product::whereIn('id', $itemProductIds)
+                ->where('allowed_payment_methods', 'prepaid_only')
+                ->exists();
+            if ($hasPrepaidOnly && $paymentMethodFormatted === 'COD') {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Your order contains bespoke pieces that require Advance Payment (Bank Transfer). Cash on Delivery is not available for these items.'
+                ], 422);
+            }
         }
 
         $order = \App\Models\Order::create([
@@ -615,7 +631,7 @@ class StoreController extends Controller
             'payment_status' => 'pending',
             'order_status' => 'pending',
             'subtotal' => $validated['subtotal'],
-            'shipping_fee' => 0.00,
+            'shipping_fee' => $shippingFee,
             'discount' => $discount,
             'total' => $validated['total'],
             'items' => $itemsArray,

@@ -43,11 +43,30 @@
     $specCare = $specs['Care'] ?? '';
     $specOrigin = $specs['Origin'] ?? '';
     $specPackaging = $specs['Packaging'] ?? '';
+
+    // Determine initial step based on validation errors
+    $initialStep = 1;
+    if ($errors->hasAny(['price', 'cost_price', 'original_price', 'stock_quantity'])) {
+        $initialStep = 2;
+    } elseif ($errors->hasAny(['allowed_payment_methods', 'custom_shipping_charge', 'weight_kg'])) {
+        $initialStep = 3;
+    } elseif ($errors->hasAny(['image', 'image_file', 'gallery_files'])) {
+        $initialStep = 4;
+    } elseif ($errors->hasAny(['short_description', 'description', 'spec_material'])) {
+        $initialStep = 5;
+    }
 @endphp
 
 <div class="max-w-4xl mx-auto space-y-6" x-data="{
+    step: {{ $initialStep }},
+    totalSteps: 5,
     availability: '{{ old('availability', $product->availability ?? 'in_stock') }}',
     leadTime: '{{ old('lead_time', $product->lead_time ?? '') }}',
+    paymentMethodRule: '{{ old('allowed_payment_methods', $product->allowed_payment_methods ?? 'all') }}',
+    isFreeShipping: {{ old('is_free_shipping', $product->is_free_shipping) ? 'true' : 'false' }},
+    primaryPreview: null,
+    
+    // Color Palette Manager
     colors: {{ json_encode($initialColors) }},
     customColorName: '',
     customColorHex: '#8B4513',
@@ -75,59 +94,228 @@
     },
     get activeColorsJson() {
         return JSON.stringify(this.colors.filter(c => c.active).map(c => ({ name: c.name, hex: c.hex, stock: c.stock })));
+    },
+
+    // Step Navigation
+    nextStep() {
+        if (this.step < this.totalSteps) {
+            this.step++;
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+    },
+    prevStep() {
+        if (this.step > 1) {
+            this.step--;
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+    },
+    goToStep(s) {
+        this.step = s;
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    },
+
+    // Image preview helper
+    handlePrimaryUpload(e) {
+        const file = e.target.files[0];
+        if (file) {
+            this.primaryPreview = URL.createObjectURL(file);
+        }
     }
 }">
 
-    <!-- Header & Breadcrumbs -->
-    <div class="flex items-center justify-between">
+    <!-- Top Header & Breadcrumbs -->
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div>
             <div class="flex items-center gap-2 text-xs text-[#8F8379] mb-1">
                 <a href="{{ route('admin.products.index') }}" class="hover:text-tan-600 transition-colors">Products</a>
                 <span>/</span>
-                <span class="text-espresso-950 dark:text-white font-medium">Edit Product</span>
+                <span class="text-espresso-950 dark:text-white font-medium">Edit Creation</span>
             </div>
             <h1 class="font-cinzel text-2xl sm:text-3xl font-bold text-espresso-950 dark:text-white">
                 Edit: {{ $product->name }}
             </h1>
         </div>
 
-        <div class="flex items-center gap-2">
+        <div class="flex items-center gap-2.5">
             <a 
                 href="{{ route('product.details', $product->slug) }}" 
                 target="_blank"
                 class="px-3.5 py-2 rounded-xl border border-[#DFD6CB] dark:border-[#3A2F29] text-xs font-semibold text-tan-600 hover:bg-[#FAF8F5] dark:hover:bg-[#201A18] transition-colors flex items-center gap-1.5"
             >
                 <i data-lucide="external-link" class="w-3.5 h-3.5"></i>
-                <span>Storefront View</span>
+                <span class="hidden sm:inline">Storefront</span>
             </a>
-
             <a 
                 href="{{ route('admin.products.index') }}" 
                 class="px-4 py-2 rounded-xl border border-[#DFD6CB] dark:border-[#3A2F29] text-xs font-semibold text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-[#201A18] transition-colors"
             >
-                Back to Catalogue
+                Back
             </a>
+            <button 
+                type="submit" 
+                form="editProductForm"
+                class="px-5 py-2 rounded-xl bg-tan-600 hover:bg-tan-700 text-white text-xs font-bold shadow-md hover:shadow-lg transition-all flex items-center gap-1.5 cursor-pointer"
+            >
+                <i data-lucide="check" class="w-4 h-4"></i>
+                <span>Save Changes</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- Stepper Navigation Bar (Tabs) -->
+    <div class="bg-white dark:bg-[#1A1513] rounded-2xl border border-[#ECE6DE] dark:border-[#2C2420] p-3 sm:p-4 shadow-xs">
+        <div class="grid grid-cols-2 sm:grid-cols-5 gap-2 text-xs">
+            
+            <!-- Step 1 Tab -->
+            <button 
+                type="button" 
+                @click="goToStep(1)"
+                class="p-2.5 rounded-xl text-left transition-all flex items-center gap-2.5 cursor-pointer"
+                :class="step === 1 ? 'bg-tan-500/10 dark:bg-tan-600/20 text-tan-700 dark:text-gold-300 font-bold border border-tan-500/30' : (step > 1 ? 'text-emerald-700 dark:text-emerald-400 hover:bg-gray-50 dark:hover:bg-[#241D1A]' : 'text-gray-400 dark:text-gray-500 hover:bg-gray-50 dark:hover:bg-[#241D1A]')"
+            >
+                <span 
+                    class="w-6 h-6 rounded-full flex items-center justify-center text-[11px] font-bold shrink-0 transition-colors"
+                    :class="step === 1 ? 'bg-tan-600 text-white' : (step > 1 ? 'bg-emerald-600 text-white' : 'bg-gray-200 dark:bg-[#2E2520] text-gray-600 dark:text-gray-400')"
+                >
+                    <template x-if="step > 1">
+                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="3"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                    </template>
+                    <template x-if="step <= 1">
+                        <span>1</span>
+                    </template>
+                </span>
+                <div class="min-w-0">
+                    <div class="truncate text-[11px] uppercase tracking-wider font-semibold opacity-75">Step 1</div>
+                    <div class="truncate text-xs font-bold">Identity & Category</div>
+                </div>
+            </button>
+
+            <!-- Step 2 Tab -->
+            <button 
+                type="button" 
+                @click="goToStep(2)"
+                class="p-2.5 rounded-xl text-left transition-all flex items-center gap-2.5 cursor-pointer"
+                :class="step === 2 ? 'bg-tan-500/10 dark:bg-tan-600/20 text-tan-700 dark:text-gold-300 font-bold border border-tan-500/30' : (step > 2 ? 'text-emerald-700 dark:text-emerald-400 hover:bg-gray-50 dark:hover:bg-[#241D1A]' : 'text-gray-400 dark:text-gray-500 hover:bg-gray-50 dark:hover:bg-[#241D1A]')"
+            >
+                <span 
+                    class="w-6 h-6 rounded-full flex items-center justify-center text-[11px] font-bold shrink-0 transition-colors"
+                    :class="step === 2 ? 'bg-tan-600 text-white' : (step > 2 ? 'bg-emerald-600 text-white' : 'bg-gray-200 dark:bg-[#2E2520] text-gray-600 dark:text-gray-400')"
+                >
+                    <template x-if="step > 2">
+                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="3"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                    </template>
+                    <template x-if="step <= 2">
+                        <span>2</span>
+                    </template>
+                </span>
+                <div class="min-w-0">
+                    <div class="truncate text-[11px] uppercase tracking-wider font-semibold opacity-75">Step 2</div>
+                    <div class="truncate text-xs font-bold">Price & Inventory</div>
+                </div>
+            </button>
+
+            <!-- Step 3 Tab -->
+            <button 
+                type="button" 
+                @click="goToStep(3)"
+                class="p-2.5 rounded-xl text-left transition-all flex items-center gap-2.5 cursor-pointer"
+                :class="step === 3 ? 'bg-tan-500/10 dark:bg-tan-600/20 text-tan-700 dark:text-gold-300 font-bold border border-tan-500/30' : (step > 3 ? 'text-emerald-700 dark:text-emerald-400 hover:bg-gray-50 dark:hover:bg-[#241D1A]' : 'text-gray-400 dark:text-gray-500 hover:bg-gray-50 dark:hover:bg-[#241D1A]')"
+            >
+                <span 
+                    class="w-6 h-6 rounded-full flex items-center justify-center text-[11px] font-bold shrink-0 transition-colors"
+                    :class="step === 3 ? 'bg-tan-600 text-white' : (step > 3 ? 'bg-emerald-600 text-white' : 'bg-gray-200 dark:bg-[#2E2520] text-gray-600 dark:text-gray-400')"
+                >
+                    <template x-if="step > 3">
+                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="3"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                    </template>
+                    <template x-if="step <= 3">
+                        <span>3</span>
+                    </template>
+                </span>
+                <div class="min-w-0">
+                    <div class="truncate text-[11px] uppercase tracking-wider font-semibold opacity-75">Step 3</div>
+                    <div class="truncate text-xs font-bold">Shipping & Rules</div>
+                </div>
+            </button>
+
+            <!-- Step 4 Tab -->
+            <button 
+                type="button" 
+                @click="goToStep(4)"
+                class="p-2.5 rounded-xl text-left transition-all flex items-center gap-2.5 cursor-pointer"
+                :class="step === 4 ? 'bg-tan-500/10 dark:bg-tan-600/20 text-tan-700 dark:text-gold-300 font-bold border border-tan-500/30' : (step > 4 ? 'text-emerald-700 dark:text-emerald-400 hover:bg-gray-50 dark:hover:bg-[#241D1A]' : 'text-gray-400 dark:text-gray-500 hover:bg-gray-50 dark:hover:bg-[#241D1A]')"
+            >
+                <span 
+                    class="w-6 h-6 rounded-full flex items-center justify-center text-[11px] font-bold shrink-0 transition-colors"
+                    :class="step === 4 ? 'bg-tan-600 text-white' : (step > 4 ? 'bg-emerald-600 text-white' : 'bg-gray-200 dark:bg-[#2E2520] text-gray-600 dark:text-gray-400')"
+                >
+                    <template x-if="step > 4">
+                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="3"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                    </template>
+                    <template x-if="step <= 4">
+                        <span>4</span>
+                    </template>
+                </span>
+                <div class="min-w-0">
+                    <div class="truncate text-[11px] uppercase tracking-wider font-semibold opacity-75">Step 4</div>
+                    <div class="truncate text-xs font-bold">Visuals & Swatches</div>
+                </div>
+            </button>
+
+            <!-- Step 5 Tab -->
+            <button 
+                type="button" 
+                @click="goToStep(5)"
+                class="p-2.5 rounded-xl text-left transition-all flex items-center gap-2.5 cursor-pointer col-span-2 sm:col-span-1"
+                :class="step === 5 ? 'bg-tan-500/10 dark:bg-tan-600/20 text-tan-700 dark:text-gold-300 font-bold border border-tan-500/30' : 'text-gray-400 dark:text-gray-500 hover:bg-gray-50 dark:hover:bg-[#241D1A]'"
+            >
+                <span 
+                    class="w-6 h-6 rounded-full flex items-center justify-center text-[11px] font-bold shrink-0 transition-colors"
+                    :class="step === 5 ? 'bg-tan-600 text-white' : 'bg-gray-200 dark:bg-[#2E2520] text-gray-600 dark:text-gray-400'"
+                >
+                    5
+                </span>
+                <div class="min-w-0">
+                    <div class="truncate text-[11px] uppercase tracking-wider font-semibold opacity-75">Step 5</div>
+                    <div class="truncate text-xs font-bold">Story & SEO</div>
+                </div>
+            </button>
+
+        </div>
+
+        <!-- Progress Bar Line -->
+        <div class="w-full bg-gray-100 dark:bg-[#241D1A] h-1.5 rounded-full mt-3 overflow-hidden">
+            <div 
+                class="bg-tan-600 h-full transition-all duration-300 ease-out"
+                :style="'width: ' + ((step / totalSteps) * 100) + '%'"
+            ></div>
         </div>
     </div>
 
     <!-- Edit Form Card -->
-    <form action="{{ route('admin.products.update', $product) }}" method="POST" enctype="multipart/form-data" class="bg-white dark:bg-[#1A1513] rounded-3xl border border-[#ECE6DE] dark:border-[#2C2420] p-6 sm:p-8 shadow-card space-y-8">
+    <form id="editProductForm" action="{{ route('admin.products.update', $product) }}" method="POST" enctype="multipart/form-data">
         @csrf
         @method('PUT')
 
         <!-- Hidden input for dynamic colors JSON -->
         <input type="hidden" name="colors_json" :value="activeColorsJson">
 
-        <!-- Section 1: Basic Information -->
-        <div>
-            <div class="flex items-center gap-2 pb-2 border-b border-[#F0EAE1] dark:border-[#2C2420]">
-                <span class="w-6 h-6 rounded-full bg-tan-100 dark:bg-[#2A1E18] text-tan-700 dark:text-gold-400 font-bold text-xs flex items-center justify-center">1</span>
-                <h2 class="font-cinzel text-base font-bold text-espresso-950 dark:text-white">
-                    Product Identification & Category
-                </h2>
+        <!-- ======================================================== -->
+        <!-- STEP 1: IDENTITY & COLLECTION                           -->
+        <!-- ======================================================== -->
+        <div x-show="step === 1" x-cloak class="bg-white dark:bg-[#1A1513] rounded-3xl border border-[#ECE6DE] dark:border-[#2C2420] p-6 sm:p-8 shadow-card space-y-6">
+            <div class="flex items-center justify-between pb-3 border-b border-[#F0EAE1] dark:border-[#2C2420]">
+                <div class="flex items-center gap-2.5">
+                    <span class="w-7 h-7 rounded-full bg-tan-100 dark:bg-[#2A1E18] text-tan-700 dark:text-gold-400 font-bold text-xs flex items-center justify-center">1</span>
+                    <div>
+                        <h2 class="font-cinzel text-lg font-bold text-espresso-950 dark:text-white">Product Identity & Collection</h2>
+                        <p class="text-xs text-[#8F8379]">Core catalog reference, SKU, and taxonomy classification</p>
+                    </div>
+                </div>
+                <span class="text-xs font-mono text-tan-600 dark:text-gold-400 font-bold">Step 1 of 5</span>
             </div>
 
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-4">
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-5 pt-2">
                 <!-- Product Name -->
                 <div class="sm:col-span-2">
                     <label class="block text-xs font-semibold text-espresso-900 dark:text-white mb-1.5">
@@ -138,77 +326,79 @@
                         name="name" 
                         value="{{ old('name', $product->name) }}" 
                         required 
-                        class="w-full px-3.5 py-2.5 text-xs rounded-xl bg-[#FAF8F5] dark:bg-[#241D1A] border border-[#E0D7CB] dark:border-[#3A2F29] text-espresso-900 dark:text-white focus:outline-hidden focus:border-tan-500"
+                        placeholder="e.g. The Sovereign Reversible Calfskin Belt"
+                        class="w-full px-4 py-2.5 text-xs rounded-xl bg-[#FAF8F5] dark:bg-[#241D1A] border border-[#E0D7CB] dark:border-[#3A2F29] text-espresso-900 dark:text-white focus:outline-hidden focus:border-tan-500 focus:ring-1 focus:ring-tan-500 font-medium"
                     >
+                    @error('name')
+                        <p class="text-xs text-rose-500 mt-1">{{ $message }}</p>
+                    @enderror
                 </div>
 
-            <div 
-                class="col-span-1 sm:col-span-2 grid grid-cols-1 sm:grid-cols-2 gap-4"
-                x-data="{
-                    categoryId: '{{ old('category_id', $product->category_id ?? '') }}',
-                    subcategoryId: '{{ old('subcategory_id', $product->subcategory_id ?? '') }}',
-                    allSubs: [
-                        @foreach($subcategories as $s)
-                            { id: {{ $s->id }}, name: '{{ addslashes($s->name) }}', category_id: {{ $s->category_id }} },
-                        @endforeach
-                    ],
-                    get filteredSubs() {
-                        if (!this.categoryId) return [];
-                        return this.allSubs.filter(s => s.category_id == this.categoryId);
-                    },
-                    onCategoryChange() {
-                        const valid = this.filteredSubs.some(s => s.id == this.subcategoryId);
-                        if (!valid) {
-                            this.subcategoryId = '';
+                <!-- Category & Subcategory Reactive Picker -->
+                <div 
+                    class="sm:col-span-2 grid grid-cols-1 sm:grid-cols-2 gap-5"
+                    x-data="{
+                        categoryId: '{{ old('category_id', $product->category_id ?? '') }}',
+                        subcategoryId: '{{ old('subcategory_id', $product->subcategory_id ?? '') }}',
+                        allSubs: [
+                            @foreach($subcategories as $s)
+                                { id: {{ $s->id }}, name: '{{ addslashes($s->name) }}', category_id: {{ $s->category_id }} },
+                            @endforeach
+                        ],
+                        get filteredSubs() {
+                            if (!this.categoryId) return [];
+                            return this.allSubs.filter(s => s.category_id == this.categoryId);
+                        },
+                        onCategoryChange() {
+                            const valid = this.filteredSubs.some(s => s.id == this.subcategoryId);
+                            if (!valid) {
+                                this.subcategoryId = '';
+                            }
                         }
-                    }
-                }"
-            >
-                <!-- Category -->
-                <div>
-                    <label class="block text-xs font-semibold text-espresso-900 dark:text-white mb-1.5">
-                        Collection Category <span class="text-rose-500">*</span>
-                    </label>
-                    <select 
-                        name="category_id" 
-                        x-model="categoryId"
-                        @change="onCategoryChange()"
-                        required
-                        class="w-full px-3.5 py-2.5 text-xs rounded-xl bg-[#FAF8F5] dark:bg-[#241D1A] border border-[#E0D7CB] dark:border-[#3A2F29] text-espresso-900 dark:text-white focus:outline-hidden focus:border-tan-500"
-                    >
-                        @foreach($categories as $cat)
-                            <option value="{{ $cat->id }}">
-                                {{ $cat->name }}
-                            </option>
-                        @endforeach
-                    </select>
-                </div>
-
-                <!-- Subcategory (Reactive Dependent Dropdown) -->
-                <div>
-                    <div class="flex items-center justify-between mb-1.5">
-                        <label class="block text-xs font-semibold text-espresso-900 dark:text-white">
-                            Subcategory (Optional)
+                    }"
+                >
+                    <!-- Category -->
+                    <div>
+                        <label class="block text-xs font-semibold text-espresso-900 dark:text-white mb-1.5">
+                            Collection Category <span class="text-rose-500">*</span>
                         </label>
-                        <a href="{{ route('admin.subcategories.index') }}#add-subcat" target="_blank" class="text-[10px] text-tan-600 hover:text-tan-700 font-semibold flex items-center gap-0.5">
-                            <span>+ New Subcategory</span>
-                        </a>
+                        <select 
+                            name="category_id" 
+                            x-model="categoryId"
+                            @change="onCategoryChange()"
+                            required
+                            class="w-full px-4 py-2.5 text-xs rounded-xl bg-[#FAF8F5] dark:bg-[#241D1A] border border-[#E0D7CB] dark:border-[#3A2F29] text-espresso-900 dark:text-white focus:outline-hidden focus:border-tan-500 font-medium"
+                        >
+                            @foreach($categories as $cat)
+                                <option value="{{ $cat->id }}">
+                                    {{ $cat->name }}
+                                </option>
+                            @endforeach
+                        </select>
                     </div>
-                    <select 
-                        name="subcategory_id" 
-                        x-model="subcategoryId"
-                        class="w-full px-3.5 py-2.5 text-xs rounded-xl bg-[#FAF8F5] dark:bg-[#241D1A] border border-[#E0D7CB] dark:border-[#3A2F29] text-espresso-900 dark:text-white focus:outline-hidden focus:border-tan-500"
-                    >
-                        <option value="">No Subcategory / General Piece</option>
-                        <template x-for="sub in filteredSubs" :key="sub.id">
-                            <option :value="sub.id" x-text="sub.name" :selected="sub.id == subcategoryId"></option>
-                        </template>
-                    </select>
-                    <p class="text-[10px] text-[#8F8379] mt-1" x-show="categoryId && filteredSubs.length === 0">
-                        No subcategories defined for this collection yet.
-                    </p>
+
+                    <!-- Subcategory -->
+                    <div>
+                        <div class="flex items-center justify-between mb-1.5">
+                            <label class="block text-xs font-semibold text-espresso-900 dark:text-white">
+                                Subcategory (Optional)
+                            </label>
+                            <a href="{{ route('admin.subcategories.index') }}#add-subcat" target="_blank" class="text-[10px] text-tan-600 hover:text-tan-700 font-semibold flex items-center gap-0.5">
+                                <span>+ New Subcategory</span>
+                            </a>
+                        </div>
+                        <select 
+                            name="subcategory_id" 
+                            x-model="subcategoryId"
+                            class="w-full px-4 py-2.5 text-xs rounded-xl bg-[#FAF8F5] dark:bg-[#241D1A] border border-[#E0D7CB] dark:border-[#3A2F29] text-espresso-900 dark:text-white focus:outline-hidden focus:border-tan-500 font-medium"
+                        >
+                            <option value="">No Subcategory / General Piece</option>
+                            <template x-for="sub in filteredSubs" :key="sub.id">
+                                <option :value="sub.id" x-text="sub.name" :selected="sub.id == subcategoryId"></option>
+                            </template>
+                        </select>
+                    </div>
                 </div>
-            </div>
 
                 <!-- SKU -->
                 <div>
@@ -220,8 +410,11 @@
                         name="sku" 
                         value="{{ old('sku', $product->sku) }}" 
                         required
-                        class="w-full px-3.5 py-2.5 text-xs rounded-xl bg-[#FAF8F5] dark:bg-[#241D1A] border border-[#E0D7CB] dark:border-[#3A2F29] text-espresso-900 dark:text-white focus:outline-hidden focus:border-tan-500 font-mono uppercase"
+                        class="w-full px-4 py-2.5 text-xs rounded-xl bg-[#FAF8F5] dark:bg-[#241D1A] border border-[#E0D7CB] dark:border-[#3A2F29] text-espresso-900 dark:text-white focus:outline-hidden focus:border-tan-500 font-mono uppercase"
                     >
+                    @error('sku')
+                        <p class="text-xs text-rose-500 mt-1">{{ $message }}</p>
+                    @enderror
                 </div>
 
                 <!-- Highlight Badge -->
@@ -234,22 +427,54 @@
                         name="badge" 
                         value="{{ old('badge', $product->badge) }}" 
                         placeholder="e.g. Bespoke Edition, 2-in-1 Design"
-                        class="w-full px-3.5 py-2.5 text-xs rounded-xl bg-[#FAF8F5] dark:bg-[#241D1A] border border-[#E0D7CB] dark:border-[#3A2F29] text-espresso-900 dark:text-white focus:outline-hidden focus:border-tan-500"
+                        class="w-full px-4 py-2.5 text-xs rounded-xl bg-[#FAF8F5] dark:bg-[#241D1A] border border-[#E0D7CB] dark:border-[#3A2F29] text-espresso-900 dark:text-white focus:outline-hidden focus:border-tan-500"
                     >
                 </div>
+
+                <!-- Flags -->
+                <div class="sm:col-span-2 flex flex-wrap items-center gap-6 pt-2">
+                    <label class="inline-flex items-center gap-2 cursor-pointer text-xs font-medium text-espresso-900 dark:text-white">
+                        <input type="checkbox" name="is_bestseller" value="1" {{ old('is_bestseller', $product->is_bestseller) ? 'checked' : '' }} class="rounded border-[#DFD6CB] text-tan-600 focus:ring-tan-500">
+                        <span>Bestseller / Flagship Collection</span>
+                    </label>
+
+                    <label class="inline-flex items-center gap-2 cursor-pointer text-xs font-medium text-espresso-900 dark:text-white">
+                        <input type="checkbox" name="is_new" value="1" {{ old('is_new', $product->is_new) ? 'checked' : '' }} class="rounded border-[#DFD6CB] text-tan-600 focus:ring-tan-500">
+                        <span>Mark as New Arrival</span>
+                    </label>
+                </div>
+            </div>
+
+            <!-- Wizard Step 1 Footer -->
+            <div class="pt-5 border-t border-[#F0EAE1] dark:border-[#2C2420] flex items-center justify-between">
+                <span class="text-xs text-[#8F8379]">Proceed to pricing & stock limits</span>
+                <button 
+                    type="button" 
+                    @click="nextStep()" 
+                    class="px-5 py-2.5 rounded-xl bg-tan-600 hover:bg-tan-700 text-white text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer shadow-xs"
+                >
+                    <span>Next: Valuation & Profit</span>
+                    <i data-lucide="chevron-right" class="w-4 h-4"></i>
+                </button>
             </div>
         </div>
 
-        <!-- Section 2: Valuation, Inventory & Production Mode -->
-        <div>
-            <div class="flex items-center gap-2 pb-2 border-b border-[#F0EAE1] dark:border-[#2C2420]">
-                <span class="w-6 h-6 rounded-full bg-tan-100 dark:bg-[#2A1E18] text-tan-700 dark:text-gold-400 font-bold text-xs flex items-center justify-center">2</span>
-                <h2 class="font-cinzel text-base font-bold text-espresso-950 dark:text-white">
-                    Valuation, Inventory & Production Mode
-                </h2>
+        <!-- ======================================================== -->
+        <!-- STEP 2: VALUATION, COST & INVENTORY                     -->
+        <!-- ======================================================== -->
+        <div x-show="step === 2" x-cloak class="bg-white dark:bg-[#1A1513] rounded-3xl border border-[#ECE6DE] dark:border-[#2C2420] p-6 sm:p-8 shadow-card space-y-6">
+            <div class="flex items-center justify-between pb-3 border-b border-[#F0EAE1] dark:border-[#2C2420]">
+                <div class="flex items-center gap-2.5">
+                    <span class="w-7 h-7 rounded-full bg-tan-100 dark:bg-[#2A1E18] text-tan-700 dark:text-gold-400 font-bold text-xs flex items-center justify-center">2</span>
+                    <div>
+                        <h2 class="font-cinzel text-lg font-bold text-espresso-950 dark:text-white">Valuation, Cost & Inventory</h2>
+                        <p class="text-xs text-[#8F8379]">Set selling price, purchase cost for net margins, and availability</p>
+                    </div>
+                </div>
+                <span class="text-xs font-mono text-tan-600 dark:text-gold-400 font-bold">Step 2 of 5</span>
             </div>
 
-            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-4">
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-5 pt-2">
                 <!-- Retail Price -->
                 <div>
                     <label class="block text-xs font-semibold text-espresso-900 dark:text-white mb-1.5">
@@ -263,8 +488,11 @@
                         value="{{ old('price', $product->price) }}" 
                         required
                         oninput="calculateProfitMargin()"
-                        class="w-full px-3.5 py-2.5 text-xs rounded-xl bg-[#FAF8F5] dark:bg-[#241D1A] border border-[#E0D7CB] dark:border-[#3A2F29] text-espresso-900 dark:text-white focus:outline-hidden focus:border-tan-500 font-mono font-bold"
+                        class="w-full px-4 py-2.5 text-xs rounded-xl bg-[#FAF8F5] dark:bg-[#241D1A] border border-[#E0D7CB] dark:border-[#3A2F29] text-espresso-900 dark:text-white focus:outline-hidden focus:border-tan-500 font-mono font-bold"
                     >
+                    @error('price')
+                        <p class="text-xs text-rose-500 mt-1">{{ $message }}</p>
+                    @enderror
                 </div>
 
                 <!-- Purchase / Cost Price (COGS) -->
@@ -281,14 +509,14 @@
                         value="{{ old('cost_price', $product->cost_price ?? 0) }}" 
                         placeholder="e.g. 2100"
                         oninput="calculateProfitMargin()"
-                        class="w-full px-3.5 py-2.5 text-xs rounded-xl bg-emerald-50/50 dark:bg-emerald-950/20 border border-emerald-200 dark:border-emerald-800/40 text-emerald-900 dark:text-emerald-300 placeholder:text-gray-400 focus:outline-hidden focus:border-emerald-500 font-mono font-bold"
+                        class="w-full px-4 py-2.5 text-xs rounded-xl bg-emerald-50/50 dark:bg-emerald-950/20 border border-emerald-200 dark:border-emerald-800/40 text-emerald-900 dark:text-emerald-300 placeholder:text-gray-400 focus:outline-hidden focus:border-emerald-500 font-mono font-bold"
                     >
                 </div>
 
                 <!-- Compare Price -->
                 <div>
                     <label class="block text-xs font-semibold text-espresso-900 dark:text-white mb-1.5">
-                        Original Compare Price (PKR / Rs.)
+                        Original Compare Price (PKR)
                     </label>
                     <input 
                         type="number" 
@@ -296,7 +524,7 @@
                         name="original_price" 
                         value="{{ old('original_price', $product->original_price) }}" 
                         placeholder="Optional discount anchor"
-                        class="w-full px-3.5 py-2.5 text-xs rounded-xl bg-[#FAF8F5] dark:bg-[#241D1A] border border-[#E0D7CB] dark:border-[#3A2F29] text-espresso-900 dark:text-white focus:outline-hidden focus:border-tan-500 font-mono"
+                        class="w-full px-4 py-2.5 text-xs rounded-xl bg-[#FAF8F5] dark:bg-[#241D1A] border border-[#E0D7CB] dark:border-[#3A2F29] text-espresso-900 dark:text-white focus:outline-hidden focus:border-tan-500 font-mono"
                     >
                 </div>
 
@@ -311,11 +539,11 @@
                         value="{{ old('stock_quantity', $product->stock_quantity) }}" 
                         required 
                         min="0"
-                        class="w-full px-3.5 py-2.5 text-xs rounded-xl bg-[#FAF8F5] dark:bg-[#241D1A] border border-[#E0D7CB] dark:border-[#3A2F29] text-espresso-900 dark:text-white focus:outline-hidden focus:border-tan-500 font-mono"
+                        class="w-full px-4 py-2.5 text-xs rounded-xl bg-[#FAF8F5] dark:bg-[#241D1A] border border-[#E0D7CB] dark:border-[#3A2F29] text-espresso-900 dark:text-white focus:outline-hidden focus:border-tan-500 font-mono"
                     >
                 </div>
 
-                <!-- Availability Type (Frontend dynamic state) -->
+                <!-- Availability Type -->
                 <div>
                     <label class="block text-xs font-semibold text-espresso-900 dark:text-white mb-1.5">
                         Availability Status <span class="text-rose-500">*</span>
@@ -323,7 +551,7 @@
                     <select 
                         name="availability" 
                         x-model="availability"
-                        class="w-full px-3.5 py-2.5 text-xs rounded-xl bg-[#FAF8F5] dark:bg-[#241D1A] border border-[#E0D7CB] dark:border-[#3A2F29] text-espresso-900 dark:text-white focus:outline-hidden focus:border-tan-500 font-medium"
+                        class="w-full px-4 py-2.5 text-xs rounded-xl bg-[#FAF8F5] dark:bg-[#241D1A] border border-[#E0D7CB] dark:border-[#3A2F29] text-espresso-900 dark:text-white focus:outline-hidden focus:border-tan-500 font-medium"
                     >
                         <option value="in_stock">In Stock — Ready to Dispatch</option>
                         <option value="on_demand">On Demand — Made to Order</option>
@@ -331,25 +559,25 @@
                     </select>
                 </div>
 
-                <!-- Lead Time (Visible & highlighted for On Demand) -->
-                <div class="sm:col-span-2">
+                <!-- Lead Time -->
+                <div class="sm:col-span-1">
                     <label class="block text-xs font-semibold text-espresso-900 dark:text-white mb-1.5 flex items-center justify-between">
-                        <span>Production & Dispatch Lead Time</span>
-                        <span class="text-[10px] text-tan-600 dark:text-gold-400" x-show="availability === 'on_demand'">Recommended for On Demand</span>
+                        <span>Production Lead Time</span>
+                        <span class="text-[10px] text-tan-600 dark:text-gold-400" x-show="availability === 'on_demand'">Required for On Demand</span>
                     </label>
                     <input 
                         type="text" 
                         name="lead_time" 
                         x-model="leadTime"
-                        placeholder="e.g. 7–10 Working Days or 2–3 Weeks"
-                        class="w-full px-3.5 py-2.5 text-xs rounded-xl bg-[#FAF8F5] dark:bg-[#241D1A] border border-[#E0D7CB] dark:border-[#3A2F29] text-espresso-900 dark:text-white focus:outline-hidden focus:border-tan-500"
+                        placeholder="e.g. 7–10 Working Days"
+                        class="w-full px-4 py-2.5 text-xs rounded-xl bg-[#FAF8F5] dark:bg-[#241D1A] border border-[#E0D7CB] dark:border-[#3A2F29] text-espresso-900 dark:text-white focus:outline-hidden focus:border-tan-500"
                         :class="availability === 'on_demand' ? 'border-amber-400 dark:border-amber-500/50 bg-amber-50/20' : ''"
                     >
                 </div>
 
                 <!-- Real-Time Profit Margin Preview Badge -->
-                <div id="profit_margin_preview" class="sm:col-span-3 px-3.5 py-2.5 rounded-xl bg-[#FAF8F5] dark:bg-[#241D1A] border border-dashed border-[#E0D7CB] dark:border-[#3A2F29] flex items-center justify-between text-xs">
-                    <span class="text-gray-600 dark:text-gray-400 flex items-center gap-1.5 font-medium">
+                <div id="profit_margin_preview" class="sm:col-span-3 px-4 py-3 rounded-2xl bg-[#FAF8F5] dark:bg-[#241D1A] border border-dashed border-[#E0D7CB] dark:border-[#3A2F29] flex items-center justify-between text-xs">
+                    <span class="text-gray-600 dark:text-gray-400 flex items-center gap-2 font-medium">
                         <svg class="w-4 h-4 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
                         Calculated Unit Profit (Selling Price - Purchase Cost):
                     </span>
@@ -357,40 +585,352 @@
                         Calculating profit...
                     </span>
                 </div>
+            </div>
 
-                <!-- Bestseller / New Arrival Flags -->
-                <div class="sm:col-span-3 flex flex-wrap items-center gap-6 pt-3">
-                    <label class="inline-flex items-center gap-2 cursor-pointer text-xs font-medium text-espresso-900 dark:text-white">
-                        <input type="checkbox" name="is_bestseller" value="1" {{ old('is_bestseller', $product->is_bestseller) ? 'checked' : '' }} class="rounded border-[#DFD6CB] text-tan-600 focus:ring-tan-500">
-                        <span>Bestseller / Flagship Collection</span>
-                    </label>
-
-                    <label class="inline-flex items-center gap-2 cursor-pointer text-xs font-medium text-espresso-900 dark:text-white">
-                        <input type="checkbox" name="is_new" value="1" {{ old('is_new', $product->is_new) ? 'checked' : '' }} class="rounded border-[#DFD6CB] text-tan-600 focus:ring-tan-500">
-                        <span>Mark as New Arrival</span>
-                    </label>
-                </div>
+            <!-- Wizard Step 2 Footer -->
+            <div class="pt-5 border-t border-[#F0EAE1] dark:border-[#2C2420] flex items-center justify-between">
+                <button 
+                    type="button" 
+                    @click="prevStep()" 
+                    class="px-5 py-2.5 rounded-xl border border-[#DFD6CB] dark:border-[#3A2F29] text-gray-700 dark:text-gray-300 text-xs font-semibold hover:bg-gray-50 dark:hover:bg-[#241D1A] transition-all flex items-center gap-1.5 cursor-pointer"
+                >
+                    <i data-lucide="chevron-left" class="w-4 h-4"></i>
+                    <span>Back: Identity</span>
+                </button>
+                <button 
+                    type="button" 
+                    @click="nextStep()" 
+                    class="px-5 py-2.5 rounded-xl bg-tan-600 hover:bg-tan-700 text-white text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer shadow-xs"
+                >
+                    <span>Next: Shipping & Payment Rules</span>
+                    <i data-lucide="chevron-right" class="w-4 h-4"></i>
+                </button>
             </div>
         </div>
 
-        <!-- Section 3: Leather Tone Variations (Colors) -->
-        <div>
-            <div class="flex items-center justify-between pb-2 border-b border-[#F0EAE1] dark:border-[#2C2420]">
-                <div class="flex items-center gap-2">
-                    <span class="w-6 h-6 rounded-full bg-tan-100 dark:bg-[#2A1E18] text-tan-700 dark:text-gold-400 font-bold text-xs flex items-center justify-center">3</span>
-                    <h2 class="font-cinzel text-base font-bold text-espresso-950 dark:text-white">
-                        Leather Tone & Swatch Variations
-                    </h2>
+        <!-- ======================================================== -->
+        <!-- STEP 3: SHIPPING & PAYMENT RULES (NEW CLIENT FEATURES)   -->
+        <!-- ======================================================== -->
+        <div x-show="step === 3" x-cloak class="bg-white dark:bg-[#1A1513] rounded-3xl border border-[#ECE6DE] dark:border-[#2C2420] p-6 sm:p-8 shadow-card space-y-6">
+            <div class="flex items-center justify-between pb-3 border-b border-[#F0EAE1] dark:border-[#2C2420]">
+                <div class="flex items-center gap-2.5">
+                    <span class="w-7 h-7 rounded-full bg-tan-100 dark:bg-[#2A1E18] text-tan-700 dark:text-gold-400 font-bold text-xs flex items-center justify-center">3</span>
+                    <div>
+                        <h2 class="font-cinzel text-lg font-bold text-espresso-950 dark:text-white">Payment & Delivery Policy Control</h2>
+                        <p class="text-xs text-[#8F8379]">Restrict payment channels (COD / Prepaid) & set item shipping weight and charges</p>
+                    </div>
                 </div>
-                <div class="flex items-center gap-3">
-                    <span class="text-[11px] font-semibold text-tan-600 dark:text-gold-400" x-text="colors.filter(c => c.active).length + ' selected'"></span>
-                    <button type="button" @click="toggleAll(true)" class="text-[11px] text-gray-500 hover:text-tan-600 underline">Select All</button>
-                    <button type="button" @click="toggleAll(false)" class="text-[11px] text-gray-500 hover:text-tan-600 underline">Clear</button>
+                <span class="text-xs font-mono text-tan-600 dark:text-gold-400 font-bold">Step 3 of 5</span>
+            </div>
+
+            <!-- Payment Method Rule Radios -->
+            <div class="space-y-3 pt-2">
+                <label class="block text-xs font-semibold text-espresso-900 dark:text-white">
+                    Allowed Payment Methods For This Creation <span class="text-rose-500">*</span>
+                </label>
+                <p class="text-[11px] text-[#8F8379]">
+                    Control how patrons can pay for this piece. Perfect for requiring advance bank transfer on luxury or customized items.
+                </p>
+
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                    
+                    <!-- Option 1: All Payment Methods -->
+                    <label 
+                        class="p-4 rounded-2xl border-2 cursor-pointer transition-all flex flex-col justify-between"
+                        :class="paymentMethodRule === 'all' 
+                            ? 'border-tan-600 bg-tan-500/5 dark:bg-tan-600/10 ring-1 ring-tan-500/30' 
+                            : 'border-[#E0D7CB] dark:border-[#3A2F29] bg-white dark:bg-[#201A18] hover:border-gray-300'"
+                    >
+                        <div class="flex items-center justify-between mb-2">
+                            <span class="font-semibold text-xs text-espresso-950 dark:text-white flex items-center gap-1.5">
+                                <i data-lucide="check-circle-2" class="w-4 h-4 text-emerald-600"></i>
+                                <span>All Methods</span>
+                            </span>
+                            <input type="radio" name="allowed_payment_methods" value="all" x-model="paymentMethodRule" class="text-tan-600 focus:ring-tan-500">
+                        </div>
+                        <p class="text-[11px] text-gray-500 leading-relaxed">
+                            COD, Bank Transfer (IBFT), JazzCash & EasyPaisa all accepted at checkout.
+                        </p>
+                    </label>
+
+                    <!-- Option 2: Prepaid Only (No COD) -->
+                    <label 
+                        class="p-4 rounded-2xl border-2 cursor-pointer transition-all flex flex-col justify-between"
+                        :class="paymentMethodRule === 'prepaid_only' 
+                            ? 'border-amber-600 bg-amber-500/5 dark:bg-amber-600/10 ring-1 ring-amber-500/30' 
+                            : 'border-[#E0D7CB] dark:border-[#3A2F29] bg-white dark:bg-[#201A18] hover:border-gray-300'"
+                    >
+                        <div class="flex items-center justify-between mb-2">
+                            <span class="font-semibold text-xs text-amber-800 dark:text-amber-400 flex items-center gap-1.5">
+                                <i data-lucide="shield-check" class="w-4 h-4 text-amber-600"></i>
+                                <span>Prepaid Only (No COD)</span>
+                            </span>
+                            <input type="radio" name="allowed_payment_methods" value="prepaid_only" x-model="paymentMethodRule" class="text-amber-600 focus:ring-amber-500">
+                        </div>
+                        <p class="text-[11px] text-gray-500 leading-relaxed">
+                            Advance Payment only (Bank / JazzCash). COD is automatically disabled at checkout.
+                        </p>
+                    </label>
+
+                    <!-- Option 3: COD Only -->
+                    <label 
+                        class="p-4 rounded-2xl border-2 cursor-pointer transition-all flex flex-col justify-between"
+                        :class="paymentMethodRule === 'cod_only' 
+                            ? 'border-blue-600 bg-blue-500/5 dark:bg-blue-600/10 ring-1 ring-blue-500/30' 
+                            : 'border-[#E0D7CB] dark:border-[#3A2F29] bg-white dark:bg-[#201A18] hover:border-gray-300'"
+                    >
+                        <div class="flex items-center justify-between mb-2">
+                            <span class="font-semibold text-xs text-blue-800 dark:text-blue-400 flex items-center gap-1.5">
+                                <i data-lucide="banknote" class="w-4 h-4 text-blue-600"></i>
+                                <span>COD Only</span>
+                            </span>
+                            <input type="radio" name="allowed_payment_methods" value="cod_only" x-model="paymentMethodRule" class="text-blue-600 focus:ring-blue-500">
+                        </div>
+                        <p class="text-[11px] text-gray-500 leading-relaxed">
+                            Cash on Delivery only. Electronic bank transfers are suppressed.
+                        </p>
+                    </label>
+
                 </div>
             </div>
 
-            <!-- Active Swatch Tiles -->
-            <div class="mt-4 space-y-4">
+            <!-- Shipping Charges & Parcel Weight -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-5 pt-4 border-t border-[#F0EAE1] dark:border-[#2C2420]">
+                
+                <!-- Weight in KG -->
+                <div>
+                    <label class="block text-xs font-semibold text-espresso-900 dark:text-white mb-1.5 flex items-center justify-between">
+                        <span>Parcel Weight (Kilograms - KG)</span>
+                        <span class="text-[10px] text-[#8F8379]">Courier Rate Sheet</span>
+                    </label>
+                    <div class="relative">
+                        <input 
+                            type="number" 
+                            step="0.05" 
+                            min="0"
+                            name="weight_kg" 
+                            value="{{ old('weight_kg', $product->weight_kg ?? 0.50) }}" 
+                            placeholder="0.50"
+                            class="w-full pl-4 pr-12 py-2.5 text-xs rounded-xl bg-[#FAF8F5] dark:bg-[#241D1A] border border-[#E0D7CB] dark:border-[#3A2F29] text-espresso-900 dark:text-white focus:outline-hidden focus:border-tan-500 font-mono"
+                        >
+                        <span class="absolute right-3.5 top-1/2 -translate-y-1/2 text-xs font-bold text-gray-400">KG</span>
+                    </div>
+                    <p class="text-[10px] text-[#8F8379] mt-1">
+                        E.g. 0.35 kg for cardholders/wallets; 0.65 kg for belts; 1.50 kg for leather holdall bags.
+                    </p>
+                </div>
+
+                <!-- Custom Delivery Charge (Override global flat shipping) -->
+                <div>
+                    <label class="block text-xs font-semibold text-espresso-900 dark:text-white mb-1.5 flex items-center justify-between">
+                        <span>Custom Delivery Charge (PKR)</span>
+                        <span class="text-[10px] text-tan-600 font-semibold">Override Default</span>
+                    </label>
+                    <div class="relative">
+                        <input 
+                            type="number" 
+                            step="1" 
+                            min="0"
+                            name="custom_shipping_charge" 
+                            value="{{ old('custom_shipping_charge', $product->custom_shipping_charge) }}" 
+                            placeholder="Leave blank for global store rate"
+                            class="w-full pl-4 pr-12 py-2.5 text-xs rounded-xl bg-[#FAF8F5] dark:bg-[#241D1A] border border-[#E0D7CB] dark:border-[#3A2F29] text-espresso-900 dark:text-white focus:outline-hidden focus:border-tan-500 font-mono"
+                        >
+                        <span class="absolute right-3.5 top-1/2 -translate-y-1/2 text-xs font-bold text-gray-400">PKR</span>
+                    </div>
+                    <p class="text-[10px] text-[#8F8379] mt-1">
+                        If set, replaces default shipping (e.g. Rs. 450 for heavy bulky items). Leave empty to use store default.
+                    </p>
+                </div>
+
+                <!-- Free Shipping Toggle -->
+                <div class="sm:col-span-2 pt-2">
+                    <label class="flex items-center gap-3 p-4 rounded-2xl border border-[#E0D7CB] dark:border-[#3A2F29] bg-[#FAF8F5] dark:bg-[#201A18] cursor-pointer">
+                        <input 
+                            type="checkbox" 
+                            name="is_free_shipping" 
+                            value="1" 
+                            x-model="isFreeShipping"
+                            class="w-4 h-4 rounded border-[#DFD6CB] text-emerald-600 focus:ring-emerald-500"
+                        >
+                        <div class="flex-1">
+                            <span class="font-bold text-xs text-espresso-950 dark:text-white flex items-center gap-1.5">
+                                <i data-lucide="gift" class="w-4 h-4 text-emerald-600"></i>
+                                <span>Guaranteed Free Shipping For This Product</span>
+                            </span>
+                            <p class="text-[11px] text-gray-500 leading-relaxed mt-0.5">
+                                Patrons buying this product will receive 100% free nationwide delivery regardless of total cart threshold.
+                            </p>
+                        </div>
+                    </label>
+                </div>
+
+            </div>
+
+            <!-- Wizard Step 3 Footer -->
+            <div class="pt-5 border-t border-[#F0EAE1] dark:border-[#2C2420] flex items-center justify-between">
+                <button 
+                    type="button" 
+                    @click="prevStep()" 
+                    class="px-5 py-2.5 rounded-xl border border-[#DFD6CB] dark:border-[#3A2F29] text-gray-700 dark:text-gray-300 text-xs font-semibold hover:bg-gray-50 dark:hover:bg-[#241D1A] transition-all flex items-center gap-1.5 cursor-pointer"
+                >
+                    <i data-lucide="chevron-left" class="w-4 h-4"></i>
+                    <span>Back: Pricing</span>
+                </button>
+                <button 
+                    type="button" 
+                    @click="nextStep()" 
+                    class="px-5 py-2.5 rounded-xl bg-tan-600 hover:bg-tan-700 text-white text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer shadow-xs"
+                >
+                    <span>Next: Visuals & Swatches</span>
+                    <i data-lucide="chevron-right" class="w-4 h-4"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- ======================================================== -->
+        <!-- STEP 4: VISUALS, GALLERY & COLOR SWATCHES               -->
+        <!-- ======================================================== -->
+        <div x-show="step === 4" x-cloak class="bg-white dark:bg-[#1A1513] rounded-3xl border border-[#ECE6DE] dark:border-[#2C2420] p-6 sm:p-8 shadow-card space-y-6">
+            <div class="flex items-center justify-between pb-3 border-b border-[#F0EAE1] dark:border-[#2C2420]">
+                <div class="flex items-center gap-2.5">
+                    <span class="w-7 h-7 rounded-full bg-tan-100 dark:bg-[#2A1E18] text-tan-700 dark:text-gold-400 font-bold text-xs flex items-center justify-center">4</span>
+                    <div>
+                        <h2 class="font-cinzel text-lg font-bold text-espresso-950 dark:text-white">Visuals, Atelier Gallery & Swatches</h2>
+                        <p class="text-xs text-[#8F8379]">Primary photograph, multi-angle gallery, and clickable leather tone swatches</p>
+                    </div>
+                </div>
+                <span class="text-xs font-mono text-tan-600 dark:text-gold-400 font-bold">Step 4 of 5</span>
+            </div>
+
+            <!-- Primary Image -->
+            <div class="space-y-3 pt-2">
+                <label class="block text-xs font-semibold text-espresso-900 dark:text-white">
+                    Primary Creation Image <span class="text-rose-500">*</span>
+                </label>
+
+                <div class="p-4 rounded-2xl bg-[#FAF8F5] dark:bg-[#201815] border border-dashed border-[#DFD6CB] dark:border-[#382D27] flex flex-col sm:flex-row items-center gap-4">
+                    <div class="w-24 h-24 rounded-2xl overflow-hidden bg-espresso-950/10 dark:bg-black/40 border border-[#E0D7CB] dark:border-[#382D27] shrink-0 flex items-center justify-center shadow-xs">
+                        <img 
+                            id="prod_preview" 
+                            :src="primaryPreview || '{{ old('image', $product->image ?: '/images/products/prod-reversible-belt.jpg') }}'" 
+                            alt="Preview" 
+                            class="w-full h-full object-cover"
+                        >
+                    </div>
+
+                    <div class="flex-1 min-w-0 text-center sm:text-left">
+                        <label class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-espresso-900 hover:bg-tan-600 text-white font-semibold text-xs cursor-pointer transition-colors shadow-2xs">
+                            <i data-lucide="upload-cloud" class="w-4 h-4 text-gold-400"></i>
+                            <span>Upload Replacement Photo</span>
+                            <input 
+                                type="file" 
+                                name="image_file" 
+                                accept="image/*" 
+                                class="hidden" 
+                                @change="handlePrimaryUpload($event)"
+                                onchange="previewProductImage(this)"
+                            >
+                        </label>
+                        <p class="text-[10px] text-[#8F8379] mt-1.5" id="prod_file_name">
+                            Recommended: Square 800x800 or 1200x1200 WebP/JPG (Auto-optimized on upload)
+                        </p>
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-[10px] text-gray-400 uppercase tracking-wider mb-1">Or Existing Asset Path / Image URL</label>
+                    <input 
+                        type="text" 
+                        id="prod_image_url"
+                        name="image" 
+                        value="{{ old('image', $product->image) }}" 
+                        oninput="previewProductUrl(this.value)"
+                        class="w-full px-4 py-2 text-xs rounded-xl bg-[#FAF8F5] dark:bg-[#241D1A] border border-[#E0D7CB] dark:border-[#3A2F29] text-espresso-900 dark:text-white focus:outline-hidden focus:border-tan-500 font-mono"
+                    >
+                </div>
+            </div>
+
+            <!-- Additional Multi-Image Gallery -->
+            <div class="space-y-3 pt-4 border-t border-[#F0EAE1] dark:border-[#2C2420]">
+                <label class="block text-xs font-semibold text-espresso-900 dark:text-white flex items-center justify-between">
+                    <span>Additional Multi-Angle Gallery</span>
+                    <span class="text-[10px] text-[#8F8379]">Select multiple photos</span>
+                </label>
+
+                <div class="p-4 rounded-2xl bg-[#FAF8F5] dark:bg-[#201815] border border-dashed border-[#DFD6CB] dark:border-[#382D27]">
+                    <div class="flex flex-wrap items-center gap-3">
+                        <label class="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-espresso-900 hover:bg-tan-600 text-white font-semibold text-xs cursor-pointer transition-colors shadow-2xs">
+                            <i data-lucide="images" class="w-4 h-4 text-gold-400"></i>
+                            <span>Upload Additional Angles</span>
+                            <input type="file" name="gallery_files[]" multiple accept="image/*" class="hidden" onchange="previewGalleryFiles(this)">
+                        </label>
+                        <span class="text-[11px] text-[#8F8379]" id="gallery_upload_status">
+                            Select one or multiple photos to add to gallery
+                        </span>
+                    </div>
+
+                    <!-- Live Selected Files Preview Grid -->
+                    <div id="gallery_preview_grid" class="hidden mt-3 pt-3 border-t border-[#EAE3D9] dark:border-[#2E2420] grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-2.5"></div>
+                </div>
+
+                <!-- Existing Additional Gallery Thumbnails -->
+                @php
+                    $existingAdditional = array_values(array_filter($galleryList, fn($img) => $img !== $product->image));
+                @endphp
+                @if(count($existingAdditional) > 0)
+                    <div class="p-3.5 rounded-xl bg-[#FAF8F5] dark:bg-[#221B18] border border-[#E0D7CB] dark:border-[#382D27]">
+                        <div class="flex items-center justify-between mb-2">
+                            <span class="text-[11px] font-semibold text-espresso-900 dark:text-white flex items-center gap-1.5">
+                                <i data-lucide="images" class="w-3.5 h-3.5 text-gold-500"></i>
+                                <span>Current Gallery Photos ({{ count($existingAdditional) }})</span>
+                            </span>
+                            <span class="text-[10px] text-[#8F8379]">Click &times; to remove photo</span>
+                        </div>
+                        <div class="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-2.5" id="existing_gallery_container">
+                            @foreach($existingAdditional as $idx => $imgUrl)
+                                <div class="relative group rounded-xl overflow-hidden bg-black/10 dark:bg-black/40 border border-[#E0D7CB] dark:border-[#3A2F29] aspect-square" data-gallery-item="{{ $imgUrl }}">
+                                    <img src="{{ $imgUrl }}" alt="Gallery image {{ $idx + 1 }}" class="w-full h-full object-cover">
+                                    <button 
+                                        type="button" 
+                                        onclick="removeExistingGalleryImage('{{ addslashes($imgUrl) }}', this)" 
+                                        class="absolute top-1 right-1 w-5 h-5 rounded-full bg-rose-600/90 hover:bg-rose-600 text-white flex items-center justify-center text-xs shadow-md transition-transform hover:scale-110 cursor-pointer"
+                                        title="Remove photo"
+                                    >&times;</button>
+                                </div>
+                            @endforeach
+                        </div>
+                    </div>
+                @endif
+
+                <div>
+                    <label class="block text-[10px] text-gray-400 uppercase tracking-wider mb-1">Or edit Image URLs / Existing Paths (One per line)</label>
+                    <textarea 
+                        id="gallery_raw_input"
+                        name="gallery_raw" 
+                        rows="2" 
+                        placeholder="/images/hero/slide-belt.jpg
+/images/brand/stitch-detail.jpg"
+                        class="w-full px-4 py-2 text-xs rounded-xl bg-[#FAF8F5] dark:bg-[#241D1A] border border-[#E0D7CB] dark:border-[#3A2F29] text-espresso-900 dark:text-white focus:outline-hidden focus:border-tan-500 font-mono"
+                    >{{ old('gallery_raw', $galleryRaw) }}</textarea>
+                </div>
+            </div>
+
+            <!-- Leather Swatches Manager -->
+            <div class="space-y-4 pt-4 border-t border-[#F0EAE1] dark:border-[#2C2420]">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <h3 class="text-xs font-semibold text-espresso-900 dark:text-white">Leather Tone Swatch Variations</h3>
+                        <p class="text-[11px] text-[#8F8379]">Select which leather shades are offered for this specific creation</p>
+                    </div>
+                    <div class="flex items-center gap-3">
+                        <span class="text-[11px] font-semibold text-tan-600 dark:text-gold-400" x-text="colors.filter(c => c.active).length + ' selected'"></span>
+                        <button type="button" @click="toggleAll(true)" class="text-[11px] text-gray-500 hover:text-tan-600 underline">Select All</button>
+                        <button type="button" @click="toggleAll(false)" class="text-[11px] text-gray-500 hover:text-tan-600 underline">Clear</button>
+                    </div>
+                </div>
+
+                <!-- Active Swatch Grid -->
                 <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
                     <template x-for="(color, idx) in colors" :key="color.name + '-' + idx">
                         <div 
@@ -417,7 +957,7 @@
                             <button 
                                 type="button" 
                                 @click.stop="removeColor(idx)" 
-                                class="text-gray-400 hover:text-rose-500 p-1 rounded-md shrink-0 transition-colors"
+                                class="text-gray-400 hover:text-rose-500 p-1 rounded-md shrink-0 transition-colors cursor-pointer"
                                 title="Remove Swatch"
                             >
                                 <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
@@ -426,18 +966,18 @@
                     </template>
                 </div>
 
-                <!-- Add Custom Swatch Input Row -->
+                <!-- Custom Tone Adder -->
                 <div class="p-3.5 rounded-2xl bg-[#FAF8F5] dark:bg-[#201A18] border border-[#E0D7CB] dark:border-[#342823] space-y-2">
                     <div class="flex flex-wrap items-center gap-3">
                         <div class="flex items-center gap-2 flex-1 min-w-[220px]">
-                            <label class="relative cursor-pointer shrink-0" title="Click to pick custom color">
+                            <label class="relative cursor-pointer shrink-0" title="Click to pick color">
                                 <input type="color" x-model="customColorHex" class="w-9 h-9 rounded-xl cursor-pointer border border-gray-300 dark:border-gray-700 p-0.5 bg-transparent shrink-0">
                             </label>
                             <input 
                                 type="text" 
                                 x-model="customColorName" 
-                                placeholder="Enter leather tone name (e.g. Havana Chestnut, Navy Blue)" 
-                                class="px-3.5 py-2 text-xs rounded-xl bg-white dark:bg-[#2A201C] border border-[#DFD6CB] dark:border-[#42322C] text-espresso-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-[#6E645E] focus:outline-hidden focus:border-tan-500 w-full"
+                                placeholder="Enter custom leather tone name (e.g. Vintage Bourbon)" 
+                                class="px-3.5 py-2 text-xs rounded-xl bg-white dark:bg-[#2A201C] border border-[#DFD6CB] dark:border-[#42322C] text-espresso-900 dark:text-white placeholder:text-gray-400 focus:outline-hidden focus:border-tan-500 w-full"
                                 @keydown.enter.prevent="addCustomColor()"
                             >
                         </div>
@@ -445,143 +985,87 @@
                         <button 
                             type="button" 
                             @click="addCustomColor()" 
-                            class="px-4 py-2 text-xs font-semibold rounded-xl bg-tan-600 hover:bg-tan-700 active:scale-95 text-white transition-all flex items-center gap-1.5 shadow-2xs shrink-0"
+                            class="px-4 py-2 text-xs font-semibold rounded-xl bg-tan-600 hover:bg-tan-700 text-white transition-all flex items-center gap-1.5 shadow-2xs shrink-0 cursor-pointer"
                         >
-                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
-                            <span>Add Swatch</span>
+                            <i data-lucide="plus" class="w-3.5 h-3.5"></i>
+                            <span>Add Custom Shade</span>
                         </button>
                     </div>
 
-                    <!-- Instant Feedback Message -->
                     <div x-show="swatchFeedback" x-transition class="flex items-center gap-1.5 text-xs text-emerald-600 dark:text-emerald-400 font-medium pt-1">
-                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                        <i data-lucide="check" class="w-3.5 h-3.5"></i>
                         <span x-text="swatchFeedback"></span>
                     </div>
                 </div>
             </div>
-        </div>
 
-        <!-- Section 4: Specifications & Dimensions -->
-        <div>
-            <div class="flex items-center gap-2 pb-2 border-b border-[#F0EAE1] dark:border-[#2C2420]">
-                <span class="w-6 h-6 rounded-full bg-tan-100 dark:bg-[#2A1E18] text-tan-700 dark:text-gold-400 font-bold text-xs flex items-center justify-center">4</span>
-                <h2 class="font-cinzel text-base font-bold text-espresso-950 dark:text-white">
-                    Technical Specifications & Sizing
-                </h2>
-            </div>
-
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-4">
-                <!-- Leather Material -->
-                <div>
-                    <label class="block text-xs font-semibold text-espresso-900 dark:text-white mb-1.5">
-                        Material Grade
-                    </label>
-                    <input 
-                        type="text" 
-                        name="spec_material" 
-                        value="{{ old('spec_material', $specMaterial) }}" 
-                        class="w-full px-3.5 py-2.5 text-xs rounded-xl bg-[#FAF8F5] dark:bg-[#241D1A] border border-[#E0D7CB] dark:border-[#3A2F29] text-espresso-900 dark:text-white focus:outline-hidden focus:border-tan-500"
-                    >
-                </div>
-
-                <!-- Hardware -->
-                <div>
-                    <label class="block text-xs font-semibold text-espresso-900 dark:text-white mb-1.5">
-                        Buckle / Hardware
-                    </label>
-                    <input 
-                        type="text" 
-                        name="spec_hardware" 
-                        value="{{ old('spec_hardware', $specHardware) }}" 
-                        class="w-full px-3.5 py-2.5 text-xs rounded-xl bg-[#FAF8F5] dark:bg-[#241D1A] border border-[#E0D7CB] dark:border-[#3A2F29] text-espresso-900 dark:text-white focus:outline-hidden focus:border-tan-500"
-                    >
-                </div>
-
-                <!-- Width / Dimensions -->
-                <div>
-                    <label class="block text-xs font-semibold text-espresso-900 dark:text-white mb-1.5">
-                        Width & Dimensions
-                    </label>
-                    <input 
-                        type="text" 
-                        name="spec_dimensions" 
-                        value="{{ old('spec_dimensions', $specDimensions) }}" 
-                        class="w-full px-3.5 py-2.5 text-xs rounded-xl bg-[#FAF8F5] dark:bg-[#241D1A] border border-[#E0D7CB] dark:border-[#3A2F29] text-espresso-900 dark:text-white focus:outline-hidden focus:border-tan-500"
-                    >
-                </div>
-
-                <!-- Available Sizes -->
-                <div>
-                    <label class="block text-xs font-semibold text-espresso-900 dark:text-white mb-1.5">
-                        Available Sizes (Belts / Tailored)
-                    </label>
-                    <input 
-                        type="text" 
-                        name="spec_sizes" 
-                        value="{{ old('spec_sizes', $specSizes) }}" 
-                        class="w-full px-3.5 py-2.5 text-xs rounded-xl bg-[#FAF8F5] dark:bg-[#241D1A] border border-[#E0D7CB] dark:border-[#3A2F29] text-espresso-900 dark:text-white focus:outline-hidden focus:border-tan-500"
-                    >
-                </div>
-
-                <!-- Care Guide -->
-                <div class="sm:col-span-2">
-                    <label class="block text-xs font-semibold text-espresso-900 dark:text-white mb-1.5">
-                        Leather Care & Preservation Note
-                    </label>
-                    <input 
-                        type="text" 
-                        name="spec_care" 
-                        value="{{ old('spec_care', $specCare) }}" 
-                        placeholder="e.g. Wipe with soft cotton cloth; treat with neutral organic leather balm periodically"
-                        class="w-full px-3.5 py-2.5 text-xs rounded-xl bg-[#FAF8F5] dark:bg-[#241D1A] border border-[#E0D7CB] dark:border-[#3A2F29] text-espresso-900 dark:text-white focus:outline-hidden focus:border-tan-500"
-                    >
-                </div>
-
-                <!-- Origin -->
-                <div>
-                    <label class="block text-xs font-semibold text-espresso-900 dark:text-white mb-1.5">
-                        Craft Origin (Optional)
-                    </label>
-                    <input 
-                        type="text" 
-                        name="spec_origin" 
-                        value="{{ old('spec_origin', $specOrigin) }}" 
-                        placeholder="e.g. Handcrafted in Pakistan (Lahore Workshop)"
-                        class="w-full px-3.5 py-2.5 text-xs rounded-xl bg-[#FAF8F5] dark:bg-[#241D1A] border border-[#E0D7CB] dark:border-[#3A2F29] text-espresso-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-[#6E645E] focus:outline-hidden focus:border-tan-500"
-                    >
-                </div>
-
-                <!-- Packaging -->
-                <div>
-                    <label class="block text-xs font-semibold text-espresso-900 dark:text-white mb-1.5">
-                        Packaging & Presentation (Optional)
-                    </label>
-                    <input 
-                        type="text" 
-                        name="spec_packaging" 
-                        value="{{ old('spec_packaging', $specPackaging) }}" 
-                        placeholder="e.g. By Zunash Magnetic Hard Box & Dust Pouch"
-                        class="w-full px-3.5 py-2.5 text-xs rounded-xl bg-[#FAF8F5] dark:bg-[#241D1A] border border-[#E0D7CB] dark:border-[#3A2F29] text-espresso-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-[#6E645E] focus:outline-hidden focus:border-tan-500"
-                    >
-                </div>
+            <!-- Wizard Step 4 Footer -->
+            <div class="pt-5 border-t border-[#F0EAE1] dark:border-[#2C2420] flex items-center justify-between">
+                <button 
+                    type="button" 
+                    @click="prevStep()" 
+                    class="px-5 py-2.5 rounded-xl border border-[#DFD6CB] dark:border-[#3A2F29] text-gray-700 dark:text-gray-300 text-xs font-semibold hover:bg-gray-50 dark:hover:bg-[#241D1A] transition-all flex items-center gap-1.5 cursor-pointer"
+                >
+                    <i data-lucide="chevron-left" class="w-4 h-4"></i>
+                    <span>Back: Shipping Rules</span>
+                </button>
+                <button 
+                    type="button" 
+                    @click="nextStep()" 
+                    class="px-5 py-2.5 rounded-xl bg-tan-600 hover:bg-tan-700 text-white text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer shadow-xs"
+                >
+                    <span>Next: Story, Specs & SEO</span>
+                    <i data-lucide="chevron-right" class="w-4 h-4"></i>
+                </button>
             </div>
         </div>
 
-        <!-- Section 5: Artisanal Highlights / Features -->
-        <div>
-            <div class="flex items-center justify-between pb-2 border-b border-[#F0EAE1] dark:border-[#2C2420]">
-                <div class="flex items-center gap-2">
-                    <span class="w-6 h-6 rounded-full bg-tan-100 dark:bg-[#2A1E18] text-tan-700 dark:text-gold-400 font-bold text-xs flex items-center justify-center">5</span>
-                    <h2 class="font-cinzel text-base font-bold text-espresso-950 dark:text-white">
-                        Artisanal Highlights (Bullet Points)
-                    </h2>
+        <!-- ======================================================== -->
+        <!-- STEP 5: STORY, SPECIFICATIONS & SEO METADATA            -->
+        <!-- ======================================================== -->
+        <div x-show="step === 5" x-cloak class="bg-white dark:bg-[#1A1513] rounded-3xl border border-[#ECE6DE] dark:border-[#2C2420] p-6 sm:p-8 shadow-card space-y-6">
+            <div class="flex items-center justify-between pb-3 border-b border-[#F0EAE1] dark:border-[#2C2420]">
+                <div class="flex items-center gap-2.5">
+                    <span class="w-7 h-7 rounded-full bg-tan-100 dark:bg-[#2A1E18] text-tan-700 dark:text-gold-400 font-bold text-xs flex items-center justify-center">5</span>
+                    <div>
+                        <h2 class="font-cinzel text-lg font-bold text-espresso-950 dark:text-white">Story, Specifications & SEO</h2>
+                        <p class="text-xs text-[#8F8379]">Editorial craft description, technical dimensions, and Google search optimization</p>
+                    </div>
                 </div>
-                <span class="text-[10px] text-tan-600 dark:text-gold-400 font-semibold flex items-center gap-1">
-                    <i data-lucide="sparkles" class="w-3 h-3"></i> Rich Editor
-                </span>
+                <span class="text-xs font-mono text-tan-600 dark:text-gold-400 font-bold">Step 5 of 5</span>
             </div>
 
-            <div class="mt-4">
+            <!-- Short Summary -->
+            <div class="space-y-1.5 pt-2">
+                <label class="block text-xs font-semibold text-espresso-900 dark:text-white flex items-center justify-between">
+                    <span>Short Summary (Catalog Cards & Meta) <span class="text-rose-500">*</span></span>
+                    <span class="text-[10px] text-tan-600 dark:text-gold-400 font-semibold flex items-center gap-1">
+                        <i data-lucide="sparkles" class="w-3 h-3"></i> Rich Editor
+                    </span>
+                </label>
+                <textarea 
+                    name="short_description" 
+                    id="prod_edit_short_desc"
+                    class="hidden"
+                >{{ old('short_description', $product->short_description) }}</textarea>
+                <div class="quill-wrapper rounded-2xl overflow-hidden border border-[#E0D7CB] dark:border-[#3A2F29] bg-[#FAF8F5] dark:bg-[#241D1A]">
+                    <div 
+                        data-rich-editor="compact" 
+                        data-target="#prod_edit_short_desc" 
+                        data-placeholder="e.g. Handcrafted in supple vegetable-tanned full-grain leather..."
+                        style="min-height: 90px;"
+                    >{!! old('short_description', $product->short_description) !!}</div>
+                </div>
+            </div>
+
+            <!-- Artisanal Highlights / Features -->
+            <div class="space-y-1.5 pt-3 border-t border-[#F0EAE1] dark:border-[#2C2420]">
+                <label class="block text-xs font-semibold text-espresso-900 dark:text-white flex items-center justify-between">
+                    <span>Artisanal Highlights (Bullet Points)</span>
+                    <span class="text-[10px] text-tan-600 dark:text-gold-400 font-semibold flex items-center gap-1">
+                        <i data-lucide="sparkles" class="w-3 h-3"></i> Rich Editor
+                    </span>
+                </label>
                 <textarea 
                     name="features_raw" 
                     id="prod_edit_features_raw"
@@ -591,194 +1075,115 @@
                     <div 
                         data-rich-editor="highlights" 
                         data-target="#prod_edit_features_raw" 
-                        data-placeholder="Click the bullet icon above or type bullet points (e.g. 100% full-grain calfskin, solid antique brass hardware...)"
+                        data-placeholder="Type bullet points (e.g. 100% full-grain calfskin, solid brass hardware...)"
                         style="min-height: 110px;"
                     >{!! old('features_raw', $featuresHtml) !!}</div>
                 </div>
             </div>
-        </div>
 
-        <!-- Section 6: Media, Atelier Gallery & Narrative -->
-        <div>
-            <div class="flex items-center gap-2 pb-2 border-b border-[#F0EAE1] dark:border-[#2C2420]">
-                <span class="w-6 h-6 rounded-full bg-tan-100 dark:bg-[#2A1E18] text-tan-700 dark:text-gold-400 font-bold text-xs flex items-center justify-center">6</span>
-                <h2 class="font-cinzel text-base font-bold text-espresso-950 dark:text-white">
-                    Imagery, Gallery & Atelier Craft Story
-                </h2>
+            <!-- Full Craft Story -->
+            <div class="space-y-1.5 pt-3 border-t border-[#F0EAE1] dark:border-[#2C2420]">
+                <label class="block text-xs font-semibold text-espresso-900 dark:text-white flex items-center justify-between">
+                    <span>Full Atelier Craft Narrative & Heritage</span>
+                    <span class="text-[10px] text-tan-600 dark:text-gold-400 font-semibold flex items-center gap-1">
+                        <i data-lucide="sparkles" class="w-3 h-3"></i> Rich Editor
+                    </span>
+                </label>
+                <textarea 
+                    name="description" 
+                    id="prod_edit_desc"
+                    class="hidden"
+                >{{ old('description', $product->description) }}</textarea>
+                <div class="quill-wrapper rounded-2xl overflow-hidden border border-[#E0D7CB] dark:border-[#3A2F29] bg-[#FAF8F5] dark:bg-[#241D1A]">
+                    <div 
+                        data-rich-editor="full" 
+                        data-target="#prod_edit_desc" 
+                        data-placeholder="Detailed narrative describing hide selection, vegetable tanning, artisan edge burnishing..."
+                        style="min-height: 130px;"
+                    >{!! old('description', $product->description) !!}</div>
+                </div>
             </div>
 
-            <div class="space-y-4 mt-4">
-                <!-- Primary Image -->
-                <div>
-                    <label class="block text-xs font-semibold text-espresso-900 dark:text-white mb-1.5">
-                        Primary Creation Image <span class="text-rose-500">*</span>
-                    </label>
-
-                    <div class="p-3.5 rounded-2xl bg-[#FAF8F5] dark:bg-[#201815] border border-dashed border-[#DFD6CB] dark:border-[#382D27] flex items-center gap-3.5">
-                        <div class="w-16 h-16 rounded-xl overflow-hidden bg-espresso-950/10 dark:bg-black/40 border border-[#E0D7CB] dark:border-[#382D27] shrink-0 flex items-center justify-center">
-                            <img id="prod_preview" src="{{ old('image', $product->image ?: '/images/products/prod-reversible-belt.jpg') }}" alt="Preview" class="w-full h-full object-cover">
-                        </div>
-
-                        <div class="flex-1 min-w-0">
-                            <label class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-espresso-900 hover:bg-tan-600 text-white font-semibold text-xs cursor-pointer transition-colors shadow-2xs">
-                                <i data-lucide="upload-cloud" class="w-3.5 h-3.5 text-gold-400"></i>
-                                <span>Upload from Computer</span>
-                                <input type="file" name="image_file" accept="image/*" class="hidden" onchange="previewProductImage(this)">
-                            </label>
-                            <p class="text-[10px] text-[#8F8379] mt-1 truncate" id="prod_file_name">
-                                PNG, JPG, WEBP, AVIF up to 5MB
-                            </p>
-                        </div>
+            <!-- Specifications Grid -->
+            <div class="pt-3 border-t border-[#F0EAE1] dark:border-[#2C2420]">
+                <h3 class="text-xs font-semibold text-espresso-900 dark:text-white mb-3">Technical Specifications & Sizing</h3>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-semibold text-espresso-900 dark:text-white mb-1">Material Grade</label>
+                        <input type="text" name="spec_material" value="{{ old('spec_material', $specMaterial) }}" class="w-full px-3.5 py-2 text-xs rounded-xl bg-[#FAF8F5] dark:bg-[#241D1A] border border-[#E0D7CB] dark:border-[#3A2F29] text-espresso-900 dark:text-white focus:outline-hidden focus:border-tan-500">
                     </div>
-
-                    <div class="mt-2.5">
-                        <label class="block text-[10px] text-gray-400 uppercase tracking-wider mb-0.5">Or use Image URL / Existing Asset Path</label>
-                        <input 
-                            type="text" 
-                            id="prod_image_url"
-                            name="image" 
-                            value="{{ old('image', $product->image) }}" 
-                            oninput="previewProductUrl(this.value)"
-                            class="w-full px-3.5 py-2 text-xs rounded-xl bg-[#FAF8F5] dark:bg-[#241D1A] border border-[#E0D7CB] dark:border-[#3A2F29] text-espresso-900 dark:text-white focus:outline-hidden focus:border-tan-500 font-mono"
-                        >
+                    <div>
+                        <label class="block text-xs font-semibold text-espresso-900 dark:text-white mb-1">Buckle / Hardware</label>
+                        <input type="text" name="spec_hardware" value="{{ old('spec_hardware', $specHardware) }}" class="w-full px-3.5 py-2 text-xs rounded-xl bg-[#FAF8F5] dark:bg-[#241D1A] border border-[#E0D7CB] dark:border-[#3A2F29] text-espresso-900 dark:text-white focus:outline-hidden focus:border-tan-500">
                     </div>
-                </div>
-
-                <!-- Additional Atelier Gallery (Multi-upload & URLs) -->
-                <div>
-                    <label class="block text-xs font-semibold text-espresso-900 dark:text-white mb-1.5 flex items-center justify-between">
-                        <span>Additional Atelier Gallery (Multiple Images)</span>
-                        <span class="text-[11px] text-[#8F8379]">Upload photos or add image paths</span>
-                    </label>
-
-                    <!-- Multi-Image Upload Box -->
-                    <div class="p-3.5 rounded-2xl bg-[#FAF8F5] dark:bg-[#201815] border border-dashed border-[#DFD6CB] dark:border-[#382D27]">
-                        <div class="flex flex-wrap items-center gap-3">
-                            <label class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-espresso-900 hover:bg-tan-600 text-white font-semibold text-xs cursor-pointer transition-colors shadow-2xs">
-                                <i data-lucide="upload-cloud" class="w-3.5 h-3.5 text-gold-400"></i>
-                                <span>Upload Images from Computer</span>
-                                <input type="file" name="gallery_files[]" multiple accept="image/*" class="hidden" onchange="previewGalleryFiles(this)">
-                            </label>
-                            <span class="text-[11px] text-[#8F8379]" id="gallery_upload_status">
-                                Select one or multiple photos to add to gallery (PNG, JPG, WEBP, AVIF up to 5MB each)
-                            </span>
-                        </div>
-
-                        <!-- Live Selected Files Preview Grid -->
-                        <div id="gallery_preview_grid" class="hidden mt-3 pt-3 border-t border-[#EAE3D9] dark:border-[#2E2420] grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-2.5">
-                            <!-- Injected dynamically via previewGalleryFiles -->
-                        </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-espresso-900 dark:text-white mb-1">Width & Dimensions</label>
+                        <input type="text" name="spec_dimensions" value="{{ old('spec_dimensions', $specDimensions) }}" class="w-full px-3.5 py-2 text-xs rounded-xl bg-[#FAF8F5] dark:bg-[#241D1A] border border-[#E0D7CB] dark:border-[#3A2F29] text-espresso-900 dark:text-white focus:outline-hidden focus:border-tan-500">
                     </div>
-
-                    <!-- Current Existing Additional Gallery Thumbnails (if any) -->
-                    @php
-                        $existingAdditional = array_values(array_filter($galleryList, fn($img) => $img !== $product->image));
-                    @endphp
-                    @if(count($existingAdditional) > 0)
-                        <div class="mt-3 p-3 rounded-xl bg-[#FAF8F5] dark:bg-[#221B18] border border-[#E0D7CB] dark:border-[#382D27]">
-                            <div class="flex items-center justify-between mb-2">
-                                <span class="text-[11px] font-semibold text-espresso-900 dark:text-white flex items-center gap-1.5">
-                                    <i data-lucide="images" class="w-3.5 h-3.5 text-gold-500"></i>
-                                    <span>Current Additional Photos ({{ count($existingAdditional) }})</span>
-                                </span>
-                                <span class="text-[10px] text-[#8F8379]">Click &times; to remove from gallery</span>
-                            </div>
-                            <div class="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-2.5" id="existing_gallery_container">
-                                @foreach($existingAdditional as $idx => $imgUrl)
-                                    <div class="relative group rounded-xl overflow-hidden bg-black/10 dark:bg-black/40 border border-[#E0D7CB] dark:border-[#3A2F29] aspect-square" data-gallery-item="{{ $imgUrl }}">
-                                        <img src="{{ $imgUrl }}" alt="Gallery image {{ $idx + 1 }}" class="w-full h-full object-cover">
-                                        <button 
-                                            type="button" 
-                                            onclick="removeExistingGalleryImage('{{ addslashes($imgUrl) }}', this)" 
-                                            class="absolute top-1 right-1 w-5 h-5 rounded-full bg-rose-600/90 hover:bg-rose-600 text-white flex items-center justify-center text-xs shadow-md transition-transform hover:scale-110"
-                                            title="Remove image from gallery"
-                                        >&times;</button>
-                                    </div>
-                                @endforeach
-                            </div>
-                        </div>
-                    @endif
-
-                    <div class="mt-2.5">
-                        <label class="block text-[10px] text-gray-400 uppercase tracking-wider mb-0.5 flex items-center justify-between">
-                            <span>Or edit Image URLs / Existing Paths (One per line)</span>
-                            <span class="text-[10px] text-[#8F8379]">Synced with photos above</span>
-                        </label>
-                        <textarea 
-                            id="gallery_raw_input"
-                            name="gallery_raw" 
-                            rows="2" 
-                            placeholder="/images/hero/slide-belt.jpg
-/images/brand/stitch-detail.jpg"
-                            class="w-full px-3.5 py-2 text-xs rounded-xl bg-[#FAF8F5] dark:bg-[#241D1A] border border-[#E0D7CB] dark:border-[#3A2F29] text-espresso-900 dark:text-white focus:outline-hidden focus:border-tan-500 font-mono"
-                        >{{ old('gallery_raw', $galleryRaw) }}</textarea>
+                    <div>
+                        <label class="block text-xs font-semibold text-espresso-900 dark:text-white mb-1">Available Sizes (Belts / Tailored)</label>
+                        <input type="text" name="spec_sizes" value="{{ old('spec_sizes', $specSizes) }}" class="w-full px-3.5 py-2 text-xs rounded-xl bg-[#FAF8F5] dark:bg-[#241D1A] border border-[#E0D7CB] dark:border-[#3A2F29] text-espresso-900 dark:text-white focus:outline-hidden focus:border-tan-500">
                     </div>
-                </div>
-
-                <!-- Short Summary -->
-                <div>
-                    <label class="block text-xs font-semibold text-espresso-900 dark:text-white mb-1.5 flex items-center justify-between">
-                        <span>Short Summary (Catalog Cards & Meta) <span class="text-rose-500">*</span></span>
-                        <span class="text-[10px] text-tan-600 dark:text-gold-400 font-semibold flex items-center gap-1">
-                            <i data-lucide="sparkles" class="w-3 h-3"></i> Rich Editor
-                        </span>
-                    </label>
-                    <textarea 
-                        name="short_description" 
-                        id="prod_edit_short_desc"
-                        class="hidden"
-                    >{{ old('short_description', $product->short_description) }}</textarea>
-                    <div class="quill-wrapper rounded-2xl overflow-hidden border border-[#E0D7CB] dark:border-[#3A2F29] bg-[#FAF8F5] dark:bg-[#241D1A]">
-                        <div 
-                            data-rich-editor="compact" 
-                            data-target="#prod_edit_short_desc" 
-                            data-placeholder="e.g. Handcrafted in supple vegetable-tanned full-grain leather with a versatile dual-tone finish..."
-                            style="min-height: 90px;"
-                        >{!! old('short_description', $product->short_description) !!}</div>
+                    <div class="sm:col-span-2">
+                        <label class="block text-xs font-semibold text-espresso-900 dark:text-white mb-1">Leather Care & Preservation</label>
+                        <input type="text" name="spec_care" value="{{ old('spec_care', $specCare) }}" placeholder="e.g. Wipe with soft cotton cloth; treat with neutral balm" class="w-full px-3.5 py-2 text-xs rounded-xl bg-[#FAF8F5] dark:bg-[#241D1A] border border-[#E0D7CB] dark:border-[#3A2F29] text-espresso-900 dark:text-white focus:outline-hidden focus:border-tan-500">
                     </div>
-                </div>
-
-                <!-- Full Craft Story -->
-                <div>
-                    <label class="block text-xs font-semibold text-espresso-900 dark:text-white mb-1.5 flex items-center justify-between">
-                        <span>Full Atelier Craft Narrative & Heritage</span>
-                        <span class="text-[10px] text-tan-600 dark:text-gold-400 font-semibold flex items-center gap-1">
-                            <i data-lucide="sparkles" class="w-3 h-3"></i> Rich Editor
-                        </span>
-                    </label>
-                    <textarea 
-                        name="description" 
-                        id="prod_edit_desc"
-                        class="hidden"
-                    >{{ old('description', $product->description) }}</textarea>
-                    <div class="quill-wrapper rounded-2xl overflow-hidden border border-[#E0D7CB] dark:border-[#3A2F29] bg-[#FAF8F5] dark:bg-[#241D1A]">
-                        <div 
-                            data-rich-editor="full" 
-                            data-target="#prod_edit_desc" 
-                            data-placeholder="e.g. Detailed narrative describing hide selection, vegetable tanning, artisan edge burnishing, and heirloom durability..."
-                            style="min-height: 140px;"
-                        >{!! old('description', $product->description) !!}</div>
+                    <div>
+                        <label class="block text-xs font-semibold text-espresso-900 dark:text-white mb-1">Craft Origin</label>
+                        <input type="text" name="spec_origin" value="{{ old('spec_origin', $specOrigin) }}" placeholder="e.g. Handcrafted in Pakistan" class="w-full px-3.5 py-2 text-xs rounded-xl bg-[#FAF8F5] dark:bg-[#241D1A] border border-[#E0D7CB] dark:border-[#3A2F29] text-espresso-900 dark:text-white focus:outline-hidden focus:border-tan-500">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-espresso-900 dark:text-white mb-1">Packaging & Presentation</label>
+                        <input type="text" name="spec_packaging" value="{{ old('spec_packaging', $specPackaging) }}" placeholder="e.g. By Zunash Magnetic Hard Box" class="w-full px-3.5 py-2 text-xs rounded-xl bg-[#FAF8F5] dark:bg-[#241D1A] border border-[#E0D7CB] dark:border-[#3A2F29] text-espresso-900 dark:text-white focus:outline-hidden focus:border-tan-500">
                     </div>
                 </div>
             </div>
-        </div>
 
-        <!-- Submit Button Bar -->
-        <div class="pt-4 border-t border-[#F0EAE1] dark:border-[#2C2420] flex flex-col-reverse sm:flex-row sm:items-center justify-end gap-2.5">
-            <a 
-                href="{{ route('admin.products.index') }}" 
-                class="w-full sm:w-auto px-5 py-2.5 rounded-xl border border-[#DFD6CB] text-xs font-semibold text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors text-center"
-            >
-                Cancel
-            </a>
+            <!-- SEO Search Optimization -->
+            <div class="pt-3 border-t border-[#F0EAE1] dark:border-[#2C2420] space-y-3">
+                <h3 class="text-xs font-semibold text-espresso-900 dark:text-white flex items-center gap-1.5">
+                    <i data-lucide="search" class="w-3.5 h-3.5 text-tan-600"></i>
+                    <span>Search Engine Optimization (SEO Metadata)</span>
+                </h3>
+                <div>
+                    <label class="block text-xs font-semibold text-espresso-900 dark:text-white mb-1">SEO Title (Browser & Google Header)</label>
+                    <input 
+                        type="text" 
+                        name="meta_title" 
+                        value="{{ old('meta_title', $product->meta_title) }}" 
+                        placeholder="Leave blank to use default (Product Name | By Zunash)"
+                        class="w-full px-3.5 py-2 text-xs rounded-xl bg-[#FAF8F5] dark:bg-[#241D1A] border border-[#E0D7CB] dark:border-[#3A2F29] text-espresso-900 dark:text-white focus:outline-hidden focus:border-tan-500"
+                    >
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-espresso-900 dark:text-white mb-1">Meta Description (Snippet under Google result)</label>
+                    <textarea 
+                        name="meta_description" 
+                        rows="2"
+                        placeholder="Crafted from full-grain leather. Shop authentic Pakistani luxury leather with express courier delivery..."
+                        class="w-full px-3.5 py-2 text-xs rounded-xl bg-[#FAF8F5] dark:bg-[#241D1A] border border-[#E0D7CB] dark:border-[#3A2F29] text-espresso-900 dark:text-white focus:outline-hidden focus:border-tan-500"
+                    >{{ old('meta_description', $product->meta_description) }}</textarea>
+                </div>
+            </div>
 
-            <button 
-                type="submit" 
-                class="w-full sm:w-auto px-6 py-2.5 rounded-xl bg-espresso-900 hover:bg-tan-600 text-white font-semibold text-xs shadow-md transition-all active:scale-95 flex items-center justify-center gap-2 border border-gold-400/20"
-            >
-                <i data-lucide="check" class="w-4 h-4 text-gold-400"></i>
-                <span>Save Changes & Sync Storefront</span>
-            </button>
+            <!-- Wizard Step 5 Footer (Final Submit) -->
+            <div class="pt-5 border-t border-[#F0EAE1] dark:border-[#2C2420] flex items-center justify-between">
+                <button 
+                    type="button" 
+                    @click="prevStep()" 
+                    class="px-5 py-2.5 rounded-xl border border-[#DFD6CB] dark:border-[#3A2F29] text-gray-700 dark:text-gray-300 text-xs font-semibold hover:bg-gray-50 dark:hover:bg-[#241D1A] transition-all flex items-center gap-1.5 cursor-pointer"
+                >
+                    <i data-lucide="chevron-left" class="w-4 h-4"></i>
+                    <span>Back: Visuals</span>
+                </button>
+                <button 
+                    type="submit" 
+                    class="px-7 py-3 rounded-xl bg-tan-600 hover:bg-tan-700 text-white font-bold text-xs shadow-lg transition-all active:scale-95 flex items-center gap-2 cursor-pointer"
+                >
+                    <i data-lucide="check" class="w-4 h-4 text-gold-300"></i>
+                    <span>Save Changes & Sync Storefront</span>
+                </button>
+            </div>
         </div>
 
     </form>
@@ -814,7 +1219,7 @@ function previewGalleryFiles(input) {
     if (!input.files || input.files.length === 0) {
         grid.classList.add('hidden');
         grid.innerHTML = '';
-        if (status) status.innerText = 'Select one or multiple photos to add to gallery (PNG, JPG, WEBP, AVIF up to 5MB each)';
+        if (status) status.innerText = 'Select one or multiple photos to add to gallery';
         return;
     }
 

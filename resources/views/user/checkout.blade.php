@@ -396,9 +396,22 @@
 
                     <div class="space-y-3.5">
                         
+                        <!-- Prepaid Only Alert (if cart contains prepaid-only item) -->
+                        <div 
+                            x-show="$store.cart && $store.cart.hasPrepaidOnly" 
+                            x-cloak 
+                            class="p-4 rounded-2xl bg-amber-50 dark:bg-amber-950/20 border border-amber-200 dark:border-amber-800/40 text-amber-900 dark:text-amber-300 text-xs flex items-start gap-3 shadow-2xs"
+                        >
+                            <svg class="w-5 h-5 text-amber-600 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+                            <div>
+                                <strong class="font-bold">Advance Payment Required:</strong> One or more handcrafted items in your bag require advance confirmation (Prepaid Only). Cash on Delivery is disabled for this order.
+                            </div>
+                        </div>
+
                         <!-- 1. Cash on Delivery (COD) -->
                         @if($codActive)
                         <label 
+                            x-show="!($store.cart && $store.cart.hasPrepaidOnly)"
                             class="flex items-start gap-4 p-4 sm:p-5 rounded-2xl border-2 cursor-pointer transition-all relative overflow-hidden"
                             :class="paymentMethod === 'cod' ? 'border-gold bg-[#FAF7F2] ring-2 ring-gold/20 shadow-xs' : 'border-ivory-300 hover:border-ivory-400 bg-white'"
                         >
@@ -1028,6 +1041,11 @@ function checkoutForm() {
 
         init() {
             localStorage.setItem('bz_cart_token', this.cartToken);
+
+            // Auto-switch away from COD if cart contains prepaid-only items
+            if (Alpine.store('cart') && Alpine.store('cart').hasPrepaidOnly && this.paymentMethod === 'cod') {
+                this.paymentMethod = 'bank';
+            }
 
             // Check if coupon parameter is present in URL (e.g. ?coupon=ZUNASH15 or ?coupon=ATELIER5)
             const urlParams = new URLSearchParams(window.location.search);

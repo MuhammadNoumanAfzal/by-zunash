@@ -4,12 +4,33 @@
 
 @section('content')
 
+@php
+    // Determine initial step based on validation errors
+    $initialStep = 1;
+    if ($errors->hasAny(['price', 'cost_price', 'original_price', 'stock_quantity'])) {
+        $initialStep = 2;
+    } elseif ($errors->hasAny(['allowed_payment_methods', 'custom_shipping_charge', 'weight_kg'])) {
+        $initialStep = 3;
+    } elseif ($errors->hasAny(['image', 'image_file', 'gallery_files'])) {
+        $initialStep = 4;
+    } elseif ($errors->hasAny(['short_description', 'description', 'spec_material'])) {
+        $initialStep = 5;
+    }
+@endphp
+
 <div class="max-w-4xl mx-auto space-y-6" x-data="{
+    step: {{ $initialStep }},
+    totalSteps: 5,
     availability: '{{ old('availability', 'in_stock') }}',
     leadTime: '{{ old('lead_time', '') }}',
+    paymentMethodRule: '{{ old('allowed_payment_methods', 'all') }}',
+    isFreeShipping: {{ old('is_free_shipping') ? 'true' : 'false' }},
+    primaryPreview: null,
+    
+    // Color Palette Manager
     colors: [
-        { name: 'Espresso & Obsidian Black', hex: '#24160F', stock: true, active: false },
-        { name: 'Cognac Tan & Coffee', hex: '#A87548', stock: true, active: false },
+        { name: 'Espresso & Obsidian Black', hex: '#24160F', stock: true, active: true },
+        { name: 'Cognac Tan & Coffee', hex: '#A87548', stock: true, active: true },
         { name: 'Midnight Espresso', hex: '#120E0C', stock: true, active: false },
         { name: 'Oxblood Burgundy', hex: '#581825', stock: true, active: false },
         { name: 'Saddle Brown', hex: '#5D3A1A', stock: true, active: false },
@@ -42,11 +63,37 @@
     },
     get activeColorsJson() {
         return JSON.stringify(this.colors.filter(c => c.active).map(c => ({ name: c.name, hex: c.hex, stock: c.stock })));
+    },
+
+    // Step Navigation
+    nextStep() {
+        if (this.step < this.totalSteps) {
+            this.step++;
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+    },
+    prevStep() {
+        if (this.step > 1) {
+            this.step--;
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+    },
+    goToStep(s) {
+        this.step = s;
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    },
+
+    // Image preview helper
+    handlePrimaryUpload(e) {
+        const file = e.target.files[0];
+        if (file) {
+            this.primaryPreview = URL.createObjectURL(file);
+        }
     }
 }">
 
-    <!-- Header & Breadcrumbs -->
-    <div class="flex items-center justify-between">
+    <!-- Top Header & Breadcrumbs -->
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div>
             <div class="flex items-center gap-2 text-xs text-[#8F8379] mb-1">
                 <a href="{{ route('admin.products.index') }}" class="hover:text-tan-600 transition-colors">Products</a>
@@ -58,159 +105,328 @@
             </h1>
         </div>
 
-        <a 
-            href="{{ route('admin.products.index') }}" 
-            class="px-4 py-2 rounded-xl border border-[#DFD6CB] dark:border-[#3A2F29] text-xs font-semibold text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-[#201A18] transition-colors"
-        >
-            Cancel
-        </a>
+        <div class="flex items-center gap-2.5">
+            <a 
+                href="{{ route('admin.products.index') }}" 
+                class="px-4 py-2 rounded-xl border border-[#DFD6CB] dark:border-[#3A2F29] text-xs font-semibold text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-[#201A18] transition-colors"
+            >
+                Cancel
+            </a>
+            <button 
+                type="submit" 
+                form="createProductForm"
+                class="px-5 py-2 rounded-xl bg-tan-600 hover:bg-tan-700 text-white text-xs font-bold shadow-md hover:shadow-lg transition-all flex items-center gap-1.5 cursor-pointer"
+            >
+                <i data-lucide="sparkles" class="w-4 h-4"></i>
+                <span>Publish Now</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- Stepper Navigation Bar (Tabs) -->
+    <div class="bg-white dark:bg-[#1A1513] rounded-2xl border border-[#ECE6DE] dark:border-[#2C2420] p-3 sm:p-4 shadow-xs">
+        <div class="grid grid-cols-2 sm:grid-cols-5 gap-2 text-xs">
+            
+            <!-- Step 1 Tab -->
+            <button 
+                type="button" 
+                @click="goToStep(1)"
+                class="p-2.5 rounded-xl text-left transition-all flex items-center gap-2.5 cursor-pointer"
+                :class="step === 1 ? 'bg-tan-500/10 dark:bg-tan-600/20 text-tan-700 dark:text-gold-300 font-bold border border-tan-500/30' : (step > 1 ? 'text-emerald-700 dark:text-emerald-400 hover:bg-gray-50 dark:hover:bg-[#241D1A]' : 'text-gray-400 dark:text-gray-500 hover:bg-gray-50 dark:hover:bg-[#241D1A]')"
+            >
+                <span 
+                    class="w-6 h-6 rounded-full flex items-center justify-center text-[11px] font-bold shrink-0 transition-colors"
+                    :class="step === 1 ? 'bg-tan-600 text-white' : (step > 1 ? 'bg-emerald-600 text-white' : 'bg-gray-200 dark:bg-[#2E2520] text-gray-600 dark:text-gray-400')"
+                >
+                    <span x-show="step <= 1">1</span>
+                    <i data-lucide="check" class="w-3.5 h-3.5" x-show="step > 1"></i>
+                </span>
+                <span class="truncate">1. Identity</span>
+            </button>
+
+            <!-- Step 2 Tab -->
+            <button 
+                type="button" 
+                @click="goToStep(2)"
+                class="p-2.5 rounded-xl text-left transition-all flex items-center gap-2.5 cursor-pointer"
+                :class="step === 2 ? 'bg-tan-500/10 dark:bg-tan-600/20 text-tan-700 dark:text-gold-300 font-bold border border-tan-500/30' : (step > 2 ? 'text-emerald-700 dark:text-emerald-400 hover:bg-gray-50 dark:hover:bg-[#241D1A]' : 'text-gray-400 dark:text-gray-500 hover:bg-gray-50 dark:hover:bg-[#241D1A]')"
+            >
+                <span 
+                    class="w-6 h-6 rounded-full flex items-center justify-center text-[11px] font-bold shrink-0 transition-colors"
+                    :class="step === 2 ? 'bg-tan-600 text-white' : (step > 2 ? 'bg-emerald-600 text-white' : 'bg-gray-200 dark:bg-[#2E2520] text-gray-600 dark:text-gray-400')"
+                >
+                    <span x-show="step <= 2">2</span>
+                    <i data-lucide="check" class="w-3.5 h-3.5" x-show="step > 2"></i>
+                </span>
+                <span class="truncate">2. Pricing & Profit</span>
+            </button>
+
+            <!-- Step 3 Tab -->
+            <button 
+                type="button" 
+                @click="goToStep(3)"
+                class="p-2.5 rounded-xl text-left transition-all flex items-center gap-2.5 cursor-pointer"
+                :class="step === 3 ? 'bg-tan-500/10 dark:bg-tan-600/20 text-tan-700 dark:text-gold-300 font-bold border border-tan-500/30' : (step > 3 ? 'text-emerald-700 dark:text-emerald-400 hover:bg-gray-50 dark:hover:bg-[#241D1A]' : 'text-gray-400 dark:text-gray-500 hover:bg-gray-50 dark:hover:bg-[#241D1A]')"
+            >
+                <span 
+                    class="w-6 h-6 rounded-full flex items-center justify-center text-[11px] font-bold shrink-0 transition-colors"
+                    :class="step === 3 ? 'bg-tan-600 text-white' : (step > 3 ? 'bg-emerald-600 text-white' : 'bg-gray-200 dark:bg-[#2E2520] text-gray-600 dark:text-gray-400')"
+                >
+                    <span x-show="step <= 3">3</span>
+                    <i data-lucide="check" class="w-3.5 h-3.5" x-show="step > 3"></i>
+                </span>
+                <span class="truncate">3. Shipping & Rules</span>
+            </button>
+
+            <!-- Step 4 Tab -->
+            <button 
+                type="button" 
+                @click="goToStep(4)"
+                class="p-2.5 rounded-xl text-left transition-all flex items-center gap-2.5 cursor-pointer"
+                :class="step === 4 ? 'bg-tan-500/10 dark:bg-tan-600/20 text-tan-700 dark:text-gold-300 font-bold border border-tan-500/30' : (step > 4 ? 'text-emerald-700 dark:text-emerald-400 hover:bg-gray-50 dark:hover:bg-[#241D1A]' : 'text-gray-400 dark:text-gray-500 hover:bg-gray-50 dark:hover:bg-[#241D1A]')"
+            >
+                <span 
+                    class="w-6 h-6 rounded-full flex items-center justify-center text-[11px] font-bold shrink-0 transition-colors"
+                    :class="step === 4 ? 'bg-tan-600 text-white' : (step > 4 ? 'bg-emerald-600 text-white' : 'bg-gray-200 dark:bg-[#2E2520] text-gray-600 dark:text-gray-400')"
+                >
+                    <span x-show="step <= 4">4</span>
+                    <i data-lucide="check" class="w-3.5 h-3.5" x-show="step > 4"></i>
+                </span>
+                <span class="truncate">4. Visuals & Swatches</span>
+            </button>
+
+            <!-- Step 5 Tab -->
+            <button 
+                type="button" 
+                @click="goToStep(5)"
+                class="p-2.5 rounded-xl text-left transition-all flex items-center gap-2.5 cursor-pointer col-span-2 sm:col-span-1"
+                :class="step === 5 ? 'bg-tan-500/10 dark:bg-tan-600/20 text-tan-700 dark:text-gold-300 font-bold border border-tan-500/30' : 'text-gray-400 dark:text-gray-500 hover:bg-gray-50 dark:hover:bg-[#241D1A]'"
+            >
+                <span 
+                    class="w-6 h-6 rounded-full flex items-center justify-center text-[11px] font-bold shrink-0 transition-colors"
+                    :class="step === 5 ? 'bg-tan-600 text-white' : 'bg-gray-200 dark:bg-[#2E2520] text-gray-600 dark:text-gray-400'"
+                >
+                    5
+                </span>
+                <span class="truncate">5. Story & SEO</span>
+            </button>
+
+        </div>
+
+        <!-- Step Progress Bar -->
+        <div class="w-full bg-gray-100 dark:bg-[#251D1A] h-1.5 rounded-full mt-3 overflow-hidden">
+            <div 
+                class="bg-gradient-to-r from-tan-600 to-gold-400 h-full transition-all duration-300 rounded-full"
+                :style="'width: ' + (step * 20) + '%'"
+            ></div>
+        </div>
     </div>
 
     <!-- Creation Form Card -->
-    <form action="{{ route('admin.products.store') }}" method="POST" enctype="multipart/form-data" class="bg-white dark:bg-[#1A1513] rounded-3xl border border-[#ECE6DE] dark:border-[#2C2420] p-6 sm:p-8 shadow-card space-y-8">
+    <form id="createProductForm" action="{{ route('admin.products.store') }}" method="POST" enctype="multipart/form-data" class="bg-white dark:bg-[#1A1513] rounded-3xl border border-[#ECE6DE] dark:border-[#2C2420] p-6 sm:p-8 shadow-card">
         @csrf
 
         <!-- Hidden input for dynamic colors JSON -->
         <input type="hidden" name="colors_json" :value="activeColorsJson">
 
-        <!-- Section 1: Basic Information -->
-        <div>
-            <div class="flex items-center gap-2 pb-2 border-b border-[#F0EAE1] dark:border-[#2C2420]">
-                <span class="w-6 h-6 rounded-full bg-tan-100 dark:bg-[#2A1E18] text-tan-700 dark:text-gold-400 font-bold text-xs flex items-center justify-center">1</span>
-                <h2 class="font-cinzel text-base font-bold text-espresso-950 dark:text-white">
-                    Product Identification & Category
-                </h2>
+        <!-- ==============================================================
+             STEP 1: IDENTITY, CATEGORIZATION & AVAILABILITY
+             ============================================================== -->
+        <div x-show="step === 1" x-transition:enter="transition ease-out duration-200" class="space-y-6">
+            <div class="flex items-center gap-2 pb-3 border-b border-[#F0EAE1] dark:border-[#2C2420]">
+                <span class="w-7 h-7 rounded-full bg-tan-100 dark:bg-[#2A1E18] text-tan-700 dark:text-gold-400 font-bold text-xs flex items-center justify-center">1</span>
+                <div>
+                    <h2 class="font-cinzel text-base font-bold text-espresso-950 dark:text-white">
+                        Product Identity & Collection
+                    </h2>
+                    <p class="text-[11px] text-[#8F8379]">Core identification, collection grouping, and production status.</p>
+                </div>
             </div>
 
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-4">
+            <div class="space-y-4">
                 <!-- Product Name -->
-                <div class="sm:col-span-2">
+                <div>
                     <label class="block text-xs font-semibold text-espresso-900 dark:text-white mb-1.5">
-                        Product Name <span class="text-rose-500">*</span>
+                        Product Title <span class="text-rose-500">*</span>
                     </label>
                     <input 
                         type="text" 
                         name="name" 
                         value="{{ old('name') }}" 
                         required 
-                        placeholder="e.g. Signature Reversible Full-Grain Calfskin Belt"
-                        class="w-full px-3.5 py-2.5 text-xs rounded-xl bg-[#FAF8F5] dark:bg-[#241D1A] border border-[#E0D7CB] dark:border-[#3A2F29] text-espresso-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-[#6E645E] focus:outline-hidden focus:border-tan-500"
+                        placeholder="e.g. The Royal Reversible Calfskin Belt"
+                        class="w-full px-3.5 py-2.5 text-xs rounded-xl bg-[#FAF8F5] dark:bg-[#241D1A] border border-[#E0D7CB] dark:border-[#3A2F29] text-espresso-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-[#6E645E] focus:outline-hidden focus:border-tan-500 font-medium"
                     >
+                    @error('name')
+                        <p class="text-rose-500 text-[10px] mt-1">{{ $message }}</p>
+                    @enderror
                 </div>
 
-            <div 
-                class="col-span-1 sm:col-span-2 grid grid-cols-1 sm:grid-cols-2 gap-4"
-                x-data="{
-                    categoryId: '{{ old('category_id', '') }}',
-                    subcategoryId: '{{ old('subcategory_id', '') }}',
-                    allSubs: [
-                        @foreach($subcategories as $s)
-                            { id: {{ $s->id }}, name: '{{ addslashes($s->name) }}', category_id: {{ $s->category_id }} },
-                        @endforeach
-                    ],
-                    get filteredSubs() {
-                        if (!this.categoryId) return [];
-                        return this.allSubs.filter(s => s.category_id == this.categoryId);
-                    },
-                    onCategoryChange() {
-                        const valid = this.filteredSubs.some(s => s.id == this.subcategoryId);
-                        if (!valid) {
-                            this.subcategoryId = '';
+                <!-- Category & Subcategory (Reactive Dependent Dropdown) -->
+                <div 
+                    class="grid grid-cols-1 sm:grid-cols-2 gap-4"
+                    x-data="{
+                        categoryId: '{{ old('category_id', '') }}',
+                        subcategoryId: '{{ old('subcategory_id', '') }}',
+                        allSubs: [
+                            @foreach($subcategories as $s)
+                                { id: {{ $s->id }}, name: '{{ addslashes($s->name) }}', category_id: {{ $s->category_id }} },
+                            @endforeach
+                        ],
+                        get filteredSubs() {
+                            if (!this.categoryId) return [];
+                            return this.allSubs.filter(s => s.category_id == this.categoryId);
+                        },
+                        onCategoryChange() {
+                            const valid = this.filteredSubs.some(s => s.id == this.subcategoryId);
+                            if (!valid) {
+                                this.subcategoryId = '';
+                            }
                         }
-                    }
-                }"
-            >
-                <!-- Category -->
-                <div>
-                    <label class="block text-xs font-semibold text-espresso-900 dark:text-white mb-1.5">
-                        Collection Category <span class="text-rose-500">*</span>
-                    </label>
-                    <select 
-                        name="category_id" 
-                        x-model="categoryId"
-                        @change="onCategoryChange()"
-                        required
-                        class="w-full px-3.5 py-2.5 text-xs rounded-xl bg-[#FAF8F5] dark:bg-[#241D1A] border border-[#E0D7CB] dark:border-[#3A2F29] text-espresso-900 dark:text-white focus:outline-hidden focus:border-tan-500"
-                    >
-                        <option value="">Select Primary Collection</option>
-                        @foreach($categories as $cat)
-                            <option value="{{ $cat->id }}">
-                                {{ $cat->name }}
-                            </option>
-                        @endforeach
-                    </select>
-                </div>
-
-                <!-- Subcategory (Reactive Dependent Dropdown) -->
-                <div>
-                    <div class="flex items-center justify-between mb-1.5">
-                        <label class="block text-xs font-semibold text-espresso-900 dark:text-white">
-                            Subcategory (Optional)
+                    }"
+                >
+                    <!-- Category -->
+                    <div>
+                        <label class="block text-xs font-semibold text-espresso-900 dark:text-white mb-1.5">
+                            Collection Category <span class="text-rose-500">*</span>
                         </label>
-                        <a href="{{ route('admin.subcategories.index') }}#add-subcat" target="_blank" class="text-[10px] text-tan-600 hover:text-tan-700 font-semibold flex items-center gap-0.5">
-                            <span>+ New Subcategory</span>
-                        </a>
+                        <select 
+                            name="category_id" 
+                            x-model="categoryId"
+                            @change="onCategoryChange()"
+                            required
+                            class="w-full px-3.5 py-2.5 text-xs rounded-xl bg-[#FAF8F5] dark:bg-[#241D1A] border border-[#E0D7CB] dark:border-[#3A2F29] text-espresso-900 dark:text-white focus:outline-hidden focus:border-tan-500 font-medium"
+                        >
+                            <option value="">Select Primary Collection</option>
+                            @foreach($categories as $cat)
+                                <option value="{{ $cat->id }}">{{ $cat->name }}</option>
+                            @endforeach
+                        </select>
+                        @error('category_id')
+                            <p class="text-rose-500 text-[10px] mt-1">{{ $message }}</p>
+                        @enderror
                     </div>
-                    <select 
-                        name="subcategory_id" 
-                        x-model="subcategoryId"
-                        class="w-full px-3.5 py-2.5 text-xs rounded-xl bg-[#FAF8F5] dark:bg-[#241D1A] border border-[#E0D7CB] dark:border-[#3A2F29] text-espresso-900 dark:text-white focus:outline-hidden focus:border-tan-500"
-                    >
-                        <option value="">No Subcategory / General Piece</option>
-                        <template x-for="sub in filteredSubs" :key="sub.id">
-                            <option :value="sub.id" x-text="sub.name" :selected="sub.id == subcategoryId"></option>
-                        </template>
-                    </select>
-                    <p class="text-[10px] text-[#8F8379] mt-1" x-show="categoryId && filteredSubs.length === 0">
-                        No subcategories defined for this collection yet.
-                    </p>
-                </div>
-            </div>
 
-                <!-- SKU -->
-                <div>
-                    <label class="block text-xs font-semibold text-espresso-900 dark:text-white mb-1.5">
-                        SKU Reference (Leave blank for auto-generation)
-                    </label>
-                    <input 
-                        type="text" 
-                        name="sku" 
-                        value="{{ old('sku') }}" 
-                        placeholder="BZ-BELT-001"
-                        class="w-full px-3.5 py-2.5 text-xs rounded-xl bg-[#FAF8F5] dark:bg-[#241D1A] border border-[#E0D7CB] dark:border-[#3A2F29] text-espresso-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-[#6E645E] focus:outline-hidden focus:border-tan-500 font-mono uppercase"
-                    >
+                    <!-- Subcategory -->
+                    <div>
+                        <div class="flex items-center justify-between mb-1.5">
+                            <label class="block text-xs font-semibold text-espresso-900 dark:text-white">
+                                Subcategory (Optional)
+                            </label>
+                            <a href="{{ route('admin.subcategories.index') }}#add-subcat" target="_blank" class="text-[10px] text-tan-600 hover:text-tan-700 font-semibold flex items-center gap-0.5">
+                                <span>+ New Subcategory</span>
+                            </a>
+                        </div>
+                        <select 
+                            name="subcategory_id" 
+                            x-model="subcategoryId"
+                            class="w-full px-3.5 py-2.5 text-xs rounded-xl bg-[#FAF8F5] dark:bg-[#241D1A] border border-[#E0D7CB] dark:border-[#3A2F29] text-espresso-900 dark:text-white focus:outline-hidden focus:border-tan-500"
+                        >
+                            <option value="">No Subcategory / General Piece</option>
+                            <template x-for="sub in filteredSubs" :key="sub.id">
+                                <option :value="sub.id" x-text="sub.name" :selected="sub.id == subcategoryId"></option>
+                            </template>
+                        </select>
+                    </div>
                 </div>
 
-                <!-- Highlight Badge -->
-                <div>
-                    <label class="block text-xs font-semibold text-espresso-900 dark:text-white mb-1.5">
-                        Atelier Highlight Badge
+                <!-- SKU & Highlight Badge -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-semibold text-espresso-900 dark:text-white mb-1.5 flex items-center justify-between">
+                            <span>SKU Reference</span>
+                            <span class="text-[10px] text-[#8F8379]">Leave blank to auto-generate</span>
+                        </label>
+                        <input 
+                            type="text" 
+                            name="sku" 
+                            value="{{ old('sku') }}" 
+                            placeholder="e.g. BZ-BELT-001"
+                            class="w-full px-3.5 py-2.5 text-xs rounded-xl bg-[#FAF8F5] dark:bg-[#241D1A] border border-[#E0D7CB] dark:border-[#3A2F29] text-espresso-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-[#6E645E] focus:outline-hidden focus:border-tan-500 font-mono uppercase"
+                        >
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-semibold text-espresso-900 dark:text-white mb-1.5">
+                            Atelier Highlight Badge
+                        </label>
+                        <input 
+                            type="text" 
+                            name="badge" 
+                            value="{{ old('badge') }}" 
+                            placeholder="e.g. Bespoke Edition, 2-in-1 Swivel"
+                            class="w-full px-3.5 py-2.5 text-xs rounded-xl bg-[#FAF8F5] dark:bg-[#241D1A] border border-[#E0D7CB] dark:border-[#3A2F29] text-espresso-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-[#6E645E] focus:outline-hidden focus:border-tan-500"
+                        >
+                    </div>
+                </div>
+
+                <!-- Availability & Lead Time -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-semibold text-espresso-900 dark:text-white mb-1.5">
+                            Availability Status <span class="text-rose-500">*</span>
+                        </label>
+                        <select 
+                            name="availability" 
+                            x-model="availability"
+                            class="w-full px-3.5 py-2.5 text-xs rounded-xl bg-[#FAF8F5] dark:bg-[#241D1A] border border-[#E0D7CB] dark:border-[#3A2F29] text-espresso-900 dark:text-white focus:outline-hidden focus:border-tan-500 font-medium"
+                        >
+                            <option value="in_stock">In Stock — Ready to Dispatch</option>
+                            <option value="on_demand">On Demand — Handcrafted to Order</option>
+                            <option value="out_of_stock">Out of Stock — Sold Out / Concierge Notice</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-semibold text-espresso-900 dark:text-white mb-1.5 flex items-center justify-between">
+                            <span>Production & Dispatch Lead Time</span>
+                            <span class="text-[10px] text-tan-600 dark:text-gold-400" x-show="availability === 'on_demand'">Recommended for On Demand</span>
+                        </label>
+                        <input 
+                            type="text" 
+                            name="lead_time" 
+                            x-model="leadTime"
+                            placeholder="e.g. 7–10 Working Days"
+                            class="w-full px-3.5 py-2.5 text-xs rounded-xl bg-[#FAF8F5] dark:bg-[#241D1A] border border-[#E0D7CB] dark:border-[#3A2F29] text-espresso-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-[#6E645E] focus:outline-hidden focus:border-tan-500"
+                            :class="availability === 'on_demand' ? 'border-amber-400 dark:border-amber-500/50 bg-amber-50/20' : ''"
+                        >
+                    </div>
+                </div>
+
+                <!-- Bestseller & New Arrival Toggles -->
+                <div class="pt-3 border-t border-[#F0EAE1] dark:border-[#2C2420] flex flex-wrap items-center gap-6">
+                    <label class="inline-flex items-center gap-2.5 cursor-pointer text-xs font-medium text-espresso-900 dark:text-white select-none">
+                        <input type="checkbox" name="is_bestseller" value="1" {{ old('is_bestseller') ? 'checked' : '' }} class="rounded border-[#DFD6CB] text-tan-600 focus:ring-tan-500">
+                        <span>⭐ Mark as Bestseller / Flagship</span>
                     </label>
-                    <input 
-                        type="text" 
-                        name="badge" 
-                        value="{{ old('badge') }}" 
-                        placeholder="e.g. Bespoke Edition, 2-in-1 Reversible, Limited"
-                        class="w-full px-3.5 py-2.5 text-xs rounded-xl bg-[#FAF8F5] dark:bg-[#241D1A] border border-[#E0D7CB] dark:border-[#3A2F29] text-espresso-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-[#6E645E] focus:outline-hidden focus:border-tan-500"
-                    >
+
+                    <label class="inline-flex items-center gap-2.5 cursor-pointer text-xs font-medium text-espresso-900 dark:text-white select-none">
+                        <input type="checkbox" name="is_new" value="1" {{ old('is_new', '1') ? 'checked' : '' }} class="rounded border-[#DFD6CB] text-tan-600 focus:ring-tan-500">
+                        <span>✨ Mark as New Arrival</span>
+                    </label>
                 </div>
             </div>
         </div>
 
-        <!-- Section 2: Valuation, Inventory & Availability (On Demand / Out of Stock / In Stock) -->
-        <div>
-            <div class="flex items-center gap-2 pb-2 border-b border-[#F0EAE1] dark:border-[#2C2420]">
-                <span class="w-6 h-6 rounded-full bg-tan-100 dark:bg-[#2A1E18] text-tan-700 dark:text-gold-400 font-bold text-xs flex items-center justify-center">2</span>
-                <h2 class="font-cinzel text-base font-bold text-espresso-950 dark:text-white">
-                    Valuation, Inventory & Production Mode
-                </h2>
+        <!-- ==============================================================
+             STEP 2: VALUATION, COST & INVENTORY
+             ============================================================== -->
+        <div x-show="step === 2" x-transition:enter="transition ease-out duration-200" class="space-y-6">
+            <div class="flex items-center gap-2 pb-3 border-b border-[#F0EAE1] dark:border-[#2C2420]">
+                <span class="w-7 h-7 rounded-full bg-tan-100 dark:bg-[#2A1E18] text-tan-700 dark:text-gold-400 font-bold text-xs flex items-center justify-center">2</span>
+                <div>
+                    <h2 class="font-cinzel text-base font-bold text-espresso-950 dark:text-white">
+                        Pricing, Cost & Profit Engine
+                    </h2>
+                    <p class="text-[11px] text-[#8F8379]">Selling price, production cost price for profit metrics, and inventory quantities.</p>
+                </div>
             </div>
 
-            <div class="grid grid-cols-1 sm:grid-cols-4 gap-4 mt-4">
-                <!-- Retail Price -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                <!-- Retail / Selling Price -->
                 <div>
                     <label class="block text-xs font-semibold text-espresso-900 dark:text-white mb-1.5">
-                        Retail / Selling Price (PKR) <span class="text-rose-500">*</span>
+                        Selling Price (PKR) <span class="text-rose-500">*</span>
                     </label>
                     <input 
                         type="number" 
@@ -221,14 +437,17 @@
                         placeholder="e.g. 4950"
                         required
                         oninput="calculateProfitMargin()"
-                        class="w-full px-3.5 py-2.5 text-xs rounded-xl bg-[#FAF8F5] dark:bg-[#241D1A] border border-[#E0D7CB] dark:border-[#3A2F29] text-espresso-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-[#6E645E] focus:outline-hidden focus:border-tan-500 font-mono font-bold"
+                        class="w-full px-3.5 py-2.5 text-xs rounded-xl bg-[#FAF8F5] dark:bg-[#241D1A] border border-[#E0D7CB] dark:border-[#3A2F29] text-espresso-900 dark:text-white placeholder:text-gray-400 focus:outline-hidden focus:border-tan-500 font-mono font-bold"
                     >
+                    @error('price')
+                        <p class="text-rose-500 text-[10px] mt-1">{{ $message }}</p>
+                    @enderror
                 </div>
 
-                <!-- Purchase / Cost Price (COGS) -->
+                <!-- Purchase / Cost Price -->
                 <div>
                     <label class="block text-xs font-semibold text-emerald-700 dark:text-emerald-400 mb-1.5 flex items-center justify-between">
-                        <span>Purchase / Cost (PKR)</span>
+                        <span>Cost Price (PKR)</span>
                         <span class="text-[10px] font-normal text-gray-500">For Real Profit</span>
                     </label>
                     <input 
@@ -239,14 +458,14 @@
                         value="{{ old('cost_price', 0) }}" 
                         placeholder="e.g. 2100"
                         oninput="calculateProfitMargin()"
-                        class="w-full px-3.5 py-2.5 text-xs rounded-xl bg-emerald-50/50 dark:bg-emerald-950/20 border border-emerald-200 dark:border-emerald-800/40 text-emerald-900 dark:text-emerald-300 placeholder:text-gray-400 focus:outline-hidden focus:border-emerald-500 font-mono font-bold"
+                        class="w-full px-3.5 py-2.5 text-xs rounded-xl bg-emerald-50/50 dark:bg-emerald-950/20 border border-emerald-300 dark:border-emerald-800/40 text-emerald-900 dark:text-emerald-300 placeholder:text-gray-400 focus:outline-hidden focus:border-emerald-500 font-mono font-bold"
                     >
                 </div>
 
-                <!-- Compare Price -->
+                <!-- Original / Compare-At Price -->
                 <div>
                     <label class="block text-xs font-semibold text-espresso-900 dark:text-white mb-1.5">
-                        Original / Strikethrough
+                        Original / Strikethrough (PKR)
                     </label>
                     <input 
                         type="number" 
@@ -254,7 +473,7 @@
                         name="original_price" 
                         value="{{ old('original_price') }}" 
                         placeholder="e.g. 6500"
-                        class="w-full px-3.5 py-2.5 text-xs rounded-xl bg-[#FAF8F5] dark:bg-[#241D1A] border border-[#E0D7CB] dark:border-[#3A2F29] text-espresso-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-[#6E645E] focus:outline-hidden focus:border-tan-500 font-mono"
+                        class="w-full px-3.5 py-2.5 text-xs rounded-xl bg-[#FAF8F5] dark:bg-[#241D1A] border border-[#E0D7CB] dark:border-[#3A2F29] text-espresso-900 dark:text-white placeholder:text-gray-400 focus:outline-hidden focus:border-tan-500 font-mono"
                     >
                 </div>
 
@@ -266,569 +485,506 @@
                     <input 
                         type="number" 
                         name="stock_quantity" 
-                        value="{{ old('stock_quantity') }}" 
+                        value="{{ old('stock_quantity', '10') }}" 
                         placeholder="e.g. 15"
                         required
-                        class="w-full px-3.5 py-2.5 text-xs rounded-xl bg-[#FAF8F5] dark:bg-[#241D1A] border border-[#E0D7CB] dark:border-[#3A2F29] text-espresso-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-[#6E645E] focus:outline-hidden focus:border-tan-500 font-mono"
-                    >
-                </div>
-            </div>
-
-            <!-- Real-Time Profit Margin Preview Badge -->
-            <div id="profit_margin_preview" class="mt-2.5 px-3.5 py-2 rounded-xl bg-[#FAF8F5] dark:bg-[#241D1A] border border-dashed border-[#E0D7CB] dark:border-[#3A2F29] flex items-center justify-between text-xs">
-                <span class="text-gray-600 dark:text-gray-400 flex items-center gap-1.5">
-                    <svg class="w-4 h-4 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-                    Estimated Profit Per Creation:
-                </span>
-                <span id="profit_calc_result" class="font-mono font-bold text-emerald-700 dark:text-emerald-400">
-                    Enter Selling & Cost Price
-                </span>
-            </div>
-                        required 
                         min="0"
-                        class="w-full px-3.5 py-2.5 text-xs rounded-xl bg-[#FAF8F5] dark:bg-[#241D1A] border border-[#E0D7CB] dark:border-[#3A2F29] text-espresso-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-[#6E645E] focus:outline-hidden focus:border-tan-500 font-mono"
+                        class="w-full px-3.5 py-2.5 text-xs rounded-xl bg-[#FAF8F5] dark:bg-[#241D1A] border border-[#E0D7CB] dark:border-[#3A2F29] text-espresso-900 dark:text-white placeholder:text-gray-400 focus:outline-hidden focus:border-tan-500 font-mono font-semibold"
                     >
+                    @error('stock_quantity')
+                        <p class="text-rose-500 text-[10px] mt-1">{{ $message }}</p>
+                    @enderror
                 </div>
+            </div>
 
-                <!-- Availability Type (Frontend dynamic state) -->
-                <div>
-                    <label class="block text-xs font-semibold text-espresso-900 dark:text-white mb-1.5">
-                        Availability Status <span class="text-rose-500">*</span>
-                    </label>
-                    <select 
-                        name="availability" 
-                        x-model="availability"
-                        class="w-full px-3.5 py-2.5 text-xs rounded-xl bg-[#FAF8F5] dark:bg-[#241D1A] border border-[#E0D7CB] dark:border-[#3A2F29] text-espresso-900 dark:text-white focus:outline-hidden focus:border-tan-500 font-medium"
-                    >
-                        <option value="in_stock">In Stock — Ready to Dispatch</option>
-                        <option value="on_demand">On Demand — Made to Order</option>
-                        <option value="out_of_stock">Out of Stock — Sold Out / Concierge Notice</option>
-                    </select>
+            <!-- Real-Time Profit Calculation Card -->
+            <div id="profit_margin_preview" class="p-4 rounded-2xl bg-emerald-50/60 dark:bg-emerald-950/20 border border-emerald-200 dark:border-emerald-800/40 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs">
+                <div class="flex items-center gap-2.5 text-emerald-900 dark:text-emerald-300">
+                    <div class="w-8 h-8 rounded-xl bg-emerald-600 text-white flex items-center justify-center font-bold text-xs shrink-0 shadow-xs">
+                        <i data-lucide="trending-up" class="w-4 h-4"></i>
+                    </div>
+                    <div>
+                        <div class="font-bold">Estimated Atelier Profit Per Sale</div>
+                        <div class="text-[11px] text-emerald-700 dark:text-emerald-400">Calculated as: Selling Price − Cost Price (COGS)</div>
+                    </div>
                 </div>
-
-                <!-- Lead Time (Visible & highlighted for On Demand) -->
-                <div class="sm:col-span-2">
-                    <label class="block text-xs font-semibold text-espresso-900 dark:text-white mb-1.5 flex items-center justify-between">
-                        <span>Production & Dispatch Lead Time</span>
-                        <span class="text-[10px] text-tan-600 dark:text-gold-400" x-show="availability === 'on_demand'">Recommended for On Demand</span>
-                    </label>
-                    <input 
-                        type="text" 
-                        name="lead_time" 
-                        x-model="leadTime"
-                        placeholder="e.g. 7–10 Working Days or 2–3 Weeks"
-                        class="w-full px-3.5 py-2.5 text-xs rounded-xl bg-[#FAF8F5] dark:bg-[#241D1A] border border-[#E0D7CB] dark:border-[#3A2F29] text-espresso-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-[#6E645E] focus:outline-hidden focus:border-tan-500"
-                        :class="availability === 'on_demand' ? 'border-amber-400 dark:border-amber-500/50 bg-amber-50/20' : ''"
-                    >
-                </div>
-
-                <!-- Bestseller / New Arrival Flags -->
-                <div class="sm:col-span-3 flex flex-wrap items-center gap-6 pt-3">
-                    <label class="inline-flex items-center gap-2 cursor-pointer text-xs font-medium text-espresso-900 dark:text-white">
-                        <input type="checkbox" name="is_bestseller" value="1" {{ old('is_bestseller') ? 'checked' : '' }} class="rounded border-[#DFD6CB] text-tan-600 focus:ring-tan-500">
-                        <span>Bestseller / Flagship Collection</span>
-                    </label>
-
-                    <label class="inline-flex items-center gap-2 cursor-pointer text-xs font-medium text-espresso-900 dark:text-white">
-                        <input type="checkbox" name="is_new" value="1" {{ old('is_new') ? 'checked' : '' }} class="rounded border-[#DFD6CB] text-tan-600 focus:ring-tan-500">
-                        <span>Mark as New Arrival</span>
-                    </label>
+                <div id="profit_calc_result" class="font-mono font-bold text-sm text-emerald-800 dark:text-emerald-300 sm:text-right">
+                    Enter Selling & Cost Price
                 </div>
             </div>
         </div>
 
-        <!-- Section 3: Leather Tone Variations (Colors) -->
-        <div>
-            <div class="flex items-center justify-between pb-2 border-b border-[#F0EAE1] dark:border-[#2C2420]">
-                <div class="flex items-center gap-2">
-                    <span class="w-6 h-6 rounded-full bg-tan-100 dark:bg-[#2A1E18] text-tan-700 dark:text-gold-400 font-bold text-xs flex items-center justify-center">3</span>
+        <!-- ==============================================================
+             STEP 3: SHIPPING, WEIGHT & PAYMENT RULES (NEW FEATURE!)
+             ============================================================== -->
+        <div x-show="step === 3" x-transition:enter="transition ease-out duration-200" class="space-y-6">
+            <div class="flex items-center gap-2 pb-3 border-b border-[#F0EAE1] dark:border-[#2C2420]">
+                <span class="w-7 h-7 rounded-full bg-tan-100 dark:bg-[#2A1E18] text-tan-700 dark:text-gold-400 font-bold text-xs flex items-center justify-center">3</span>
+                <div>
                     <h2 class="font-cinzel text-base font-bold text-espresso-950 dark:text-white">
-                        Leather Tone & Swatch Variations
+                        Shipping, Courier Weight & Payment Controls
                     </h2>
-                </div>
-                <div class="flex items-center gap-3">
-                    <span class="text-[11px] font-semibold text-tan-600 dark:text-gold-400" x-text="colors.filter(c => c.active).length + ' selected'"></span>
-                    <button type="button" @click="toggleAll(true)" class="text-[11px] text-gray-500 hover:text-tan-600 underline">Select All</button>
-                    <button type="button" @click="toggleAll(false)" class="text-[11px] text-gray-500 hover:text-tan-600 underline">Clear</button>
+                    <p class="text-[11px] text-[#8F8379]">Restrict payment methods per product (e.g. No COD on luxury pieces) and custom delivery charges.</p>
                 </div>
             </div>
 
-            <!-- Active Swatch Tiles -->
-            <div class="mt-4 space-y-4">
-                <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
-                    <template x-for="(color, idx) in colors" :key="color.name + '-' + idx">
-                        <div 
-                            class="p-2.5 rounded-2xl border transition-all flex items-center justify-between gap-2.5 cursor-pointer select-none"
-                            :class="color.active 
-                                ? 'bg-[#FAF8F5] dark:bg-[#2A201C] border-tan-500 dark:border-gold-500 ring-1 ring-tan-500/30 shadow-xs' 
-                                : 'bg-gray-50/60 dark:bg-[#1E1816]/60 border-gray-200 dark:border-gray-800 opacity-60 hover:opacity-90'"
-                            @click="if ($event.target.closest('button')) return; color.active = !color.active"
-                        >
-                            <div class="flex items-center gap-2.5 flex-1 min-w-0">
-                                <input 
-                                    type="checkbox" 
-                                    x-model="color.active" 
-                                    @click.stop 
-                                    class="rounded border-gray-300 dark:border-gray-600 text-tan-600 focus:ring-tan-500 shrink-0 cursor-pointer"
-                                >
-                                <span 
-                                    class="w-6 h-6 rounded-full border border-black/20 dark:border-white/30 shrink-0 shadow-xs ring-1 ring-black/10" 
-                                    :style="{ backgroundColor: color.hex }"
-                                ></span>
-                                <span class="text-xs font-semibold text-espresso-950 dark:text-white truncate" x-text="color.name"></span>
-                            </div>
-                            
-                            <button 
-                                type="button" 
-                                @click.stop="removeColor(idx)" 
-                                class="text-gray-400 hover:text-rose-500 p-1 rounded-md shrink-0 transition-colors"
-                                title="Remove Swatch"
-                            >
-                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
-                            </button>
+            <!-- 1. Allowed Payment Methods Rule -->
+            <div class="space-y-3">
+                <label class="block text-xs font-semibold text-espresso-900 dark:text-white">
+                    Allowed Checkout Payment Methods <span class="text-rose-500">*</span>
+                </label>
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                    
+                    <!-- Option 1: All Methods -->
+                    <label 
+                        class="p-4 rounded-2xl border-2 cursor-pointer transition-all flex flex-col justify-between gap-3 relative overflow-hidden"
+                        :class="paymentMethodRule === 'all' ? 'border-tan-600 bg-[#FAF7F2] dark:bg-[#2A1F1A] ring-2 ring-tan-500/20' : 'border-[#E0D7CB] dark:border-[#3A2F29] hover:border-gray-400 bg-white dark:bg-[#201A18]'"
+                    >
+                        <div class="flex items-center justify-between">
+                            <span class="font-bold text-xs text-espresso-950 dark:text-white flex items-center gap-1.5">
+                                <i data-lucide="check-check" class="w-4 h-4 text-emerald-600"></i>
+                                All Payment Methods
+                            </span>
+                            <input type="radio" name="allowed_payment_methods" value="all" x-model="paymentMethodRule" class="text-tan-600 focus:ring-tan-500">
                         </div>
+                        <p class="text-[11px] text-gray-500 dark:text-gray-400 leading-relaxed">
+                            Shopper can choose between <strong>Cash on Delivery (COD)</strong>, Bank Transfer, JazzCash & EasyPaisa.
+                        </p>
+                        <span class="text-[10px] font-semibold text-emerald-700 dark:text-emerald-400 bg-emerald-100 dark:bg-emerald-950/40 px-2 py-0.5 rounded-md w-fit">
+                            Standard Recommended
+                        </span>
+                    </label>
+
+                    <!-- Option 2: Prepaid Only (Bank / Mobile Account) -->
+                    <label 
+                        class="p-4 rounded-2xl border-2 cursor-pointer transition-all flex flex-col justify-between gap-3 relative overflow-hidden"
+                        :class="paymentMethodRule === 'prepaid_only' ? 'border-amber-600 bg-amber-50/50 dark:bg-[#2A1F1A] ring-2 ring-amber-500/20' : 'border-[#E0D7CB] dark:border-[#3A2F29] hover:border-gray-400 bg-white dark:bg-[#201A18]'"
+                    >
+                        <div class="flex items-center justify-between">
+                            <span class="font-bold text-xs text-espresso-950 dark:text-white flex items-center gap-1.5">
+                                <i data-lucide="shield-alert" class="w-4 h-4 text-amber-600"></i>
+                                Bank Transfer Only (No COD)
+                            </span>
+                            <input type="radio" name="allowed_payment_methods" value="prepaid_only" x-model="paymentMethodRule" class="text-amber-600 focus:ring-amber-500">
+                        </div>
+                        <p class="text-[11px] text-gray-500 dark:text-gray-400 leading-relaxed">
+                            COD is disabled at checkout. Shopper <strong>must pay in advance</strong> via IBFT or JazzCash/EasyPaisa.
+                        </p>
+                        <span class="text-[10px] font-semibold text-amber-700 dark:text-amber-400 bg-amber-100 dark:bg-amber-950/40 px-2 py-0.5 rounded-md w-fit">
+                            For High-Value / Bespoke Items
+                        </span>
+                    </label>
+
+                    <!-- Option 3: COD Only -->
+                    <label 
+                        class="p-4 rounded-2xl border-2 cursor-pointer transition-all flex flex-col justify-between gap-3 relative overflow-hidden"
+                        :class="paymentMethodRule === 'cod_only' ? 'border-tan-600 bg-[#FAF7F2] dark:bg-[#2A1F1A] ring-2 ring-tan-500/20' : 'border-[#E0D7CB] dark:border-[#3A2F29] hover:border-gray-400 bg-white dark:bg-[#201A18]'"
+                    >
+                        <div class="flex items-center justify-between">
+                            <span class="font-bold text-xs text-espresso-950 dark:text-white flex items-center gap-1.5">
+                                <i data-lucide="banknote" class="w-4 h-4 text-tan-600"></i>
+                                Cash on Delivery (COD) Only
+                            </span>
+                            <input type="radio" name="allowed_payment_methods" value="cod_only" x-model="paymentMethodRule" class="text-tan-600 focus:ring-tan-500">
+                        </div>
+                        <p class="text-[11px] text-gray-500 dark:text-gray-400 leading-relaxed">
+                            Restricts payment specifically to COD at doorstep upon nationwide receipt.
+                        </p>
+                        <span class="text-[10px] font-semibold text-gray-600 dark:text-gray-400 bg-gray-100 dark:bg-[#2A221E] px-2 py-0.5 rounded-md w-fit">
+                            COD Exclusive
+                        </span>
+                    </label>
+
+                </div>
+            </div>
+
+            <!-- 2. Weight & Delivery Charges -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-3 border-t border-[#F0EAE1] dark:border-[#2C2420]">
+                <!-- Product Weight (KG) -->
+                <div>
+                    <label class="block text-xs font-semibold text-espresso-900 dark:text-white mb-1.5 flex items-center justify-between">
+                        <span>Approx. Weight (Kilograms)</span>
+                        <span class="text-[10px] text-gray-500">For Courier Rates</span>
+                    </label>
+                    <div class="relative">
+                        <input 
+                            type="number" 
+                            step="0.05" 
+                            name="weight_kg" 
+                            value="{{ old('weight_kg', '0.50') }}" 
+                            placeholder="e.g. 0.25 (wallet) or 1.80 (bag)"
+                            class="w-full pl-3.5 pr-12 py-2.5 text-xs rounded-xl bg-[#FAF8F5] dark:bg-[#241D1A] border border-[#E0D7CB] dark:border-[#3A2F29] text-espresso-900 dark:text-white placeholder:text-gray-400 focus:outline-hidden focus:border-tan-500 font-mono font-semibold"
+                        >
+                        <span class="absolute right-3.5 top-1/2 -translate-y-1/2 text-xs font-bold text-gray-400">KG</span>
+                    </div>
+                    <p class="text-[10px] text-gray-500 mt-1">Helps calculate heavy-parcel shipping manifests.</p>
+                </div>
+
+                <!-- Custom Delivery Charge -->
+                <div>
+                    <label class="block text-xs font-semibold text-espresso-900 dark:text-white mb-1.5 flex items-center justify-between">
+                        <span>Custom Delivery Charge (PKR)</span>
+                        <span class="text-[10px] text-tan-600 dark:text-gold-400">Optional Override</span>
+                    </label>
+                    <div class="relative">
+                        <input 
+                            type="number" 
+                            step="1" 
+                            name="custom_shipping_charge" 
+                            value="{{ old('custom_shipping_charge') }}" 
+                            placeholder="Leave empty for store default (Rs. 250)"
+                            class="w-full pl-10 pr-3.5 py-2.5 text-xs rounded-xl bg-[#FAF8F5] dark:bg-[#241D1A] border border-[#E0D7CB] dark:border-[#3A2F29] text-espresso-900 dark:text-white placeholder:text-gray-400 focus:outline-hidden focus:border-tan-500 font-mono"
+                        >
+                        <span class="absolute left-3.5 top-1/2 -translate-y-1/2 text-xs font-bold text-gray-400">Rs.</span>
+                    </div>
+                    <p class="text-[10px] text-gray-500 mt-1">If blank, store standard shipping policy applies automatically.</p>
+                </div>
+            </div>
+
+            <!-- 3. Guaranteed Free Shipping Toggle -->
+            <div class="p-4 rounded-2xl bg-[#FAF8F5] dark:bg-[#241D1A] border border-[#E0D7CB] dark:border-[#3A2F29] flex items-center justify-between">
+                <div>
+                    <div class="text-xs font-bold text-espresso-950 dark:text-white flex items-center gap-1.5">
+                        <i data-lucide="gift" class="w-4 h-4 text-tan-600"></i>
+                        <span>Complimentary Free Shipping Guarantee</span>
+                    </div>
+                    <p class="text-[11px] text-gray-500 dark:text-gray-400 mt-0.5">
+                        Always offer Free Delivery on this creation, regardless of shopping bag total.
+                    </p>
+                </div>
+                <label class="relative inline-flex items-center cursor-pointer">
+                    <input type="checkbox" name="is_free_shipping" value="1" x-model="isFreeShipping" class="sr-only peer">
+                    <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-emerald-600"></div>
+                </label>
+            </div>
+        </div>
+
+        <!-- ==============================================================
+             STEP 4: VISUALS, GALLERY & LEATHER TONES
+             ============================================================== -->
+        <div x-show="step === 4" x-transition:enter="transition ease-out duration-200" class="space-y-6">
+            <div class="flex items-center gap-2 pb-3 border-b border-[#F0EAE1] dark:border-[#2C2420]">
+                <span class="w-7 h-7 rounded-full bg-tan-100 dark:bg-[#2A1E18] text-tan-700 dark:text-gold-400 font-bold text-xs flex items-center justify-center">4</span>
+                <div>
+                    <h2 class="font-cinzel text-base font-bold text-espresso-950 dark:text-white">
+                        Atelier Imagery & Leather Tones
+                    </h2>
+                    <p class="text-[11px] text-[#8F8379]">Primary silhouette photo (auto-converted to WebP), gallery angles, and color swatches.</p>
+                </div>
+            </div>
+
+            <!-- Primary Image Upload -->
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-5 items-start">
+                <div class="sm:col-span-2 space-y-3">
+                    <label class="block text-xs font-semibold text-espresso-900 dark:text-white">
+                        Primary Silhouette Photo <span class="text-rose-500">*</span>
+                    </label>
+                    <div class="border-2 border-dashed border-[#DFD6CB] dark:border-[#3A2F29] rounded-2xl p-6 text-center hover:border-tan-500 transition-colors bg-[#FAF8F5] dark:bg-[#241D1A]">
+                        <input 
+                            type="file" 
+                            name="image_file" 
+                            id="primaryImageInput" 
+                            accept="image/*"
+                            @change="handlePrimaryUpload($event)"
+                            class="hidden"
+                        >
+                        <label for="primaryImageInput" class="cursor-pointer flex flex-col items-center justify-center gap-2">
+                            <div class="w-12 h-12 rounded-full bg-tan-100 dark:bg-[#2A1E18] text-tan-600 dark:text-gold-400 flex items-center justify-center">
+                                <i data-lucide="upload-cloud" class="w-6 h-6"></i>
+                            </div>
+                            <span class="text-xs font-semibold text-espresso-900 dark:text-white">
+                                Click to select from device or drag & drop
+                            </span>
+                            <span class="text-[10px] text-gray-500">
+                                JPG, PNG, WEBP, AVIF up to 5MB. Automatically compressed to high-speed WebP!
+                            </span>
+                        </label>
+                    </div>
+
+                    <!-- Fallback Path / URL input -->
+                    <div>
+                        <label class="block text-[11px] font-semibold text-gray-500 mb-1">
+                            Or Existing Relative Path
+                        </label>
+                        <input 
+                            type="text" 
+                            name="image" 
+                            value="{{ old('image') }}" 
+                            placeholder="/images/products/prod-reversible-belt.webp"
+                            class="w-full px-3.5 py-2 text-xs rounded-xl bg-[#FAF8F5] dark:bg-[#241D1A] border border-[#E0D7CB] dark:border-[#3A2F29] text-espresso-900 dark:text-white font-mono"
+                        >
+                    </div>
+                </div>
+
+                <!-- Live Preview Card -->
+                <div>
+                    <label class="block text-xs font-semibold text-espresso-900 dark:text-white mb-2">
+                        Live Image Preview
+                    </label>
+                    <div class="aspect-square rounded-2xl overflow-hidden bg-gray-100 dark:bg-[#241D1A] border border-[#DFD6CB] dark:border-[#3A2F29] flex items-center justify-center relative shadow-xs">
+                        <template x-if="primaryPreview">
+                            <img :src="primaryPreview" alt="Preview" class="w-full h-full object-cover">
+                        </template>
+                        <template x-if="!primaryPreview">
+                            <div class="text-center p-4 text-gray-400">
+                                <i data-lucide="image" class="w-8 h-8 mx-auto mb-1 text-gray-300"></i>
+                                <span class="text-[11px]">Upload to preview</span>
+                            </div>
+                        </template>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Additional Gallery Angles -->
+            <div class="pt-4 border-t border-[#F0EAE1] dark:border-[#2C2420] space-y-3">
+                <label class="block text-xs font-semibold text-espresso-900 dark:text-white">
+                    Additional Gallery Angle Images (Multi-upload)
+                </label>
+                <div class="border-2 border-dashed border-[#DFD6CB] dark:border-[#3A2F29] rounded-2xl p-5 text-center hover:border-tan-500 transition-colors bg-[#FAF8F5] dark:bg-[#241D1A]">
+                    <input 
+                        type="file" 
+                        name="gallery_files[]" 
+                        id="galleryImagesInput" 
+                        accept="image/*" 
+                        multiple
+                        class="hidden"
+                    >
+                    <label for="galleryImagesInput" class="cursor-pointer flex flex-col items-center justify-center gap-1.5">
+                        <i data-lucide="images" class="w-6 h-6 text-tan-600 dark:text-gold-400"></i>
+                        <span class="text-xs font-semibold text-espresso-900 dark:text-white">
+                            Select multiple gallery photos (Buckle closeups, interior, packing)
+                        </span>
+                        <span class="text-[10px] text-gray-500">Hold Ctrl or Shift to select multiple photos</span>
+                    </label>
+                </div>
+            </div>
+
+            <!-- Handcrafted Leather Colorway Swatches -->
+            <div class="pt-4 border-t border-[#F0EAE1] dark:border-[#2C2420] space-y-4">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <h3 class="text-xs font-bold text-espresso-950 dark:text-white">
+                            Available Leather Tone Swatches
+                        </h3>
+                        <p class="text-[11px] text-[#8F8379]">Select the color tones available for this handcrafted creation.</p>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <button type="button" @click="toggleAll(true)" class="text-[10px] text-tan-600 hover:underline font-semibold cursor-pointer">Select All</button>
+                        <span class="text-gray-300">|</span>
+                        <button type="button" @click="toggleAll(false)" class="text-[10px] text-gray-500 hover:underline font-semibold cursor-pointer">Clear All</button>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-2 sm:grid-cols-3 gap-2.5">
+                    <template x-for="(color, idx) in colors" :key="idx">
+                        <label 
+                            class="p-2.5 rounded-xl border flex items-center justify-between gap-2 cursor-pointer transition-all select-none"
+                            :class="color.active ? 'border-tan-500 bg-[#FAF7F2] dark:bg-[#2A1F1A] shadow-2xs' : 'border-[#E0D7CB] dark:border-[#3A2F29] bg-white dark:bg-[#201A18] opacity-75'"
+                        >
+                            <div class="flex items-center gap-2 min-w-0">
+                                <span class="w-4 h-4 rounded-full border border-black/20 shrink-0 shadow-2xs" :style="'background-color: ' + color.hex"></span>
+                                <span class="text-xs font-medium text-espresso-950 dark:text-white truncate" x-text="color.name"></span>
+                            </div>
+                            <input type="checkbox" x-model="color.active" class="rounded border-[#DFD6CB] text-tan-600 focus:ring-tan-500">
+                        </label>
                     </template>
                 </div>
 
-                <!-- Add Custom Swatch Input Row -->
-                <div class="p-3.5 rounded-2xl bg-[#FAF8F5] dark:bg-[#201A18] border border-[#E0D7CB] dark:border-[#342823] space-y-2">
-                    <div class="flex flex-wrap items-center gap-3">
-                        <div class="flex items-center gap-2 flex-1 min-w-[220px]">
-                            <label class="relative cursor-pointer shrink-0" title="Click to pick custom color">
-                                <input type="color" x-model="customColorHex" class="w-9 h-9 rounded-xl cursor-pointer border border-gray-300 dark:border-gray-700 p-0.5 bg-transparent shrink-0">
-                            </label>
-                            <input 
-                                type="text" 
-                                x-model="customColorName" 
-                                placeholder="Enter leather tone name (e.g. Havana Chestnut, Navy Blue)" 
-                                class="px-3.5 py-2 text-xs rounded-xl bg-white dark:bg-[#2A201C] border border-[#DFD6CB] dark:border-[#42322C] text-espresso-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-[#6E645E] focus:outline-hidden focus:border-tan-500 w-full"
-                                @keydown.enter.prevent="addCustomColor()"
-                            >
-                        </div>
-
-                        <button 
-                            type="button" 
-                            @click="addCustomColor()" 
-                            class="px-4 py-2 text-xs font-semibold rounded-xl bg-tan-600 hover:bg-tan-700 active:scale-95 text-white transition-all flex items-center gap-1.5 shadow-2xs shrink-0"
-                        >
-                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
-                            <span>Add Swatch</span>
-                        </button>
-                    </div>
-
-                    <!-- Instant Feedback Message -->
-                    <div x-show="swatchFeedback" x-transition class="flex items-center gap-1.5 text-xs text-emerald-600 dark:text-emerald-400 font-medium pt-1">
-                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
-                        <span x-text="swatchFeedback"></span>
-                    </div>
+                <!-- Add Custom Swatch -->
+                <div class="p-3 rounded-xl bg-[#FAF8F5] dark:bg-[#241D1A] border border-[#E0D7CB] dark:border-[#3A2F29] flex flex-wrap items-center gap-2.5">
+                    <input type="color" x-model="customColorHex" class="w-8 h-8 rounded-lg cursor-pointer border-0 bg-transparent">
+                    <input 
+                        type="text" 
+                        x-model="customColorName" 
+                        placeholder="Custom Tone Name (e.g. Vintage Bourbon)" 
+                        class="flex-1 min-w-[200px] px-3 py-1.5 text-xs rounded-lg bg-white dark:bg-[#1E1815] border border-[#E0D7CB] dark:border-[#3A2F29] text-espresso-900 dark:text-white"
+                    >
+                    <button 
+                        type="button" 
+                        @click="addCustomColor()" 
+                        class="px-3.5 py-1.5 rounded-lg bg-tan-600 hover:bg-tan-700 text-white text-xs font-semibold transition-colors cursor-pointer"
+                    >
+                        + Add Swatch
+                    </button>
+                    <span class="text-emerald-600 text-xs font-medium" x-text="swatchFeedback"></span>
                 </div>
             </div>
         </div>
 
-        <!-- Section 4: Specifications & Dimensions -->
-        <div>
-            <div class="flex items-center gap-2 pb-2 border-b border-[#F0EAE1] dark:border-[#2C2420]">
-                <span class="w-6 h-6 rounded-full bg-tan-100 dark:bg-[#2A1E18] text-tan-700 dark:text-gold-400 font-bold text-xs flex items-center justify-center">4</span>
-                <h2 class="font-cinzel text-base font-bold text-espresso-950 dark:text-white">
-                    Technical Specifications & Sizing
-                </h2>
-            </div>
-
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-4">
-                <!-- Leather Material -->
+        <!-- ==============================================================
+             STEP 5: STORY, SPECIFICATIONS & SEO
+             ============================================================== -->
+        <div x-show="step === 5" x-transition:enter="transition ease-out duration-200" class="space-y-6">
+            <div class="flex items-center gap-2 pb-3 border-b border-[#F0EAE1] dark:border-[#2C2420]">
+                <span class="w-7 h-7 rounded-full bg-tan-100 dark:bg-[#2A1E18] text-tan-700 dark:text-gold-400 font-bold text-xs flex items-center justify-center">5</span>
                 <div>
-                    <label class="block text-xs font-semibold text-espresso-900 dark:text-white mb-1.5">
-                        Material Grade
-                    </label>
-                    <input 
-                        type="text" 
-                        name="spec_material" 
-                        value="{{ old('spec_material') }}" 
-                        placeholder="e.g. 100% Full-Grain Vegetable Tanned Calfskin"
-                        class="w-full px-3.5 py-2.5 text-xs rounded-xl bg-[#FAF8F5] dark:bg-[#241D1A] border border-[#E0D7CB] dark:border-[#3A2F29] text-espresso-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-[#6E645E] focus:outline-hidden focus:border-tan-500"
-                    >
-                </div>
-
-                <!-- Hardware -->
-                <div>
-                    <label class="block text-xs font-semibold text-espresso-900 dark:text-white mb-1.5">
-                        Buckle / Hardware
-                    </label>
-                    <input 
-                        type="text" 
-                        name="spec_hardware" 
-                        value="{{ old('spec_hardware') }}" 
-                        placeholder="e.g. Solid Antique Brass Finish (360° Reversible Swivel)"
-                        class="w-full px-3.5 py-2.5 text-xs rounded-xl bg-[#FAF8F5] dark:bg-[#241D1A] border border-[#E0D7CB] dark:border-[#3A2F29] text-espresso-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-[#6E645E] focus:outline-hidden focus:border-tan-500"
-                    >
-                </div>
-
-                <!-- Width / Dimensions -->
-                <div>
-                    <label class="block text-xs font-semibold text-espresso-900 dark:text-white mb-1.5">
-                        Width & Dimensions
-                    </label>
-                    <input 
-                        type="text" 
-                        name="spec_dimensions" 
-                        value="{{ old('spec_dimensions') }}" 
-                        placeholder="e.g. 34 mm Width • 3.8 mm Thickness"
-                        class="w-full px-3.5 py-2.5 text-xs rounded-xl bg-[#FAF8F5] dark:bg-[#241D1A] border border-[#E0D7CB] dark:border-[#3A2F29] text-espresso-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-[#6E645E] focus:outline-hidden focus:border-tan-500"
-                    >
-                </div>
-
-                <!-- Available Sizes -->
-                <div>
-                    <label class="block text-xs font-semibold text-espresso-900 dark:text-white mb-1.5">
-                        Available Sizes (Belts / Tailored)
-                    </label>
-                    <input 
-                        type="text" 
-                        name="spec_sizes" 
-                        value="{{ old('spec_sizes') }}" 
-                        placeholder="e.g. 30, 32, 34, 36, 38, 40, 42 inches"
-                        class="w-full px-3.5 py-2.5 text-xs rounded-xl bg-[#FAF8F5] dark:bg-[#241D1A] border border-[#E0D7CB] dark:border-[#3A2F29] text-espresso-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-[#6E645E] focus:outline-hidden focus:border-tan-500"
-                    >
-                </div>
-
-                <!-- Care Guide -->
-                <div class="sm:col-span-2">
-                    <label class="block text-xs font-semibold text-espresso-900 dark:text-white mb-1.5">
-                        Leather Care & Preservation Note
-                    </label>
-                    <input 
-                        type="text" 
-                        name="spec_care" 
-                        value="{{ old('spec_care') }}" 
-                        placeholder="e.g. Wipe with soft cotton cloth; treat with neutral organic leather balm periodically"
-                        class="w-full px-3.5 py-2.5 text-xs rounded-xl bg-[#FAF8F5] dark:bg-[#241D1A] border border-[#E0D7CB] dark:border-[#3A2F29] text-espresso-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-[#6E645E] focus:outline-hidden focus:border-tan-500"
-                    >
-                </div>
-
-                <!-- Origin -->
-                <div>
-                    <label class="block text-xs font-semibold text-espresso-900 dark:text-white mb-1.5">
-                        Craft Origin (Optional)
-                    </label>
-                    <input 
-                        type="text" 
-                        name="spec_origin" 
-                        value="{{ old('spec_origin') }}" 
-                        placeholder="e.g. Handcrafted in Pakistan (Lahore Workshop)"
-                        class="w-full px-3.5 py-2.5 text-xs rounded-xl bg-[#FAF8F5] dark:bg-[#241D1A] border border-[#E0D7CB] dark:border-[#3A2F29] text-espresso-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-[#6E645E] focus:outline-hidden focus:border-tan-500"
-                    >
-                </div>
-
-                <!-- Packaging -->
-                <div>
-                    <label class="block text-xs font-semibold text-espresso-900 dark:text-white mb-1.5">
-                        Packaging & Presentation (Optional)
-                    </label>
-                    <input 
-                        type="text" 
-                        name="spec_packaging" 
-                        value="{{ old('spec_packaging') }}" 
-                        placeholder="e.g. By Zunash Magnetic Hard Box & Dust Pouch"
-                        class="w-full px-3.5 py-2.5 text-xs rounded-xl bg-[#FAF8F5] dark:bg-[#241D1A] border border-[#E0D7CB] dark:border-[#3A2F29] text-espresso-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-[#6E645E] focus:outline-hidden focus:border-tan-500"
-                    >
-                </div>
-            </div>
-        </div>
-
-        <!-- Section 5: Artisanal Highlights / Features -->
-        <div>
-            <div class="flex items-center justify-between pb-2 border-b border-[#F0EAE1] dark:border-[#2C2420]">
-                <div class="flex items-center gap-2">
-                    <span class="w-6 h-6 rounded-full bg-tan-100 dark:bg-[#2A1E18] text-tan-700 dark:text-gold-400 font-bold text-xs flex items-center justify-center">5</span>
                     <h2 class="font-cinzel text-base font-bold text-espresso-950 dark:text-white">
-                        Artisanal Highlights (Bullet Points)
+                        Editorial Story, Specifications & SEO
                     </h2>
-                </div>
-                <span class="text-[10px] text-tan-600 dark:text-gold-400 font-semibold flex items-center gap-1">
-                    <i data-lucide="sparkles" class="w-3 h-3"></i> Rich Editor
-                </span>
-            </div>
-
-            <div class="mt-4">
-                <textarea 
-                    name="features_raw" 
-                    id="prod_features_raw"
-                    class="hidden"
-                >{{ old('features_raw') }}</textarea>
-                <div class="quill-wrapper rounded-2xl overflow-hidden border border-[#E0D7CB] dark:border-[#3A2F29] bg-[#FAF8F5] dark:bg-[#241D1A]">
-                    <div 
-                        data-rich-editor="highlights" 
-                        data-target="#prod_features_raw" 
-                        data-placeholder="Click the bullet icon above or type bullet points (e.g. 100% full-grain calfskin, solid antique brass hardware...)"
-                        style="min-height: 110px;"
-                    >{!! old('features_raw') !!}</div>
+                    <p class="text-[11px] text-[#8F8379]">Punchy tagline, full story, material specs, and Google search snippet.</p>
                 </div>
             </div>
-        </div>
 
-        <!-- Section 6: Media, Atelier Gallery & Narrative -->
-        <div>
-            <div class="flex items-center gap-2 pb-2 border-b border-[#F0EAE1] dark:border-[#2C2420]">
-                <span class="w-6 h-6 rounded-full bg-tan-100 dark:bg-[#2A1E18] text-tan-700 dark:text-gold-400 font-bold text-xs flex items-center justify-center">6</span>
-                <h2 class="font-cinzel text-base font-bold text-espresso-950 dark:text-white">
-                    Imagery, Gallery & Atelier Craft Story
-                </h2>
-            </div>
-
-            <div class="space-y-4 mt-4">
-                <!-- Primary Image -->
+            <div class="space-y-4">
+                <!-- Short Description -->
                 <div>
                     <label class="block text-xs font-semibold text-espresso-900 dark:text-white mb-1.5">
-                        Primary Creation Image <span class="text-rose-500">*</span>
-                    </label>
-
-                    <div class="p-3.5 rounded-2xl bg-[#FAF8F5] dark:bg-[#201815] border border-dashed border-[#DFD6CB] dark:border-[#382D27] flex items-center gap-3.5">
-                        <div class="w-16 h-16 rounded-xl overflow-hidden bg-[#F2EDE5] dark:bg-[#2A201C] border border-[#E0D7CB] dark:border-[#382D27] shrink-0 flex items-center justify-center relative">
-                            <img id="prod_preview" src="{{ old('image') }}" alt="Preview" class="w-full h-full object-cover {{ old('image') ? '' : 'hidden' }}">
-                            <div id="prod_preview_placeholder" class="{{ old('image') ? 'hidden' : 'flex' }} flex-col items-center justify-center text-gray-400 dark:text-gray-500">
-                                <i data-lucide="image" class="w-6 h-6"></i>
-                            </div>
-                        </div>
-
-                        <div class="flex-1 min-w-0">
-                            <label class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-espresso-900 hover:bg-tan-600 text-white font-semibold text-xs cursor-pointer transition-colors shadow-2xs">
-                                <i data-lucide="upload-cloud" class="w-3.5 h-3.5 text-gold-400"></i>
-                                <span>Upload from Computer</span>
-                                <input type="file" name="image_file" accept="image/*" class="hidden" onchange="previewProductImage(this)">
-                            </label>
-                            <p class="text-[10px] text-[#8F8379] mt-1 truncate" id="prod_file_name">
-                                PNG, JPG, WEBP, AVIF up to 5MB
-                            </p>
-                        </div>
-                    </div>
-
-                    <div class="mt-2.5">
-                        <label class="block text-[10px] text-gray-400 uppercase tracking-wider mb-0.5">Or use Image URL / Existing Asset Path</label>
-                        <input 
-                            type="text" 
-                            id="prod_image_url"
-                            name="image" 
-                            value="{{ old('image') }}" 
-                            oninput="previewProductUrl(this.value)"
-                            placeholder="e.g. /images/products/product-name.jpg or image URL"
-                            class="w-full px-3.5 py-2 text-xs rounded-xl bg-[#FAF8F5] dark:bg-[#241D1A] border border-[#E0D7CB] dark:border-[#3A2F29] text-espresso-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-[#6E645E] focus:outline-hidden focus:border-tan-500 font-mono"
-                        >
-                    </div>
-                </div>
-
-                <!-- Additional Atelier Gallery (Multi-upload & URLs) -->
-                <div>
-                    <label class="block text-xs font-semibold text-espresso-900 dark:text-white mb-1.5 flex items-center justify-between">
-                        <span>Additional Atelier Gallery (Multiple Images)</span>
-                        <span class="text-[11px] text-[#8F8379]">Upload photos or add image paths</span>
-                    </label>
-
-                    <!-- Multi-Image Upload Box -->
-                    <div class="p-3.5 rounded-2xl bg-[#FAF8F5] dark:bg-[#201815] border border-dashed border-[#DFD6CB] dark:border-[#382D27]">
-                        <div class="flex flex-wrap items-center gap-3">
-                            <label class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-espresso-900 hover:bg-tan-600 text-white font-semibold text-xs cursor-pointer transition-colors shadow-2xs">
-                                <i data-lucide="upload-cloud" class="w-3.5 h-3.5 text-gold-400"></i>
-                                <span>Upload Images from Computer</span>
-                                <input type="file" name="gallery_files[]" multiple accept="image/*" class="hidden" onchange="previewGalleryFiles(this)">
-                            </label>
-                            <span class="text-[11px] text-[#8F8379]" id="gallery_upload_status">
-                                Select one or multiple photos (PNG, JPG, WEBP, AVIF up to 5MB each)
-                            </span>
-                        </div>
-
-                        <!-- Live Selected Files Preview Grid -->
-                        <div id="gallery_preview_grid" class="hidden mt-3 pt-3 border-t border-[#EAE3D9] dark:border-[#2E2420] grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-2.5">
-                            <!-- Injected dynamically via previewGalleryFiles -->
-                        </div>
-                    </div>
-
-                    <div class="mt-2.5">
-                        <label class="block text-[10px] text-gray-400 uppercase tracking-wider mb-0.5 flex items-center justify-between">
-                            <span>Or paste Additional Image URLs / Paths (One per line)</span>
-                            <span class="text-[10px] text-[#8F8379]">Optional</span>
-                        </label>
-                        <textarea 
-                            id="gallery_raw_input"
-                            name="gallery_raw" 
-                            rows="2" 
-                            placeholder="e.g. /images/products/detail-side.jpg or https://example.com/angle.jpg"
-                            class="w-full px-3.5 py-2 text-xs rounded-xl bg-[#FAF8F5] dark:bg-[#241D1A] border border-[#E0D7CB] dark:border-[#3A2F29] text-espresso-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-[#6E645E] focus:outline-hidden focus:border-tan-500 font-mono"
-                        >{{ old('gallery_raw') }}</textarea>
-                    </div>
-                </div>
-
-                <!-- Short Summary -->
-                <div>
-                    <label class="block text-xs font-semibold text-espresso-900 dark:text-white mb-1.5 flex items-center justify-between">
-                        <span>Short Summary (Catalog Cards & Meta) <span class="text-rose-500">*</span></span>
-                        <span class="text-[10px] text-tan-600 dark:text-gold-400 font-semibold flex items-center gap-1">
-                            <i data-lucide="sparkles" class="w-3 h-3"></i> Rich Editor
-                        </span>
+                        Short Tagline Description <span class="text-rose-500">*</span>
                     </label>
                     <textarea 
                         name="short_description" 
-                        id="prod_short_desc"
-                        class="hidden"
+                        rows="2" 
+                        required 
+                        placeholder="e.g. Handcrafted full-grain calfskin leather belt with an antique brass 360° swivel buckle."
+                        class="w-full px-3.5 py-2.5 text-xs rounded-xl bg-[#FAF8F5] dark:bg-[#241D1A] border border-[#E0D7CB] dark:border-[#3A2F29] text-espresso-900 dark:text-white placeholder:text-gray-400 focus:outline-hidden focus:border-tan-500"
                     >{{ old('short_description') }}</textarea>
-                    <div class="quill-wrapper rounded-2xl overflow-hidden border border-[#E0D7CB] dark:border-[#3A2F29] bg-[#FAF8F5] dark:bg-[#241D1A]">
-                        <div 
-                            data-rich-editor="compact" 
-                            data-target="#prod_short_desc" 
-                            data-placeholder="e.g. Handcrafted in supple vegetable-tanned full-grain leather with a versatile dual-tone finish..."
-                            style="min-height: 90px;"
-                        >{!! old('short_description') !!}</div>
-                    </div>
                 </div>
 
-                <!-- Full Craft Story -->
+                <!-- Full Editorial Story -->
                 <div>
-                    <label class="block text-xs font-semibold text-espresso-900 dark:text-white mb-1.5 flex items-center justify-between">
-                        <span>Full Atelier Craft Narrative & Heritage</span>
-                        <span class="text-[10px] text-tan-600 dark:text-gold-400 font-semibold flex items-center gap-1">
-                            <i data-lucide="sparkles" class="w-3 h-3"></i> Rich Editor
-                        </span>
+                    <label class="block text-xs font-semibold text-espresso-900 dark:text-white mb-1.5">
+                        Full Atelier Story & Craft Description
                     </label>
                     <textarea 
                         name="description" 
-                        id="prod_desc"
-                        class="hidden"
+                        rows="4" 
+                        placeholder="Detailed narrative about the hide selection, drum-dyeing, hand-waxed saddle stitching, and heirloom longevity..."
+                        class="w-full px-3.5 py-2.5 text-xs rounded-xl bg-[#FAF8F5] dark:bg-[#241D1A] border border-[#E0D7CB] dark:border-[#3A2F29] text-espresso-900 dark:text-white placeholder:text-gray-400 focus:outline-hidden focus:border-tan-500"
                     >{{ old('description') }}</textarea>
-                    <div class="quill-wrapper rounded-2xl overflow-hidden border border-[#E0D7CB] dark:border-[#3A2F29] bg-[#FAF8F5] dark:bg-[#241D1A]">
-                        <div 
-                            data-rich-editor="full" 
-                            data-target="#prod_desc" 
-                            data-placeholder="e.g. Detailed narrative describing hide selection, vegetable tanning, artisan edge burnishing, and heirloom durability..."
-                            style="min-height: 140px;"
-                        >{!! old('description') !!}</div>
+                </div>
+
+                <!-- Specifications Grid -->
+                <div class="pt-3 border-t border-[#F0EAE1] dark:border-[#2C2420]">
+                    <h3 class="text-xs font-bold text-espresso-950 dark:text-white mb-3">
+                        Technical Specifications
+                    </h3>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+                        <div>
+                            <label class="block text-[11px] font-semibold text-gray-600 dark:text-gray-400 mb-1">Leather / Material</label>
+                            <input type="text" name="spec_material" value="{{ old('spec_material', '100% Full-Grain Vegetable-Tanned Calfskin') }}" class="w-full px-3 py-2 text-xs rounded-xl bg-[#FAF8F5] dark:bg-[#241D1A] border border-[#E0D7CB] dark:border-[#3A2F29] text-espresso-900 dark:text-white">
+                        </div>
+
+                        <div>
+                            <label class="block text-[11px] font-semibold text-gray-600 dark:text-gray-400 mb-1">Hardware / Buckle</label>
+                            <input type="text" name="spec_hardware" value="{{ old('spec_hardware', 'Solid Antique Brass Hardware') }}" class="w-full px-3 py-2 text-xs rounded-xl bg-[#FAF8F5] dark:bg-[#241D1A] border border-[#E0D7CB] dark:border-[#3A2F29] text-espresso-900 dark:text-white">
+                        </div>
+
+                        <div>
+                            <label class="block text-[11px] font-semibold text-gray-600 dark:text-gray-400 mb-1">Dimensions & Width</label>
+                            <input type="text" name="spec_dimensions" value="{{ old('spec_dimensions') }}" placeholder="e.g. 35mm (1.38 in) width" class="w-full px-3 py-2 text-xs rounded-xl bg-[#FAF8F5] dark:bg-[#241D1A] border border-[#E0D7CB] dark:border-[#3A2F29] text-espresso-900 dark:text-white">
+                        </div>
+
+                        <div>
+                            <label class="block text-[11px] font-semibold text-gray-600 dark:text-gray-400 mb-1">Lining & Seams</label>
+                            <input type="text" name="spec_care" value="{{ old('spec_care', 'Hand-waxed bonded nylon thread') }}" class="w-full px-3 py-2 text-xs rounded-xl bg-[#FAF8F5] dark:bg-[#241D1A] border border-[#E0D7CB] dark:border-[#3A2F29] text-espresso-900 dark:text-white">
+                        </div>
+
+                        <div>
+                            <label class="block text-[11px] font-semibold text-gray-600 dark:text-gray-400 mb-1">Atelier Origin</label>
+                            <input type="text" name="spec_origin" value="{{ old('spec_origin', 'Handcrafted in Lahore, Pakistan') }}" class="w-full px-3 py-2 text-xs rounded-xl bg-[#FAF8F5] dark:bg-[#241D1A] border border-[#E0D7CB] dark:border-[#3A2F29] text-espresso-900 dark:text-white">
+                        </div>
+
+                        <div>
+                            <label class="block text-[11px] font-semibold text-gray-600 dark:text-gray-400 mb-1">Packaging Box</label>
+                            <input type="text" name="spec_packaging" value="{{ old('spec_packaging', 'Rigid Foil-Embossed Presentation Box') }}" class="w-full px-3 py-2 text-xs rounded-xl bg-[#FAF8F5] dark:bg-[#241D1A] border border-[#E0D7CB] dark:border-[#3A2F29] text-espresso-900 dark:text-white">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Google SEO Snippet -->
+                <div class="pt-3 border-t border-[#F0EAE1] dark:border-[#2C2420]">
+                    <h3 class="text-xs font-bold text-espresso-950 dark:text-white mb-2">
+                        Google Search Engine Preview (SEO)
+                    </h3>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <div>
+                            <label class="block text-[11px] font-semibold text-gray-600 dark:text-gray-400 mb-1">Meta Title</label>
+                            <input type="text" name="meta_title" value="{{ old('meta_title') }}" placeholder="By Zunash | Handcrafted Leather..." class="w-full px-3 py-2 text-xs rounded-xl bg-[#FAF8F5] dark:bg-[#241D1A] border border-[#E0D7CB] dark:border-[#3A2F29] text-espresso-900 dark:text-white">
+                        </div>
+                        <div>
+                            <label class="block text-[11px] font-semibold text-gray-600 dark:text-gray-400 mb-1">Meta Description</label>
+                            <input type="text" name="meta_description" value="{{ old('meta_description') }}" placeholder="Experience heirloom Pakistani leathercraft..." class="w-full px-3 py-2 text-xs rounded-xl bg-[#FAF8F5] dark:bg-[#241D1A] border border-[#E0D7CB] dark:border-[#3A2F29] text-espresso-900 dark:text-white">
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- Submit Button Bar -->
-        <div class="pt-4 border-t border-[#F0EAE1] dark:border-[#2C2420] flex flex-col-reverse sm:flex-row sm:items-center justify-end gap-2.5">
-            <a 
-                href="{{ route('admin.products.index') }}" 
-                class="w-full sm:w-auto px-5 py-2.5 rounded-xl border border-[#DFD6CB] text-xs font-semibold text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors text-center"
-            >
-                Cancel
-            </a>
-
+        <!-- ==============================================================
+             BOTTOM STEPPER CONTROLS & SUBMIT BUTTONS
+             ============================================================== -->
+        <div class="pt-6 border-t border-[#F0EAE1] dark:border-[#2C2420] flex items-center justify-between gap-4 mt-8">
+            <!-- Previous Button -->
             <button 
-                type="submit" 
-                class="w-full sm:w-auto px-6 py-2.5 rounded-xl bg-espresso-900 hover:bg-tan-600 text-white font-semibold text-xs shadow-md transition-all active:scale-95 flex items-center justify-center gap-2 border border-gold-400/20"
+                type="button" 
+                @click="prevStep()" 
+                x-show="step > 1"
+                class="px-4 py-2.5 rounded-xl border border-[#DFD6CB] dark:border-[#3A2F29] text-xs font-bold text-espresso-900 dark:text-white hover:bg-gray-50 dark:hover:bg-[#201A18] transition-all flex items-center gap-1.5 cursor-pointer"
             >
-                <i data-lucide="check" class="w-4 h-4 text-gold-400"></i>
-                <span>Publish Product to Atelier Catalogue</span>
+                <i data-lucide="arrow-left" class="w-4 h-4"></i>
+                <span>Previous Step</span>
             </button>
+            <div x-show="step === 1"></div>
+
+            <div class="flex items-center gap-3">
+                <!-- Next Button -->
+                <button 
+                    type="button" 
+                    @click="nextStep()" 
+                    x-show="step < totalSteps"
+                    class="px-5 py-2.5 rounded-xl bg-espresso-900 dark:bg-white text-white dark:text-espresso-950 text-xs font-bold hover:bg-black dark:hover:bg-gray-100 transition-all flex items-center gap-1.5 cursor-pointer shadow-md"
+                >
+                    <span>Next: Continue</span>
+                    <i data-lucide="arrow-right" class="w-4 h-4"></i>
+                </button>
+
+                <!-- Final Save & Publish Button -->
+                <button 
+                    type="submit" 
+                    x-show="step === totalSteps"
+                    class="px-6 py-2.5 rounded-xl bg-tan-600 hover:bg-tan-700 text-white text-xs font-bold shadow-lg hover:shadow-xl transition-all flex items-center gap-2 cursor-pointer"
+                >
+                    <i data-lucide="sparkles" class="w-4 h-4 text-gold-300"></i>
+                    <span>Save & Publish to Store</span>
+                </button>
+            </div>
         </div>
 
     </form>
-
 </div>
 
-@push('scripts')
+<!-- Real-time profit calculation helper -->
 <script>
-function previewProductImage(input) {
-    if (input.files && input.files[0]) {
-        const file = input.files[0];
-        const nameEl = document.getElementById('prod_file_name');
-        if (nameEl) nameEl.textContent = file.name + ' (' + Math.round(file.size / 1024) + ' KB)';
-        const reader = new FileReader();
-        reader.onload = function(e) {
-            const img = document.getElementById('prod_preview');
-            const placeholder = document.getElementById('prod_preview_placeholder');
-            if (img) {
-                img.src = e.target.result;
-                img.classList.remove('hidden');
-            }
-            if (placeholder) {
-                placeholder.classList.add('hidden');
-            }
-        };
-        reader.readAsDataURL(file);
-    }
-}
-function previewProductUrl(url) {
-    const img = document.getElementById('prod_preview');
-    const placeholder = document.getElementById('prod_preview_placeholder');
-    if (url && url.trim().length > 0) {
-        if (img) {
-            img.src = url;
-            img.classList.remove('hidden');
-        }
-        if (placeholder) {
-            placeholder.classList.add('hidden');
-        }
-    } else {
-        if (img) {
-            img.src = '';
-            img.classList.add('hidden');
-        }
-        if (placeholder) {
-            placeholder.classList.remove('hidden');
-        }
-    }
-}
-function previewGalleryFiles(input) {
-    const grid = document.getElementById('gallery_preview_grid');
-    const status = document.getElementById('gallery_upload_status');
-    if (!grid) return;
-
-    if (!input.files || input.files.length === 0) {
-        grid.classList.add('hidden');
-        grid.innerHTML = '';
-        if (status) status.innerText = 'Select one or multiple photos (PNG, JPG, WEBP, AVIF up to 5MB each)';
-        return;
-    }
-
-    grid.innerHTML = '';
-    grid.classList.remove('hidden');
-    if (status) {
-        status.innerText = `${input.files.length} photo${input.files.length > 1 ? 's' : ''} ready to upload`;
-    }
-
-    Array.from(input.files).forEach((file) => {
-        const reader = new FileReader();
-        reader.onload = function(e) {
-            const card = document.createElement('div');
-            card.className = 'relative rounded-xl overflow-hidden bg-black/10 dark:bg-black/40 border border-[#E0D7CB] dark:border-[#3A2F29] aspect-square flex items-center justify-center';
-            card.innerHTML = `
-                <img src="${e.target.result}" alt="${file.name}" class="w-full h-full object-cover">
-                <span class="absolute bottom-1 right-1 bg-black/75 text-[9px] text-white px-1 py-0.5 rounded font-mono">
-                    ${Math.round(file.size / 1024)}KB
-                </span>
-            `;
-            grid.appendChild(card);
-        };
-        reader.readAsDataURL(file);
-    });
-}
 function calculateProfitMargin() {
     const retailInput = document.getElementById('prod_retail_price');
     const costInput = document.getElementById('prod_cost_price');
-    const resultSpan = document.getElementById('profit_calc_result');
-    if (!retailInput || !costInput || !resultSpan) return;
+    const resultEl = document.getElementById('profit_calc_result');
+    if (!retailInput || !costInput || !resultEl) return;
 
     const retail = parseFloat(retailInput.value) || 0;
     const cost = parseFloat(costInput.value) || 0;
 
     if (retail <= 0) {
-        resultSpan.innerHTML = '<span class="text-gray-400">Enter Selling & Cost Price</span>';
+        resultEl.innerHTML = 'Enter Selling Price';
+        resultEl.className = 'font-mono font-bold text-xs text-gray-500';
         return;
     }
 
     const profit = retail - cost;
     const margin = Math.round((profit / retail) * 100);
 
-    if (profit < 0) {
-        resultSpan.innerHTML = `<span class="text-rose-500 font-bold">LOSS: PKR ${Math.abs(profit).toLocaleString()} (${margin}%)</span>`;
+    if (profit > 0) {
+        resultEl.innerHTML = `PKR ${profit.toLocaleString()} profit <span class="ml-1 text-[11px] bg-emerald-100 text-emerald-800 px-1.5 py-0.5 rounded font-bold">${margin}% margin</span>`;
+        resultEl.className = 'font-mono font-bold text-xs text-emerald-700 dark:text-emerald-400';
+    } else if (profit === 0) {
+        resultEl.innerHTML = `Break Even (PKR 0 profit)`;
+        resultEl.className = 'font-mono font-bold text-xs text-amber-600';
     } else {
-        resultSpan.innerHTML = `<span class="text-emerald-600 dark:text-emerald-400 font-bold">Profit: PKR ${profit.toLocaleString()} (${margin}% Gross Margin)</span>`;
+        resultEl.innerHTML = `Loss: PKR ${Math.abs(profit).toLocaleString()}`;
+        resultEl.className = 'font-mono font-bold text-xs text-rose-600';
     }
 }
 document.addEventListener('DOMContentLoaded', calculateProfitMargin);
 </script>
-@endpush
 
 @endsection

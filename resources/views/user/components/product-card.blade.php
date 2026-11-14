@@ -16,7 +16,11 @@
         'colors' => $product['colors'] ?? [],
         'availability' => $product['availability'] ?? ($isOutOfStock ? 'out_of_stock' : ($isOnDemand ? 'on_demand' : 'in_stock')),
         'in_stock' => !$isOutOfStock,
-        'lead_time' => $product['lead_time'] ?? null
+        'lead_time' => $product['lead_time'] ?? null,
+        'allowed_payment_methods' => $product['allowed_payment_methods'] ?? 'all',
+        'custom_shipping_charge' => $product['custom_shipping_charge'] ?? null,
+        'is_free_shipping' => !empty($product['is_free_shipping']),
+        'weight_kg' => $product['weight_kg'] ?? null
     ]);
 @endphp
 

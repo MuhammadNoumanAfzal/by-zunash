@@ -321,6 +321,10 @@ Alpine.store('cart', {
             existing.quantity = (parseInt(existing.quantity, 10) || 0) + qty;
             existing.key = itemKey;
             if (resolvedVariant) existing.variant = resolvedVariant;
+            if (product.allowed_payment_methods) existing.allowed_payment_methods = product.allowed_payment_methods;
+            if (product.custom_shipping_charge !== undefined) existing.custom_shipping_charge = product.custom_shipping_charge;
+            if (product.is_free_shipping !== undefined) existing.is_free_shipping = Boolean(product.is_free_shipping);
+            if (product.weight_kg !== undefined) existing.weight_kg = product.weight_kg;
         } else {
             this.items.push({
                 key: itemKey,
@@ -331,7 +335,11 @@ Alpine.store('cart', {
                 image: product.image,
                 category: product.category_name || product.category,
                 variant: resolvedVariant,
-                quantity: qty
+                quantity: qty,
+                allowed_payment_methods: product.allowed_payment_methods || 'all',
+                custom_shipping_charge: (product.custom_shipping_charge !== null && product.custom_shipping_charge !== undefined && product.custom_shipping_charge !== '') ? Number(product.custom_shipping_charge) : null,
+                is_free_shipping: Boolean(product.is_free_shipping),
+                weight_kg: product.weight_kg ? Number(product.weight_kg) : 0.50
             });
         }
         this.save();
@@ -407,13 +415,54 @@ Alpine.store('cart', {
         return Math.round(this.subtotal * (this.appliedCoupon.percent / 100));
     },
 
+    get hasPrepaidOnly() {
+        return this.items.some(i => i.allowed_payment_methods === 'prepaid_only');
+    },
+
+    get hasCodOnly() {
+        return this.items.some(i => i.allowed_payment_methods === 'cod_only');
+    },
+
+    get isComplimentaryShipping() {
+        return this.items.length > 0 && this.items.every(i => i.is_free_shipping);
+    },
+
     get shipping() {
         if (this.subtotal === 0) return 0;
+
+        // If all items have guaranteed free shipping
+        if (this.isComplimentaryShipping) return 0;
+
+        // Check if any item has custom shipping charge
+        let maxCustomShipping = 0;
+        let hasCustomShipping = false;
+        for (const item of this.items) {
+            if (item.custom_shipping_charge && item.custom_shipping_charge > 0) {
+                hasCustomShipping = true;
+                if (item.custom_shipping_charge > maxCustomShipping) {
+                    maxCustomShipping = item.custom_shipping_charge;
+                }
+            }
+        }
+
         const threshold = (typeof window.BYZUNASH_FREE_SHIPPING_THRESHOLD === 'number') 
             ? window.BYZUNASH_FREE_SHIPPING_THRESHOLD 
             : 5000;
-        if (threshold <= 0) return 0;
-        return this.subtotal >= threshold ? 0 : 250;
+
+        // If cart has reached free shipping threshold AND no custom shipping item overrides it
+        if (threshold > 0 && this.subtotal >= threshold && !hasCustomShipping) {
+            return 0;
+        }
+
+        if (hasCustomShipping) {
+            return maxCustomShipping;
+        }
+
+        const defaultRate = (typeof window.BYZUNASH_FLAT_SHIPPING_RATE === 'number')
+            ? window.BYZUNASH_FLAT_SHIPPING_RATE
+            : 250;
+
+        return (threshold > 0 && this.subtotal >= threshold) ? 0 : defaultRate;
     },
 
     get total() {
