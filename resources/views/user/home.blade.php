@@ -106,7 +106,7 @@
         :class="currentSlide === 0 ? 'opacity-100 z-10' : 'opacity-0 z-0 pointer-events-none'"
     >
         <!-- Background Image -->
-        <picture class="block w-full h-full">
+        <picture class="absolute inset-0 w-full h-full pointer-events-none">
             <source media="(max-width: 640px)" srcset="{{ asset('images/hero/slide-bag-mobile-v2.webp') }}" type="image/webp">
             <source srcset="{{ asset('images/hero/slide-bag-v2.webp') }}" type="image/webp">
             <img 
@@ -127,7 +127,7 @@
         <div class="absolute bottom-0 inset-x-0 h-32 bg-gradient-to-t from-black/60 via-black/20 to-transparent pointer-events-none"></div>
 
         <!-- Overlaid Animated Content -->
-        <div class="relative z-10 w-full h-full flex items-center">
+        <div class="absolute inset-0 z-20 w-full h-full flex items-center">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
                 <div class="max-w-2xl py-3 pb-16 sm:pb-3">
                     
@@ -192,7 +192,7 @@
         :class="currentSlide === 1 ? 'opacity-100 z-10 pointer-events-auto' : 'opacity-0 z-0 pointer-events-none'"
     >
         <!-- Background Image -->
-        <picture class="block w-full h-full">
+        <picture class="absolute inset-0 w-full h-full pointer-events-none">
             <source media="(max-width: 640px)" srcset="{{ asset('images/hero/slide-belt-mobile.webp') }}" type="image/webp">
             <source srcset="{{ asset('images/hero/slide-belt.webp') }}" type="image/webp">
             <img 
@@ -212,7 +212,7 @@
         <div class="absolute bottom-0 inset-x-0 h-32 bg-gradient-to-t from-black/60 via-black/20 to-transparent pointer-events-none"></div>
 
         <!-- Overlaid Animated Content -->
-        <div class="relative z-10 w-full h-full flex items-center">
+        <div class="absolute inset-0 z-20 w-full h-full flex items-center">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
                 <div class="max-w-2xl py-3 pb-16 sm:pb-3">
                     
@@ -277,7 +277,7 @@
         :class="currentSlide === 2 ? 'opacity-100 z-10 pointer-events-auto' : 'opacity-0 z-0 pointer-events-none'"
     >
         <!-- Background Image -->
-        <picture class="block w-full h-full">
+        <picture class="absolute inset-0 w-full h-full pointer-events-none">
             <source media="(max-width: 640px)" srcset="{{ asset('images/hero/slide-wallet-mobile.webp') }}" type="image/webp">
             <source srcset="{{ asset('images/hero/slide-wallet.webp') }}" type="image/webp">
             <img 
@@ -297,7 +297,7 @@
         <div class="absolute bottom-0 inset-x-0 h-32 bg-gradient-to-t from-black/60 via-black/20 to-transparent pointer-events-none"></div>
 
         <!-- Overlaid Animated Content -->
-        <div class="relative z-10 w-full h-full flex items-center">
+        <div class="absolute inset-0 z-20 w-full h-full flex items-center">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
                 <div class="max-w-2xl py-3 pb-16 sm:pb-3">
                     
@@ -357,7 +357,7 @@
     </div>
 
     <!-- ================= BOTTOM CONTROLS & PROGRESS ================= -->
-    <div class="absolute bottom-3 sm:bottom-4 left-0 right-0 z-20 pointer-events-auto">
+    <div class="absolute bottom-3 sm:bottom-4 left-0 right-0 z-30 pointer-events-auto">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between">
             
             <!-- Animated Slide Progress Indicators -->
