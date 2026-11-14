@@ -24,4 +24,3 @@ Disallow: /api/
 # Host & Dynamic Sitemaps
 Host: byzunash.com
 Sitemap: https://byzunash.com/sitemap.xml
-Sitemap: http://127.0.0.1:8000/sitemap.xml

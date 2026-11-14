@@ -13,6 +13,11 @@
     <meta name="robots" content="@yield('robots', 'index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1')">
     <meta name="author" content="By Zunash Atelier">
     <link rel="canonical" href="@yield('canonical', url()->current())">
+    <link rel="icon" type="image/svg+xml" href="{{ asset('favicon.svg') }}">
+    <link rel="alternate icon" href="{{ asset('favicon.ico') }}">
+    <meta name="theme-color" content="#231B15">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 
     <!-- Regional & Local Pakistani E-Commerce SEO -->
     <meta name="geo.region" content="PK">
