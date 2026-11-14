@@ -19,6 +19,7 @@ class Product extends Model
         'category_name',
         'subcategory_id',
         'price',
+        'cost_price',
         'original_price',
         'sku',
         'badge',
@@ -41,6 +42,7 @@ class Product extends Model
 
     protected $casts = [
         'price' => 'float',
+        'cost_price' => 'float',
         'original_price' => 'float',
         'is_bestseller' => 'boolean',
         'is_new' => 'boolean',
@@ -80,5 +82,22 @@ class Product extends Model
     public function activeDeals()
     {
         return $this->deals()->where('is_active', true);
+    }
+
+    /**
+     * Estimated Profit Per Unit (Selling Price - Cost/Purchase Price)
+     */
+    public function getProfitPerUnitAttribute(): float
+    {
+        return max(0, (float)$this->price - (float)($this->cost_price ?? 0));
+    }
+
+    /**
+     * Profit Margin Percentage
+     */
+    public function getMarginPercentageAttribute(): float
+    {
+        if ((float)$this->price <= 0) return 0.0;
+        return round((($this->price - (float)($this->cost_price ?? 0)) / $this->price) * 100, 1);
     }
 }

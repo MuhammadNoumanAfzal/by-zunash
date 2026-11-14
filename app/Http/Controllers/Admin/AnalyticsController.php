@@ -39,17 +39,27 @@ class AnalyticsController extends Controller
 
         $allOrders = $query->orderBy('created_at', 'desc')->get();
 
-        // Core Financial Metrics
+        // Core Financial Metrics (Real Accounting)
         $totalOrdersCount = $allOrders->count();
-        $grossRevenue = (float) $allOrders->sum('total');
+        $deliveredOrders = $allOrders->whereIn('order_status', ['completed', 'delivered']);
+        $returnedOrders = $allOrders->where('order_status', 'returned');
+        $dispatchedOrders = $allOrders->where('order_status', 'dispatched');
+
+        $grossRevenue = (float) $deliveredOrders->sum('total');
         $totalDiscount = (float) $allOrders->sum('discount');
         $netSales = $grossRevenue;
 
-        // Estimated Cost of Goods Sold (Crafting materials + leather + artisan labour @ ~42% of revenue)
-        $cogs = round($netSales * 0.42, 2);
-        $grossProfit = $netSales - $cogs;
-        $profitMargin = $netSales > 0 ? round(($grossProfit / $netSales) * 100, 1) : 58.0;
-        $averageOrderValue = $totalOrdersCount > 0 ? round($netSales / $totalOrdersCount) : 0;
+        // Real Cost of Goods Sold (Actual Product Purchase/Crafting Costs)
+        $cogs = 0;
+        foreach ($deliveredOrders as $ord) {
+            $cogs += $ord->total_cost;
+        }
+
+        // Real Return Losses from failed courier deliveries
+        $returnLosses = (float) $returnedOrders->sum('return_courier_charge');
+        $grossProfit = max(0, $netSales - $cogs - $returnLosses);
+        $profitMargin = $netSales > 0 ? round(($grossProfit / $netSales) * 100, 1) : 0;
+        $averageOrderValue = $deliveredOrders->count() > 0 ? round($netSales / $deliveredOrders->count()) : ($totalOrdersCount > 0 ? round($allOrders->sum('total') / $totalOrdersCount) : 0);
 
         // Estimated Tax / PRA breakdown (Assuming 5% withholding / sales tax applicable)
         $taxCollected = round($netSales * 0.05, 2);
@@ -172,15 +182,46 @@ class AnalyticsController extends Controller
      */
     public function exportOrders(Request $request)
     {
-        $month = $request->input('month', date('Y-m'));
-        $start = Carbon::parse($month)->startOfMonth();
-        $end = Carbon::parse($month)->endOfMonth();
+        $timeframe = $request->input('timeframe', 'this_month');
+        $startDateInput = $request->input('start_date');
+        $endDateInput = $request->input('end_date');
 
-        $orders = Order::whereBetween('created_at', [$start, $end])
-            ->orderBy('created_at', 'asc')
-            ->get();
+        $query = Order::query();
+        $label = 'orders_report_' . date('Y-m-d');
 
-        $fileName = 'byzunash_orders_' . $month . '.csv';
+        if ($timeframe === 'today') {
+            $query->whereDate('created_at', now()->toDateString());
+            $label = 'orders_daily_' . now()->format('Y-m-d');
+        } elseif ($timeframe === 'yesterday') {
+            $query->whereDate('created_at', now()->subDay()->toDateString());
+            $label = 'orders_yesterday_' . now()->subDay()->format('Y-m-d');
+        } elseif ($timeframe === 'this_week') {
+            $query->where('created_at', '>=', now()->startOfWeek());
+            $label = 'orders_weekly_' . now()->format('Y-W');
+        } elseif ($timeframe === 'this_month') {
+            $month = $request->input('month', date('Y-m'));
+            $start = Carbon::parse($month)->startOfMonth();
+            $end = Carbon::parse($month)->endOfMonth();
+            $query->whereBetween('created_at', [$start, $end]);
+            $label = 'orders_monthly_' . $start->format('Y-m');
+        } elseif ($timeframe === 'this_year') {
+            $query->where('created_at', '>=', now()->startOfYear());
+            $label = 'orders_yearly_' . now()->format('Y');
+        } elseif ($timeframe === 'custom' && $startDateInput && $endDateInput) {
+            $start = Carbon::parse($startDateInput)->startOfDay();
+            $end = Carbon::parse($endDateInput)->endOfDay();
+            $query->whereBetween('created_at', [$start, $end]);
+            $label = 'orders_' . $start->format('Y-m-d') . '_to_' . $end->format('Y-m-d');
+        } elseif ($request->filled('month')) {
+            $month = $request->input('month');
+            $start = Carbon::parse($month)->startOfMonth();
+            $end = Carbon::parse($month)->endOfMonth();
+            $query->whereBetween('created_at', [$start, $end]);
+            $label = 'orders_' . $month;
+        }
+
+        $orders = $query->orderBy('created_at', 'asc')->get();
+        $fileName = 'byzunash_' . $label . '.csv';
 
         $headers = [
             'Content-Type' => 'text/csv; charset=UTF-8',
@@ -204,14 +245,16 @@ class AnalyticsController extends Controller
                 'Phone',
                 'Email',
                 'City',
+                'Order Status',
+                'Courier Name',
+                'Tracking Number',
                 'Payment Method',
                 'Payment Status',
-                'Order Status',
-                'Subtotal (PKR)',
-                'Discount (PKR)',
-                'Shipping Fee (PKR)',
-                'Total Paid (PKR)',
-                'Courier / Tracking',
+                'Gross Revenue (PKR)',
+                'Product Cost / COGS (PKR)',
+                'Return Courier Loss (PKR)',
+                'Net Profit / Loss (PKR)',
+                'Return Reason',
             ]);
 
             foreach ($orders as $order) {
@@ -223,14 +266,16 @@ class AnalyticsController extends Controller
                     $order->customer_phone,
                     $order->customer_email,
                     $order->city,
+                    ucfirst($order->order_status),
+                    $order->courier_name ?: 'None',
+                    $order->tracking_number ?: 'N/A',
                     $order->payment_method,
                     $order->payment_status,
-                    $order->order_status,
-                    number_format($order->subtotal, 2, '.', ''),
-                    number_format($order->discount, 2, '.', ''),
-                    number_format($order->shipping_fee, 2, '.', ''),
                     number_format($order->total, 2, '.', ''),
-                    ($order->courier_name ?: 'None') . ' / ' . ($order->tracking_number ?: 'N/A'),
+                    number_format($order->total_cost, 2, '.', ''),
+                    number_format((float)($order->return_courier_charge ?? 0), 2, '.', ''),
+                    number_format($order->net_profit, 2, '.', ''),
+                    $order->return_reason ?: 'N/A',
                 ]);
             }
 

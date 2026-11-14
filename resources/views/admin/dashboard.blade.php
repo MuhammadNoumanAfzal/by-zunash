@@ -75,6 +75,197 @@
     </div>
 
 
+    <!-- ======================= 1.1 EXECUTIVE SALES, FULFILLMENT & PROFIT AUDIT ======================= -->
+    <div class="rounded-2xl bg-white dark:bg-[#161210] border border-[#ECE6DE] dark:border-[#261E1A] p-3.5 sm:p-5 shadow-xs w-full min-w-0 space-y-4">
+        
+        <!-- Header Controls: Timeframe Pills, Custom Date Range & CSV Download -->
+        <div class="flex flex-col xl:flex-row xl:items-center xl:justify-between gap-3 pb-3.5 border-b border-[#F0EAE1] dark:border-[#241C18]">
+            <div>
+                <div class="flex items-center gap-2">
+                    <span class="w-2.5 h-2.5 rounded-full bg-gold"></span>
+                    <h2 class="font-cinzel text-sm sm:text-base font-bold text-espresso-950 dark:text-white">
+                        Executive Sales, COD Delivery & Real Profit Audit
+                    </h2>
+                </div>
+                <p class="text-[11px] text-gray-500 dark:text-gray-400 mt-0.5">
+                    Auditing Period: <strong class="text-tan-700 dark:text-gold-400 font-mono">{{ $dateLabel }}</strong>
+                </p>
+            </div>
+
+            <!-- Controls (Filter Buttons & Download) -->
+            <div class="flex flex-wrap items-center gap-2" x-data="{ showCustom: {{ $timeframe === 'custom' ? 'true' : 'false' }} }">
+                
+                <!-- Timeframe Quick Filter Buttons -->
+                <div class="inline-flex rounded-xl bg-[#FAF8F5] dark:bg-[#201814] p-1 border border-[#E0D7CB] dark:border-[#2F231D] text-xs font-semibold">
+                    <a href="{{ route('admin.dashboard', ['timeframe' => 'today']) }}" class="px-2.5 py-1 rounded-lg transition-colors {{ $timeframe === 'today' ? 'bg-espresso-900 text-white dark:bg-gold-500 dark:text-espresso-950 shadow-xs' : 'text-gray-600 dark:text-gray-400 hover:text-espresso-900 dark:hover:text-white' }}">
+                        Daily (Today)
+                    </a>
+                    <a href="{{ route('admin.dashboard', ['timeframe' => 'yesterday']) }}" class="px-2.5 py-1 rounded-lg transition-colors {{ $timeframe === 'yesterday' ? 'bg-espresso-900 text-white dark:bg-gold-500 dark:text-espresso-950 shadow-xs' : 'text-gray-600 dark:text-gray-400 hover:text-espresso-900 dark:hover:text-white' }}">
+                        Yesterday
+                    </a>
+                    <a href="{{ route('admin.dashboard', ['timeframe' => 'this_week']) }}" class="px-2.5 py-1 rounded-lg transition-colors {{ $timeframe === 'this_week' ? 'bg-espresso-900 text-white dark:bg-gold-500 dark:text-espresso-950 shadow-xs' : 'text-gray-600 dark:text-gray-400 hover:text-espresso-900 dark:hover:text-white' }}">
+                        7 Days
+                    </a>
+                    <a href="{{ route('admin.dashboard', ['timeframe' => 'this_month']) }}" class="px-2.5 py-1 rounded-lg transition-colors {{ $timeframe === 'this_month' ? 'bg-espresso-900 text-white dark:bg-gold-500 dark:text-espresso-950 shadow-xs' : 'text-gray-600 dark:text-gray-400 hover:text-espresso-900 dark:hover:text-white' }}">
+                        Monthly
+                    </a>
+                    <a href="{{ route('admin.dashboard', ['timeframe' => 'this_year']) }}" class="px-2.5 py-1 rounded-lg transition-colors {{ $timeframe === 'this_year' ? 'bg-espresso-900 text-white dark:bg-gold-500 dark:text-espresso-950 shadow-xs' : 'text-gray-600 dark:text-gray-400 hover:text-espresso-900 dark:hover:text-white' }}">
+                        Yearly
+                    </a>
+                    <button type="button" @click="showCustom = !showCustom" class="px-2.5 py-1 rounded-lg transition-colors flex items-center gap-1 {{ $timeframe === 'custom' ? 'bg-espresso-900 text-white dark:bg-gold-500 dark:text-espresso-950 shadow-xs' : 'text-gray-600 dark:text-gray-400 hover:text-espresso-900 dark:hover:text-white' }}">
+                        <i data-lucide="calendar" class="w-3 h-3"></i>
+                        <span>Custom Date</span>
+                    </button>
+                </div>
+
+                <!-- Custom Date Range Form (collapsible) -->
+                <div x-show="showCustom" x-cloak class="flex items-center gap-1.5 bg-[#FAF8F5] dark:bg-[#201814] p-1 rounded-xl border border-[#E0D7CB] dark:border-[#2F231D]">
+                    <form method="GET" action="{{ route('admin.dashboard') }}" class="flex items-center gap-1.5">
+                        <input type="hidden" name="timeframe" value="custom">
+                        <input type="date" name="start_date" value="{{ $customStart ?: date('Y-m-01') }}" class="px-2 py-1 text-xs rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-[#161210] text-espresso-900 dark:text-white">
+                        <span class="text-xs text-gray-400">to</span>
+                        <input type="date" name="end_date" value="{{ $customEnd ?: date('Y-m-d') }}" class="px-2 py-1 text-xs rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-[#161210] text-espresso-900 dark:text-white">
+                        <button type="submit" class="px-2.5 py-1 rounded-lg bg-tan-600 hover:bg-tan-700 text-white text-xs font-semibold">
+                            Apply
+                        </button>
+                    </form>
+                </div>
+
+                <!-- One-Click Export CSV Button -->
+                <a 
+                    href="{{ route('admin.analytics.export.orders', ['timeframe' => $timeframe, 'start_date' => $customStart, 'end_date' => $customEnd]) }}" 
+                    class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold shadow-xs active:scale-95 transition-all"
+                    title="Export full breakdown with Profit, COGS and COD Returns"
+                >
+                    <i data-lucide="download" class="w-3.5 h-3.5"></i>
+                    <span>Export Sales & Profit CSV</span>
+                </a>
+            </div>
+        </div>
+
+        <!-- 8 Executive Operational & Profit Metrics Grid -->
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-2.5 sm:gap-3">
+            
+            <!-- Metric 1: Total Orders Placed -->
+            <div class="p-3 rounded-xl bg-[#FAF8F5] dark:bg-[#1D1714] border border-[#EBE3D8] dark:border-[#2C211B]">
+                <div class="text-[10px] font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400 flex items-center justify-between">
+                    <span>Total Orders Placed</span>
+                    <i data-lucide="shopping-cart" class="w-3.5 h-3.5 text-tan-600"></i>
+                </div>
+                <div class="font-cinzel text-xl sm:text-2xl font-bold text-espresso-950 dark:text-white mt-1">
+                    {{ $filterOrdersCount }}
+                </div>
+                <div class="text-[10px] text-gray-500 mt-0.5">
+                    In selected timeframe
+                </div>
+            </div>
+
+            <!-- Metric 2: Successfully Delivered (COD Collected) -->
+            <div class="p-3 rounded-xl bg-emerald-50/50 dark:bg-emerald-950/20 border border-emerald-200/80 dark:border-emerald-800/40">
+                <div class="text-[10px] font-bold uppercase tracking-wider text-emerald-800 dark:text-emerald-300 flex items-center justify-between">
+                    <span>Delivered Orders</span>
+                    <span class="px-1.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-700 dark:text-emerald-300 text-[9px] font-bold">
+                        {{ $filterDeliveryRate }}% Success
+                    </span>
+                </div>
+                <div class="font-cinzel text-xl sm:text-2xl font-bold text-emerald-800 dark:text-emerald-200 mt-1">
+                    {{ $filterDeliveredCount }}
+                </div>
+                <div class="text-[10px] text-emerald-700/80 dark:text-emerald-400 mt-0.5">
+                    Cash collected & fulfilled
+                </div>
+            </div>
+
+            <!-- Metric 3: In Transit / Dispatched -->
+            <div class="p-3 rounded-xl bg-sky-50/50 dark:bg-sky-950/20 border border-sky-200/80 dark:border-sky-800/40">
+                <div class="text-[10px] font-bold uppercase tracking-wider text-sky-800 dark:text-sky-300 flex items-center justify-between">
+                    <span>In Transit / Dispatched</span>
+                    <i data-lucide="truck" class="w-3.5 h-3.5 text-sky-600"></i>
+                </div>
+                <div class="font-cinzel text-xl sm:text-2xl font-bold text-sky-800 dark:text-sky-200 mt-1">
+                    {{ $filterDispatchedCount }}
+                </div>
+                <div class="text-[10px] text-sky-700/80 dark:text-sky-400 mt-0.5">
+                    With Courier (TCS / Trax / PostEx)
+                </div>
+            </div>
+
+            <!-- Metric 4: COD Returns & Failed Deliveries -->
+            <div class="p-3 rounded-xl bg-rose-50/50 dark:bg-rose-950/20 border border-rose-200/80 dark:border-rose-800/40">
+                <div class="text-[10px] font-bold uppercase tracking-wider text-rose-800 dark:text-rose-300 flex items-center justify-between">
+                    <span>COD Returns & Failed</span>
+                    <span class="px-1.5 py-0.5 rounded-full bg-rose-500/20 text-rose-700 dark:text-rose-300 text-[9px] font-bold">
+                        {{ $filterReturnRate }}% Return Rate
+                    </span>
+                </div>
+                <div class="font-cinzel text-xl sm:text-2xl font-bold text-rose-700 dark:text-rose-300 mt-1">
+                    {{ $filterReturnedCount }}
+                </div>
+                <div class="text-[10px] text-rose-600/80 dark:text-rose-400 mt-0.5">
+                    Loss: Rs. {{ number_format($filterReturnLosses) }}
+                </div>
+            </div>
+
+            <!-- Metric 5: Delivered Revenue (Gross) -->
+            <div class="p-3 rounded-xl bg-[#FAF8F5] dark:bg-[#1D1714] border border-[#EBE3D8] dark:border-[#2C211B]">
+                <div class="text-[10px] font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400">
+                    Delivered Gross Revenue
+                </div>
+                <div class="font-cinzel text-lg sm:text-xl font-bold text-espresso-950 dark:text-white mt-1">
+                    Rs. {{ number_format($filterDeliveredRevenue) }}
+                </div>
+                <div class="text-[10px] text-gray-500 mt-0.5">
+                    From {{ $filterDeliveredCount }} completed orders
+                </div>
+            </div>
+
+            <!-- Metric 6: Real COGS (Product Purchase Cost) -->
+            <div class="p-3 rounded-xl bg-[#FAF8F5] dark:bg-[#1D1714] border border-[#EBE3D8] dark:border-[#2C211B]">
+                <div class="text-[10px] font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400">
+                    Product Purchase Cost (COGS)
+                </div>
+                <div class="font-cinzel text-lg sm:text-xl font-bold text-espresso-950 dark:text-white mt-1">
+                    Rs. {{ number_format($filterRealCogs) }}
+                </div>
+                <div class="text-[10px] text-gray-500 mt-0.5">
+                    Real raw material & craft cost
+                </div>
+            </div>
+
+            <!-- Metric 7: Lost Courier Charges on Returns -->
+            <div class="p-3 rounded-xl bg-amber-50/50 dark:bg-amber-950/20 border border-amber-200/80 dark:border-amber-800/40">
+                <div class="text-[10px] font-bold uppercase tracking-wider text-amber-800 dark:text-amber-300">
+                    Courier Return Freight Loss
+                </div>
+                <div class="font-cinzel text-lg sm:text-xl font-bold text-amber-800 dark:text-amber-300 mt-1">
+                    Rs. {{ number_format($filterReturnLosses) }}
+                </div>
+                <div class="text-[10px] text-amber-700/80 dark:text-amber-400 mt-0.5">
+                    Non-delivery courier invoice
+                </div>
+            </div>
+
+            <!-- Metric 8: Net Realized Profit (Real In-Pocket Cash) -->
+            <div class="p-3 rounded-xl bg-gradient-to-br from-emerald-500/10 via-tan-500/10 to-gold/20 border border-gold/40">
+                <div class="text-[10px] font-bold uppercase tracking-wider text-emerald-800 dark:text-gold-300 flex items-center justify-between">
+                    <span>Net Realized Profit</span>
+                    <span class="px-1.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-800 dark:text-emerald-300 text-[9px] font-bold">
+                        {{ $filterProfitMargin }}% Margin
+                    </span>
+                </div>
+                <div class="font-cinzel text-lg sm:text-xl font-bold text-emerald-700 dark:text-emerald-300 mt-1">
+                    Rs. {{ number_format($filterNetProfit) }}
+                </div>
+                <div class="text-[10px] text-emerald-600 dark:text-emerald-400 mt-0.5 font-medium">
+                    (Revenue - COGS - Return Losses)
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+
     <!-- ======================= 2. COMPACT 4 KPI STAT CARDS (REDUCED HEIGHT) ======================= -->
     <div class="grid grid-cols-2 lg:grid-cols-4 gap-2.5 sm:gap-3 w-full min-w-0">
         

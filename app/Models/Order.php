@@ -29,6 +29,10 @@ class Order extends Model
         'tracking_number',
         'tracking_url',
         'dispatched_at',
+        'return_reason',
+        'return_courier_charge',
+        'returned_at',
+        'delivered_at',
         'subtotal',
         'shipping_fee',
         'discount',
@@ -44,11 +48,84 @@ class Order extends Model
         'items' => 'array',
         'is_read' => 'boolean',
         'dispatched_at' => 'datetime',
+        'returned_at' => 'datetime',
+        'delivered_at' => 'datetime',
+        'return_courier_charge' => 'float',
     ];
 
     public function scopeUnread($query)
     {
         return $query->where('is_read', false);
+    }
+
+    public function scopeDelivered($query)
+    {
+        return $query->whereIn('order_status', ['completed', 'delivered']);
+    }
+
+    public function scopeReturned($query)
+    {
+        return $query->where('order_status', 'returned');
+    }
+
+    public function scopeDispatched($query)
+    {
+        return $query->where('order_status', 'dispatched');
+    }
+
+    /**
+     * Calculate Total Product Purchase Cost (COGS) for this order
+     */
+    public function getTotalCostAttribute(): float
+    {
+        if (empty($this->items) || !is_array($this->items)) {
+            return round($this->subtotal * 0.40, 2);
+        }
+
+        $cost = 0;
+        foreach ($this->items as $item) {
+            $qty = (int)($item['quantity'] ?? $item['qty'] ?? 1);
+            $itemCost = (float)($item['cost_price'] ?? 0);
+
+            if ($itemCost <= 0 && !empty($item['id'])) {
+                $prod = Product::find($item['id']);
+                if ($prod && $prod->cost_price > 0) {
+                    $itemCost = (float)$prod->cost_price;
+                }
+            }
+
+            // Fallback: If product has no cost price set, default to 40% of item price
+            if ($itemCost <= 0) {
+                $itemCost = round(((float)($item['price'] ?? 0)) * 0.40, 2);
+            }
+
+            $cost += ($itemCost * $qty);
+        }
+
+        return round($cost, 2);
+    }
+
+    /**
+     * Real Net Profit on this Order
+     */
+    public function getNetProfitAttribute(): float
+    {
+        if ($this->order_status === 'returned') {
+            // Direct loss: Return courier fees + forward courier fees
+            return -round((float)($this->return_courier_charge > 0 ? $this->return_courier_charge : 250), 2);
+        }
+
+        if ($this->order_status === 'cancelled') {
+            return 0.0;
+        }
+
+        if (in_array($this->order_status, ['completed', 'delivered'])) {
+            // Profit = Total received - Product Purchase Cost
+            return round($this->total - $this->total_cost, 2);
+        }
+
+        // For pending/dispatched orders, estimated prospective profit
+        return round($this->total - $this->total_cost, 2);
     }
 
     /**

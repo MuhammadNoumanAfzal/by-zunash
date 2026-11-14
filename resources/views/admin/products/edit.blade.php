@@ -253,15 +253,35 @@
                 <!-- Retail Price -->
                 <div>
                     <label class="block text-xs font-semibold text-espresso-900 dark:text-white mb-1.5">
-                        Retail Price (PKR / Rs.) <span class="text-rose-500">*</span>
+                        Retail / Selling Price (PKR) <span class="text-rose-500">*</span>
                     </label>
                     <input 
                         type="number" 
                         step="1" 
+                        id="prod_retail_price"
                         name="price" 
                         value="{{ old('price', $product->price) }}" 
                         required
+                        oninput="calculateProfitMargin()"
                         class="w-full px-3.5 py-2.5 text-xs rounded-xl bg-[#FAF8F5] dark:bg-[#241D1A] border border-[#E0D7CB] dark:border-[#3A2F29] text-espresso-900 dark:text-white focus:outline-hidden focus:border-tan-500 font-mono font-bold"
+                    >
+                </div>
+
+                <!-- Purchase / Cost Price (COGS) -->
+                <div>
+                    <label class="block text-xs font-semibold text-emerald-700 dark:text-emerald-400 mb-1.5 flex items-center justify-between">
+                        <span>Purchase / Cost (PKR)</span>
+                        <span class="text-[10px] font-normal text-gray-500">For Real Profit</span>
+                    </label>
+                    <input 
+                        type="number" 
+                        step="1" 
+                        id="prod_cost_price"
+                        name="cost_price" 
+                        value="{{ old('cost_price', $product->cost_price ?? 0) }}" 
+                        placeholder="e.g. 2100"
+                        oninput="calculateProfitMargin()"
+                        class="w-full px-3.5 py-2.5 text-xs rounded-xl bg-emerald-50/50 dark:bg-emerald-950/20 border border-emerald-200 dark:border-emerald-800/40 text-emerald-900 dark:text-emerald-300 placeholder:text-gray-400 focus:outline-hidden focus:border-emerald-500 font-mono font-bold"
                     >
                 </div>
 
@@ -325,6 +345,17 @@
                         class="w-full px-3.5 py-2.5 text-xs rounded-xl bg-[#FAF8F5] dark:bg-[#241D1A] border border-[#E0D7CB] dark:border-[#3A2F29] text-espresso-900 dark:text-white focus:outline-hidden focus:border-tan-500"
                         :class="availability === 'on_demand' ? 'border-amber-400 dark:border-amber-500/50 bg-amber-50/20' : ''"
                     >
+                </div>
+
+                <!-- Real-Time Profit Margin Preview Badge -->
+                <div id="profit_margin_preview" class="sm:col-span-3 px-3.5 py-2.5 rounded-xl bg-[#FAF8F5] dark:bg-[#241D1A] border border-dashed border-[#E0D7CB] dark:border-[#3A2F29] flex items-center justify-between text-xs">
+                    <span class="text-gray-600 dark:text-gray-400 flex items-center gap-1.5 font-medium">
+                        <svg class="w-4 h-4 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                        Calculated Unit Profit (Selling Price - Purchase Cost):
+                    </span>
+                    <span id="profit_calc_result" class="font-mono font-bold text-emerald-700 dark:text-emerald-400">
+                        Calculating profit...
+                    </span>
                 </div>
 
                 <!-- Bestseller / New Arrival Flags -->
@@ -824,6 +855,30 @@ function removeExistingGalleryImage(url, btn) {
         setTimeout(() => item.remove(), 200);
     }
 }
+function calculateProfitMargin() {
+    const retailInput = document.getElementById('prod_retail_price');
+    const costInput = document.getElementById('prod_cost_price');
+    const resultSpan = document.getElementById('profit_calc_result');
+    if (!retailInput || !costInput || !resultSpan) return;
+
+    const retail = parseFloat(retailInput.value) || 0;
+    const cost = parseFloat(costInput.value) || 0;
+
+    if (retail <= 0) {
+        resultSpan.innerHTML = '<span class="text-gray-400">Enter Selling & Cost Price</span>';
+        return;
+    }
+
+    const profit = retail - cost;
+    const margin = Math.round((profit / retail) * 100);
+
+    if (profit < 0) {
+        resultSpan.innerHTML = `<span class="text-rose-500 font-bold">LOSS: PKR ${Math.abs(profit).toLocaleString()} (${margin}%)</span>`;
+    } else {
+        resultSpan.innerHTML = `<span class="text-emerald-600 dark:text-emerald-400 font-bold">Profit: PKR ${profit.toLocaleString()} (${margin}% Gross Margin)</span>`;
+    }
+}
+document.addEventListener('DOMContentLoaded', calculateProfitMargin);
 </script>
 @endpush
 

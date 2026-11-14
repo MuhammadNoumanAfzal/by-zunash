@@ -429,11 +429,21 @@
                             </div>
                         </td>
 
-                        <!-- Price (Current Price Only) -->
+                        <!-- Price (Selling Price + Cost/Profit) -->
                         <td class="py-3.5 px-3">
                             <div class="font-cinzel font-bold text-sm text-espresso-950 dark:text-white">
                                 Rs. {{ number_format($product->price) }}
                             </div>
+                            @if(($product->cost_price ?? 0) > 0)
+                                <div class="text-[10px] text-gray-500 dark:text-gray-400 mt-0.5 flex items-center gap-1 font-mono">
+                                    <span>Cost: Rs. {{ number_format($product->cost_price) }}</span>
+                                    <span class="text-emerald-600 dark:text-emerald-400 font-semibold font-sans">({{ $product->margin_percentage }}%)</span>
+                                </div>
+                            @else
+                                <div class="text-[9px] text-gray-400 mt-0.5">
+                                    Cost not set
+                                </div>
+                            @endif
                         </td>
 
                         <!-- Stock & Status -->

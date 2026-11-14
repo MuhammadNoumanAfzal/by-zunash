@@ -163,15 +163,17 @@
                     <span class="text-[10px] text-muted uppercase font-sans font-normal">Workflow Step</span>
                 </h2>
 
-                <form action="{{ route('admin.orders.update-status', $order) }}" method="POST" class="space-y-4">
+                <form action="{{ route('admin.orders.update-status', $order) }}" method="POST" class="space-y-4" x-data="{ currentStatus: '{{ $order->order_status }}' }">
                     @csrf
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
                         <div>
                             <label class="block text-[10px] font-bold uppercase tracking-wider text-[#8F8379] mb-1.5">Order Status</label>
-                            <select name="order_status" class="w-full px-3 py-2.5 text-xs rounded-xl bg-[#FAF8F5] dark:bg-[#241D1A] border border-[#DFD6CB] dark:border-[#382D27] text-espresso-900 dark:text-white font-semibold focus:outline-hidden focus:border-gold">
+                            <select name="order_status" x-model="currentStatus" class="w-full px-3 py-2.5 text-xs rounded-xl bg-[#FAF8F5] dark:bg-[#241D1A] border border-[#DFD6CB] dark:border-[#382D27] text-espresso-900 dark:text-white font-semibold focus:outline-hidden focus:border-gold">
                                 <option value="pending" {{ $order->order_status === 'pending' ? 'selected' : '' }}>● Pending Order</option>
                                 <option value="processing" {{ $order->order_status === 'processing' ? 'selected' : '' }}>● In Crafting / Processing</option>
-                                <option value="completed" {{ $order->order_status === 'completed' ? 'selected' : '' }}>● Delivered & Closed</option>
+                                <option value="dispatched" {{ $order->order_status === 'dispatched' ? 'selected' : '' }}>● In Transit / Dispatched</option>
+                                <option value="completed" {{ in_array($order->order_status, ['completed', 'delivered']) ? 'selected' : '' }}>● Delivered & Paid</option>
+                                <option value="returned" {{ $order->order_status === 'returned' ? 'selected' : '' }}>● COD Return / Failed Delivery</option>
                                 <option value="cancelled" {{ $order->order_status === 'cancelled' ? 'selected' : '' }}>● Cancelled</option>
                             </select>
                         </div>
@@ -182,7 +184,47 @@
                                 <option value="pending" {{ $order->payment_status === 'pending' ? 'selected' : '' }}>Pending Clearance</option>
                                 <option value="paid" {{ $order->payment_status === 'paid' ? 'selected' : '' }}>Paid / Cleared</option>
                                 <option value="failed" {{ $order->payment_status === 'failed' ? 'selected' : '' }}>Payment Failed</option>
+                                <option value="refunded" {{ $order->payment_status === 'refunded' ? 'selected' : '' }}>Refunded</option>
                             </select>
+                        </div>
+                    </div>
+
+                    <!-- COD Return / Failed Delivery Details (Shown when Returned is selected) -->
+                    <div x-show="currentStatus === 'returned'" x-cloak class="p-3.5 rounded-2xl bg-rose-50/70 dark:bg-rose-950/20 border border-rose-200 dark:border-rose-900/50 space-y-3">
+                        <div class="flex items-center gap-2 text-rose-800 dark:text-rose-300 font-bold text-xs">
+                            <i data-lucide="alert-triangle" class="w-4 h-4 text-rose-600"></i>
+                            <span>COD Return & Failed Delivery Reconciliation</span>
+                        </div>
+
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                            <div>
+                                <label class="block text-[10px] font-bold uppercase tracking-wider text-rose-900 dark:text-rose-300 mb-1">
+                                    Return Reason
+                                </label>
+                                <select name="return_reason" class="w-full px-3 py-2 text-xs rounded-xl bg-white dark:bg-[#1D1412] border border-rose-300 dark:border-rose-800 text-espresso-900 dark:text-white focus:outline-hidden">
+                                    <option value="Customer Refused at Doorstep" {{ $order->return_reason === 'Customer Refused at Doorstep' ? 'selected' : '' }}>Customer Refused at Doorstep</option>
+                                    <option value="Phone Switched Off / Unreachable" {{ $order->return_reason === 'Phone Switched Off / Unreachable' ? 'selected' : '' }}>Phone Switched Off / Unreachable</option>
+                                    <option value="Fake / Prank Order" {{ $order->return_reason === 'Fake / Prank Order' ? 'selected' : '' }}>Fake / Prank Order</option>
+                                    <option value="Address Incomplete / Untraceable" {{ $order->return_reason === 'Address Incomplete / Untraceable' ? 'selected' : '' }}>Address Incomplete / Untraceable</option>
+                                    <option value="Delayed Delivery by Courier" {{ $order->return_reason === 'Delayed Delivery by Courier' ? 'selected' : '' }}>Delayed Delivery by Courier</option>
+                                    <option value="Customer Cancelled via Phone" {{ $order->return_reason === 'Customer Cancelled via Phone' ? 'selected' : '' }}>Customer Cancelled via Phone</option>
+                                    <option value="Damaged in Transit" {{ $order->return_reason === 'Damaged in Transit' ? 'selected' : '' }}>Damaged in Transit</option>
+                                </select>
+                            </div>
+
+                            <div>
+                                <label class="block text-[10px] font-bold uppercase tracking-wider text-rose-900 dark:text-rose-300 mb-1">
+                                    Courier Return Charge / Freight Loss (PKR)
+                                </label>
+                                <input 
+                                    type="number" 
+                                    step="1" 
+                                    name="return_courier_charge" 
+                                    value="{{ old('return_courier_charge', $order->return_courier_charge ?: 250) }}"
+                                    placeholder="e.g. 250"
+                                    class="w-full px-3 py-2 text-xs rounded-xl bg-white dark:bg-[#1D1412] border border-rose-300 dark:border-rose-800 text-espresso-900 dark:text-white font-mono font-bold focus:outline-hidden"
+                                >
+                            </div>
                         </div>
                     </div>
 
@@ -396,6 +438,40 @@
                         <span class="font-cinzel text-xl sm:text-2xl text-tan-700 dark:text-gold-400 font-extrabold tracking-tight">
                             Rs. {{ number_format($order->total) }}
                         </span>
+                    </div>
+
+                    <!-- Atelier Unit Profit & Margin Analysis (Admin Secret Accounting) -->
+                    <div class="mt-4 p-3.5 rounded-2xl bg-gradient-to-r from-emerald-500/10 via-[#FAF8F5] to-gold/15 dark:from-emerald-950/20 dark:via-[#1D1714] dark:to-gold-950/20 border border-emerald-500/30 space-y-1.5">
+                        <div class="text-[10px] font-bold uppercase tracking-wider text-emerald-800 dark:text-emerald-400 flex items-center justify-between">
+                            <span class="flex items-center gap-1.5">
+                                <i data-lucide="calculator" class="w-3.5 h-3.5 text-emerald-600"></i>
+                                <span>Profit & Accounting Breakdown</span>
+                            </span>
+                            @if($order->order_status === 'returned')
+                                <span class="px-2 py-0.5 rounded-full bg-rose-500/20 text-rose-700 text-[9px] font-bold">COD Return Loss</span>
+                            @else
+                                <span class="px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-800 dark:text-emerald-300 text-[9px] font-bold">Net Profit</span>
+                            @endif
+                        </div>
+
+                        <div class="flex justify-between text-xs text-gray-600 dark:text-gray-400">
+                            <span>Estimated Product Purchase Cost (COGS):</span>
+                            <span class="font-mono font-bold text-espresso-900 dark:text-white">Rs. {{ number_format($order->total_cost) }}</span>
+                        </div>
+
+                        @if($order->order_status === 'returned')
+                            <div class="flex justify-between text-xs text-rose-600 font-medium">
+                                <span>Return Courier Loss:</span>
+                                <span class="font-mono font-bold">- Rs. {{ number_format($order->return_courier_charge ?: 250) }}</span>
+                            </div>
+                        @endif
+
+                        <div class="flex justify-between text-xs font-bold pt-1.5 border-t border-emerald-500/20 {{ $order->net_profit >= 0 ? 'text-emerald-700 dark:text-emerald-300' : 'text-rose-600' }}">
+                            <span>Real Net Cash Profit:</span>
+                            <span class="font-mono text-sm">
+                                {{ $order->net_profit >= 0 ? '+' : '' }} Rs. {{ number_format($order->net_profit) }}
+                            </span>
+                        </div>
                     </div>
                 </div>
             </div>

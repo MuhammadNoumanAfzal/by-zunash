@@ -61,30 +61,52 @@
         </div>
     </div>
 
-    <!-- 5 Stats Cards -->
+    <!-- 5 Strategic Operational Stats Cards -->
     <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3.5">
+        <!-- 1. Total Orders -->
         <a href="{{ route('admin.orders.index') }}" class="p-4 rounded-2xl bg-white dark:bg-[#1A1513] border {{ !request()->hasAny(['unread', 'status', 'payment']) ? 'border-tan-500 ring-2 ring-tan-500/20' : 'border-[#ECE6DE] dark:border-[#2C2420]' }} shadow-2xs hover:border-tan-500 transition-colors">
             <div class="text-[10px] font-bold uppercase tracking-wider text-[#8F8379]">TOTAL ORDERS</div>
             <div class="font-cinzel text-2xl font-bold text-espresso-950 dark:text-white mt-1">{{ $totalOrders }}</div>
+            <div class="text-[10px] text-gray-500 mt-0.5">Lifetime orders</div>
         </a>
-        <a href="{{ route('admin.orders.index', ['unread' => 1]) }}" class="p-4 rounded-2xl bg-white dark:bg-[#1A1513] border {{ request('unread') ? 'border-amber-500 ring-2 ring-amber-400/20' : 'border-[#ECE6DE] dark:border-[#2C2420]' }} shadow-2xs hover:border-amber-500 transition-colors">
-            <div class="flex items-center justify-between">
-                <div class="text-[10px] font-bold uppercase tracking-wider text-amber-600">UNREAD NEW</div>
-                <span class="w-2 h-2 rounded-full bg-amber-500 animate-pulse"></span>
-            </div>
-            <div class="font-cinzel text-2xl font-bold text-amber-600 mt-1">{{ $unreadOrders }}</div>
-        </a>
-        <a href="{{ route('admin.orders.index', ['status' => 'pending']) }}" class="p-4 rounded-2xl bg-white dark:bg-[#1A1513] border {{ request('status') === 'pending' ? 'border-amber-500 ring-2 ring-amber-400/20' : 'border-[#ECE6DE] dark:border-[#2C2420]' }} shadow-2xs hover:border-amber-500 transition-colors">
-            <div class="text-[10px] font-bold uppercase tracking-wider text-amber-600">PENDING DISPATCH</div>
-            <div class="font-cinzel text-2xl font-bold text-amber-600 mt-1">{{ $pendingOrders }}</div>
-        </a>
+
+        <!-- 2. Delivered Orders -->
         <a href="{{ route('admin.orders.index', ['status' => 'completed']) }}" class="p-4 rounded-2xl bg-white dark:bg-[#1A1513] border {{ request('status') === 'completed' ? 'border-emerald-500 ring-2 ring-emerald-400/20' : 'border-[#ECE6DE] dark:border-[#2C2420]' }} shadow-2xs hover:border-emerald-500 transition-colors">
-            <div class="text-[10px] font-bold uppercase tracking-wider text-emerald-600">DELIVERED & CLOSED</div>
-            <div class="font-cinzel text-2xl font-bold text-emerald-600 mt-1">{{ $completedOrders }}</div>
+            <div class="flex items-center justify-between">
+                <div class="text-[10px] font-bold uppercase tracking-wider text-emerald-600">DELIVERED & PAID</div>
+                <span class="px-1.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-700 dark:text-emerald-300 text-[9px] font-bold font-mono">{{ $deliveryRate }}%</span>
+            </div>
+            <div class="font-cinzel text-2xl font-bold text-emerald-600 mt-1">{{ $deliveredOrders }}</div>
+            <div class="text-[10px] text-emerald-600/80 mt-0.5">Cash collected</div>
         </a>
-        <a href="{{ route('admin.orders.index', ['payment' => 'COD']) }}" class="p-4 rounded-2xl bg-white dark:bg-[#1A1513] border {{ request('payment') === 'COD' ? 'border-tan-500 ring-2 ring-tan-500/20' : 'border-[#ECE6DE] dark:border-[#2C2420]' }} shadow-2xs hover:border-tan-500 transition-colors">
-            <div class="text-[10px] font-bold uppercase tracking-wider text-tan-600">CASH ON DELIVERY</div>
-            <div class="font-cinzel text-2xl font-bold text-tan-600 mt-1">{{ \App\Models\Order::where('payment_method', 'COD')->count() }}</div>
+
+        <!-- 3. Dispatched / In Transit -->
+        <a href="{{ route('admin.orders.index', ['status' => 'dispatched']) }}" class="p-4 rounded-2xl bg-white dark:bg-[#1A1513] border {{ request('status') === 'dispatched' ? 'border-sky-500 ring-2 ring-sky-400/20' : 'border-[#ECE6DE] dark:border-[#2C2420]' }} shadow-2xs hover:border-sky-500 transition-colors">
+            <div class="text-[10px] font-bold uppercase tracking-wider text-sky-600">IN TRANSIT / DISPATCHED</div>
+            <div class="font-cinzel text-2xl font-bold text-sky-600 mt-1">{{ $dispatchedOrders }}</div>
+            <div class="text-[10px] text-sky-600/80 mt-0.5">With Courier</div>
+        </a>
+
+        <!-- 4. COD Returns & Non-Deliveries -->
+        <a href="{{ route('admin.orders.index', ['status' => 'returned']) }}" class="p-4 rounded-2xl bg-white dark:bg-[#1A1513] border {{ request('status') === 'returned' ? 'border-rose-500 ring-2 ring-rose-400/20' : 'border-[#ECE6DE] dark:border-[#2C2420]' }} shadow-2xs hover:border-rose-500 transition-colors">
+            <div class="flex items-center justify-between">
+                <div class="text-[10px] font-bold uppercase tracking-wider text-rose-600">COD RETURNS & FAILED</div>
+                <span class="px-1.5 py-0.5 rounded-full bg-rose-500/20 text-rose-700 dark:text-rose-300 text-[9px] font-bold font-mono">{{ $returnRate }}%</span>
+            </div>
+            <div class="font-cinzel text-2xl font-bold text-rose-600 mt-1">{{ $returnedOrders }}</div>
+            <div class="text-[10px] text-rose-600/80 mt-0.5">Loss: Rs. {{ number_format($totalReturnLoss) }}</div>
+        </a>
+
+        <!-- 5. Pending & Unread -->
+        <a href="{{ route('admin.orders.index', ['status' => 'pending']) }}" class="p-4 rounded-2xl bg-white dark:bg-[#1A1513] border {{ request('status') === 'pending' || request('unread') ? 'border-amber-500 ring-2 ring-amber-400/20' : 'border-[#ECE6DE] dark:border-[#2C2420]' }} shadow-2xs hover:border-amber-500 transition-colors">
+            <div class="flex items-center justify-between">
+                <div class="text-[10px] font-bold uppercase tracking-wider text-amber-600">PENDING DISPATCH</div>
+                @if($unreadOrders > 0)
+                    <span class="w-2 h-2 rounded-full bg-amber-500 animate-pulse" title="{{ $unreadOrders }} new unread"></span>
+                @endif
+            </div>
+            <div class="font-cinzel text-2xl font-bold text-amber-600 mt-1">{{ $pendingOrders }}</div>
+            <div class="text-[10px] text-amber-600/80 mt-0.5">{{ $unreadOrders }} unread orders</div>
         </a>
     </div>
 
@@ -106,9 +128,11 @@
             <div class="lg:col-span-3">
                 <select name="status" onchange="this.form.submit()" class="w-full px-3 py-2 text-xs rounded-xl bg-[#FAF8F5] dark:bg-[#241D1A] border border-[#E0D7CB] dark:border-[#382D27] text-espresso-900 dark:text-white focus:outline-hidden focus:border-tan-500 cursor-pointer">
                     <option value="all">Order Status: All</option>
-                    <option value="pending" {{ request('status') === 'pending' ? 'selected' : '' }}>Pending</option>
-                    <option value="processing" {{ request('status') === 'processing' ? 'selected' : '' }}>Processing</option>
-                    <option value="completed" {{ request('status') === 'completed' ? 'selected' : '' }}>Completed / Delivered</option>
+                    <option value="pending" {{ request('status') === 'pending' ? 'selected' : '' }}>Pending Dispatch</option>
+                    <option value="processing" {{ request('status') === 'processing' ? 'selected' : '' }}>Processing / Confirmed</option>
+                    <option value="dispatched" {{ request('status') === 'dispatched' ? 'selected' : '' }}>In Transit / Dispatched</option>
+                    <option value="completed" {{ request('status') === 'completed' ? 'selected' : '' }}>Delivered & Paid</option>
+                    <option value="returned" {{ request('status') === 'returned' ? 'selected' : '' }}>Returned / COD Return</option>
                     <option value="cancelled" {{ request('status') === 'cancelled' ? 'selected' : '' }}>Cancelled</option>
                 </select>
             </div>
@@ -240,10 +264,20 @@
                                     <span class="px-1.5 py-0.2 rounded text-[9px] font-bold bg-amber-100 text-amber-800 dark:bg-amber-950/40 dark:text-amber-300">NEW</span>
                                 @endif
                             </div>
-                            @if($order->order_status === 'completed')
+                            @if(in_array($order->order_status, ['completed', 'delivered']))
                                 <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-50 text-emerald-700 dark:bg-emerald-950/40 dark:text-emerald-300 border border-emerald-200 shrink-0">
                                     <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
                                     Delivered
+                                </span>
+                            @elseif($order->order_status === 'dispatched')
+                                <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-sky-50 text-sky-700 dark:bg-sky-950/40 dark:text-sky-300 border border-sky-200 shrink-0">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-sky-500"></span>
+                                    In Transit
+                                </span>
+                            @elseif($order->order_status === 'returned')
+                                <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-rose-50 text-rose-700 dark:bg-rose-950/40 dark:text-rose-300 border border-rose-200 shrink-0" title="{{ $order->return_reason ?: 'COD Return' }}">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-rose-500"></span>
+                                    COD Returned
                                 </span>
                             @elseif($order->order_status === 'pending')
                                 <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-50 text-amber-800 dark:bg-amber-950/40 dark:text-amber-300 border border-amber-200 shrink-0">
@@ -253,7 +287,7 @@
                             @elseif($order->order_status === 'processing')
                                 <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-blue-50 text-blue-800 dark:bg-blue-950/40 dark:text-blue-300 border border-blue-200 shrink-0">
                                     <span class="w-1.5 h-1.5 rounded-full bg-blue-500"></span>
-                                    In Crafting
+                                    Confirmed
                                 </span>
                             @else
                                 <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-gray-50 text-gray-700 dark:bg-gray-800 dark:text-gray-300 border border-gray-200 shrink-0">
@@ -437,20 +471,42 @@
 
                             <td class="py-3.5 px-3">
                                 <div>
-                                    @if($order->order_status === 'completed')
+                                    @if(in_array($order->order_status, ['completed', 'delivered']))
                                         <span class="inline-flex items-center gap-1.5 text-xs font-semibold text-emerald-600">
                                             <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
-                                            Delivered
+                                            Delivered & Paid
                                         </span>
+                                    @elseif($order->order_status === 'dispatched')
+                                        <span class="inline-flex items-center gap-1.5 text-xs font-semibold text-sky-600">
+                                            <span class="w-1.5 h-1.5 rounded-full bg-sky-500"></span>
+                                            In Transit / Dispatched
+                                        </span>
+                                    @elseif($order->order_status === 'returned')
+                                        <div class="space-y-0.5">
+                                            <span class="inline-flex items-center gap-1.5 text-xs font-semibold text-rose-600">
+                                                <span class="w-1.5 h-1.5 rounded-full bg-rose-500"></span>
+                                                COD Returned
+                                            </span>
+                                            @if($order->return_reason)
+                                                <div class="text-[10px] text-rose-700/80 dark:text-rose-400 font-medium">
+                                                    {{ $order->return_reason }}
+                                                </div>
+                                            @endif
+                                            @if($order->return_courier_charge > 0)
+                                                <div class="text-[9px] text-gray-500 font-mono">
+                                                    Loss: Rs. {{ number_format($order->return_courier_charge) }}
+                                                </div>
+                                            @endif
+                                        </div>
                                     @elseif($order->order_status === 'pending')
                                         <span class="inline-flex items-center gap-1.5 text-xs font-semibold text-amber-600">
                                             <span class="w-1.5 h-1.5 rounded-full bg-amber-500"></span>
-                                            Pending
+                                            Pending Dispatch
                                         </span>
                                     @elseif($order->order_status === 'processing')
                                         <span class="inline-flex items-center gap-1.5 text-xs font-semibold text-blue-600">
                                             <span class="w-1.5 h-1.5 rounded-full bg-blue-500"></span>
-                                            In Crafting
+                                            Confirmed / Packing
                                         </span>
                                     @else
                                         <span class="inline-flex items-center gap-1.5 text-xs font-semibold text-gray-500">

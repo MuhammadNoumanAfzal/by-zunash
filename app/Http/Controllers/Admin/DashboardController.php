@@ -15,17 +15,76 @@ class DashboardController extends Controller
     /**
      * Executive Atelier Control Center Dashboard
      */
-    public function index()
+    public function index(Request $request)
     {
         $totalProducts = Product::count();
         $activeProducts = Product::where('in_stock', true)->count();
         $lowStockCount = Product::where('stock_quantity', '<=', 5)->where('stock_quantity', '>', 0)->count();
         $outOfStockCount = Product::where('stock_quantity', '<=', 0)->count();
 
+        // Timeframe filter for Sales, COD Delivery & Profit Performance
+        $timeframe = $request->input('timeframe', 'this_month');
+        $customStart = $request->input('start_date');
+        $customEnd = $request->input('end_date');
+
+        $filterQuery = Order::query();
+        $dateLabel = 'This Month';
+
+        if ($timeframe === 'today') {
+            $filterQuery->whereDate('created_at', now()->toDateString());
+            $dateLabel = 'Today (' . now()->format('d M Y') . ')';
+        } elseif ($timeframe === 'yesterday') {
+            $filterQuery->whereDate('created_at', now()->subDay()->toDateString());
+            $dateLabel = 'Yesterday (' . now()->subDay()->format('d M Y') . ')';
+        } elseif ($timeframe === 'this_week') {
+            $filterQuery->where('created_at', '>=', now()->startOfWeek());
+            $dateLabel = 'This Week (' . now()->startOfWeek()->format('d M') . ' – ' . now()->format('d M') . ')';
+        } elseif ($timeframe === 'this_month') {
+            $filterQuery->where('created_at', '>=', now()->startOfMonth());
+            $dateLabel = 'This Month (' . now()->format('F Y') . ')';
+        } elseif ($timeframe === 'this_year') {
+            $filterQuery->where('created_at', '>=', now()->startOfYear());
+            $dateLabel = 'This Year (' . now()->format('Y') . ')';
+        } elseif ($timeframe === 'custom' && $customStart && $customEnd) {
+            $filterQuery->whereBetween('created_at', [
+                \Carbon\Carbon::parse($customStart)->startOfDay(),
+                \Carbon\Carbon::parse($customEnd)->endOfDay()
+            ]);
+            $dateLabel = \Carbon\Carbon::parse($customStart)->format('d M Y') . ' – ' . \Carbon\Carbon::parse($customEnd)->format('d M Y');
+        } elseif ($timeframe === 'all_time') {
+            $dateLabel = 'All Time Performance';
+        }
+
+        $filteredOrders = $filterQuery->get();
+
+        $filterOrdersCount = $filteredOrders->count();
+        $filterDeliveredCount = $filteredOrders->whereIn('order_status', ['completed', 'delivered'])->count();
+        $filterDispatchedCount = $filteredOrders->where('order_status', 'dispatched')->count();
+        $filterReturnedCount = $filteredOrders->where('order_status', 'returned')->count();
+        $filterPendingCount = $filteredOrders->where('order_status', 'pending')->count();
+        $filterCancelledCount = $filteredOrders->where('order_status', 'cancelled')->count();
+
+        $filterDeliveryRate = $filterOrdersCount > 0 ? round(($filterDeliveredCount / $filterOrdersCount) * 100, 1) : 0;
+        $filterReturnRate = $filterOrdersCount > 0 ? round(($filterReturnedCount / $filterOrdersCount) * 100, 1) : 0;
+
+        // Financials for the filtered timeframe
+        $filterDeliveredRevenue = (float) $filteredOrders->whereIn('order_status', ['completed', 'delivered'])->sum('total');
+        $filterGrossRevenue = (float) $filteredOrders->where('order_status', '!=', 'cancelled')->sum('total');
+
+        // Real COGS & Return Losses
+        $filterRealCogs = 0;
+        foreach ($filteredOrders->whereIn('order_status', ['completed', 'delivered']) as $ord) {
+            $filterRealCogs += $ord->total_cost;
+        }
+        $filterReturnLosses = (float) $filteredOrders->where('order_status', 'returned')->sum('return_courier_charge');
+        $filterNetProfit = max(0, $filterDeliveredRevenue - $filterRealCogs - $filterReturnLosses);
+        $filterProfitMargin = $filterDeliveredRevenue > 0 ? round(($filterNetProfit / $filterDeliveredRevenue) * 100, 1) : 0;
+
+        // Lifetime stats
         $totalOrders = Order::count();
         $ordersThisMonth = Order::whereMonth('created_at', now()->month)->count();
-        $totalRevenue = Order::sum('total');
-        $averageOrderValue = $totalOrders > 0 ? round($totalRevenue / $totalOrders) : 0;
+        $totalRevenue = Order::whereIn('order_status', ['completed', 'delivered'])->sum('total');
+        $averageOrderValue = $filterDeliveredCount > 0 ? round($filterDeliveredRevenue / $filterDeliveredCount) : ($totalOrders > 0 ? round(Order::sum('total') / $totalOrders) : 0);
 
         $activeInquiries = Inquiry::where('status', 'unread')->count();
         $totalClients = Customer::count();
@@ -147,6 +206,24 @@ class DashboardController extends Controller
         }
 
         return view('admin.dashboard', compact(
+            'timeframe',
+            'customStart',
+            'customEnd',
+            'dateLabel',
+            'filterOrdersCount',
+            'filterDeliveredCount',
+            'filterDispatchedCount',
+            'filterReturnedCount',
+            'filterPendingCount',
+            'filterCancelledCount',
+            'filterDeliveryRate',
+            'filterReturnRate',
+            'filterDeliveredRevenue',
+            'filterGrossRevenue',
+            'filterRealCogs',
+            'filterReturnLosses',
+            'filterNetProfit',
+            'filterProfitMargin',
             'totalProducts',
             'activeProducts',
             'lowStockCount',

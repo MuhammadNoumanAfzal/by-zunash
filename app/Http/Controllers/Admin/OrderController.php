@@ -46,18 +46,30 @@ class OrderController extends Controller
         $orders = $query->latest()->paginate(10)->withQueryString();
 
         $totalOrders = Order::count();
-        $completedOrders = Order::where('order_status', 'completed')->count();
+        $deliveredOrders = Order::whereIn('order_status', ['completed', 'delivered'])->count();
+        $dispatchedOrders = Order::where('order_status', 'dispatched')->count();
+        $returnedOrders = Order::where('order_status', 'returned')->count();
         $pendingOrders = Order::where('order_status', 'pending')->count();
+        $cancelledOrders = Order::where('order_status', 'cancelled')->count();
         $unreadOrders = Order::where('is_read', false)->count();
-        $totalRevenue = Order::sum('total');
+        $totalRevenue = (float) Order::whereIn('order_status', ['completed', 'delivered'])->sum('total');
+        $deliveryRate = $totalOrders > 0 ? round(($deliveredOrders / $totalOrders) * 100, 1) : 0;
+        $returnRate = $totalOrders > 0 ? round(($returnedOrders / $totalOrders) * 100, 1) : 0;
+        $totalReturnLoss = (float) Order::where('order_status', 'returned')->sum('return_courier_charge');
 
         return view('admin.orders.index', compact(
             'orders',
             'totalOrders',
-            'completedOrders',
+            'deliveredOrders',
+            'dispatchedOrders',
+            'returnedOrders',
             'pendingOrders',
+            'cancelledOrders',
             'unreadOrders',
-            'totalRevenue'
+            'totalRevenue',
+            'deliveryRate',
+            'returnRate',
+            'totalReturnLoss'
         ));
     }
 
@@ -150,13 +162,31 @@ class OrderController extends Controller
     public function updateStatus(Request $request, Order $order)
     {
         $validated = $request->validate([
-            'order_status' => 'required|in:pending,processing,completed,cancelled',
-            'payment_status' => 'required|in:pending,paid,failed',
+            'order_status' => 'required|in:pending,processing,dispatched,completed,delivered,returned,cancelled',
+            'payment_status' => 'required|in:pending,paid,failed,refunded',
+            'return_reason' => 'nullable|string|max:255',
+            'return_courier_charge' => 'nullable|numeric|min:0',
         ]);
 
-        $order->update($validated);
+        $data = $validated;
+        if (in_array($validated['order_status'], ['completed', 'delivered'])) {
+            $data['delivered_at'] = now();
+            if ($validated['payment_status'] === 'pending') {
+                $data['payment_status'] = 'paid';
+            }
+        } elseif ($validated['order_status'] === 'dispatched') {
+            $data['dispatched_at'] = $order->dispatched_at ?: now();
+        } elseif ($validated['order_status'] === 'returned') {
+            $data['returned_at'] = now();
+            $data['payment_status'] = 'failed';
+            if (!isset($data['return_courier_charge']) || $data['return_courier_charge'] === null) {
+                $data['return_courier_charge'] = 250.00;
+            }
+        }
 
-        return back()->with('toast_success', "Order #{$order->order_number} status updated.");
+        $order->update($data);
+
+        return back()->with('toast_success', "Order #{$order->order_number} status updated to " . ucfirst($order->order_status));
     }
 
     /**
@@ -178,7 +208,7 @@ class OrderController extends Controller
         ];
 
         if ($request->boolean('mark_dispatched')) {
-            $data['order_status'] = 'completed';
+            $data['order_status'] = 'dispatched';
             $data['dispatched_at'] = now();
         }
 
