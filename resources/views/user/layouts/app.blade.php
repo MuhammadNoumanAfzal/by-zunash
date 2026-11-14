@@ -100,8 +100,8 @@
 
     @if(request()->routeIs('home'))
     <!-- Preload Critical Hero LCP Image for Instant Mobile & Desktop Performance -->
-    <link rel="preload" as="image" href="{{ asset('images/hero/slide-bag-mobile.webp') }}" type="image/webp" media="(max-width: 640px)" fetchpriority="high">
-    <link rel="preload" as="image" href="{{ asset('images/hero/slide-bag.webp') }}" type="image/webp" media="(min-width: 641px)" fetchpriority="high">
+    <link rel="preload" as="image" href="{{ asset('images/hero/slide-bag-mobile-v2.webp') }}" type="image/webp" media="(max-width: 640px)" fetchpriority="high">
+    <link rel="preload" as="image" href="{{ asset('images/hero/slide-bag-v2.webp') }}" type="image/webp" media="(min-width: 641px)" fetchpriority="high">
     @endif
 
     <!-- Preconnect & Asynchronous High-Performance Luxury Google Fonts -->

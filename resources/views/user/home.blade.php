@@ -107,13 +107,13 @@
     >
         <!-- Background Image -->
         <picture class="block w-full h-full">
-            <source media="(max-width: 640px)" srcset="{{ asset('images/hero/slide-bag-mobile.webp') }}" type="image/webp">
-            <source srcset="{{ asset('images/hero/slide-bag.webp') }}" type="image/webp">
+            <source media="(max-width: 640px)" srcset="{{ asset('images/hero/slide-bag-mobile-v2.webp') }}" type="image/webp">
+            <source srcset="{{ asset('images/hero/slide-bag-v2.webp') }}" type="image/webp">
             <img 
-                src="{{ asset('images/hero/slide-bag.jpg') }}" 
+                src="{{ asset('images/hero/slide-bag-v2.jpg') }}" 
                 alt="By Zunash Handcrafted Italian Leather Bag" 
-                width="1920"
-                height="1080"
+                width="1600"
+                height="900"
                 fetchpriority="high"
                 loading="eager"
                 decoding="sync"
@@ -701,11 +701,11 @@
                 <!-- Primary Atelier Image -->
                 <div class="relative z-10 w-[88%] aspect-[4/3] sm:aspect-[16/11] rounded-2xl overflow-hidden shadow-2xl border-4 border-white group">
                     <picture>
-                        <source srcset="{{ asset('images/brand/artisan-craft.webp') }}" type="image/webp">
+                        <source srcset="{{ asset('images/brand/artisan-craft-v2.webp') }}" type="image/webp">
                         <img 
-                            src="{{ asset('images/brand/artisan-craft.jpg') }}" 
+                            src="{{ asset('images/brand/artisan-craft-v2.jpg') }}" 
                             alt="By Zunash Master Leather Artisan Workshop in Lahore" 
-                            width="640"
+                            width="600"
                             height="440"
                             loading="lazy"
                             decoding="async"
@@ -722,12 +722,12 @@
                 <!-- Secondary Floating Inset Image (Macro Stitch) -->
                 <div class="absolute -bottom-7 right-2 sm:right-4 w-[52%] sm:w-[48%] aspect-square rounded-2xl overflow-hidden shadow-2xl border-4 border-white z-20 group">
                     <picture>
-                        <source srcset="{{ asset('images/brand/stitch-detail.webp') }}" type="image/webp">
+                        <source srcset="{{ asset('images/brand/stitch-detail-v2.webp') }}" type="image/webp">
                         <img 
-                            src="{{ asset('images/brand/stitch-detail.jpg') }}" 
+                            src="{{ asset('images/brand/stitch-detail-v2.jpg') }}" 
                             alt="Macro hand-stitched waxed seam detail" 
-                            width="320"
-                            height="320"
+                            width="360"
+                            height="360"
                             loading="lazy"
                             decoding="async"
                             class="w-full h-full object-cover transform transition-transform duration-700 ease-out group-hover:scale-110"
@@ -1331,8 +1331,8 @@
         <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
             <div class="reveal delay-75 group relative aspect-square rounded-2xl overflow-hidden bg-ivory-100 border border-ivory-300 shadow-2xs hover:shadow-xl transition-all duration-300">
                 <picture>
-                    <source srcset="{{ asset('images/brand/artisan-craft.webp') }}" type="image/webp">
-                    <img src="{{ asset('images/brand/artisan-craft.jpg') }}" alt="Atelier Craftsman at work" width="200" height="200" loading="lazy" decoding="async" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700">
+                    <source srcset="{{ asset('images/brand/artisan-craft-v2.webp') }}" type="image/webp">
+                    <img src="{{ asset('images/brand/artisan-craft-v2.jpg') }}" alt="Atelier Craftsman at work" width="200" height="200" loading="lazy" decoding="async" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700">
                 </picture>
                 <div class="absolute inset-0 bg-espresso-950/60 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col items-center justify-center text-white p-3 text-center">
                     <i data-lucide="instagram" class="w-6 h-6 text-gold mb-1"></i>
@@ -1353,8 +1353,8 @@
             </div>
             <div class="reveal delay-225 group relative aspect-square rounded-2xl overflow-hidden bg-ivory-100 border border-ivory-300 shadow-2xs hover:shadow-xl transition-all duration-300">
                 <picture>
-                    <source srcset="{{ asset('images/brand/stitch-detail.webp') }}" type="image/webp">
-                    <img src="{{ asset('images/brand/stitch-detail.jpg') }}" alt="Waxed saddle stitch detail" width="200" height="200" loading="lazy" decoding="async" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700">
+                    <source srcset="{{ asset('images/brand/stitch-detail-v2.webp') }}" type="image/webp">
+                    <img src="{{ asset('images/brand/stitch-detail-v2.jpg') }}" alt="Waxed saddle stitch detail" width="200" height="200" loading="lazy" decoding="async" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700">
                 </picture>
                 <div class="absolute inset-0 bg-espresso-950/60 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col items-center justify-center text-white p-3 text-center">
                     <i data-lucide="instagram" class="w-6 h-6 text-gold mb-1"></i>
