@@ -199,14 +199,12 @@ class ProductController extends Controller
         $primaryImage = !empty($validated['image']) ? $validated['image'] : '/images/products/prod-reversible-belt.jpg';
 
         if ($request->hasFile('image_file')) {
-            $file = $request->file('image_file');
-            $filename = 'prod-' . $slug . '-' . time() . '.' . $file->getClientOriginalExtension();
-            $destDir = public_path('images/products');
-            if (!file_exists($destDir)) {
-                @mkdir($destDir, 0755, true);
-            }
-            $file->move($destDir, $filename);
-            $primaryImage = '/images/products/' . $filename;
+            $primaryImage = \App\Services\ImageOptimizer::processUpload(
+                $request->file('image_file'),
+                'images/products',
+                'prod-' . $slug,
+                800
+            );
         }
 
         $leadTime = !empty($validated['lead_time']) ? trim($validated['lead_time']) : null;
@@ -315,14 +313,12 @@ class ProductController extends Controller
         $primaryImage = !empty($validated['image']) ? $validated['image'] : $product->image;
 
         if ($request->hasFile('image_file')) {
-            $file = $request->file('image_file');
-            $filename = 'prod-' . $product->slug . '-' . time() . '.' . $file->getClientOriginalExtension();
-            $destDir = public_path('images/products');
-            if (!file_exists($destDir)) {
-                @mkdir($destDir, 0755, true);
-            }
-            $file->move($destDir, $filename);
-            $primaryImage = '/images/products/' . $filename;
+            $primaryImage = \App\Services\ImageOptimizer::processUpload(
+                $request->file('image_file'),
+                'images/products',
+                'prod-' . $product->slug,
+                800
+            );
         }
 
         $leadTime = !empty($validated['lead_time']) ? trim($validated['lead_time']) : $product->lead_time;
@@ -526,18 +522,17 @@ class ProductController extends Controller
             $gallery = $fallback;
         }
 
-        // 2. Direct computer file uploads
+        // 2. Direct computer file uploads (Automatically compressed & WebP formatted)
         if ($request->hasFile('gallery_files')) {
-            $destDir = public_path('images/products');
-            if (!file_exists($destDir)) {
-                @mkdir($destDir, 0755, true);
-            }
-
             foreach ($request->file('gallery_files') as $idx => $file) {
                 if ($file && $file->isValid()) {
-                    $filename = 'prod-gallery-' . Str::slug($slug) . '-' . time() . '-' . ($idx + 1) . '-' . rand(10, 99) . '.' . $file->getClientOriginalExtension();
-                    $file->move($destDir, $filename);
-                    $gallery[] = '/images/products/' . $filename;
+                    $webpUrl = \App\Services\ImageOptimizer::processUpload(
+                        $file,
+                        'images/products',
+                        'prod-gallery-' . Str::slug($slug) . '-' . ($idx + 1),
+                        800
+                    );
+                    $gallery[] = $webpUrl;
                 }
             }
         }

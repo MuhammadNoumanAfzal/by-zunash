@@ -492,7 +492,7 @@
             <div class="flex items-center gap-3">
                 <a 
                     href="{{ route('shop') }}" 
-                    class="text-xs uppercase tracking-widest font-bold text-gold-600 hover:text-espresso-950 transition-colors flex items-center gap-1.5 py-1.5 px-3 rounded-full hover:bg-gold/10 group"
+                    class="text-xs uppercase tracking-widest font-bold text-[#593E15] dark:text-gold-300 hover:text-espresso-950 transition-colors flex items-center gap-1.5 py-1.5 px-3 rounded-full hover:bg-gold/10 group"
                 >
                     <span>View All</span>
                     <i data-lucide="arrow-right" class="w-3.5 h-3.5 transition-transform group-hover:translate-x-0.5"></i>
@@ -1046,7 +1046,7 @@
                 <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-2xl bg-ivory-100 dark:bg-[#1A1411] group-hover:bg-espresso-950 text-gold-700 dark:text-gold-400 group-hover:text-gold-300 flex items-center justify-center transition-all duration-300 shadow-inner group-hover:scale-110 mb-2 sm:mb-3">
                     <i data-lucide="truck" class="w-4 h-4 sm:w-5 sm:h-5"></i>
                 </div>
-                <h4 class="font-serif text-xs sm:text-sm font-bold text-espresso-950 dark:text-ivory mb-1 group-hover:text-gold-600 transition-colors">Nationwide Delivery</h4>
+                <h3 class="font-serif text-xs sm:text-sm font-bold text-espresso-950 dark:text-ivory mb-1 group-hover:text-gold-600 transition-colors">Nationwide Delivery</h3>
                 <p class="text-[10px] sm:text-[11px] text-muted-dark dark:text-ivory-400 leading-relaxed font-light">
                     Fast courier shipping across 150+ Pakistani cities with real-time SMS updates.
                 </p>
@@ -1062,7 +1062,7 @@
                         <path d="M6 12h.01M18 12h.01"></path>
                     </svg>
                 </div>
-                <h4 class="font-serif text-xs sm:text-sm font-bold text-espresso-950 dark:text-ivory mb-1 group-hover:text-gold-600 transition-colors">Cash on Delivery</h4>
+                <h3 class="font-serif text-xs sm:text-sm font-bold text-espresso-950 dark:text-ivory mb-1 group-hover:text-gold-600 transition-colors">Cash on Delivery</h3>
                 <p class="text-[10px] sm:text-[11px] text-muted-dark dark:text-ivory-400 leading-relaxed font-light">
                     Zero risk. Inspect your parcel and pay securely with cash at your doorstep nationwide.
                 </p>
@@ -1074,7 +1074,7 @@
                 <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-2xl bg-ivory-100 dark:bg-[#1A1411] group-hover:bg-espresso-950 text-gold-700 dark:text-gold-400 group-hover:text-gold-300 flex items-center justify-center transition-all duration-300 shadow-inner group-hover:scale-110 mb-2 sm:mb-3">
                     <i data-lucide="award" class="w-4 h-4 sm:w-5 sm:h-5"></i>
                 </div>
-                <h4 class="font-serif text-xs sm:text-sm font-bold text-espresso-950 dark:text-ivory mb-1 group-hover:text-gold-600 transition-colors">100% Pure Leather</h4>
+                <h3 class="font-serif text-xs sm:text-sm font-bold text-espresso-950 dark:text-ivory mb-1 group-hover:text-gold-600 transition-colors">100% Pure Leather</h3>
                 <p class="text-[10px] sm:text-[11px] text-muted-dark dark:text-ivory-400 leading-relaxed font-light">
                     Full-grain & top-grain Pakistani cowhide. Zero synthetic fillers, zero peel.
                 </p>
@@ -1086,7 +1086,7 @@
                 <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-2xl bg-ivory-100 dark:bg-[#1A1411] group-hover:bg-espresso-950 text-gold-700 dark:text-gold-400 group-hover:text-gold-300 flex items-center justify-center transition-all duration-300 shadow-inner group-hover:scale-110 mb-2 sm:mb-3">
                     <i data-lucide="rotate-ccw" class="w-4 h-4 sm:w-5 sm:h-5"></i>
                 </div>
-                <h4 class="font-serif text-xs sm:text-sm font-bold text-espresso-950 dark:text-ivory mb-1 group-hover:text-gold-600 transition-colors">7-Day Exchanges</h4>
+                <h3 class="font-serif text-xs sm:text-sm font-bold text-espresso-950 dark:text-ivory mb-1 group-hover:text-gold-600 transition-colors">7-Day Exchanges</h3>
                 <p class="text-[10px] sm:text-[11px] text-muted-dark dark:text-ivory-400 leading-relaxed font-light">
                     Effortless size swaps or returns with quick doorstep pickup and zero hassle.
                 </p>
@@ -1098,7 +1098,7 @@
                 <div class="w-12 h-12 rounded-2xl bg-ivory-100 dark:bg-[#1A1411] group-hover:bg-espresso-950 text-gold-700 dark:text-gold-400 group-hover:text-gold-300 flex items-center justify-center transition-all duration-300 shadow-inner group-hover:scale-110 mb-3">
                     <i data-lucide="phone-call" class="w-5 h-5"></i>
                 </div>
-                <h4 class="font-serif text-sm font-bold text-espresso-950 dark:text-ivory mb-1 group-hover:text-gold-600 transition-colors">Atelier Concierge</h4>
+                <h3 class="font-serif text-sm font-bold text-espresso-950 dark:text-ivory mb-1 group-hover:text-gold-600 transition-colors">Atelier Concierge</h3>
                 <p class="text-[11px] text-muted-dark dark:text-ivory-400 leading-relaxed font-light">
                     Direct concierge support via WhatsApp & phone for sizing advice, gifting, or order inquiries.
                 </p>
@@ -1110,7 +1110,7 @@
                 <div class="w-12 h-12 rounded-2xl bg-ivory-100 dark:bg-[#1A1411] group-hover:bg-espresso-950 text-gold-700 dark:text-gold-400 group-hover:text-gold-300 flex items-center justify-center transition-all duration-300 shadow-inner group-hover:scale-110 mb-3">
                     <i data-lucide="headphones" class="w-5 h-5"></i>
                 </div>
-                <h4 class="font-serif text-sm font-bold text-espresso-950 dark:text-ivory mb-1 group-hover:text-gold-600 transition-colors">Personal Concierge</h4>
+                <h3 class="font-serif text-sm font-bold text-espresso-950 dark:text-ivory mb-1 group-hover:text-gold-600 transition-colors">Personal Concierge</h3>
                 <p class="text-[11px] text-muted-dark dark:text-ivory-400 leading-relaxed font-light">
                     Direct concierge assistance on WhatsApp for belt sizing, gift selection, and styling recommendations.
                 </p>

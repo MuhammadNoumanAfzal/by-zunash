@@ -50,15 +50,12 @@ class CategoryController extends Controller
         $imagePath = '/images/categories/cat-belts.jpg';
 
         if ($request->hasFile('image_file')) {
-            $file = $request->file('image_file');
-            $extension = $file->getClientOriginalExtension() ?: 'jpg';
-            $filename = 'cat-' . Str::slug($validated['name']) . '-' . time() . '.' . $extension;
-            $destinationPath = public_path('images/categories');
-            if (!file_exists($destinationPath)) {
-                mkdir($destinationPath, 0755, true);
-            }
-            $file->move($destinationPath, $filename);
-            $imagePath = '/images/categories/' . $filename;
+            $imagePath = \App\Services\ImageOptimizer::processUpload(
+                $request->file('image_file'),
+                'images/categories',
+                'cat-' . Str::slug($validated['name']),
+                800
+            );
         } elseif (!empty($validated['image'])) {
             $imagePath = $validated['image'];
         }
@@ -95,15 +92,12 @@ class CategoryController extends Controller
         $imagePath = $category->image;
 
         if ($request->hasFile('image_file')) {
-            $file = $request->file('image_file');
-            $extension = $file->getClientOriginalExtension() ?: 'jpg';
-            $filename = 'cat-' . Str::slug($validated['name']) . '-' . time() . '.' . $extension;
-            $destinationPath = public_path('images/categories');
-            if (!file_exists($destinationPath)) {
-                mkdir($destinationPath, 0755, true);
-            }
-            $file->move($destinationPath, $filename);
-            $imagePath = '/images/categories/' . $filename;
+            $imagePath = \App\Services\ImageOptimizer::processUpload(
+                $request->file('image_file'),
+                'images/categories',
+                'cat-' . Str::slug($validated['name']),
+                800
+            );
         } elseif (!empty($validated['image'])) {
             $imagePath = $validated['image'];
         }

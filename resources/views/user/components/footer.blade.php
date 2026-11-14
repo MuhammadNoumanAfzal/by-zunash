@@ -23,9 +23,9 @@
 
             <!-- Col 2: The Collections -->
             <div>
-                <h4 class="font-serif text-sm uppercase tracking-widest text-gold font-semibold mb-4">
+                <h3 class="font-serif text-sm uppercase tracking-widest text-gold font-semibold mb-4">
                     Collections
-                </h4>
+                </h3>
                 <ul class="space-y-2.5 text-xs tracking-wide">
                     <li><a href="{{ route('category', 'belts') }}" class="text-ivory-300 hover:text-gold transition-colors">Leather Belts</a></li>
                     <li><a href="{{ route('category', 'wallets') }}" class="text-ivory-300 hover:text-gold transition-colors">Wallets & Cardholders</a></li>
@@ -38,9 +38,9 @@
 
             <!-- Col 3: Client Concierge & Policies -->
             <div>
-                <h4 class="font-serif text-sm uppercase tracking-widest text-gold font-semibold mb-4">
+                <h3 class="font-serif text-sm uppercase tracking-widest text-gold font-semibold mb-4">
                     Client Care
-                </h4>
+                </h3>
                 <ul class="space-y-2.5 text-xs tracking-wide">
                     <li><a href="{{ route('policy.shipping') }}" class="text-ivory-300 hover:text-gold transition-colors">Shipping & Delivery</a></li>
                     <li><a href="{{ route('policy.returns') }}" class="text-ivory-300 hover:text-gold transition-colors">Returns & Exchanges</a></li>
@@ -54,9 +54,9 @@
 
             <!-- Col 4: Contact & Hours -->
             <div>
-                <h4 class="font-serif text-sm uppercase tracking-widest text-gold font-semibold mb-4">
+                <h3 class="font-serif text-sm uppercase tracking-widest text-gold font-semibold mb-4">
                     Atelier Care
-                </h4>
+                </h3>
                 <ul class="space-y-3 text-xs text-ivory-300">
                     <li class="flex items-start gap-2.5">
                         <i data-lucide="map-pin" class="w-4 h-4 text-gold flex-shrink-0 mt-0.5"></i>

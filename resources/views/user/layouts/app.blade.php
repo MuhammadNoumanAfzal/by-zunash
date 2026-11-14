@@ -445,7 +445,7 @@
         href="https://wa.me/923214700545?text={{ urlencode('Assalam-o-Alaikum By Zunash Concierge! I would like assistance with an inquiry or order.') }}" 
         target="_blank" 
         rel="noopener noreferrer" 
-        class="fixed bottom-6 right-6 z-40 group flex items-center gap-2.5 p-3.5 sm:px-4 sm:py-3 bg-[#25D366] hover:bg-[#20ba59] text-white rounded-full shadow-2xl hover:shadow-[#25D366]/40 hover:scale-105 transition-all duration-300 no-print print:hidden"
+        class="fixed bottom-6 right-6 z-40 group flex items-center gap-2.5 p-3.5 sm:px-4 sm:py-3 bg-[#075E54] hover:bg-[#128C7E] text-white rounded-full shadow-2xl hover:shadow-[#075E54]/40 hover:scale-105 transition-all duration-300 no-print print:hidden"
         aria-label="Chat with By Zunash Concierge on WhatsApp"
         title="Chat on WhatsApp (+92 321 4700545)"
     >

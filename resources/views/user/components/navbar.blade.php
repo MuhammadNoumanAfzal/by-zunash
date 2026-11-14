@@ -87,7 +87,7 @@
             <nav class="hidden lg:flex items-center space-x-7">
                 <a 
                     href="{{ route('home') }}" 
-                    class="text-xs uppercase tracking-widest font-medium transition-colors duration-200 {{ request()->routeIs('home') ? 'text-gold-600 font-semibold' : 'text-espresso-800 dark:text-ivory-200 hover:text-gold-600 dark:hover:text-gold' }}"
+                    class="text-xs uppercase tracking-widest font-medium transition-colors duration-200 {{ request()->routeIs('home') ? 'text-[#593E15] dark:text-gold-400 font-bold' : 'text-espresso-800 dark:text-ivory-200 hover:text-[#593E15] dark:hover:text-gold' }}"
                 >
                     Home
                 </a>
@@ -102,12 +102,13 @@
                         type="button" 
                         @click="toggleCollections()"
                         class="text-xs uppercase tracking-widest font-medium transition-colors duration-200 flex items-center gap-1.5 py-5 focus:outline-none"
-                        :class="collectionsOpen || {{ request()->is('category*') ? 'true' : 'false' }} ? 'text-gold-600 font-semibold' : 'text-espresso-800 dark:text-ivory-200 hover:text-gold-600 dark:hover:text-gold'"
+                        :class="collectionsOpen || {{ request()->is('category*') ? 'true' : 'false' }} ? 'text-[#593E15] dark:text-gold-400 font-semibold' : 'text-espresso-800 dark:text-ivory-200 hover:text-[#593E15] dark:hover:text-gold'"
                         aria-label="Toggle collections menu"
-                        aria-expanded="collectionsOpen"
+                        aria-expanded="false"
+                        :aria-expanded="collectionsOpen ? 'true' : 'false'"
                     >
                         <span>Collections</span>
-                        <i data-lucide="chevron-down" class="w-3.5 h-3.5 transition-transform duration-200" :class="collectionsOpen ? 'rotate-180 text-gold-600' : ''"></i>
+                        <i data-lucide="chevron-down" class="w-3.5 h-3.5 transition-transform duration-200" :class="collectionsOpen ? 'rotate-180 text-[#593E15] dark:text-gold-400' : ''"></i>
                     </button>
 
                     <!-- Full-Width Luxury Mega-Menu Dropdown (Dynamic from Atelier Database) -->

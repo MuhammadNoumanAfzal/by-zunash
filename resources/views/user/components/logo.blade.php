@@ -36,9 +36,9 @@
             <!-- Typographic Lockup -->
             <div class="flex flex-col">
                 <div class="flex items-center justify-center gap-1.5 -mb-0.5">
-                    <span class="h-[0.5px] w-3 {{ $variant === 'white' ? 'bg-gold/60' : 'bg-gold/80' }}"></span>
-                    <span class="text-[9px] tracking-[0.28em] uppercase font-cinzel font-semibold {{ $variant === 'white' ? 'text-gold-200' : 'text-gold-600 dark:text-gold-400' }}">BY</span>
-                    <span class="h-[0.5px] w-3 {{ $variant === 'white' ? 'bg-gold/60' : 'bg-gold/80' }}"></span>
+                    <span class="h-[0.5px] w-3 {{ $variant === 'white' ? 'bg-gold/60' : 'bg-[#593E15]/70 dark:bg-gold/80' }}"></span>
+                    <span class="text-[9px] tracking-[0.28em] uppercase font-cinzel font-semibold {{ $variant === 'white' ? 'text-gold-200' : 'text-[#593E15] dark:text-gold-300' }}">BY</span>
+                    <span class="h-[0.5px] w-3 {{ $variant === 'white' ? 'bg-gold/60' : 'bg-[#593E15]/70 dark:bg-gold/80' }}"></span>
                 </div>
                 <span class="font-cinzel tracking-[0.22em] text-[17px] font-bold uppercase leading-none {{ $variant === 'white' ? 'text-ivory' : 'text-espresso-950 dark:text-ivory' }} group-hover:text-gold transition-colors">
                     ZUNASH
