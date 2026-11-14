@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\RateLimiter;
+use Illuminate\Support\Str;
 
 class AuthController extends Controller
 {
@@ -21,7 +23,7 @@ class AuthController extends Controller
     }
 
     /**
-     * Attempt admin login
+     * Attempt admin login with brute-force protection
      */
     public function login(Request $request)
     {
@@ -30,16 +32,28 @@ class AuthController extends Controller
             'password' => 'required|string',
         ]);
 
+        $throttleKey = Str::transliterate(Str::lower($request->input('email')) . '|' . $request->ip());
+
+        if (RateLimiter::tooManyAttempts($throttleKey, 5)) {
+            $seconds = RateLimiter::availableIn($throttleKey);
+            return back()->withInput($request->only('email'))->withErrors([
+                'email' => "Too many login attempts. Access temporarily locked for {$seconds} seconds.",
+            ]);
+        }
+
         $remember = $request->boolean('remember');
 
         if (Auth::guard('admin')->attempt($credentials, $remember)) {
+            RateLimiter::clear($throttleKey);
             $request->session()->regenerate();
 
             return redirect()->intended(route('admin.dashboard'))
                 ->with('toast_success', 'Welcome back, ' . Auth::guard('admin')->user()->name . '. Atelier Control Center is ready.');
         }
 
-        return back()->withInput($request->only('email', 'remember'))->withErrors([
+        RateLimiter::hit($throttleKey, 60);
+
+        return back()->withInput($request->only('email'))->withErrors([
             'email' => 'The provided credentials do not match our executive records.',
         ]);
     }

@@ -135,7 +135,7 @@
             @endif
 
             <!-- Login Form -->
-            <form action="{{ route('admin.login.submit') }}" method="POST" class="space-y-4 relative z-10">
+            <form action="{{ route('admin.login.submit') }}" method="POST" class="space-y-4 relative z-10" autocomplete="off">
                 @csrf
 
                 <!-- Email -->
@@ -149,10 +149,12 @@
                             type="email" 
                             id="admin-email" 
                             name="email" 
-                            value="{{ old('email', 'admin@byzunash.com') }}" 
+                            value="{{ old('email') }}" 
                             required 
                             autofocus
-                            placeholder="admin@byzunash.com"
+                            autocomplete="username"
+                            spellcheck="false"
+                            placeholder="Enter executive email address"
                             class="w-full pl-10 pr-4 py-2.5 text-xs rounded-xl bg-[#FAF8F5] border border-[#E0D7CB] focus:outline-hidden focus:border-tan-500 focus:bg-white transition-all text-espresso-900"
                         >
                     </div>
@@ -164,7 +166,10 @@
                         <label class="block text-xs font-semibold text-espresso-900" for="admin-password">
                             Password
                         </label>
-                        <span class="text-[10px] text-tan-600 font-medium">Encrypted TLS</span>
+                        <span class="text-[10px] text-tan-600 font-medium flex items-center gap-1">
+                            <i data-lucide="shield-check" class="w-3 h-3 text-gold-500"></i>
+                            <span>Encrypted TLS</span>
+                        </span>
                     </div>
                     <div class="relative">
                         <i data-lucide="lock" class="w-4 h-4 text-[#A89C91] absolute left-3.5 top-1/2 -translate-y-1/2"></i>
@@ -172,19 +177,28 @@
                             type="password" 
                             id="admin-password" 
                             name="password" 
-                            value="password"
                             required 
-                            placeholder="••••••••"
-                            class="w-full pl-10 pr-4 py-2.5 text-xs rounded-xl bg-[#FAF8F5] border border-[#E0D7CB] focus:outline-hidden focus:border-tan-500 focus:bg-white transition-all text-espresso-900"
+                            autocomplete="current-password"
+                            placeholder="Enter secure password"
+                            class="w-full pl-10 pr-10 py-2.5 text-xs rounded-xl bg-[#FAF8F5] border border-[#E0D7CB] focus:outline-hidden focus:border-tan-500 focus:bg-white transition-all text-espresso-900"
                         >
+                        <button 
+                            type="button" 
+                            onclick="togglePasswordVisibility()"
+                            class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-espresso-900 focus:outline-none p-1 cursor-pointer"
+                            tabindex="-1"
+                            aria-label="Toggle password visibility"
+                        >
+                            <i data-lucide="eye" id="eye-icon" class="w-4 h-4"></i>
+                        </button>
                     </div>
                 </div>
 
                 <!-- Remember Me Checkbox -->
                 <div class="flex items-center justify-between pt-1">
-                    <label class="flex items-center gap-2 cursor-pointer text-xs text-[#7A6E64]">
-                        <input type="checkbox" name="remember" class="rounded border-[#DFD6CB] text-tan-600 focus:ring-tan-500" checked>
-                        <span>Keep me authenticated</span>
+                    <label class="flex items-center gap-2 cursor-pointer text-xs text-[#7A6E64] select-none">
+                        <input type="checkbox" name="remember" class="rounded border-[#DFD6CB] text-tan-600 focus:ring-tan-500">
+                        <span>Keep me authenticated on this device</span>
                     </label>
                 </div>
 
@@ -211,6 +225,20 @@
     </div>
 
     <script>
+        function togglePasswordVisibility() {
+            const input = document.getElementById('admin-password');
+            const icon = document.getElementById('eye-icon');
+            if (input) {
+                const isPass = input.type === 'password';
+                input.type = isPass ? 'text' : 'password';
+                if (icon) {
+                    icon.setAttribute('data-lucide', isPass ? 'eye-off' : 'eye');
+                    if (window.lucide) {
+                        lucide.createIcons();
+                    }
+                }
+            }
+        }
         lucide.createIcons();
     </script>
 
