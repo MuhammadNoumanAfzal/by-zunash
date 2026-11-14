@@ -1,22 +1,31 @@
 @props([
     'variant' => 'full', // 'full', 'compact', 'white'
-    'height' => 'h-10'
+    'height' => 'h-9 sm:h-10'
 ])
 
-<a href="{{ route('home') }}" class="group inline-flex items-center gap-3 transition-opacity duration-300 hover:opacity-90 focus:outline-none">
-    @if(file_exists(public_path('images/logo.png')))
+<a href="{{ route('home') }}" class="group inline-flex items-center gap-2.5 transition-all duration-300 hover:opacity-95 focus:outline-none" aria-label="By Zunash Luxury Leather Home">
+    @if(file_exists(public_path('images/logo-transparent.webp')) || file_exists(public_path('images/logo-transparent.png')))
+        <picture class="inline-block">
+            @if(file_exists(public_path('images/logo-transparent.webp')))
+                <source srcset="{{ asset('images/logo-transparent.webp') }}" type="image/webp">
+            @endif
+            <img 
+                src="{{ asset('images/logo-transparent.png') }}" 
+                alt="By Zunash — Luxury at your door step" 
+                class="{{ $height }} w-auto max-w-[190px] sm:max-w-[230px] object-contain drop-shadow-[0_2px_10px_rgba(0,0,0,0.6)] group-hover:scale-[1.03] transition-transform duration-300"
+                loading="eager"
+            >
+        </picture>
+    @elseif(file_exists(public_path('images/logo.png')))
         <img src="{{ asset('images/logo.png') }}" alt="By Zunash Luxury Leather" class="{{ $height }} w-auto object-contain">
     @else
-        <!-- Refined By Zunash Luxury Typographic & Emblem Mark -->
+        <!-- Refined By Zunash Luxury Typographic & Emblem Mark Fallback -->
         <div class="flex items-center gap-2.5">
             <!-- Monogram Emblem -->
             <div class="relative flex items-center justify-center w-9 h-9 rounded-full bg-gradient-to-br from-espresso-900 via-chocolate-800 to-espresso-950 border border-gold/40 shadow-sm text-gold">
                 <svg viewBox="0 0 100 100" class="w-6 h-6 fill-none stroke-current" stroke-linecap="round" stroke-linejoin="round">
-                    <!-- Background subtle ring -->
                     <circle cx="50" cy="50" r="38" stroke="currentColor" stroke-width="1.5" stroke-dasharray="2 3" opacity="0.6"/>
-                    <!-- Antique Gold Intertwined Loop -->
                     <ellipse cx="50" cy="50" rx="34" ry="18" transform="rotate(-30 50 50)" stroke="url(#goldGradient)" stroke-width="2.5" fill="none" opacity="0.85"/>
-                    <!-- Luxury Serif Z -->
                     <path d="M30 30 H68 L32 70 H70" stroke="url(#goldGradientLight)" stroke-width="7" stroke-linecap="square"/>
                     <defs>
                         <linearGradient id="goldGradient" x1="0%" y1="0%" x2="100%" y2="100%">

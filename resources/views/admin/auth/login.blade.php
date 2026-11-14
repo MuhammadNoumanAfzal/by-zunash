@@ -5,6 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Atelier Executive Login | By Zunash Control Center</title>
 
+    <!-- Official Brand Favicons -->
+    <link rel="shortcut icon" href="{{ asset('favicon.ico') }}">
+    <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}">
+    <link rel="icon" type="image/png" sizes="48x48" href="{{ asset('favicon-48x48.png') }}">
+    <link rel="icon" type="image/png" sizes="32x32" href="{{ asset('favicon-32x32.png') }}">
+    <link rel="icon" type="image/png" sizes="16x16" href="{{ asset('favicon-16x16.png') }}">
+    <link rel="apple-touch-icon" sizes="180x180" href="{{ asset('apple-touch-icon.png') }}">
+
     <!-- Google Fonts: Plus Jakarta Sans & Inter -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -77,39 +85,14 @@
             <div class="absolute -bottom-16 -left-16 w-44 h-44 bg-gold-400/15 rounded-full blur-2xl pointer-events-none"></div>
 
             <!-- Brand Header -->
-            <div class="text-center mb-8 relative z-10">
-                <div class="relative flex items-center justify-center w-16 h-16 rounded-full bg-gradient-to-br from-espresso-950 via-espresso-900 to-chocolate-800 border border-gold/50 shadow-xl text-gold mx-auto mb-4">
-                    <svg viewBox="0 0 100 100" class="w-10 h-10 fill-none stroke-current" stroke-linecap="round" stroke-linejoin="round">
-                        <!-- Background subtle ring -->
-                        <circle cx="50" cy="50" r="38" stroke="currentColor" stroke-width="1.5" stroke-dasharray="2 3" opacity="0.6"/>
-                        <!-- Antique Gold Intertwined Loop -->
-                        <ellipse cx="50" cy="50" rx="34" ry="18" transform="rotate(-30 50 50)" stroke="url(#loginGoldGrad)" stroke-width="2.5" fill="none" opacity="0.85"/>
-                        <!-- Luxury Serif Z -->
-                        <path d="M30 30 H68 L32 70 H70" stroke="url(#loginGoldGradLight)" stroke-width="7" stroke-linecap="square"/>
-                        <defs>
-                            <linearGradient id="loginGoldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-                                <stop offset="0%" stop-color="#E4D5B1" />
-                                <stop offset="50%" stop-color="#C5A16B" />
-                                <stop offset="100%" stop-color="#94703B" />
-                            </linearGradient>
-                            <linearGradient id="loginGoldGradLight" x1="0%" y1="0%" x2="100%" y2="100%">
-                                <stop offset="0%" stop-color="#FFFFFF" />
-                                <stop offset="40%" stop-color="#E4D5B1" />
-                                <stop offset="100%" stop-color="#C5A16B" />
-                            </linearGradient>
-                        </defs>
-                    </svg>
-                </div>
-                <div class="flex items-center justify-center gap-1.5 -mb-0.5">
-                    <span class="h-[0.5px] w-3 bg-gold/80"></span>
-                    <span class="text-[9px] tracking-[0.28em] uppercase font-cinzel font-semibold text-gold-600">BY</span>
-                    <span class="h-[0.5px] w-3 bg-gold/80"></span>
-                </div>
-                <h1 class="font-cinzel text-2xl sm:text-3xl font-bold text-espresso-900 tracking-wider">
-                    ZUNASH
-                </h1>
+            <div class="text-center mb-8 relative z-10 flex flex-col items-center">
+                <img 
+                    src="{{ asset('images/logo-transparent.png') }}" 
+                    alt="By Zunash Luxury Leather" 
+                    class="h-14 sm:h-16 w-auto max-w-[240px] object-contain drop-shadow-md mb-2"
+                >
                 <p class="text-[10px] font-bold uppercase tracking-[0.25em] text-tan-600 mt-1">
-                    Atelier Control Center • Artisanal Leather
+                    Atelier Control Center • Executive Access
                 </p>
                 <div class="h-0.5 w-16 bg-gradient-to-r from-transparent via-gold-400 to-transparent mx-auto mt-3"></div>
             </div>

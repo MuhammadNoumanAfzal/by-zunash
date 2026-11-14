@@ -7,6 +7,14 @@
 
     <title>@yield('title', 'By Zunash Atelier Control Center | Luxury Leather Goods')</title>
 
+    <!-- Official Brand Favicons -->
+    <link rel="shortcut icon" href="{{ asset('favicon.ico') }}">
+    <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}">
+    <link rel="icon" type="image/png" sizes="48x48" href="{{ asset('favicon-48x48.png') }}">
+    <link rel="icon" type="image/png" sizes="32x32" href="{{ asset('favicon-32x32.png') }}">
+    <link rel="icon" type="image/png" sizes="16x16" href="{{ asset('favicon-16x16.png') }}">
+    <link rel="apple-touch-icon" sizes="180x180" href="{{ asset('apple-touch-icon.png') }}">
+
     <!-- Theme Initialization: Set 'dark' class on html before first render to prevent white flash -->
     <script>
         (function() {
@@ -435,50 +443,20 @@
             :class="sidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'"
             class="fixed inset-y-0 left-0 z-50 w-64 bg-white dark:bg-[#161210] border-r border-[#ECE6DE] dark:border-[#261E1A] transition-transform duration-300 ease-in-out flex flex-col justify-between shadow-xs"
         >
-            <!-- Top Logo & Brand Identity (Original Authentic By Zunash Luxury Emblem) -->
+            <!-- Top Logo & Brand Identity (Official By Zunash Luxury Emblem) -->
             <div class="px-5 py-4 border-b border-[#ECE6DE] dark:border-[#261E1A] flex items-center justify-between">
-                <a href="{{ route('admin.dashboard') }}" class="flex items-center gap-3 group">
-                    <!-- Monogram Emblem (Exact Storefront Vector Mark) -->
-                    <div class="relative flex items-center justify-center w-10 h-10 rounded-full bg-gradient-to-br from-espresso-900 via-chocolate-800 to-espresso-950 border border-gold/40 shadow-sm text-gold shrink-0 group-hover:scale-105 group-hover:border-gold transition-all duration-300">
-                        <svg viewBox="0 0 100 100" class="w-6 h-6 fill-none stroke-current" stroke-linecap="round" stroke-linejoin="round">
-                            <!-- Background subtle ring -->
-                            <circle cx="50" cy="50" r="38" stroke="currentColor" stroke-width="1.5" stroke-dasharray="2 3" opacity="0.6"/>
-                            <!-- Antique Gold Intertwined Loop -->
-                            <ellipse cx="50" cy="50" rx="34" ry="18" transform="rotate(-30 50 50)" stroke="url(#adminSidebarGoldGrad)" stroke-width="2.5" fill="none" opacity="0.85"/>
-                            <!-- Luxury Serif Z -->
-                            <path d="M30 30 H68 L32 70 H70" stroke="url(#adminSidebarGoldGradLight)" stroke-width="7" stroke-linecap="square"/>
-                            <defs>
-                                <linearGradient id="adminSidebarGoldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-                                    <stop offset="0%" stop-color="#E4D5B1" />
-                                    <stop offset="50%" stop-color="#C5A16B" />
-                                    <stop offset="100%" stop-color="#94703B" />
-                                </linearGradient>
-                                <linearGradient id="adminSidebarGoldGradLight" x1="0%" y1="0%" x2="100%" y2="100%">
-                                    <stop offset="0%" stop-color="#FFFFFF" />
-                                    <stop offset="40%" stop-color="#E4D5B1" />
-                                    <stop offset="100%" stop-color="#C5A16B" />
-                                </linearGradient>
-                            </defs>
-                        </svg>
-                    </div>
-
-                    <!-- Typographic Brand Lockup -->
-                    <div class="flex flex-col">
-                        <div class="flex items-center gap-1.5 -mb-0.5">
-                            <span class="h-[0.5px] w-2.5 bg-gold/80"></span>
-                            <span class="text-[8px] tracking-[0.28em] uppercase font-cinzel font-semibold text-gold-600 dark:text-gold-400">BY</span>
-                            <span class="h-[0.5px] w-2.5 bg-gold/80"></span>
-                        </div>
-                        <span class="font-cinzel tracking-[0.22em] text-[15px] font-bold uppercase leading-none text-espresso-950 dark:text-[#E8D0BE] group-hover:text-gold transition-colors">
-                            ZUNASH
-                        </span>
-                        <span class="text-[8px] font-bold tracking-[0.16em] uppercase text-tan-600 dark:text-gold/80 mt-1">
-                            ATELIER CONTROL
-                        </span>
-                    </div>
+                <a href="{{ route('admin.dashboard') }}" class="flex flex-col items-start gap-1 group">
+                    <img 
+                        src="{{ asset('images/logo-transparent.png') }}" 
+                        alt="By Zunash Luxury Leather" 
+                        class="h-8 w-auto max-w-[170px] object-contain drop-shadow-sm group-hover:scale-105 transition-transform duration-300"
+                    >
+                    <span class="text-[7.5px] font-bold tracking-[0.2em] uppercase text-gold-600 dark:text-gold-400 pl-0.5">
+                        ATELIER CONTROL CENTER
+                    </span>
                 </a>
 
-                <button @click="sidebarOpen = false" class="lg:hidden text-gray-400 hover:text-gray-600">
+                <button @click="sidebarOpen = false" class="lg:hidden text-gray-400 hover:text-gray-600" aria-label="Close sidebar">
                     <i data-lucide="x" class="w-5 h-5"></i>
                 </button>
             </div>

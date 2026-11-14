@@ -248,10 +248,12 @@
     <div class="container">
         
         <div class="doc-header">
-            <div>
-                <h1 class="brand-title">BY ZUNASH</h1>
-                <div class="brand-sub">Luxury Leather Atelier • Financial Audit</div>
-                <div class="report-badge">{{ $reportTitle }}</div>
+            <div style="display: flex; align-items: center; gap: 14px;">
+                <img src="{{ asset('images/logo-transparent.png') }}" alt="By Zunash" style="height: 46px; width: auto; max-width: 160px; object-fit: contain;">
+                <div>
+                    <div class="brand-sub">Luxury Leather Atelier • Financial Audit</div>
+                    <div class="report-badge">{{ $reportTitle }}</div>
+                </div>
             </div>
 
             <div class="header-meta">
