@@ -100,24 +100,29 @@
     @touchend.passive="handleTouchEnd($event)"
     class="relative w-full h-[500px] sm:h-[550px] md:h-[600px] lg:h-[640px] overflow-hidden bg-espresso-950 text-ivory select-none"
 >
-    <!-- ================= SLIDE 1: SIGNATURE HANDBAGS ================= -->
+    <!-- ================= SLIDE 1: SIGNATURE HANDBAGS (LCP HERO ELEMENT) ================= -->
     <div 
         x-show="currentSlide === 0"
-        x-transition:enter="transition-all ease-out duration-700"
-        x-transition:enter-start="opacity-0"
-        x-transition:enter-end="opacity-100"
-        x-transition:leave="transition-all ease-in duration-400 absolute inset-0"
+        x-transition:leave="transition-opacity ease-in duration-300 absolute inset-0"
         x-transition:leave-start="opacity-100"
         x-transition:leave-end="opacity-0"
         class="absolute inset-0 w-full h-full"
     >
         <!-- Background Image with Ken-Burns slow motion zoom -->
-        <img 
-            src="{{ asset('images/hero/slide-bag.jpg') }}" 
-            alt="By Zunash Handcrafted Italian Leather Bag" 
-            class="absolute inset-0 w-full h-full object-cover object-center transition-transform duration-[8000ms] ease-out"
-            :class="currentSlide === 0 ? 'scale-105' : 'scale-100'"
-        >
+        <picture>
+            <source srcset="{{ asset('images/hero/slide-bag.webp') }}" type="image/webp">
+            <img 
+                src="{{ asset('images/hero/slide-bag.jpg') }}" 
+                alt="By Zunash Handcrafted Italian Leather Bag" 
+                width="1920"
+                height="1080"
+                fetchpriority="high"
+                loading="eager"
+                decoding="sync"
+                class="absolute inset-0 w-full h-full object-cover object-center transition-transform duration-[8000ms] ease-out"
+                :class="currentSlide === 0 ? 'scale-105' : 'scale-100'"
+            >
+        </picture>
         
         <!-- Balanced Medium Dark Luxury Contrast Overlays -->
         <div class="absolute inset-0 bg-black/20 pointer-events-none"></div>
@@ -187,21 +192,29 @@
     <!-- ================= SLIDE 2: REVERSIBLE BELTS ================= -->
     <div 
         x-show="currentSlide === 1"
-        x-transition:enter="transition-all ease-out duration-700"
+        x-cloak
+        x-transition:enter="transition-opacity ease-out duration-500"
         x-transition:enter-start="opacity-0"
         x-transition:enter-end="opacity-100"
-        x-transition:leave="transition-all ease-in duration-400 absolute inset-0"
+        x-transition:leave="transition-opacity ease-in duration-300 absolute inset-0"
         x-transition:leave-start="opacity-100"
         x-transition:leave-end="opacity-0"
         class="absolute inset-0 w-full h-full"
     >
         <!-- Background Image with Ken-Burns slow motion zoom -->
-        <img 
-            src="{{ asset('images/hero/slide-belt.jpg') }}" 
-            alt="By Zunash Reversible Calfskin Leather Belts" 
-            class="absolute inset-0 w-full h-full object-cover object-center transition-transform duration-[8000ms] ease-out"
-            :class="currentSlide === 1 ? 'scale-105' : 'scale-100'"
-        >
+        <picture>
+            <source srcset="{{ asset('images/hero/slide-belt.webp') }}" type="image/webp">
+            <img 
+                src="{{ asset('images/hero/slide-belt.jpg') }}" 
+                alt="By Zunash Reversible Calfskin Leather Belts" 
+                width="1920"
+                height="1080"
+                loading="lazy"
+                decoding="async"
+                class="absolute inset-0 w-full h-full object-cover object-center transition-transform duration-[8000ms] ease-out"
+                :class="currentSlide === 1 ? 'scale-105' : 'scale-100'"
+            >
+        </picture>
         
         <!-- Balanced Medium Dark Luxury Contrast Overlays -->
         <div class="absolute inset-0 bg-black/20 pointer-events-none"></div>
@@ -271,21 +284,29 @@
     <!-- ================= SLIDE 3: WALLETS & ACCESSORIES ================= -->
     <div 
         x-show="currentSlide === 2"
-        x-transition:enter="transition-all ease-out duration-700"
+        x-cloak
+        x-transition:enter="transition-opacity ease-out duration-500"
         x-transition:enter-start="opacity-0"
         x-transition:enter-end="opacity-100"
-        x-transition:leave="transition-all ease-in duration-400 absolute inset-0"
+        x-transition:leave="transition-opacity ease-in duration-300 absolute inset-0"
         x-transition:leave-start="opacity-100"
         x-transition:leave-end="opacity-0"
         class="absolute inset-0 w-full h-full"
     >
         <!-- Background Image with Ken-Burns slow motion zoom -->
-        <img 
-            src="{{ asset('images/hero/slide-wallet.jpg') }}" 
-            alt="By Zunash Slim Bifold Leather Wallet" 
-            class="absolute inset-0 w-full h-full object-cover object-center transition-transform duration-[8000ms] ease-out"
-            :class="currentSlide === 2 ? 'scale-105' : 'scale-100'"
-        >
+        <picture>
+            <source srcset="{{ asset('images/hero/slide-wallet.webp') }}" type="image/webp">
+            <img 
+                src="{{ asset('images/hero/slide-wallet.jpg') }}" 
+                alt="By Zunash Slim Bifold Leather Wallet" 
+                width="1920"
+                height="1080"
+                loading="lazy"
+                decoding="async"
+                class="absolute inset-0 w-full h-full object-cover object-center transition-transform duration-[8000ms] ease-out"
+                :class="currentSlide === 2 ? 'scale-105' : 'scale-100'"
+            >
+        </picture>
         
         <!-- Balanced Medium Dark Luxury Contrast Overlays -->
         <div class="absolute inset-0 bg-black/20 pointer-events-none"></div>
@@ -513,6 +534,7 @@
                             rotY: 0,
                             isHovering: false,
                             onMove(e) {
+                                if (window.matchMedia('(hover: none)').matches) return;
                                 const rect = $el.getBoundingClientRect();
                                 const x = e.clientX - rect.left;
                                 const y = e.clientY - rect.top;
@@ -536,11 +558,23 @@
                         class="snap-start flex-shrink-0 w-[210px] sm:w-[230px] md:w-[240px] lg:w-[calc(25%-15px)] h-[250px] sm:h-[270px] lg:h-[280px] rounded-2xl overflow-hidden relative shadow-lg hover:shadow-2xl border-0 ring-0 outline-none group bg-espresso-950 flex flex-col justify-end will-change-transform"
                     >
                         <!-- Background Product Image with Smooth Hover Zoom -->
-                        <img 
-                            src="{{ asset($cat['image']) }}" 
-                            alt="{{ $cat['name'] }}" 
-                            class="absolute inset-0 w-full h-full object-cover object-center transform transition-transform duration-700 ease-out group-hover:scale-105"
-                        >
+                        @php
+                            $catWebp = preg_replace('/\.(jpg|jpeg|png)$/i', '.webp', $cat['image']);
+                        @endphp
+                        <picture>
+                            @if(file_exists(public_path($catWebp)))
+                                <source srcset="{{ asset($catWebp) }}" type="image/webp">
+                            @endif
+                            <img 
+                                src="{{ asset($cat['image']) }}" 
+                                alt="{{ $cat['name'] }}" 
+                                width="400"
+                                height="500"
+                                loading="lazy"
+                                decoding="async"
+                                class="absolute inset-0 w-full h-full object-cover object-center transform transition-transform duration-700 ease-out group-hover:scale-105"
+                            >
+                        </picture>
 
                         <!-- Permanent Solid Deep Bottom Gradient for 100% Legibility -->
                         <div class="absolute inset-0 bg-gradient-to-t from-black/95 via-black/60 via-35% to-transparent z-10 pointer-events-none"></div>
@@ -682,11 +716,18 @@
 
                 <!-- Primary Atelier Image -->
                 <div class="relative z-10 w-[88%] aspect-[4/3] sm:aspect-[16/11] rounded-2xl overflow-hidden shadow-2xl border-4 border-white group">
-                    <img 
-                        src="{{ asset('images/brand/artisan-craft.jpg') }}" 
-                        alt="By Zunash Master Leather Artisan Workshop in Lahore" 
-                        class="w-full h-full object-cover transform transition-transform duration-700 ease-out group-hover:scale-105"
-                    >
+                    <picture>
+                        <source srcset="{{ asset('images/brand/artisan-craft.webp') }}" type="image/webp">
+                        <img 
+                            src="{{ asset('images/brand/artisan-craft.jpg') }}" 
+                            alt="By Zunash Master Leather Artisan Workshop in Lahore" 
+                            width="640"
+                            height="440"
+                            loading="lazy"
+                            decoding="async"
+                            class="w-full h-full object-cover transform transition-transform duration-700 ease-out group-hover:scale-105"
+                        >
+                    </picture>
                     <div class="absolute inset-0 bg-gradient-to-t from-espresso-950/70 via-transparent to-transparent opacity-60 group-hover:opacity-40 transition-opacity duration-300"></div>
                     <div class="absolute bottom-4 left-4 z-20 text-white">
                         <span class="text-[10px] uppercase font-bold tracking-widest text-gold-300 block">The Bench</span>
@@ -696,11 +737,18 @@
 
                 <!-- Secondary Floating Inset Image (Macro Stitch) -->
                 <div class="absolute -bottom-7 right-2 sm:right-4 w-[52%] sm:w-[48%] aspect-square rounded-2xl overflow-hidden shadow-2xl border-4 border-white z-20 group">
-                    <img 
-                        src="{{ asset('images/brand/stitch-detail.jpg') }}" 
-                        alt="Macro hand-stitched waxed seam detail" 
-                        class="w-full h-full object-cover transform transition-transform duration-700 ease-out group-hover:scale-110"
-                    >
+                    <picture>
+                        <source srcset="{{ asset('images/brand/stitch-detail.webp') }}" type="image/webp">
+                        <img 
+                            src="{{ asset('images/brand/stitch-detail.jpg') }}" 
+                            alt="Macro hand-stitched waxed seam detail" 
+                            width="320"
+                            height="320"
+                            loading="lazy"
+                            decoding="async"
+                            class="w-full h-full object-cover transform transition-transform duration-700 ease-out group-hover:scale-110"
+                        >
+                    </picture>
                     <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-50 group-hover:opacity-30 transition-opacity"></div>
                     <div class="absolute bottom-3 left-3 z-20">
                         <span class="text-[9px] uppercase font-bold tracking-wider text-gold-300 block">Waxed Thread</span>
@@ -881,11 +929,18 @@
                     <div class="grid grid-cols-2 gap-3 mb-4">
                         <!-- Belt Preview -->
                         <div class="relative aspect-square rounded-xl overflow-hidden bg-black/40 border border-white/10 group-hover:border-gold/30 transition-all">
-                            <img 
-                                src="{{ asset('images/products/prod-reversible-belt.jpg') }}" 
-                                alt="Reversible Belt in Gift Set" 
-                                class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                            >
+                            <picture>
+                                <source srcset="{{ asset('images/products/prod-reversible-belt.webp') }}" type="image/webp">
+                                <img 
+                                    src="{{ asset('images/products/prod-reversible-belt.jpg') }}" 
+                                    alt="Reversible Belt in Gift Set" 
+                                    width="300"
+                                    height="300"
+                                    loading="lazy"
+                                    decoding="async"
+                                    class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                                >
+                            </picture>
                             <div class="absolute bottom-2 left-2 z-10 px-2 py-0.5 rounded bg-black/70 backdrop-blur-xs text-[9px] font-semibold text-gold-300">
                                 Reversible Belt
                             </div>
@@ -893,11 +948,18 @@
 
                         <!-- Wallet Preview -->
                         <div class="relative aspect-square rounded-xl overflow-hidden bg-black/40 border border-white/10 group-hover:border-gold/30 transition-all">
-                            <img 
-                                src="{{ asset('images/products/prod-bifold-wallet.jpg') }}" 
-                                alt="Heritage Bifold Wallet in Gift Set" 
-                                class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                            >
+                            <picture>
+                                <source srcset="{{ asset('images/products/prod-bifold-wallet.webp') }}" type="image/webp">
+                                <img 
+                                    src="{{ asset('images/products/prod-bifold-wallet.jpg') }}" 
+                                    alt="Heritage Bifold Wallet in Gift Set" 
+                                    width="300"
+                                    height="300"
+                                    loading="lazy"
+                                    decoding="async"
+                                    class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                                >
+                            </picture>
                             <div class="absolute bottom-2 left-2 z-10 px-2 py-0.5 rounded bg-black/70 backdrop-blur-xs text-[9px] font-semibold text-gold-300">
                                 Heritage Bifold
                             </div>
@@ -1284,7 +1346,10 @@
 
         <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
             <div class="reveal delay-75 group relative aspect-square rounded-2xl overflow-hidden bg-ivory-100 border border-ivory-300 shadow-2xs hover:shadow-xl transition-all duration-300">
-                <img src="{{ asset('images/brand/artisan-craft.jpg') }}" alt="Atelier Craftsman at work" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700">
+                <picture>
+                    <source srcset="{{ asset('images/brand/artisan-craft.webp') }}" type="image/webp">
+                    <img src="{{ asset('images/brand/artisan-craft.jpg') }}" alt="Atelier Craftsman at work" width="200" height="200" loading="lazy" decoding="async" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700">
+                </picture>
                 <div class="absolute inset-0 bg-espresso-950/60 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col items-center justify-center text-white p-3 text-center">
                     <i data-lucide="instagram" class="w-6 h-6 text-gold mb-1"></i>
                     <span class="text-[11px] font-semibold">@ByZunash</span>
@@ -1292,7 +1357,10 @@
                 </div>
             </div>
             <div class="reveal delay-150 group relative aspect-square rounded-2xl overflow-hidden bg-ivory-100 border border-ivory-300 shadow-2xs hover:shadow-xl transition-all duration-300">
-                <img src="{{ asset('images/products/prod-signature-satchel.jpg') }}" alt="Signature Satchel" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700">
+                <picture>
+                    <source srcset="{{ asset('images/products/prod-signature-satchel.webp') }}" type="image/webp">
+                    <img src="{{ asset('images/products/prod-signature-satchel.jpg') }}" alt="Signature Satchel" width="200" height="200" loading="lazy" decoding="async" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700">
+                </picture>
                 <div class="absolute inset-0 bg-espresso-950/60 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col items-center justify-center text-white p-3 text-center">
                     <i data-lucide="instagram" class="w-6 h-6 text-gold mb-1"></i>
                     <span class="text-[11px] font-semibold">@ByZunash</span>
@@ -1300,7 +1368,10 @@
                 </div>
             </div>
             <div class="reveal delay-225 group relative aspect-square rounded-2xl overflow-hidden bg-ivory-100 border border-ivory-300 shadow-2xs hover:shadow-xl transition-all duration-300">
-                <img src="{{ asset('images/brand/stitch-detail.jpg') }}" alt="Waxed saddle stitch detail" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700">
+                <picture>
+                    <source srcset="{{ asset('images/brand/stitch-detail.webp') }}" type="image/webp">
+                    <img src="{{ asset('images/brand/stitch-detail.jpg') }}" alt="Waxed saddle stitch detail" width="200" height="200" loading="lazy" decoding="async" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700">
+                </picture>
                 <div class="absolute inset-0 bg-espresso-950/60 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col items-center justify-center text-white p-3 text-center">
                     <i data-lucide="instagram" class="w-6 h-6 text-gold mb-1"></i>
                     <span class="text-[11px] font-semibold">@ByZunash</span>
@@ -1308,7 +1379,10 @@
                 </div>
             </div>
             <div class="reveal delay-300 group relative aspect-square rounded-2xl overflow-hidden bg-ivory-100 border border-ivory-300 shadow-2xs hover:shadow-xl transition-all duration-300">
-                <img src="{{ asset('images/products/prod-reversible-belt.jpg') }}" alt="The Royal Reversible Belt" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700">
+                <picture>
+                    <source srcset="{{ asset('images/products/prod-reversible-belt.webp') }}" type="image/webp">
+                    <img src="{{ asset('images/products/prod-reversible-belt.jpg') }}" alt="The Royal Reversible Belt" width="200" height="200" loading="lazy" decoding="async" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700">
+                </picture>
                 <div class="absolute inset-0 bg-espresso-950/60 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col items-center justify-center text-white p-3 text-center">
                     <i data-lucide="instagram" class="w-6 h-6 text-gold mb-1"></i>
                     <span class="text-[11px] font-semibold">@ByZunash</span>
@@ -1316,7 +1390,10 @@
                 </div>
             </div>
             <div class="reveal delay-450 group relative aspect-square rounded-2xl overflow-hidden bg-ivory-100 border border-ivory-300 shadow-2xs hover:shadow-xl transition-all duration-300">
-                <img src="{{ asset('images/products/prod-bifold-wallet.jpg') }}" alt="Heritage Bifold Leather Wallet" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700">
+                <picture>
+                    <source srcset="{{ asset('images/products/prod-bifold-wallet.webp') }}" type="image/webp">
+                    <img src="{{ asset('images/products/prod-bifold-wallet.jpg') }}" alt="Heritage Bifold Leather Wallet" width="200" height="200" loading="lazy" decoding="async" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700">
+                </picture>
                 <div class="absolute inset-0 bg-espresso-950/60 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col items-center justify-center text-white p-3 text-center">
                     <i data-lucide="instagram" class="w-6 h-6 text-gold mb-1"></i>
                     <span class="text-[11px] font-semibold">@ByZunash</span>
@@ -1324,7 +1401,10 @@
                 </div>
             </div>
             <div class="reveal delay-600 group relative aspect-square rounded-2xl overflow-hidden bg-ivory-100 border border-ivory-300 shadow-2xs hover:shadow-xl transition-all duration-300">
-                <img src="{{ asset('images/products/prod-key-fob.jpg') }}" alt="Brass & Leather Key Fob" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700">
+                <picture>
+                    <source srcset="{{ asset('images/products/prod-key-fob.webp') }}" type="image/webp">
+                    <img src="{{ asset('images/products/prod-key-fob.jpg') }}" alt="Brass & Leather Key Fob" width="200" height="200" loading="lazy" decoding="async" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700">
+                </picture>
                 <div class="absolute inset-0 bg-espresso-950/60 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col items-center justify-center text-white p-3 text-center">
                     <i data-lucide="instagram" class="w-6 h-6 text-gold mb-1"></i>
                     <span class="text-[11px] font-semibold">@ByZunash</span>

@@ -28,6 +28,7 @@
         rotY: 0,
         isTilting: false,
         onMove(e) {
+            if (window.matchMedia('(hover: none)').matches) return;
             const rect = $el.getBoundingClientRect();
             const x = e.clientX - rect.left;
             const y = e.clientY - rect.top;
@@ -87,20 +88,42 @@
 
         <!-- Product Image Link -->
         <a href="{{ route('product.details', $product['slug']) }}" class="block w-full h-full relative" aria-label="View {{ $product['name'] }} details">
-            <img 
-                src="{{ asset($product['image']) }}" 
-                alt="{{ $product['name'] }} - Handcrafted Full-Grain Leather by Zunash Pakistan" 
-                loading="lazy"
-                class="w-full h-full object-cover object-center transform transition-transform duration-700 ease-out group-hover:scale-105 {{ $isOutOfStock ? 'grayscale-[20%] opacity-85' : '' }}"
-            >
+            @php
+                $mainWebp = preg_replace('/\.(jpg|jpeg|png)$/i', '.webp', $product['image']);
+            @endphp
+            <picture>
+                @if(file_exists(public_path($mainWebp)))
+                    <source srcset="{{ asset($mainWebp) }}" type="image/webp">
+                @endif
+                <img 
+                    src="{{ asset($product['image']) }}" 
+                    alt="{{ $product['name'] }} - Handcrafted Full-Grain Leather by Zunash Pakistan" 
+                    width="400"
+                    height="400"
+                    loading="lazy"
+                    decoding="async"
+                    class="w-full h-full object-cover object-center transform transition-transform duration-700 ease-out group-hover:scale-105 {{ $isOutOfStock ? 'grayscale-[20%] opacity-85' : '' }}"
+                >
+            </picture>
             <!-- Secondary Image Hover Transition (if gallery has 2+ images) -->
             @if(!empty($product['gallery']) && count($product['gallery']) > 1 && !$isOutOfStock)
-                <img 
-                    src="{{ asset($product['gallery'][1]) }}" 
-                    alt="{{ $product['name'] }} - Atelier Craftsmanship Detail Angle" 
-                    loading="lazy"
-                    class="absolute inset-0 w-full h-full object-cover object-center opacity-0 group-hover:opacity-100 transition-opacity duration-500 ease-in-out"
-                >
+                @php
+                    $hoverWebp = preg_replace('/\.(jpg|jpeg|png)$/i', '.webp', $product['gallery'][1]);
+                @endphp
+                <picture>
+                    @if(file_exists(public_path($hoverWebp)))
+                        <source srcset="{{ asset($hoverWebp) }}" type="image/webp">
+                    @endif
+                    <img 
+                        src="{{ asset($product['gallery'][1]) }}" 
+                        alt="{{ $product['name'] }} - Atelier Craftsmanship Detail Angle" 
+                        width="400"
+                        height="400"
+                        loading="lazy"
+                        decoding="async"
+                        class="absolute inset-0 w-full h-full object-cover object-center opacity-0 group-hover:opacity-100 transition-opacity duration-500 ease-in-out"
+                    >
+                </picture>
             @endif
 
             @if($isOutOfStock)
