@@ -336,6 +336,12 @@
         activeToast: null,
         toastTimer: null,
         notifFilter: 'all',
+        soundEnabled: localStorage.getItem('zunash_sound_enabled') !== 'false',
+        toggleSound() {
+            this.soundEnabled = !this.soundEnabled;
+            localStorage.setItem('zunash_sound_enabled', this.soundEnabled ? 'true' : 'false');
+            if (this.soundEnabled) this.playChime();
+        },
         toggleTheme() {
             this.theme = this.theme === 'light' ? 'dark' : 'light';
             localStorage.setItem('zunash_admin_theme', this.theme);
@@ -347,6 +353,7 @@
             window.dispatchEvent(new CustomEvent('themechanged', { detail: this.theme }));
         },
         playChime() {
+            if (!this.soundEnabled) return;
             try {
                 const AudioCtx = window.AudioContext || window.webkitAudioContext;
                 if (!AudioCtx) return;
@@ -1251,6 +1258,22 @@
                             </div>
                         </div>
                     </div>
+
+                    <!-- Real-Time Order Sound Toggle (Chime Alert) -->
+                    <button 
+                        type="button"
+                        @click="toggleSound()" 
+                        class="w-8 h-8 rounded-full border border-[#E0D7CB] dark:border-[#3A2F29] flex items-center justify-center transition-colors"
+                        :class="soundEnabled ? 'text-emerald-600 border-emerald-300 dark:border-emerald-800 bg-emerald-50/50 dark:bg-emerald-950/30' : 'text-gray-400 hover:text-gray-600'"
+                        :title="soundEnabled ? 'Order sound alert is ON (Click to mute)' : 'Order sound alert is MUTED (Click to unmute)'"
+                    >
+                        <template x-if="soundEnabled">
+                            <i data-lucide="volume-2" class="w-3.5 h-3.5 text-emerald-600"></i>
+                        </template>
+                        <template x-if="!soundEnabled">
+                            <i data-lucide="volume-x" class="w-3.5 h-3.5 text-gray-400"></i>
+                        </template>
+                    </button>
 
                     <!-- Dark / Light Theme Toggle -->
                     <button 

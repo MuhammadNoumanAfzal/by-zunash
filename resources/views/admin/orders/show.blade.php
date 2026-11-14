@@ -48,9 +48,12 @@
                 @php
                     $statusStyles = [
                         'pending' => 'bg-amber-50 text-amber-800 dark:bg-amber-950/50 dark:text-amber-300 border-amber-200 dark:border-amber-800/60',
+                        'confirmed' => 'bg-emerald-50 text-emerald-800 dark:bg-emerald-950/50 dark:text-emerald-300 border-emerald-300 dark:border-emerald-700/60',
                         'processing' => 'bg-blue-50 text-blue-800 dark:bg-blue-950/50 dark:text-blue-300 border-blue-200 dark:border-blue-800/60',
+                        'dispatched' => 'bg-sky-50 text-sky-800 dark:bg-sky-950/50 dark:text-sky-300 border-sky-200 dark:border-sky-800/60',
                         'completed' => 'bg-emerald-50 text-emerald-800 dark:bg-emerald-950/50 dark:text-emerald-300 border-emerald-200 dark:border-emerald-800/60',
                         'cancelled' => 'bg-rose-50 text-rose-800 dark:bg-rose-950/50 dark:text-rose-300 border-rose-200 dark:border-rose-800/60',
+                        'returned' => 'bg-rose-50 text-rose-800 dark:bg-rose-950/50 dark:text-rose-300 border-rose-200 dark:border-rose-800/60',
                     ];
                     $payStyles = [
                         'paid' => 'bg-emerald-50 text-emerald-800 dark:bg-emerald-950/50 dark:text-emerald-300 border-emerald-200',
@@ -59,7 +62,7 @@
                     ];
                 @endphp
                 <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold border {{ $statusStyles[$order->order_status] ?? 'bg-gray-100 text-gray-800' }}">
-                    <span class="w-2 h-2 rounded-full {{ $order->order_status === 'completed' ? 'bg-emerald-500' : ($order->order_status === 'pending' ? 'bg-amber-500' : ($order->order_status === 'processing' ? 'bg-blue-500' : 'bg-rose-500')) }}"></span>
+                    <span class="w-2 h-2 rounded-full {{ in_array($order->order_status, ['completed', 'confirmed']) ? 'bg-emerald-500' : ($order->order_status === 'pending' ? 'bg-amber-500' : ($order->order_status === 'processing' ? 'bg-blue-500' : ($order->order_status === 'dispatched' ? 'bg-sky-500' : 'bg-rose-500'))) }}"></span>
                     <span class="capitalize">{{ $order->order_status === 'completed' ? 'Delivered' : $order->order_status }}</span>
                 </span>
 
@@ -110,6 +113,16 @@
                 >
                     <i data-lucide="package-check" class="w-3.5 h-3.5 text-tan-600"></i>
                     <span class="hidden sm:inline">Packing Slip</span>
+                </a>
+                <span class="w-px h-4 bg-[#DFD6CB] dark:bg-[#3A2F29]"></span>
+                <a 
+                    href="{{ route('admin.orders.thermal-label', $order) }}" 
+                    target="_blank"
+                    class="inline-flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-lg text-xs font-semibold text-espresso-900 dark:text-white hover:bg-white dark:hover:bg-[#1A1513] transition-colors"
+                    title="Print 4x6 Thermal Shipping Barcode Sticker"
+                >
+                    <i data-lucide="tag" class="w-3.5 h-3.5 text-tan-600"></i>
+                    <span class="hidden sm:inline">4x6 Sticker</span>
                 </a>
                 <span class="w-px h-4 bg-[#DFD6CB] dark:bg-[#3A2F29]"></span>
                 <a 
@@ -170,6 +183,7 @@
                             <label class="block text-[10px] font-bold uppercase tracking-wider text-[#8F8379] mb-1.5">Order Status</label>
                             <select name="order_status" x-model="currentStatus" class="w-full px-3 py-2.5 text-xs rounded-xl bg-[#FAF8F5] dark:bg-[#241D1A] border border-[#DFD6CB] dark:border-[#382D27] text-espresso-900 dark:text-white font-semibold focus:outline-hidden focus:border-gold">
                                 <option value="pending" {{ $order->order_status === 'pending' ? 'selected' : '' }}>● Pending Order</option>
+                                <option value="confirmed" {{ $order->order_status === 'confirmed' ? 'selected' : '' }}>● Confirmed via WhatsApp</option>
                                 <option value="processing" {{ $order->order_status === 'processing' ? 'selected' : '' }}>● In Crafting / Processing</option>
                                 <option value="dispatched" {{ $order->order_status === 'dispatched' ? 'selected' : '' }}>● In Transit / Dispatched</option>
                                 <option value="completed" {{ in_array($order->order_status, ['completed', 'delivered']) ? 'selected' : '' }}>● Delivered & Paid</option>
@@ -551,13 +565,25 @@
                         <div class="flex items-center gap-2 pt-2">
                             @if($order->whatsapp_phone)
                                 <a 
+                                    href="{{ route('admin.orders.whatsapp-confirm', $order) }}" 
+                                    target="_blank" 
+                                    class="flex-1 px-3 py-2 rounded-xl bg-emerald-500 hover:bg-emerald-600 text-white text-[11px] font-semibold flex items-center justify-center gap-1.5 transition-colors shadow-2xs"
+                                    title="1-Click WhatsApp Order Confirmation (Anti-RTO verification)"
+                                >
+                                    <i data-lucide="check-check" class="w-3.5 h-3.5"></i>
+                                    <span>Confirm on WA</span>
+                                </a>
+                            @endif
+
+                            @if($order->whatsapp_phone)
+                                <a 
                                     href="https://wa.me/{{ $order->whatsapp_phone }}?text={{ urlencode($order->whatsapp_dispatch_message) }}" 
                                     target="_blank" 
                                     class="flex-1 px-3 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-[11px] font-semibold flex items-center justify-center gap-1.5 transition-colors shadow-2xs"
                                     title="Send Personalized Dispatch Message on WhatsApp"
                                 >
-                                    <i data-lucide="message-circle" class="w-3.5 h-3.5"></i>
-                                    <span>WhatsApp</span>
+                                    <i data-lucide="truck" class="w-3.5 h-3.5"></i>
+                                    <span>Dispatch WA</span>
                                 </a>
                             @endif
 

@@ -64,6 +64,12 @@ Route::prefix('policies')->name('policy.')->group(function () {
     Route::get('/privacy', [StoreController::class, 'privacyPolicy'])->name('privacy');
 });
 
+// Public Order Tracking
+Route::get('/track-order', [StoreController::class, 'trackOrder'])->name('track-order');
+
+// 1-Click Post-Purchase Upsell
+Route::post('/api/order/add-upsell', [StoreController::class, 'addUpsell'])->name('order.add-upsell');
+
 // XML Sitemap for Search Engines
 Route::get('/sitemap.xml', [StoreController::class, 'sitemap'])->name('sitemap');
 
@@ -135,6 +141,8 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::post('/orders/{order}/status', [AdminOrderController::class, 'updateStatus'])->name('orders.update-status');
         Route::get('/orders/{order}/invoice', [AdminOrderController::class, 'invoice'])->name('orders.invoice');
         Route::get('/orders/{order}/packing-slip', [AdminOrderController::class, 'packingSlip'])->name('orders.packing-slip');
+        Route::get('/orders/{order}/thermal-label', [AdminOrderController::class, 'thermalLabel'])->name('orders.thermal-label');
+        Route::get('/orders/{order}/whatsapp-confirm', [AdminOrderController::class, 'whatsappConfirm'])->name('orders.whatsapp-confirm');
         Route::get('/orders/{order}/receipt', [AdminOrderController::class, 'receipt'])->name('orders.receipt');
         Route::delete('/orders/{order}', [AdminOrderController::class, 'destroy'])->name('orders.destroy');
 

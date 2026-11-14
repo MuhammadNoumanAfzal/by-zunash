@@ -24,7 +24,7 @@
         }
         const form = document.getElementById('bulkActionForm');
         document.getElementById('bulkActionInput').value = action;
-        if (action === 'print_slips') {
+        if (action === 'print_slips' || action === 'print_thermal_labels') {
             form.target = '_blank';
         } else {
             form.target = '_self';
@@ -139,7 +139,8 @@
                 <select name="status" onchange="this.form.submit()" class="w-full px-3 py-2 text-xs rounded-xl bg-[#FAF8F5] dark:bg-[#241D1A] border border-[#E0D7CB] dark:border-[#382D27] text-espresso-900 dark:text-white focus:outline-hidden focus:border-tan-500 cursor-pointer">
                     <option value="all">Order Status: All</option>
                     <option value="pending" {{ request('status') === 'pending' ? 'selected' : '' }}>Pending Dispatch</option>
-                    <option value="processing" {{ request('status') === 'processing' ? 'selected' : '' }}>Processing / Confirmed</option>
+                    <option value="confirmed" {{ request('status') === 'confirmed' ? 'selected' : '' }}>Confirmed via WhatsApp</option>
+                    <option value="processing" {{ request('status') === 'processing' ? 'selected' : '' }}>Processing / Packing</option>
                     <option value="dispatched" {{ request('status') === 'dispatched' ? 'selected' : '' }}>In Transit / Dispatched</option>
                     <option value="completed" {{ request('status') === 'completed' ? 'selected' : '' }}>Delivered & Paid</option>
                     <option value="returned" {{ request('status') === 'returned' ? 'selected' : '' }}>Returned / COD Return</option>
@@ -214,7 +215,18 @@
                 title="Open unified multi-page printable packing slips in a new tab"
             >
                 <i data-lucide="printer" class="w-3.5 h-3.5"></i>
-                <span>Print Packing Slips</span>
+                <span>Packing Slips</span>
+            </button>
+
+            <!-- Bulk Print 4x6 Thermal Labels -->
+            <button 
+                type="button" 
+                @click="submitBulk('print_thermal_labels')" 
+                class="px-3.5 py-1.5 rounded-xl bg-tan-500 hover:bg-tan-600 text-white text-xs font-semibold flex items-center gap-1.5 transition-colors shadow-2xs"
+                title="Print 4x6 Thermal Shipping Stickers (Zebra/Xprinter)"
+            >
+                <i data-lucide="tag" class="w-3.5 h-3.5"></i>
+                <span>4x6 Thermal Labels</span>
             </button>
 
             <!-- Bulk Export CSV -->
@@ -331,6 +343,28 @@
                         </div>
 
                         <div class="flex items-center gap-1.5 shrink-0">
+                            <!-- 1-Click WhatsApp Order Confirmation -->
+                            @if($order->order_status === 'pending' || !$order->confirmed_at)
+                                <a 
+                                    href="{{ route('admin.orders.whatsapp-confirm', $order) }}" 
+                                    target="_blank" 
+                                    class="w-7 h-7 rounded-full bg-emerald-500 hover:bg-emerald-600 text-white inline-flex items-center justify-center shadow-2xs transition-colors"
+                                    title="Confirm on WhatsApp"
+                                >
+                                    <i data-lucide="check-check" class="w-3.5 h-3.5"></i>
+                                </a>
+                            @endif
+
+                            <!-- 4x6 Label -->
+                            <a 
+                                href="{{ route('admin.orders.thermal-label', $order) }}" 
+                                target="_blank" 
+                                class="w-7 h-7 rounded-full border border-tan-400 text-tan-700 dark:text-tan-400 hover:bg-tan-50 inline-flex items-center justify-center transition-colors"
+                                title="Print 4x6 Thermal Label"
+                            >
+                                <i data-lucide="tag" class="w-3.5 h-3.5"></i>
+                            </a>
+
                             <!-- Direct WhatsApp Concierge Button -->
                             @if($order->whatsapp_phone)
                                 <a 
@@ -511,7 +545,12 @@
                                     @elseif($order->order_status === 'pending')
                                         <span class="inline-flex items-center gap-1.5 text-xs font-semibold text-amber-600">
                                             <span class="w-1.5 h-1.5 rounded-full bg-amber-500"></span>
-                                            Pending Dispatch
+                                            Pending Confirmation
+                                        </span>
+                                    @elseif($order->order_status === 'confirmed')
+                                        <span class="inline-flex items-center gap-1.5 text-xs font-semibold text-emerald-700 dark:text-emerald-400">
+                                            <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                                            Order Confirmed
                                         </span>
                                     @elseif($order->order_status === 'processing')
                                         <span class="inline-flex items-center gap-1.5 text-xs font-semibold text-blue-600">
@@ -548,6 +587,28 @@
                             <td class="py-3.5 px-4 text-right">
                                 <div class="inline-flex items-center gap-1.5 justify-end">
                                     
+                                    <!-- 1-Click WhatsApp Order Confirmation (Anti-RTO) -->
+                                    @if($order->order_status === 'pending' || !$order->confirmed_at)
+                                        <a 
+                                            href="{{ route('admin.orders.whatsapp-confirm', $order) }}" 
+                                            target="_blank"
+                                            class="w-7 h-7 rounded-full bg-emerald-500 hover:bg-emerald-600 inline-flex items-center justify-center text-white shadow-2xs transition-colors"
+                                            title="1-Click WhatsApp Order Confirmation (Anti-RTO Verification)"
+                                        >
+                                            <i data-lucide="check-check" class="w-3.5 h-3.5"></i>
+                                        </a>
+                                    @endif
+
+                                    <!-- 4x6 Thermal Barcode Shipping Label -->
+                                    <a 
+                                        href="{{ route('admin.orders.thermal-label', $order) }}" 
+                                        target="_blank"
+                                        class="w-7 h-7 rounded-full border border-tan-400 text-tan-700 dark:text-tan-400 hover:bg-tan-50 dark:hover:bg-[#2A201C] inline-flex items-center justify-center transition-colors"
+                                        title="Print 4x6 Thermal Barcode Shipping Sticker"
+                                    >
+                                        <i data-lucide="tag" class="w-3.5 h-3.5"></i>
+                                    </a>
+
                                     <!-- 1-Click WhatsApp Concierge Dispatch Button -->
                                     @if($order->whatsapp_phone)
                                         <a 

@@ -517,7 +517,20 @@ class StoreController extends Controller
             'rating' => 'required|integer|min:1|max:5',
             'title' => 'required|string|max:150',
             'comment' => 'required|string|min:10|max:2000',
+            'image' => 'nullable|file|mimes:jpeg,png,jpg,webp|max:5120',
         ]);
+
+        $imagePath = null;
+        if ($request->hasFile('image')) {
+            $file = $request->file('image');
+            $dir = public_path('images/reviews');
+            if (!file_exists($dir)) {
+                @mkdir($dir, 0755, true);
+            }
+            $filename = 'client-' . time() . '-' . \Illuminate\Support\Str::random(6) . '.' . $file->getClientOriginalExtension();
+            $file->move($dir, $filename);
+            $imagePath = '/images/reviews/' . $filename;
+        }
 
         \App\Models\Review::create([
             'author' => $validated['author'],
@@ -528,11 +541,12 @@ class StoreController extends Controller
             'rating' => $validated['rating'],
             'title' => $validated['title'],
             'comment' => $validated['comment'],
+            'image' => $imagePath,
             'status' => 'published',
             'verified' => true,
         ]);
 
-        return back()->with('review_success', 'Thank you for sharing your experience. Your client review has been verified and recorded.');
+        return back()->with('review_success', 'Thank you for sharing your experience. Your client review and leather photo have been verified and recorded.');
     }
 
     /**
@@ -935,5 +949,91 @@ class StoreController extends Controller
 
         return response($xml, 200)
             ->header('Content-Type', 'application/xml; charset=utf-8');
+    }
+
+    /**
+     * Public Order Tracking Page (/track-order)
+     */
+    public function trackOrder(Request $request)
+    {
+        $search = trim($request->input('q') ?? $request->input('order_number') ?? $request->input('phone') ?? '');
+        $order = null;
+        $searched = false;
+
+        if (!empty($search)) {
+            $searched = true;
+            $cleanPhone = preg_replace('/[^0-9]/', '', $search);
+            $last7 = strlen($cleanPhone) >= 7 ? substr($cleanPhone, -7) : $cleanPhone;
+
+            $order = \App\Models\Order::where(function($q) use ($search, $last7) {
+                $q->where('order_number', $search)
+                  ->orWhere('order_number', 'like', "%{$search}%")
+                  ->orWhere('tracking_number', $search)
+                  ->orWhere('customer_email', $search);
+                if (!empty($last7)) {
+                    $q->orWhere('customer_phone', 'like', "%{$last7}%");
+                }
+            })->latest()->first();
+        }
+
+        return view('user.track-order', compact('order', 'search', 'searched'));
+    }
+
+    /**
+     * 1-Click Post-Purchase Upsell (/api/order/add-upsell)
+     */
+    public function addUpsell(Request $request)
+    {
+        $validated = $request->validate([
+            'order_number' => 'required|string',
+        ]);
+
+        $order = \App\Models\Order::where('order_number', $validated['order_number'])->first();
+        if (!$order) {
+            return response()->json(['success' => false, 'message' => 'Order not found.'], 404);
+        }
+
+        $items = is_array($order->items) ? $order->items : (json_decode($order->items, true) ?: []);
+        foreach ($items as $it) {
+            if (($it['is_upsell'] ?? false) || ($it['sku'] ?? '') === 'UPSELL-CARDHOLDER') {
+                return response()->json([
+                    'success' => true,
+                    'already_added' => true,
+                    'message' => 'VIP Cardholder is already included in your parcel dossier!',
+                    'order' => $order
+                ]);
+            }
+        }
+
+        $upsellPrice = 990;
+        $upsellItem = [
+            'id' => null,
+            'name' => 'Full-Grain Minimalist Cardholder (Heirloom Edition)',
+            'sku' => 'UPSELL-CARDHOLDER',
+            'price' => $upsellPrice,
+            'quantity' => 1,
+            'image' => '/images/products/cardholder.webp',
+            'is_upsell' => true,
+        ];
+
+        $items[] = $upsellItem;
+        $newSubtotal = (float)$order->subtotal + $upsellPrice;
+        $newTotal = (float)$order->total + $upsellPrice;
+
+        $order->update([
+            'items' => $items,
+            'subtotal' => $newSubtotal,
+            'total' => $newTotal,
+        ]);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'VIP Cardholder successfully added to your order for Rs. 990!',
+            'order' => [
+                'order_number' => $order->order_number,
+                'total' => $order->total,
+                'items_count' => count($items),
+            ]
+        ]);
     }
 }

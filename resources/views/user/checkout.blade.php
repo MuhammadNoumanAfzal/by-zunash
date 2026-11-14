@@ -172,6 +172,59 @@
                 </div>
             </div>
 
+            <!-- 1-Click Post-Purchase VIP Upsell Card -->
+            <div class="mb-6 p-4 sm:p-5 rounded-2xl bg-gradient-to-r from-amber-50 to-[#FAF5EE] border-2 border-dashed border-amber-300 text-left no-print relative overflow-hidden">
+                <div class="flex items-center justify-between gap-2 mb-2">
+                    <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-amber-500 text-espresso-950 uppercase tracking-wider">
+                        ⚡ 1-Click Post-Purchase VIP Exclusive
+                    </span>
+                    <span class="text-[11px] text-gray-500 font-medium">No Added Courier Fee</span>
+                </div>
+
+                <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3.5">
+                    <div class="flex items-center gap-3">
+                        <div class="w-12 h-12 rounded-xl bg-white border border-amber-200 p-1 shrink-0 shadow-xs flex items-center justify-center">
+                            <svg class="w-6 h-6 text-tan-700" fill="none" stroke="currentColor" viewBox="0 0 24 24"><rect x="2" y="5" width="20" height="14" rx="2"></rect><line x1="2" y1="10" x2="22" y2="10"></line></svg>
+                        </div>
+                        <div class="min-w-0">
+                            <h4 class="font-serif font-bold text-sm text-espresso-950 truncate">
+                                Full-Grain Slim Cardholder (Heirloom Edition)
+                            </h4>
+                            <p class="text-[11px] text-gray-600 leading-tight">
+                                Hand-burnished vegetable-tanned leather. Fits your current dispatch with zero added delivery cost.
+                            </p>
+                            <div class="flex items-center gap-2 mt-1">
+                                <span class="font-cinzel font-bold text-sm text-espresso-950">Rs. 990</span>
+                                <span class="text-xs text-gray-400 line-through">Rs. 1,850</span>
+                                <span class="text-[10px] font-bold text-emerald-700 bg-emerald-50 px-1.5 py-0.2 rounded">Save 46%</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="w-full sm:w-auto shrink-0">
+                        <button 
+                            type="button" 
+                            @click="addUpsellToOrder()" 
+                            :disabled="upsellAdded || upsellLoading"
+                            class="w-full sm:w-auto px-4 py-2.5 rounded-xl font-semibold text-xs transition-all shadow-md flex items-center justify-center gap-1.5"
+                            :class="upsellAdded ? 'bg-emerald-600 text-white cursor-default' : 'bg-espresso-950 hover:bg-tan-700 text-gold cursor-pointer active:scale-95'"
+                        >
+                            <template x-if="upsellLoading">
+                                <span class="text-gold">Adding...</span>
+                            </template>
+                            <template x-if="!upsellLoading && !upsellAdded">
+                                <span>Add to Order (Rs. 990)</span>
+                            </template>
+                            <template x-if="upsellAdded">
+                                <span class="flex items-center gap-1">
+                                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                                    Enclosed in Parcel
+                                </span>
+                            </template>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
             <!-- Action Buttons: Print Slip, WhatsApp, Continue Shopping -->
             <div class="flex flex-col sm:flex-row items-center justify-center gap-3 no-print">
                 <button 
@@ -984,6 +1037,53 @@ function checkoutForm() {
         receiptFileName: '',
         receiptPreview: null,
         transactionId: '',
+
+        // 1-Click Post-Purchase Upsell State
+        upsellAdded: false,
+        upsellLoading: false,
+
+        async addUpsellToOrder() {
+            if (this.upsellAdded || this.upsellLoading || !this.orderNumber) return;
+            this.upsellLoading = true;
+            try {
+                const csrf = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '';
+                const res = await fetch('{{ route('order.add-upsell') }}', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json',
+                        'X-CSRF-TOKEN': csrf
+                    },
+                    body: JSON.stringify({
+                        order_number: this.orderNumber
+                    })
+                });
+                const data = await res.json();
+                if (data.success) {
+                    this.upsellAdded = true;
+                    this.placedOrderTotal = Number(this.placedOrderTotal) + 990;
+                    if (Array.isArray(this.placedOrderItems)) {
+                        this.placedOrderItems.push({
+                            key: 'upsell-cardholder',
+                            name: 'Full-Grain Slim Cardholder',
+                            variant: 'Heirloom Edition',
+                            price: 990,
+                            quantity: 1,
+                            image: '/images/products/cardholder.webp'
+                        });
+                    }
+                    if (window.ZunashAlert) {
+                        window.ZunashAlert.toast('Cardholder successfully added to your order!', 'success');
+                    }
+                } else {
+                    alert(data.message || 'Could not add item to order.');
+                }
+            } catch(e) {
+                console.error(e);
+            } finally {
+                this.upsellLoading = false;
+            }
+        },
 
         handleReceiptUpload(event) {
             const file = event.target.files[0];

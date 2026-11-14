@@ -33,6 +33,7 @@ class Order extends Model
         'return_courier_charge',
         'returned_at',
         'delivered_at',
+        'confirmed_at',
         'subtotal',
         'shipping_fee',
         'discount',
@@ -47,11 +48,17 @@ class Order extends Model
         'total' => 'float',
         'items' => 'array',
         'is_read' => 'boolean',
+        'confirmed_at' => 'datetime',
         'dispatched_at' => 'datetime',
         'returned_at' => 'datetime',
         'delivered_at' => 'datetime',
         'return_courier_charge' => 'float',
     ];
+
+    public function scopeConfirmed($query)
+    {
+        return $query->where('order_status', 'confirmed');
+    }
 
     public function scopeUnread($query)
     {
@@ -193,5 +200,30 @@ class Order extends Model
         $link = $this->tracking_link;
 
         return "Dear {$this->customer_name}, your By Zunash order #{$this->order_number} has been dispatched via {$courier}. Tracking ID: {$tracking}. Track here: {$link}";
+    }
+
+    /**
+     * Polite, Anti-RTO WhatsApp Order Confirmation Message for Pakistani Customers.
+     */
+    public function getWhatsappConfirmMessageAttribute(): string
+    {
+        $itemNames = [];
+        if (is_array($this->items)) {
+            foreach ($this->items as $it) {
+                $qty = $it['quantity'] ?? $it['qty'] ?? 1;
+                $itemNames[] = ($it['name'] ?? 'Leather Item') . ' (x' . $qty . ')';
+            }
+        }
+        $summary = !empty($itemNames) ? implode(', ', $itemNames) : 'Handcrafted Leather Selection';
+        $totalFormatted = number_format($this->total);
+        $payMode = $this->payment_method === 'COD' ? 'Cash on Delivery (COD)' : $this->payment_method;
+
+        return "Assalam-o-Alaikum {$this->customer_name}!\n\n"
+             . "Thank you for choosing By Zunash Luxury Leather. We have recorded your order #{$this->order_number}:\n\n"
+             . "📦 Items: {$summary}\n"
+             . "💰 Total Amount: PKR {$totalFormatted} ({$payMode})\n"
+             . "📍 Delivery Address: {$this->shipping_address}, {$this->city}\n\n"
+             . "Kindly reply *YES* or *CONFIRM* to this message so our atelier can verify and pack your parcel for priority dispatch today.\n\n"
+             . "Warm regards,\nBy Zunash Atelier\nLahore, Pakistan";
     }
 }

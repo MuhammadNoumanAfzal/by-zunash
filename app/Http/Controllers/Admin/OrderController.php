@@ -164,14 +164,16 @@ class OrderController extends Controller
     public function updateStatus(Request $request, Order $order)
     {
         $validated = $request->validate([
-            'order_status' => 'required|in:pending,processing,dispatched,completed,delivered,returned,cancelled',
+            'order_status' => 'required|in:pending,confirmed,processing,dispatched,completed,delivered,returned,cancelled',
             'payment_status' => 'required|in:pending,paid,failed,refunded',
             'return_reason' => 'nullable|string|max:255',
             'return_courier_charge' => 'nullable|numeric|min:0',
         ]);
 
         $data = $validated;
-        if (in_array($validated['order_status'], ['completed', 'delivered'])) {
+        if ($validated['order_status'] === 'confirmed' && !$order->confirmed_at) {
+            $data['confirmed_at'] = now();
+        } elseif (in_array($validated['order_status'], ['completed', 'delivered'])) {
             $data['delivered_at'] = now();
             if ($validated['payment_status'] === 'pending') {
                 $data['payment_status'] = 'paid';
@@ -189,6 +191,24 @@ class OrderController extends Controller
         $order->update($data);
 
         return back()->with('toast_success', "Order #{$order->order_number} status updated to " . ucfirst($order->order_status));
+    }
+
+    /**
+     * 1-Click WhatsApp Order Confirmation (Anti-RTO verification).
+     */
+    public function whatsappConfirm(Request $request, Order $order)
+    {
+        if ($request->boolean('mark_confirmed', true) && in_array($order->order_status, ['pending', 'unconfirmed'])) {
+            $order->update([
+                'order_status' => 'confirmed',
+                'confirmed_at' => now(),
+            ]);
+        }
+
+        $phone = $order->whatsapp_phone;
+        $msg = urlencode($order->whatsapp_confirm_message);
+
+        return redirect("https://wa.me/{$phone}?text={$msg}");
     }
 
     /**
@@ -249,6 +269,10 @@ class OrderController extends Controller
 
         if ($action === 'print_slips') {
             return view('admin.orders.bulk-packing-slips', compact('orders'));
+        }
+
+        if ($action === 'print_thermal_labels') {
+            return view('admin.orders.bulk-thermal-labels', compact('orders'));
         }
 
         if ($action === 'export_csv') {
@@ -336,6 +360,14 @@ class OrderController extends Controller
     public function packingSlip(Order $order)
     {
         return view('admin.orders.packing-slip', compact('order'));
+    }
+
+    /**
+     * 4x6 Inch Thermal Barcode Shipping Sticker Label.
+     */
+    public function thermalLabel(Order $order)
+    {
+        return view('admin.orders.thermal-label', compact('order'));
     }
 
     /**

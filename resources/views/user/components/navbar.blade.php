@@ -286,6 +286,13 @@
                 >
                     Contact
                 </a>
+
+                <a 
+                    href="{{ route('track-order') }}" 
+                    class="text-xs uppercase tracking-widest font-medium transition-colors duration-200 {{ request()->routeIs('track-order') ? 'text-gold-600 font-semibold' : 'text-espresso-800 dark:text-ivory-200 hover:text-gold-600 dark:hover:text-gold' }}"
+                >
+                    Track Order
+                </a>
             </nav>
 
             <!-- Right Action Icons (De-cluttered on mobile: Search + Bag; Wishlist/Theme in drawer) -->
@@ -643,6 +650,14 @@
                         class="block text-sm font-medium tracking-wide uppercase py-1 text-espresso-900 hover:text-gold-600"
                     >
                         Client Care & Concierge
+                    </a>
+                    <a 
+                        href="{{ route('track-order') }}" 
+                        @click="mobileMenuOpen = false"
+                        class="flex items-center gap-2 text-sm font-medium tracking-wide uppercase py-1 {{ request()->routeIs('track-order') ? 'text-gold-600 font-semibold' : 'text-espresso-900 dark:text-ivory-100 hover:text-gold-600' }}"
+                    >
+                        <i data-lucide="compass" class="w-4 h-4 text-tan-600"></i>
+                        <span>Track Consignment</span>
                     </a>
                 </nav>
             </div>

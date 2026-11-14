@@ -54,6 +54,17 @@
         formRating: 5,
         formTitle: '',
         formComment: '',
+        photoPreview: null,
+        photoName: '',
+        lightboxImage: null,
+        handlePhotoUpload(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+            this.photoName = file.name;
+            const reader = new FileReader();
+            reader.onload = (ev) => { this.photoPreview = ev.target.result; };
+            reader.readAsDataURL(file);
+        },
         presets: [
             {
                 label: '✨ Heirloom Quality',
@@ -356,11 +367,28 @@
 
                     <!-- Attached Studio Product Inspection Thumbnail -->
                     <div class="pt-4 border-t border-ivory-200 flex items-center justify-between">
-                        <div class="flex items-center gap-3">
-                            <div class="w-12 h-12 rounded-xl overflow-hidden border border-ivory-300 bg-ivory-50 flex-shrink-0 shadow-xs">
-                                <img :src="review.image" :alt="review.product_name" class="w-full h-full object-cover">
-                            </div>
-                            <span class="text-[11px] text-muted font-light">Client Verified Hide & Buckle</span>
+                        <div>
+                            <template x-if="review.image">
+                                <div class="flex items-center gap-3">
+                                    <div 
+                                        class="w-14 h-14 rounded-xl overflow-hidden border border-ivory-300 bg-ivory-50 flex-shrink-0 shadow-xs cursor-pointer group/img relative"
+                                        @click="lightboxImage = review.image"
+                                        title="Click to zoom client photo"
+                                    >
+                                        <img :src="review.image" :alt="review.product_name" class="w-full h-full object-cover transition-transform group-hover/img:scale-110">
+                                        <div class="absolute inset-0 bg-black/25 opacity-0 group-hover/img:opacity-100 flex items-center justify-center text-white transition-opacity">
+                                            <i data-lucide="zoom-in" class="w-4 h-4"></i>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <span class="text-[11px] font-semibold text-espresso-950 block">Patron Photo</span>
+                                        <span class="text-[10px] text-muted font-light">Verified on arrival</span>
+                                    </div>
+                                </div>
+                            </template>
+                            <template x-if="!review.image">
+                                <span class="text-[11px] text-muted font-light">Verified Doorstep Review</span>
+                            </template>
                         </div>
 
                         <!-- Helpful Button -->
@@ -466,7 +494,7 @@
                 Your feedback directly informs our master leathercraft artisans in {{ !empty($storeSettings['warehouse_city']) ? $storeSettings['warehouse_city'] : 'our atelier' }}.
             </p>
 
-            <form action="{{ route('reviews.submit') }}" method="POST" class="space-y-3.5">
+            <form action="{{ route('reviews.submit') }}" method="POST" enctype="multipart/form-data" class="space-y-3.5">
                 @csrf
 
                 <!-- Rating Selector -->
@@ -579,6 +607,32 @@
                     ></textarea>
                 </div>
 
+                <!-- Attached Customer Leather Photo (Optional) -->
+                <div>
+                    <label class="block text-[11px] uppercase tracking-wider font-semibold text-espresso-900 mb-1">
+                        Attach Product / Leather Photo (Optional)
+                    </label>
+                    <div class="flex items-center gap-3">
+                        <label class="flex-1 flex items-center justify-center gap-2 px-3 py-2.5 rounded-xl border-2 border-dashed border-ivory-300 hover:border-gold cursor-pointer bg-ivory-50 text-xs text-muted hover:text-espresso-950 transition-colors">
+                            <i data-lucide="camera" class="w-4 h-4 text-gold-700"></i>
+                            <span x-text="photoName || 'Upload photo of your leather piece (JPG, PNG)'"></span>
+                            <input 
+                                type="file" 
+                                name="image" 
+                                accept="image/jpeg,image/png,image/webp" 
+                                class="hidden" 
+                                @change="handlePhotoUpload($event)"
+                            >
+                        </label>
+                        <template x-if="photoPreview">
+                            <div class="relative w-11 h-11 rounded-xl overflow-hidden border border-gold/40 shadow-xs shrink-0">
+                                <img :src="photoPreview" class="w-full h-full object-cover">
+                                <button type="button" @click="photoPreview = null; photoName = ''" class="absolute inset-0 bg-black/40 text-white flex items-center justify-center text-xs">✕</button>
+                            </div>
+                        </template>
+                    </div>
+                </div>
+
                 <!-- Submit Button -->
                 <button 
                     type="submit" 
@@ -588,6 +642,26 @@
                 </button>
             </form>
 
+        </div>
+    </div>
+
+    <!-- Photo Lightbox Modal -->
+    <div 
+        x-show="lightboxImage" 
+        x-cloak 
+        class="fixed inset-0 z-50 bg-black/85 backdrop-blur-sm flex items-center justify-center p-4"
+        @click.self="lightboxImage = null"
+        @keydown.escape.window="lightboxImage = null"
+    >
+        <div class="relative max-w-2xl w-full bg-white rounded-2xl overflow-hidden shadow-2xl p-2 border border-gold/40">
+            <button 
+                type="button" 
+                @click="lightboxImage = null" 
+                class="absolute top-4 right-4 z-10 w-8 h-8 rounded-full bg-black/60 text-white flex items-center justify-center hover:bg-black transition-colors"
+            >
+                ✕
+            </button>
+            <img :src="lightboxImage" alt="Client Leather Photo" class="w-full h-auto max-h-[80vh] object-contain rounded-xl">
         </div>
     </div>
 

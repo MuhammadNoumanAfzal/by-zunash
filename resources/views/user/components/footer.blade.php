@@ -42,6 +42,7 @@
                     Client Care
                 </h3>
                 <ul class="space-y-2.5 text-xs tracking-wide">
+                    <li><a href="{{ route('track-order') }}" class="text-gold hover:underline font-bold transition-colors flex items-center gap-1.5"><i data-lucide="compass" class="w-3.5 h-3.5"></i><span>Track Consignment</span></a></li>
                     <li><a href="{{ route('policy.shipping') }}" class="text-ivory-300 hover:text-gold transition-colors">Shipping & Delivery</a></li>
                     <li><a href="{{ route('policy.returns') }}" class="text-ivory-300 hover:text-gold transition-colors">Returns & Exchanges</a></li>
                     <li><a href="{{ route('faq') }}" class="text-ivory-300 hover:text-gold transition-colors">Frequently Asked Questions</a></li>
