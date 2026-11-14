@@ -118,3 +118,4 @@ class ImageOptimizer
         return true;
     }
 }
+

@@ -109,3 +109,4 @@ class OptimizeImagesCommand extends Command
         return 0;
     }
 }
+
