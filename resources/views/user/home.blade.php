@@ -102,11 +102,8 @@
 >
     <!-- ================= SLIDE 1: SIGNATURE HANDBAGS (LCP HERO ELEMENT) ================= -->
     <div 
-        x-show="currentSlide === 0"
-        x-transition:leave="transition-opacity ease-in duration-300 absolute inset-0"
-        x-transition:leave-start="opacity-100"
-        x-transition:leave-end="opacity-0"
-        class="absolute inset-0 w-full h-full"
+        class="absolute inset-0 w-full h-full transition-opacity duration-700 ease-in-out"
+        :class="currentSlide === 0 ? 'opacity-100 z-10' : 'opacity-0 z-0 pointer-events-none'"
     >
         <!-- Background Image -->
         <picture class="block w-full h-full">
@@ -135,7 +132,7 @@
                 <div class="max-w-2xl py-3 pb-16 sm:pb-3">
                     
                     <!-- Tag / Badge -->
-                    <div class="inline-flex items-center gap-2 mb-3.5 sm:mb-4 animate-hero-tag">
+                    <div class="inline-flex items-center gap-2 mb-3.5 sm:mb-4">
                         <span class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-black/60 backdrop-blur-md border border-gold/50 text-gold-300 text-[11px] uppercase tracking-widest font-serif shadow-md">
                             <span class="w-1.5 h-1.5 rounded-full bg-gold animate-pulse"></span>
                             Handcrafted Luxury
@@ -143,18 +140,18 @@
                     </div>
 
                     <!-- Clean Headline -->
-                    <h1 class="font-serif text-2xl sm:text-4xl lg:text-[42px] font-normal tracking-tight text-white leading-[1.18] mb-3.5 sm:mb-4 drop-shadow-[0_4px_16px_rgba(0,0,0,0.95)] animate-hero-title">
+                    <h1 class="font-serif text-2xl sm:text-4xl lg:text-[42px] font-normal tracking-tight text-white leading-[1.18] mb-3.5 sm:mb-4 drop-shadow-[0_4px_16px_rgba(0,0,0,0.95)]">
                         Crafted for a Lifetime of 
                         <span class="italic font-light text-gold-300 drop-shadow-[0_4px_16px_rgba(0,0,0,0.95)] block sm:inline">Elegance.</span>
                     </h1>
 
                     <!-- Clear Description -->
-                    <p class="text-xs sm:text-sm text-white/95 font-normal leading-relaxed max-w-xl drop-shadow-[0_2px_8px_rgba(0,0,0,0.9)] animate-hero-desc" style="margin-bottom: 26px !important;">
+                    <p class="text-xs sm:text-sm text-white/95 font-normal leading-relaxed max-w-xl drop-shadow-[0_2px_8px_rgba(0,0,0,0.9)]" style="margin-bottom: 26px !important;">
                         Artisanal full-grain leather handbags sculpted by master craftsmen. Designed with quiet sophistication to endure with you every day.
                     </p>
 
                     <!-- CTAs -->
-                    <div class="flex flex-wrap items-center gap-3.5 sm:gap-4 animate-hero-actions" style="margin-bottom: 26px !important;">
+                    <div class="flex flex-wrap items-center gap-3.5 sm:gap-4" style="margin-bottom: 26px !important;">
                         <a 
                             href="{{ route('category', 'handbags') }}" 
                             class="px-5 py-2.5 sm:px-6 sm:py-3 bg-gold hover:bg-gold-light text-espresso-950 text-[11px] sm:text-xs uppercase tracking-widest font-bold rounded-lg shadow-luxury hover:shadow-gold-glow hover:-translate-y-0.5 transition-all duration-300 flex items-center gap-2 group active:scale-95"
@@ -172,7 +169,7 @@
                     </div>
 
                     <!-- Feature Row (Protected Pill - Hidden on mobile to prevent overlapping controls) -->
-                    <div class="hidden sm:inline-flex flex-wrap items-center gap-3.5 px-4 py-2 rounded-full bg-black/55 backdrop-blur-md border border-white/20 text-[11px] text-white shadow-md animate-hero-specs">
+                    <div class="hidden sm:inline-flex flex-wrap items-center gap-3.5 px-4 py-2 rounded-full bg-black/55 backdrop-blur-md border border-white/20 text-[11px] text-white shadow-md">
                         <span class="flex items-center gap-2">
                             <i data-lucide="award" class="w-3.5 h-3.5 text-gold"></i>
                             <span>100% Full-Grain Leather</span>
@@ -191,15 +188,8 @@
 
     <!-- ================= SLIDE 2: REVERSIBLE BELTS ================= -->
     <div 
-        x-show="currentSlide === 1"
-        x-cloak
-        x-transition:enter="transition-opacity ease-out duration-500"
-        x-transition:enter-start="opacity-0"
-        x-transition:enter-end="opacity-100"
-        x-transition:leave="transition-opacity ease-in duration-300 absolute inset-0"
-        x-transition:leave-start="opacity-100"
-        x-transition:leave-end="opacity-0"
-        class="absolute inset-0 w-full h-full"
+        class="absolute inset-0 w-full h-full transition-opacity duration-700 ease-in-out opacity-0 z-0 pointer-events-none"
+        :class="currentSlide === 1 ? 'opacity-100 z-10 !pointer-events-auto' : 'opacity-0 z-0 pointer-events-none'"
     >
         <!-- Background Image -->
         <picture class="block w-full h-full">
@@ -227,7 +217,7 @@
                 <div class="max-w-2xl py-3 pb-16 sm:pb-3">
                     
                     <!-- Tag / Badge -->
-                    <div class="inline-flex items-center gap-2 mb-3.5 sm:mb-4 animate-hero-tag">
+                    <div class="inline-flex items-center gap-2 mb-3.5 sm:mb-4">
                         <span class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-black/60 backdrop-blur-md border border-gold/50 text-gold-300 text-[11px] uppercase tracking-widest font-serif shadow-md">
                             <span class="w-1.5 h-1.5 rounded-full bg-gold animate-pulse"></span>
                             The Reversible Belt
@@ -235,18 +225,18 @@
                     </div>
 
                     <!-- Clean Headline -->
-                    <h2 class="font-serif text-2xl sm:text-4xl lg:text-[42px] font-normal tracking-tight text-white leading-[1.18] mb-3.5 sm:mb-4 drop-shadow-[0_4px_16px_rgba(0,0,0,0.95)] animate-hero-title">
+                    <h2 class="font-serif text-2xl sm:text-4xl lg:text-[42px] font-normal tracking-tight text-white leading-[1.18] mb-3.5 sm:mb-4 drop-shadow-[0_4px_16px_rgba(0,0,0,0.95)]">
                         Two Refined Looks. 
                         <span class="italic font-light text-gold-300 drop-shadow-[0_4px_16px_rgba(0,0,0,0.95)] block sm:inline">One Smooth Twist.</span>
                     </h2>
 
                     <!-- Clear Description -->
-                    <p class="text-xs sm:text-sm text-white/95 font-normal leading-relaxed max-w-xl drop-shadow-[0_2px_8px_rgba(0,0,0,0.9)] animate-hero-desc" style="margin-bottom: 26px !important;">
+                    <p class="text-xs sm:text-sm text-white/95 font-normal leading-relaxed max-w-xl drop-shadow-[0_2px_8px_rgba(0,0,0,0.9)]" style="margin-bottom: 26px !important;">
                         Handcrafted calfskin with a 360° swivel antique brass buckle. Effortlessly switches between rich cognac brown and obsidian black.
                     </p>
 
                     <!-- CTAs -->
-                    <div class="flex flex-wrap items-center gap-3.5 sm:gap-4 animate-hero-actions" style="margin-bottom: 26px !important;">
+                    <div class="flex flex-wrap items-center gap-3.5 sm:gap-4" style="margin-bottom: 26px !important;">
                         <a 
                             href="{{ route('category', 'belts') }}" 
                             class="px-5 py-2.5 sm:px-6 sm:py-3 bg-gold hover:bg-gold-light text-espresso-950 text-[11px] sm:text-xs uppercase tracking-widest font-bold rounded-lg shadow-luxury hover:shadow-gold-glow hover:-translate-y-0.5 transition-all duration-300 flex items-center gap-2 group active:scale-95"
@@ -264,7 +254,7 @@
                     </div>
 
                     <!-- Feature Row (Protected Pill - Hidden on mobile to prevent overlapping controls) -->
-                    <div class="hidden sm:inline-flex flex-wrap items-center gap-3.5 px-4 py-2 rounded-full bg-black/55 backdrop-blur-md border border-white/20 text-[11px] text-white shadow-md animate-hero-specs">
+                    <div class="hidden sm:inline-flex flex-wrap items-center gap-3.5 px-4 py-2 rounded-full bg-black/55 backdrop-blur-md border border-white/20 text-[11px] text-white shadow-md">
                         <span class="flex items-center gap-2">
                             <i data-lucide="refresh-cw" class="w-3.5 h-3.5 text-gold"></i>
                             <span>360° Swivel Buckle</span>
@@ -283,15 +273,8 @@
 
     <!-- ================= SLIDE 3: WALLETS & ACCESSORIES ================= -->
     <div 
-        x-show="currentSlide === 2"
-        x-cloak
-        x-transition:enter="transition-opacity ease-out duration-500"
-        x-transition:enter-start="opacity-0"
-        x-transition:enter-end="opacity-100"
-        x-transition:leave="transition-opacity ease-in duration-300 absolute inset-0"
-        x-transition:leave-start="opacity-100"
-        x-transition:leave-end="opacity-0"
-        class="absolute inset-0 w-full h-full"
+        class="absolute inset-0 w-full h-full transition-opacity duration-700 ease-in-out opacity-0 z-0 pointer-events-none"
+        :class="currentSlide === 2 ? 'opacity-100 z-10 !pointer-events-auto' : 'opacity-0 z-0 pointer-events-none'"
     >
         <!-- Background Image -->
         <picture class="block w-full h-full">
@@ -319,7 +302,7 @@
                 <div class="max-w-2xl py-3 pb-16 sm:pb-3">
                     
                     <!-- Tag / Badge -->
-                    <div class="inline-flex items-center gap-2 mb-3.5 sm:mb-4 animate-hero-tag">
+                    <div class="inline-flex items-center gap-2 mb-3.5 sm:mb-4">
                         <span class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-black/60 backdrop-blur-md border border-gold/50 text-gold-300 text-[11px] uppercase tracking-widest font-serif shadow-md">
                             <span class="w-1.5 h-1.5 rounded-full bg-gold animate-pulse"></span>
                             Minimalist Essentials
@@ -327,18 +310,18 @@
                     </div>
 
                     <!-- Clean Headline -->
-                    <h2 class="font-serif text-2xl sm:text-4xl lg:text-[42px] font-normal tracking-tight text-white leading-[1.18] mb-3.5 sm:mb-4 drop-shadow-[0_4px_16px_rgba(0,0,0,0.95)] animate-hero-title">
+                    <h2 class="font-serif text-2xl sm:text-4xl lg:text-[42px] font-normal tracking-tight text-white leading-[1.18] mb-3.5 sm:mb-4 drop-shadow-[0_4px_16px_rgba(0,0,0,0.95)]">
                         Slim in Pocket. 
                         <span class="italic font-light text-gold-300 drop-shadow-[0_4px_16px_rgba(0,0,0,0.95)] block sm:inline">Timeless in Hand.</span>
                     </h2>
 
                     <!-- Clear Description -->
-                    <p class="text-xs sm:text-sm text-white/95 font-normal leading-relaxed max-w-xl drop-shadow-[0_2px_8px_rgba(0,0,0,0.9)] animate-hero-desc" style="margin-bottom: 26px !important;">
+                    <p class="text-xs sm:text-sm text-white/95 font-normal leading-relaxed max-w-xl drop-shadow-[0_2px_8px_rgba(0,0,0,0.9)]" style="margin-bottom: 26px !important;">
                         Hand-burnished bifold wallets and slim cardholders with certified RFID protection. Tailored for everyday carry without the bulk.
                     </p>
 
                     <!-- CTAs -->
-                    <div class="flex flex-wrap items-center gap-3.5 sm:gap-4 animate-hero-actions" style="margin-bottom: 26px !important;">
+                    <div class="flex flex-wrap items-center gap-3.5 sm:gap-4" style="margin-bottom: 26px !important;">
                         <a 
                             href="{{ route('category', 'wallets') }}" 
                             class="px-5 py-2.5 sm:px-6 sm:py-3 bg-gold hover:bg-gold-light text-espresso-950 text-[11px] sm:text-xs uppercase tracking-widest font-bold rounded-lg shadow-luxury hover:shadow-gold-glow hover:-translate-y-0.5 transition-all duration-300 flex items-center gap-2 group active:scale-95"
@@ -356,7 +339,7 @@
                     </div>
 
                     <!-- Feature Row (Protected Pill - Hidden on mobile to prevent overlapping controls) -->
-                    <div class="hidden sm:inline-flex flex-wrap items-center gap-3.5 px-4 py-2 rounded-full bg-black/55 backdrop-blur-md border border-white/20 text-[11px] text-white shadow-md animate-hero-specs">
+                    <div class="hidden sm:inline-flex flex-wrap items-center gap-3.5 px-4 py-2 rounded-full bg-black/55 backdrop-blur-md border border-white/20 text-[11px] text-white shadow-md">
                         <span class="flex items-center gap-2">
                             <i data-lucide="shield-check" class="w-3.5 h-3.5 text-gold"></i>
                             <span>Certified RFID Protection</span>
