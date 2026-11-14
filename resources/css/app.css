@@ -189,6 +189,18 @@
   animation: heroProgress 6s linear forwards;
 }
 
+@media (max-width: 640px) {
+  .animate-hero-tag,
+  .animate-hero-title,
+  .animate-hero-desc,
+  .animate-hero-actions,
+  .animate-hero-specs {
+    animation: none !important;
+    opacity: 1 !important;
+    transform: none !important;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .reveal, .reveal-left, .reveal-right, .reveal-scale {
     opacity: 1 !important;

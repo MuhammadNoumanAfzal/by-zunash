@@ -108,8 +108,8 @@
         x-transition:leave-end="opacity-0"
         class="absolute inset-0 w-full h-full"
     >
-        <!-- Background Image with Ken-Burns slow motion zoom -->
-        <picture>
+        <!-- Background Image -->
+        <picture class="block w-full h-full">
             <source media="(max-width: 640px)" srcset="{{ asset('images/hero/slide-bag-mobile.webp') }}" type="image/webp">
             <source srcset="{{ asset('images/hero/slide-bag.webp') }}" type="image/webp">
             <img 
@@ -120,8 +120,7 @@
                 fetchpriority="high"
                 loading="eager"
                 decoding="sync"
-                class="absolute inset-0 w-full h-full object-cover object-center transition-transform duration-[8000ms] ease-out"
-                :class="currentSlide === 0 ? 'scale-105' : 'scale-100'"
+                class="absolute inset-0 w-full h-full object-cover object-center"
             >
         </picture>
         
@@ -202,8 +201,8 @@
         x-transition:leave-end="opacity-0"
         class="absolute inset-0 w-full h-full"
     >
-        <!-- Background Image with Ken-Burns slow motion zoom -->
-        <picture>
+        <!-- Background Image -->
+        <picture class="block w-full h-full">
             <source media="(max-width: 640px)" srcset="{{ asset('images/hero/slide-belt-mobile.webp') }}" type="image/webp">
             <source srcset="{{ asset('images/hero/slide-belt.webp') }}" type="image/webp">
             <img 
@@ -213,8 +212,7 @@
                 height="1080"
                 loading="lazy"
                 decoding="async"
-                class="absolute inset-0 w-full h-full object-cover object-center transition-transform duration-[8000ms] ease-out"
-                :class="currentSlide === 1 ? 'scale-105' : 'scale-100'"
+                class="absolute inset-0 w-full h-full object-cover object-center"
             >
         </picture>
         
@@ -295,8 +293,8 @@
         x-transition:leave-end="opacity-0"
         class="absolute inset-0 w-full h-full"
     >
-        <!-- Background Image with Ken-Burns slow motion zoom -->
-        <picture>
+        <!-- Background Image -->
+        <picture class="block w-full h-full">
             <source media="(max-width: 640px)" srcset="{{ asset('images/hero/slide-wallet-mobile.webp') }}" type="image/webp">
             <source srcset="{{ asset('images/hero/slide-wallet.webp') }}" type="image/webp">
             <img 
@@ -306,8 +304,7 @@
                 height="1080"
                 loading="lazy"
                 decoding="async"
-                class="absolute inset-0 w-full h-full object-cover object-center transition-transform duration-[8000ms] ease-out"
-                :class="currentSlide === 2 ? 'scale-105' : 'scale-100'"
+                class="absolute inset-0 w-full h-full object-cover object-center"
             >
         </picture>
         
