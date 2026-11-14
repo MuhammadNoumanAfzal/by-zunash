@@ -188,8 +188,8 @@
 
     <!-- ================= SLIDE 2: REVERSIBLE BELTS ================= -->
     <div 
-        class="absolute inset-0 w-full h-full transition-opacity duration-700 ease-in-out opacity-0 z-0 pointer-events-none"
-        :class="currentSlide === 1 ? 'opacity-100 z-10 !pointer-events-auto' : 'opacity-0 z-0 pointer-events-none'"
+        class="absolute inset-0 w-full h-full transition-opacity duration-700 ease-in-out"
+        :class="currentSlide === 1 ? 'opacity-100 z-10 pointer-events-auto' : 'opacity-0 z-0 pointer-events-none'"
     >
         <!-- Background Image -->
         <picture class="block w-full h-full">
@@ -273,8 +273,8 @@
 
     <!-- ================= SLIDE 3: WALLETS & ACCESSORIES ================= -->
     <div 
-        class="absolute inset-0 w-full h-full transition-opacity duration-700 ease-in-out opacity-0 z-0 pointer-events-none"
-        :class="currentSlide === 2 ? 'opacity-100 z-10 !pointer-events-auto' : 'opacity-0 z-0 pointer-events-none'"
+        class="absolute inset-0 w-full h-full transition-opacity duration-700 ease-in-out"
+        :class="currentSlide === 2 ? 'opacity-100 z-10 pointer-events-auto' : 'opacity-0 z-0 pointer-events-none'"
     >
         <!-- Background Image -->
         <picture class="block w-full h-full">

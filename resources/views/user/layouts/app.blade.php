@@ -12,9 +12,16 @@
     <meta name="keywords" content="@yield('meta_keywords', 'pure leather belts Pakistan, full grain leather wallets Pakistan, luxury leather handbags Lahore, handmade leather bags Karachi, Pakistani leather goods, By Zunash')">
     <meta name="robots" content="@yield('robots', 'index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1')">
     <meta name="author" content="By Zunash Atelier">
+    <!-- Canonical & Standardized Favicons for Google Search & Browsers -->
     <link rel="canonical" href="@yield('canonical', url()->current())">
+    <link rel="shortcut icon" href="{{ asset('favicon.ico') }}">
+    <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}">
+    <link rel="icon" type="image/png" sizes="48x48" href="{{ asset('favicon-48x48.png') }}">
+    <link rel="icon" type="image/png" sizes="96x96" href="{{ asset('favicon-96x96.png') }}">
+    <link rel="icon" type="image/png" sizes="32x32" href="{{ asset('favicon-32x32.png') }}">
+    <link rel="icon" type="image/png" sizes="16x16" href="{{ asset('favicon-16x16.png') }}">
     <link rel="icon" type="image/svg+xml" href="{{ asset('favicon.svg') }}">
-    <link rel="alternate icon" href="{{ asset('favicon.ico') }}">
+    <link rel="apple-touch-icon" sizes="180x180" href="{{ asset('apple-touch-icon.png') }}">
     <meta name="theme-color" content="#231B15">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -43,28 +50,50 @@
     <meta name="twitter:description" content="@yield('og_description', View::getSection('meta_description', 'Handcrafted full-grain leather silhouettes, reversible belts, and accessories in Pakistan.'))">
     <meta name="twitter:image" content="@yield('og_image', asset('images/hero/slide-bag.jpg'))">
 
-    <!-- Google Global Structured Data (Organization & WebSite) -->
+    <!-- Google Global Structured Data (Organization, Brand, Knowledge Graph & Sitelinks) -->
     <script type="application/ld+json">
     {
         "@context": "https://schema.org",
         "@graph": [
             {
-                "@type": "Organization",
+                "@type": ["Organization", "Brand", "OnlineStore"],
                 "@id": "{{ url('/') }}/#organization",
                 "name": "By Zunash",
+                "legalName": "By Zunash Luxury Leather",
+                "alternateName": [
+                    "ByZunash",
+                    "byzunash.com",
+                    "By Zunash Atelier",
+                    "Zunash",
+                    "Zunash Leather"
+                ],
                 "url": "{{ url('/') }}",
                 "logo": {
                     "@type": "ImageObject",
                     "@id": "{{ url('/') }}/#logo",
                     "url": "{{ asset('images/logo.png') }}",
-                    "caption": "By Zunash Luxury Leather"
+                    "caption": "By Zunash Luxury Leather Monogram & Identity",
+                    "width": "512",
+                    "height": "512"
                 },
-                "description": "Artisanal full-grain leather goods handcrafted in Pakistan. Heirloom reversible belts, RFID wallets, handbags, and bespoke accessories.",
+                "image": "{{ asset('images/logo.png') }}",
+                "slogan": "Crafted for a Lifetime of Elegance",
+                "description": "By Zunash is an authentic Pakistani luxury leather atelier specializing in handcrafted full-grain calfskin belts, RFID wallets, and structural handbags.",
+                "disambiguatingDescription": "Official website and atelier of By Zunash Luxury Leather Goods Pakistan, distinct from social media personal accounts or other fashion labels.",
+                "knowsAbout": [
+                    "Luxury Leather Goods",
+                    "Handcrafted Leather Bags",
+                    "Full-Grain Calfskin Belts",
+                    "RFID Leather Wallets",
+                    "Pakistani Artisanal Craftsmanship"
+                ],
                 "address": {
                     "@type": "PostalAddress",
-                    "addressCountry": "PK",
+                    "streetAddress": "Gulberg III",
                     "addressLocality": "Lahore",
-                    "addressRegion": "Punjab"
+                    "addressRegion": "Punjab",
+                    "postalCode": "54000",
+                    "addressCountry": "PK"
                 },
                 "contactPoint": {
                     "@type": "ContactPoint",
@@ -74,8 +103,8 @@
                     "availableLanguage": ["English", "Urdu"]
                 },
                 "sameAs": [
-                    "https://www.instagram.com",
-                    "https://www.facebook.com"
+                    "https://www.instagram.com/byzunash",
+                    "https://www.facebook.com/byzunash"
                 ]
             },
             {
@@ -83,6 +112,7 @@
                 "@id": "{{ url('/') }}/#website",
                 "url": "{{ url('/') }}",
                 "name": "By Zunash",
+                "alternateName": "ByZunash",
                 "publisher": {
                     "@id": "{{ url('/') }}/#organization"
                 },
@@ -91,6 +121,30 @@
                     "target": "{{ route('search') }}?q={search_term_string}",
                     "query-input": "required name=search_term_string"
                 }
+            },
+            {
+                "@type": "SiteNavigationElement",
+                "@id": "{{ url('/') }}/#navigation",
+                "name": [
+                    "Handcrafted Handbags",
+                    "Reversible Belts",
+                    "RFID Wallets",
+                    "Curated Deals & Bundles",
+                    "Atelier Catalog",
+                    "Our Story & Craft",
+                    "Client Reviews",
+                    "Contact Atelier"
+                ],
+                "url": [
+                    "{{ route('category', 'handbags') }}",
+                    "{{ route('category', 'belts') }}",
+                    "{{ route('category', 'wallets') }}",
+                    "{{ route('deals') }}",
+                    "{{ route('shop') }}",
+                    "{{ route('about') }}",
+                    "{{ route('reviews') }}",
+                    "{{ route('contact') }}"
+                ]
             }
         ]
     }
