@@ -55,7 +55,9 @@ class OrderController extends Controller
         $totalRevenue = (float) Order::whereIn('order_status', ['completed', 'delivered'])->sum('total');
         $deliveryRate = $totalOrders > 0 ? round(($deliveredOrders / $totalOrders) * 100, 1) : 0;
         $returnRate = $totalOrders > 0 ? round(($returnedOrders / $totalOrders) * 100, 1) : 0;
-        $totalReturnLoss = (float) Order::where('order_status', 'returned')->sum('return_courier_charge');
+        $totalReturnLoss = \Illuminate\Support\Facades\Schema::hasColumn('orders', 'return_courier_charge')
+            ? (float) Order::where('order_status', 'returned')->sum('return_courier_charge')
+            : 0;
 
         return view('admin.orders.index', compact(
             'orders',
