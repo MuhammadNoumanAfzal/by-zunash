@@ -80,7 +80,7 @@
 
             <!-- Brand Logo (Center on Mobile, Left on Desktop) -->
             <div class="flex-shrink-0 flex items-center">
-                <x-user.components.logo height="h-8 sm:h-9" />
+                <x-user.components.logo height="h-10 sm:h-12" />
             </div>
 
             <!-- Desktop Navigation Links (Scalable Curated Top-Level) -->
@@ -529,7 +529,7 @@
             <div>
                 <!-- Drawer Header -->
                 <div class="flex items-center justify-between pb-6 border-b border-ivory-200 dark:border-white/10">
-                    <x-user.components.logo height="h-8" />
+                    <x-user.components.logo height="h-10" />
                     <div class="flex items-center gap-1">
                         <!-- Mobile Theme Toggle -->
                         <button 

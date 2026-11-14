@@ -87,7 +87,7 @@
             <!-- Brand Header -->
             <div class="text-center mb-8 relative z-10 flex flex-col items-center">
                 <img 
-                    src="{{ asset('images/logo-transparent.png') }}" 
+                    src="{{ asset('images/logo-dark-bg.png') }}" 
                     alt="By Zunash Luxury Leather" 
                     class="h-14 sm:h-16 w-auto max-w-[240px] object-contain drop-shadow-md mb-2"
                 >

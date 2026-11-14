@@ -447,9 +447,14 @@
             <div class="px-5 py-4 border-b border-[#ECE6DE] dark:border-[#261E1A] flex items-center justify-between">
                 <a href="{{ route('admin.dashboard') }}" class="flex flex-col items-start gap-1 group">
                     <img 
+                        src="{{ asset('images/logo-dark-bg.png') }}" 
+                        alt="By Zunash Luxury Leather" 
+                        class="dark:hidden h-9 w-auto max-w-[175px] object-contain drop-shadow-sm group-hover:scale-105 transition-transform duration-300"
+                    >
+                    <img 
                         src="{{ asset('images/logo-transparent.png') }}" 
                         alt="By Zunash Luxury Leather" 
-                        class="h-8 w-auto max-w-[170px] object-contain drop-shadow-sm group-hover:scale-105 transition-transform duration-300"
+                        class="hidden dark:block h-9 w-auto max-w-[175px] object-contain drop-shadow-sm group-hover:scale-105 transition-transform duration-300"
                     >
                     <span class="text-[7.5px] font-bold tracking-[0.2em] uppercase text-gold-600 dark:text-gold-400 pl-0.5">
                         ATELIER CONTROL CENTER
