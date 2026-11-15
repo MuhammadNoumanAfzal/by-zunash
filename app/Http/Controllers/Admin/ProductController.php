@@ -152,15 +152,17 @@ class ProductController extends Controller
             'price' => 'required|numeric|min:0',
             'cost_price' => 'nullable|numeric|min:0',
             'original_price' => 'nullable|numeric|min:0',
-            'stock_quantity' => 'required|integer|min:0',
+            'stock_quantity' => 'nullable|integer|min:0',
             'sku' => 'nullable|string|max:50|unique:products,sku',
             'badge' => 'nullable|string|max:50',
             'is_bestseller' => 'nullable|boolean',
             'is_new' => 'nullable|boolean',
             'availability' => 'nullable|string|in:in_stock,out_of_stock,on_demand',
             'lead_time' => 'nullable|string|max:100',
-            'short_description' => 'required|string|max:500',
+            'short_description' => 'nullable|string|max:1000',
             'description' => 'nullable|string',
+            'rating' => 'nullable|numeric|min:1|max:5',
+            'reviews_count' => 'nullable|integer|min:0',
             'image' => 'nullable|string|max:255',
             'image_file' => 'nullable|image|mimes:jpeg,png,jpg,webp,gif,avif|max:5120',
             'gallery_raw' => 'nullable|string',
@@ -172,6 +174,7 @@ class ProductController extends Controller
             'spec_hardware' => 'nullable|string|max:255',
             'spec_dimensions' => 'nullable|string|max:255',
             'spec_sizes' => 'nullable|string|max:255',
+            'spec_lining' => 'nullable|string|max:255',
             'spec_care' => 'nullable|string|max:255',
             'spec_origin' => 'nullable|string|max:255',
             'spec_packaging' => 'nullable|string|max:255',
@@ -219,9 +222,10 @@ class ProductController extends Controller
             $count++;
         }
 
-        $availability = $validated['availability'] ?? ($validated['stock_quantity'] > 0 ? 'in_stock' : 'out_of_stock');
+        $stockQuantity = isset($validated['stock_quantity']) && $validated['stock_quantity'] !== '' ? (int)$validated['stock_quantity'] : 15;
+        $availability = $validated['availability'] ?? ($stockQuantity > 0 ? 'in_stock' : 'out_of_stock');
         $sku = !empty($validated['sku']) ? trim(strtoupper($validated['sku'])) : $this->generateUniqueSku($category);
-        $primaryImage = !empty($validated['image']) ? $validated['image'] : '/images/products/prod-reversible-belt.jpg';
+        $primaryImage = !empty($validated['image']) ? $validated['image'] : '/images/products/prod-dress-belt.webp';
 
         if ($request->hasFile('image_file')) {
             $primaryImage = \App\Services\ImageOptimizer::processUpload(
@@ -258,6 +262,12 @@ class ProductController extends Controller
             $whatsappReviews = is_array($decoded) ? $decoded : null;
         }
 
+        $shortDescription = !empty($validated['short_description']) 
+            ? trim($validated['short_description']) 
+            : (!empty($validated['description']) ? Str::limit(strip_tags($validated['description']), 180) : 'Handcrafted luxury full-grain leather ' . $validated['name'] . ' from By Zunash Atelier.');
+
+        $fullDescription = !empty($validated['description']) ? $validated['description'] : $shortDescription;
+
         Product::create([
             'name' => $validated['name'],
             'slug' => $slug,
@@ -268,20 +278,20 @@ class ProductController extends Controller
             'price' => $validated['price'],
             'cost_price' => $validated['cost_price'] ?? 0,
             'original_price' => $validated['original_price'] ?? null,
-            'stock_quantity' => $validated['stock_quantity'],
+            'stock_quantity' => $stockQuantity,
             'sku' => $sku,
             'badge' => $validated['badge'] ?? null,
             'is_bestseller' => $request->boolean('is_bestseller'),
             'is_new' => $request->boolean('is_new'),
-            'in_stock' => $validated['stock_quantity'] > 0 && $availability !== 'out_of_stock',
+            'in_stock' => $stockQuantity > 0 && $availability !== 'out_of_stock',
             'availability' => $availability,
             'allowed_payment_methods' => $validated['allowed_payment_methods'] ?? 'all',
             'custom_shipping_charge' => ($request->filled('custom_shipping_charge') && $request->input('custom_shipping_charge') !== '') ? (float)$request->input('custom_shipping_charge') : null,
             'weight_kg' => ($request->filled('weight_kg') && $request->input('weight_kg') !== '') ? (float)$request->input('weight_kg') : 0.50,
             'is_free_shipping' => $request->boolean('is_free_shipping'),
             'lead_time' => $leadTime,
-            'short_description' => $validated['short_description'],
-            'description' => !empty($validated['description']) ? $validated['description'] : $validated['short_description'],
+            'short_description' => $shortDescription,
+            'description' => $fullDescription,
             'meta_title' => $validated['meta_title'] ?? null,
             'meta_description' => $validated['meta_description'] ?? null,
             'image' => $primaryImage,
@@ -304,8 +314,8 @@ class ProductController extends Controller
             'gift_set_original_price' => $request->filled('gift_set_original_price') ? (float)$request->input('gift_set_original_price') : null,
             'gift_set_image' => $giftSetImage,
             'whatsapp_reviews' => $whatsappReviews,
-            'rating' => 5.0,
-            'reviews_count' => 0,
+            'rating' => $request->filled('rating') ? (float)$request->input('rating') : 5.0,
+            'reviews_count' => $request->filled('reviews_count') ? (int)$request->input('reviews_count') : 0,
         ]);
 
         return redirect()->route('admin.products.index')
@@ -337,15 +347,17 @@ class ProductController extends Controller
             'price' => 'required|numeric|min:0',
             'cost_price' => 'nullable|numeric|min:0',
             'original_price' => 'nullable|numeric|min:0',
-            'stock_quantity' => 'required|integer|min:0',
+            'stock_quantity' => 'nullable|integer|min:0',
             'sku' => 'nullable|string|max:50|unique:products,sku,' . $product->id,
             'badge' => 'nullable|string|max:50',
             'is_bestseller' => 'nullable|boolean',
             'is_new' => 'nullable|boolean',
             'availability' => 'nullable|string|in:in_stock,out_of_stock,on_demand',
             'lead_time' => 'nullable|string|max:100',
-            'short_description' => 'required|string|max:500',
+            'short_description' => 'nullable|string|max:1000',
             'description' => 'nullable|string',
+            'rating' => 'nullable|numeric|min:1|max:5',
+            'reviews_count' => 'nullable|integer|min:0',
             'image' => 'nullable|string|max:255',
             'image_file' => 'nullable|image|mimes:jpeg,png,jpg,webp,gif,avif|max:5120',
             'gallery_raw' => 'nullable|string',
@@ -357,6 +369,7 @@ class ProductController extends Controller
             'spec_hardware' => 'nullable|string|max:255',
             'spec_dimensions' => 'nullable|string|max:255',
             'spec_sizes' => 'nullable|string|max:255',
+            'spec_lining' => 'nullable|string|max:255',
             'spec_care' => 'nullable|string|max:255',
             'spec_origin' => 'nullable|string|max:255',
             'spec_packaging' => 'nullable|string|max:255',
@@ -396,7 +409,8 @@ class ProductController extends Controller
             $category = $product->category ?: Category::first();
         }
 
-        $availability = $validated['availability'] ?? ($validated['stock_quantity'] > 0 ? 'in_stock' : 'out_of_stock');
+        $stockQuantity = isset($validated['stock_quantity']) && $validated['stock_quantity'] !== '' ? (int)$validated['stock_quantity'] : ($product->stock_quantity ?? 15);
+        $availability = $validated['availability'] ?? ($stockQuantity > 0 ? 'in_stock' : 'out_of_stock');
         $primaryImage = !empty($validated['image']) ? $validated['image'] : $product->image;
 
         if ($request->hasFile('image_file')) {
@@ -434,6 +448,12 @@ class ProductController extends Controller
             $whatsappReviews = is_array($decoded) ? $decoded : $product->whatsapp_reviews;
         }
 
+        $shortDescription = !empty($validated['short_description']) 
+            ? trim($validated['short_description']) 
+            : (!empty($validated['description']) ? Str::limit(strip_tags($validated['description']), 180) : ($product->short_description ?: 'Handcrafted luxury leather ' . $validated['name']));
+
+        $fullDescription = !empty($validated['description']) ? $validated['description'] : ($product->description ?: $shortDescription);
+
         $product->update([
             'name' => $validated['name'],
             'category_id' => $category?->id,
@@ -443,20 +463,20 @@ class ProductController extends Controller
             'price' => $validated['price'],
             'cost_price' => $validated['cost_price'] ?? ($product->cost_price ?? 0),
             'original_price' => $validated['original_price'] ?? $product->original_price,
-            'stock_quantity' => $validated['stock_quantity'],
+            'stock_quantity' => $stockQuantity,
             'sku' => !empty($validated['sku']) ? trim(strtoupper($validated['sku'])) : ($product->sku ?: $this->generateUniqueSku($category)),
             'badge' => $validated['badge'] ?? $product->badge,
             'is_bestseller' => $request->boolean('is_bestseller'),
             'is_new' => $request->boolean('is_new'),
-            'in_stock' => $validated['stock_quantity'] > 0 && $availability !== 'out_of_stock',
+            'in_stock' => $stockQuantity > 0 && $availability !== 'out_of_stock',
             'availability' => $availability,
             'allowed_payment_methods' => $validated['allowed_payment_methods'] ?? ($product->allowed_payment_methods ?? 'all'),
             'custom_shipping_charge' => ($request->filled('custom_shipping_charge') && $request->input('custom_shipping_charge') !== '') ? (float)$request->input('custom_shipping_charge') : null,
             'weight_kg' => ($request->filled('weight_kg') && $request->input('weight_kg') !== '') ? (float)$request->input('weight_kg') : ($product->weight_kg ?? 0.50),
             'is_free_shipping' => $request->boolean('is_free_shipping'),
             'lead_time' => $leadTime,
-            'short_description' => $validated['short_description'],
-            'description' => !empty($validated['description']) ? $validated['description'] : $product->description,
+            'short_description' => $shortDescription,
+            'description' => $fullDescription,
             'meta_title' => $validated['meta_title'] ?? $product->meta_title,
             'meta_description' => $validated['meta_description'] ?? $product->meta_description,
             'image' => $primaryImage,
@@ -479,6 +499,8 @@ class ProductController extends Controller
             'gift_set_original_price' => $request->filled('gift_set_original_price') ? (float)$request->input('gift_set_original_price') : $product->gift_set_original_price,
             'gift_set_image' => $giftSetImage,
             'whatsapp_reviews' => $whatsappReviews,
+            'rating' => $request->filled('rating') ? (float)$request->input('rating') : ($product->rating ?? 5.0),
+            'reviews_count' => $request->filled('reviews_count') ? (int)$request->input('reviews_count') : ($product->reviews_count ?? 0),
         ]);
 
         return redirect()->route('admin.products.index')
@@ -608,8 +630,8 @@ class ProductController extends Controller
     {
         $hasAnySpec = $request->filled('spec_material') || $request->filled('spec_hardware') ||
                       $request->filled('spec_dimensions') || $request->filled('spec_sizes') ||
-                      $request->filled('spec_care') || $request->filled('spec_origin') ||
-                      $request->filled('spec_packaging');
+                      $request->filled('spec_lining') || $request->filled('spec_care') ||
+                      $request->filled('spec_origin') || $request->filled('spec_packaging');
 
         if ($hasAnySpec) {
             $specs = [];
@@ -617,6 +639,7 @@ class ProductController extends Controller
             if ($request->filled('spec_hardware')) $specs['Hardware'] = trim($request->input('spec_hardware'));
             if ($request->filled('spec_dimensions')) $specs['Width & Dimensions'] = trim($request->input('spec_dimensions'));
             if ($request->filled('spec_sizes')) $specs['Available Sizes'] = trim($request->input('spec_sizes'));
+            if ($request->filled('spec_lining')) $specs['Lining & Seams'] = trim($request->input('spec_lining'));
             if ($request->filled('spec_care')) $specs['Care'] = trim($request->input('spec_care'));
             if ($request->filled('spec_origin')) $specs['Origin'] = trim($request->input('spec_origin'));
             if ($request->filled('spec_packaging')) $specs['Packaging'] = trim($request->input('spec_packaging'));
