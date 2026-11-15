@@ -30,13 +30,13 @@
 }">
 
     <!-- ======================= 1. COMPACT EXECUTIVE RIBBON ======================= -->
-    <div class="relative overflow-hidden rounded-2xl bg-gradient-to-r from-espresso-950 via-[#1C1512] to-tan-800 text-white py-2.5 px-3.5 sm:px-5 shadow-xs border border-gold/30 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 w-full min-w-0">
+    <div class="relative overflow-hidden rounded-2xl bg-gradient-to-r from-slate-900 via-slate-800 to-slate-900 text-white py-2.5 px-3.5 sm:px-5 shadow-xs border border-slate-700 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 w-full min-w-0">
         <!-- Subtle luxury ambient gold ornament -->
         <div class="absolute -right-10 -top-10 w-44 h-44 rounded-full bg-gold/10 blur-2xl pointer-events-none"></div>
 
         <!-- Left: Brand Title & Live Status -->
         <div class="flex items-center gap-2.5 sm:gap-3 relative z-10 min-w-0">
-            <div class="w-8 h-8 rounded-xl bg-gradient-to-br from-espresso-900 to-tan-700 text-gold font-cinzel font-bold text-xs flex items-center justify-center shrink-0 border border-gold/40 shadow-xs">
+            <div class="w-8 h-8 rounded-xl bg-slate-800 text-gold font-cinzel font-bold text-xs flex items-center justify-center shrink-0 border border-gold/40 shadow-xs">
                 BZ
             </div>
             <div class="min-w-0 flex-1">
@@ -49,7 +49,7 @@
                         LIVE
                     </span>
                 </div>
-                <p class="text-[10px] text-tan-200/80 mt-0.5 line-clamp-1 sm:line-clamp-none">
+                <p class="text-[10px] text-slate-300 mt-0.5 line-clamp-1 sm:line-clamp-none">
                     Executive Leathercraft Control Center • Real-time sales velocity & orders across Pakistan
                 </p>
             </div>
@@ -57,7 +57,7 @@
 
         <!-- Right: Compact Revenue & Action Button -->
         <div class="flex items-center justify-between sm:justify-end gap-2.5 w-full sm:w-auto shrink-0 relative z-10 pt-1.5 sm:pt-0 border-t border-white/10 sm:border-0">
-            <div class="px-2.5 sm:px-3 py-1 rounded-xl bg-black/40 border border-gold/30 text-left sm:text-right min-w-0">
+            <div class="px-2.5 sm:px-3 py-1 rounded-xl bg-slate-950/60 border border-slate-700 text-left sm:text-right min-w-0">
                 <span class="text-[8px] font-bold tracking-wider uppercase text-gold-300 block truncate">TOTAL REVENUE (PKR)</span>
                 <div class="font-cinzel text-xs sm:text-base font-bold text-white leading-none mt-0.5 truncate">
                     Rs. {{ number_format($totalRevenue, 0) }}
@@ -76,10 +76,10 @@
 
 
     <!-- ======================= 1.1 EXECUTIVE SALES, FULFILLMENT & PROFIT AUDIT ======================= -->
-    <div class="rounded-2xl bg-white dark:bg-[#161210] border border-[#ECE6DE] dark:border-[#261E1A] p-3.5 sm:p-5 shadow-xs w-full min-w-0 space-y-4">
+    <div class="rounded-2xl bg-white dark:bg-slate-800 border border-[#ECE6DE] dark:border-slate-700 p-3.5 sm:p-5 shadow-xs w-full min-w-0 space-y-4">
         
         <!-- Header Controls: Timeframe Pills, Custom Date Range & CSV Download -->
-        <div class="flex flex-col xl:flex-row xl:items-center xl:justify-between gap-3 pb-3.5 border-b border-[#F0EAE1] dark:border-[#241C18]">
+        <div class="flex flex-col xl:flex-row xl:items-center xl:justify-between gap-3 pb-3.5 border-b border-[#F0EAE1] dark:border-slate-700">
             <div>
                 <div class="flex items-center gap-2">
                     <span class="w-2.5 h-2.5 rounded-full bg-gold"></span>
@@ -87,7 +87,7 @@
                         Executive Sales, COD Delivery & Real Profit Audit
                     </h2>
                 </div>
-                <p class="text-[11px] text-gray-500 dark:text-gray-400 mt-0.5">
+                <p class="text-[11px] text-gray-500 dark:text-slate-400 mt-0.5">
                     Auditing Period: <strong class="text-tan-700 dark:text-gold-400 font-mono">{{ $dateLabel }}</strong>
                 </p>
             </div>
@@ -96,35 +96,35 @@
             <div class="flex flex-wrap items-center gap-2" x-data="{ showCustom: {{ $timeframe === 'custom' ? 'true' : 'false' }} }">
                 
                 <!-- Timeframe Quick Filter Buttons -->
-                <div class="inline-flex rounded-xl bg-[#FAF8F5] dark:bg-[#201814] p-1 border border-[#E0D7CB] dark:border-[#2F231D] text-xs font-semibold">
-                    <a href="{{ route('admin.dashboard', ['timeframe' => 'today']) }}" class="px-2.5 py-1 rounded-lg transition-colors {{ $timeframe === 'today' ? 'bg-espresso-900 text-white dark:bg-gold-500 dark:text-espresso-950 shadow-xs' : 'text-gray-600 dark:text-gray-400 hover:text-espresso-900 dark:hover:text-white' }}">
+                <div class="inline-flex rounded-xl bg-[#FAF8F5] dark:bg-slate-900/80 p-1 border border-[#E0D7CB] dark:border-slate-700 text-xs font-semibold">
+                    <a href="{{ route('admin.dashboard', ['timeframe' => 'today']) }}" class="px-2.5 py-1 rounded-lg transition-colors {{ $timeframe === 'today' ? 'bg-espresso-900 text-white dark:bg-amber-500 dark:text-slate-950 font-bold shadow-xs' : 'text-gray-600 dark:text-slate-400 hover:text-espresso-900 dark:hover:text-white' }}">
                         Daily (Today)
                     </a>
-                    <a href="{{ route('admin.dashboard', ['timeframe' => 'yesterday']) }}" class="px-2.5 py-1 rounded-lg transition-colors {{ $timeframe === 'yesterday' ? 'bg-espresso-900 text-white dark:bg-gold-500 dark:text-espresso-950 shadow-xs' : 'text-gray-600 dark:text-gray-400 hover:text-espresso-900 dark:hover:text-white' }}">
+                    <a href="{{ route('admin.dashboard', ['timeframe' => 'yesterday']) }}" class="px-2.5 py-1 rounded-lg transition-colors {{ $timeframe === 'yesterday' ? 'bg-espresso-900 text-white dark:bg-amber-500 dark:text-slate-950 font-bold shadow-xs' : 'text-gray-600 dark:text-slate-400 hover:text-espresso-900 dark:hover:text-white' }}">
                         Yesterday
                     </a>
-                    <a href="{{ route('admin.dashboard', ['timeframe' => 'this_week']) }}" class="px-2.5 py-1 rounded-lg transition-colors {{ $timeframe === 'this_week' ? 'bg-espresso-900 text-white dark:bg-gold-500 dark:text-espresso-950 shadow-xs' : 'text-gray-600 dark:text-gray-400 hover:text-espresso-900 dark:hover:text-white' }}">
+                    <a href="{{ route('admin.dashboard', ['timeframe' => 'this_week']) }}" class="px-2.5 py-1 rounded-lg transition-colors {{ $timeframe === 'this_week' ? 'bg-espresso-900 text-white dark:bg-amber-500 dark:text-slate-950 font-bold shadow-xs' : 'text-gray-600 dark:text-slate-400 hover:text-espresso-900 dark:hover:text-white' }}">
                         7 Days
                     </a>
-                    <a href="{{ route('admin.dashboard', ['timeframe' => 'this_month']) }}" class="px-2.5 py-1 rounded-lg transition-colors {{ $timeframe === 'this_month' ? 'bg-espresso-900 text-white dark:bg-gold-500 dark:text-espresso-950 shadow-xs' : 'text-gray-600 dark:text-gray-400 hover:text-espresso-900 dark:hover:text-white' }}">
+                    <a href="{{ route('admin.dashboard', ['timeframe' => 'this_month']) }}" class="px-2.5 py-1 rounded-lg transition-colors {{ $timeframe === 'this_month' ? 'bg-espresso-900 text-white dark:bg-amber-500 dark:text-slate-950 font-bold shadow-xs' : 'text-gray-600 dark:text-slate-400 hover:text-espresso-900 dark:hover:text-white' }}">
                         Monthly
                     </a>
-                    <a href="{{ route('admin.dashboard', ['timeframe' => 'this_year']) }}" class="px-2.5 py-1 rounded-lg transition-colors {{ $timeframe === 'this_year' ? 'bg-espresso-900 text-white dark:bg-gold-500 dark:text-espresso-950 shadow-xs' : 'text-gray-600 dark:text-gray-400 hover:text-espresso-900 dark:hover:text-white' }}">
+                    <a href="{{ route('admin.dashboard', ['timeframe' => 'this_year']) }}" class="px-2.5 py-1 rounded-lg transition-colors {{ $timeframe === 'this_year' ? 'bg-espresso-900 text-white dark:bg-amber-500 dark:text-slate-950 font-bold shadow-xs' : 'text-gray-600 dark:text-slate-400 hover:text-espresso-900 dark:hover:text-white' }}">
                         Yearly
                     </a>
-                    <button type="button" @click="showCustom = !showCustom" class="px-2.5 py-1 rounded-lg transition-colors flex items-center gap-1 {{ $timeframe === 'custom' ? 'bg-espresso-900 text-white dark:bg-gold-500 dark:text-espresso-950 shadow-xs' : 'text-gray-600 dark:text-gray-400 hover:text-espresso-900 dark:hover:text-white' }}">
+                    <button type="button" @click="showCustom = !showCustom" class="px-2.5 py-1 rounded-lg transition-colors flex items-center gap-1 {{ $timeframe === 'custom' ? 'bg-espresso-900 text-white dark:bg-amber-500 dark:text-slate-950 font-bold shadow-xs' : 'text-gray-600 dark:text-slate-400 hover:text-espresso-900 dark:hover:text-white' }}">
                         <i data-lucide="calendar" class="w-3 h-3"></i>
                         <span>Custom Date</span>
                     </button>
                 </div>
 
                 <!-- Custom Date Range Form (collapsible) -->
-                <div x-show="showCustom" x-cloak class="flex items-center gap-1.5 bg-[#FAF8F5] dark:bg-[#201814] p-1 rounded-xl border border-[#E0D7CB] dark:border-[#2F231D]">
+                <div x-show="showCustom" x-cloak class="flex items-center gap-1.5 bg-[#FAF8F5] dark:bg-slate-900/80 p-1 rounded-xl border border-[#E0D7CB] dark:border-slate-700">
                     <form method="GET" action="{{ route('admin.dashboard') }}" class="flex items-center gap-1.5">
                         <input type="hidden" name="timeframe" value="custom">
-                        <input type="date" name="start_date" value="{{ $customStart ?: date('Y-m-01') }}" class="px-2 py-1 text-xs rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-[#161210] text-espresso-900 dark:text-white">
+                        <input type="date" name="start_date" value="{{ $customStart ?: date('Y-m-01') }}" class="px-2 py-1 text-xs rounded-lg border border-gray-300 dark:border-slate-700 bg-white dark:bg-slate-900 text-espresso-900 dark:text-white">
                         <span class="text-xs text-gray-400">to</span>
-                        <input type="date" name="end_date" value="{{ $customEnd ?: date('Y-m-d') }}" class="px-2 py-1 text-xs rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-[#161210] text-espresso-900 dark:text-white">
+                        <input type="date" name="end_date" value="{{ $customEnd ?: date('Y-m-d') }}" class="px-2 py-1 text-xs rounded-lg border border-gray-300 dark:border-slate-700 bg-white dark:bg-slate-900 text-espresso-900 dark:text-white">
                         <button type="submit" class="px-2.5 py-1 rounded-lg bg-tan-600 hover:bg-tan-700 text-white text-xs font-semibold">
                             Apply
                         </button>
@@ -168,7 +168,7 @@
         <div class="grid grid-cols-2 md:grid-cols-4 gap-2.5 sm:gap-3">
             
             <!-- Metric 1: Total Orders Placed -->
-            <div class="p-3 rounded-xl bg-[#FAF8F5] dark:bg-[#1D1714] border border-[#EBE3D8] dark:border-[#2C211B]">
+            <div class="p-3 rounded-xl bg-[#FAF8F5] dark:bg-slate-900/60 border border-[#EBE3D8] dark:border-slate-700">
                 <div class="text-[10px] font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400 flex items-center justify-between">
                     <span>Total Orders Placed</span>
                     <i data-lucide="shopping-cart" class="w-3.5 h-3.5 text-tan-600"></i>
@@ -228,7 +228,7 @@
             </div>
 
             <!-- Metric 5: Delivered Revenue (Gross) -->
-            <div class="p-3 rounded-xl bg-[#FAF8F5] dark:bg-[#1D1714] border border-[#EBE3D8] dark:border-[#2C211B]">
+            <div class="p-3 rounded-xl bg-[#FAF8F5] dark:bg-slate-900/60 border border-[#EBE3D8] dark:border-slate-700">
                 <div class="text-[10px] font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400">
                     Delivered Gross Revenue
                 </div>
@@ -241,7 +241,7 @@
             </div>
 
             <!-- Metric 6: Real COGS (Product Purchase Cost) -->
-            <div class="p-3 rounded-xl bg-[#FAF8F5] dark:bg-[#1D1714] border border-[#EBE3D8] dark:border-[#2C211B]">
+            <div class="p-3 rounded-xl bg-[#FAF8F5] dark:bg-slate-900/60 border border-[#EBE3D8] dark:border-slate-700">
                 <div class="text-[10px] font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400">
                     Product Purchase Cost (COGS)
                 </div>
@@ -291,9 +291,9 @@
     <div class="grid grid-cols-2 lg:grid-cols-4 gap-2.5 sm:gap-3 w-full min-w-0">
         
         <!-- KPI 1: TOTAL PRODUCTS -->
-        <a href="{{ route('admin.products.index') }}" class="p-2.5 sm:p-3.5 rounded-xl bg-white dark:bg-[#161210] border border-[#ECE6DE] dark:border-[#261E1A] shadow-2xs hover:border-tan-500 transition-colors group flex items-center justify-between min-w-0 overflow-hidden">
+        <a href="{{ route('admin.products.index') }}" class="p-2.5 sm:p-3.5 rounded-xl bg-white dark:bg-slate-800 border border-[#ECE6DE] dark:border-slate-700 shadow-2xs hover:border-tan-500 transition-colors group flex items-center justify-between min-w-0 overflow-hidden">
             <div class="min-w-0 flex-1">
-                <div class="text-[9px] font-bold uppercase tracking-wider text-[#8F8379] truncate">
+                <div class="text-[9px] font-bold uppercase tracking-wider text-slate-400 truncate">
                     TOTAL CREATIONS
                 </div>
                 <div class="font-cinzel text-lg sm:text-2xl font-bold text-espresso-950 dark:text-white leading-tight mt-0.5">
@@ -304,15 +304,15 @@
                     <span class="truncate">{{ $activeProducts }} Active</span>
                 </div>
             </div>
-            <div class="w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-[#FAF6F2] dark:bg-[#251A14] text-tan-700 dark:text-gold-400 flex items-center justify-center shrink-0 border border-tan-200 dark:border-[#38261E] group-hover:scale-105 transition-transform ml-1">
+            <div class="w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-slate-100 dark:bg-slate-900/60 text-tan-700 dark:text-gold-400 flex items-center justify-center shrink-0 border border-tan-200 dark:border-slate-700 group-hover:scale-105 transition-transform ml-1">
                 <i data-lucide="shopping-bag" class="w-3.5 h-3.5 sm:w-4 sm:h-4"></i>
             </div>
         </a>
 
         <!-- KPI 2: STORE ORDERS -->
-        <a href="{{ route('admin.orders.index') }}" class="p-2.5 sm:p-3.5 rounded-xl bg-white dark:bg-[#161210] border border-[#ECE6DE] dark:border-[#261E1A] shadow-2xs hover:border-gold-400 transition-colors group flex items-center justify-between min-w-0 overflow-hidden">
+        <a href="{{ route('admin.orders.index') }}" class="p-2.5 sm:p-3.5 rounded-xl bg-white dark:bg-slate-800 border border-[#ECE6DE] dark:border-slate-700 shadow-2xs hover:border-gold-400 transition-colors group flex items-center justify-between min-w-0 overflow-hidden">
             <div class="min-w-0 flex-1">
-                <div class="text-[9px] font-bold uppercase tracking-wider text-[#8F8379] truncate">
+                <div class="text-[9px] font-bold uppercase tracking-wider text-slate-400 truncate">
                     STORE ORDERS
                 </div>
                 <div class="font-cinzel text-lg sm:text-2xl font-bold text-espresso-950 dark:text-white leading-tight mt-0.5">
@@ -323,34 +323,34 @@
                     <span class="truncate">{{ $ordersThisMonth }} This Month</span>
                 </div>
             </div>
-            <div class="w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-[#FDF9F2] dark:bg-[#261F15] text-gold-700 dark:text-gold-400 flex items-center justify-center shrink-0 border border-gold-300/40 group-hover:scale-105 transition-transform ml-1">
+            <div class="w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-amber-50 dark:bg-slate-900/60 text-gold-700 dark:text-gold-400 flex items-center justify-center shrink-0 border border-gold-300/40 dark:border-slate-700 group-hover:scale-105 transition-transform ml-1">
                 <i data-lucide="clipboard-check" class="w-3.5 h-3.5 sm:w-4 sm:h-4"></i>
             </div>
         </a>
 
         <!-- KPI 3: CLIENT INQUIRIES -->
-        <a href="{{ route('admin.messages.index') }}" class="p-2.5 sm:p-3.5 rounded-xl bg-white dark:bg-[#161210] border border-[#ECE6DE] dark:border-[#261E1A] shadow-2xs hover:border-amber-400 transition-colors group flex items-center justify-between min-w-0 overflow-hidden">
+        <a href="{{ route('admin.messages.index') }}" class="p-2.5 sm:p-3.5 rounded-xl bg-white dark:bg-slate-800 border border-[#ECE6DE] dark:border-slate-700 shadow-2xs hover:border-amber-400 transition-colors group flex items-center justify-between min-w-0 overflow-hidden">
             <div class="min-w-0 flex-1">
-                <div class="text-[9px] font-bold uppercase tracking-wider text-[#8F8379] truncate">
+                <div class="text-[9px] font-bold uppercase tracking-wider text-slate-400 truncate">
                     CLIENT INQUIRIES
                 </div>
                 <div class="font-cinzel text-lg sm:text-2xl font-bold text-espresso-950 dark:text-white leading-tight mt-0.5">
                     {{ $activeInquiries }}
                 </div>
-                <div class="flex items-center gap-1 text-[10px] text-[#8F8379] mt-0.5 font-medium truncate">
+                <div class="flex items-center gap-1 text-[10px] text-slate-400 mt-0.5 font-medium truncate">
                     <span class="w-1.5 h-1.5 rounded-full {{ $activeInquiries > 0 ? 'bg-amber-500' : 'bg-emerald-500' }} shrink-0"></span>
                     <span class="truncate">{{ $activeInquiries > 0 ? $activeInquiries . ' Pending' : 'All Handled' }}</span>
                 </div>
             </div>
-            <div class="w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-[#FAF8F5] dark:bg-[#201815] text-tan-700 dark:text-gold flex items-center justify-center shrink-0 border border-[#E8E1D7] dark:border-[#38261E] group-hover:scale-105 transition-transform ml-1">
+            <div class="w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-slate-100 dark:bg-slate-900/60 text-tan-700 dark:text-gold flex items-center justify-center shrink-0 border border-slate-200 dark:border-slate-700 group-hover:scale-105 transition-transform ml-1">
                 <i data-lucide="message-square" class="w-3.5 h-3.5 sm:w-4 sm:h-4"></i>
             </div>
         </a>
 
         <!-- KPI 4: TOTAL PATRONS -->
-        <a href="{{ route('admin.customers.index') }}" class="p-2.5 sm:p-3.5 rounded-xl bg-white dark:bg-[#161210] border border-[#ECE6DE] dark:border-[#261E1A] shadow-2xs hover:border-emerald-500 transition-colors group flex items-center justify-between min-w-0 overflow-hidden">
+        <a href="{{ route('admin.customers.index') }}" class="p-2.5 sm:p-3.5 rounded-xl bg-white dark:bg-slate-800 border border-[#ECE6DE] dark:border-slate-700 shadow-2xs hover:border-emerald-500 transition-colors group flex items-center justify-between min-w-0 overflow-hidden">
             <div class="min-w-0 flex-1">
-                <div class="text-[9px] font-bold uppercase tracking-wider text-[#8F8379] truncate">
+                <div class="text-[9px] font-bold uppercase tracking-wider text-slate-400 truncate">
                     TOTAL PATRONS
                 </div>
                 <div class="font-cinzel text-lg sm:text-2xl font-bold text-espresso-950 dark:text-white leading-tight mt-0.5">
@@ -361,7 +361,7 @@
                     <span class="truncate">Avg Ticket: Rs. {{ number_format($averageOrderValue) }}</span>
                 </div>
             </div>
-            <div class="w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-[#F0FAF5] dark:bg-[#162720] text-emerald-600 flex items-center justify-center shrink-0 border border-[#D5EFE2] dark:border-[#223E32] group-hover:scale-105 transition-transform ml-1">
+            <div class="w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-emerald-50 dark:bg-slate-900/60 text-emerald-600 flex items-center justify-center shrink-0 border border-emerald-200 dark:border-slate-700 group-hover:scale-105 transition-transform ml-1">
                 <i data-lucide="users" class="w-3.5 h-3.5 sm:w-4 sm:h-4"></i>
             </div>
         </a>
@@ -373,11 +373,11 @@
     <div class="grid grid-cols-1 lg:grid-cols-12 gap-3.5 w-full min-w-0">
 
         <!-- Left Column: Multi-Tab Interactive Charts Hub (8 Cols / ~67%) -->
-        <div class="lg:col-span-8 p-3.5 sm:p-5 rounded-2xl bg-white dark:bg-[#161210] border border-[#ECE6DE] dark:border-[#261E1A] shadow-card flex flex-col justify-between w-full min-w-0 overflow-hidden">
+        <div class="lg:col-span-8 p-3.5 sm:p-5 rounded-2xl bg-white dark:bg-slate-800 border border-[#ECE6DE] dark:border-slate-700 shadow-card flex flex-col justify-between w-full min-w-0 overflow-hidden">
             
             <div>
                 <!-- Header with Clean Tab Selectors & Sliding Chevrons -->
-                <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 pb-3 border-b border-[#F0EAE1] dark:border-[#261E1A]">
+                <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 pb-3 border-b border-[#F0EAE1] dark:border-slate-700">
                     
                     <!-- Graph Title with Dynamic Icon and Slide Navigation -->
                     <div class="flex items-center justify-between sm:justify-start gap-2.5">
@@ -397,7 +397,7 @@
                             <button 
                                 type="button" 
                                 @click="prevChart()" 
-                                class="w-7 h-7 rounded-lg bg-[#FAF8F5] dark:bg-[#201815] border border-[#EFE8DF] dark:border-[#2E241F] flex items-center justify-center text-espresso-900 dark:text-white hover:text-tan-600 transition-colors shadow-2xs"
+                                class="w-7 h-7 rounded-lg bg-[#FAF8F5] dark:bg-slate-900 border border-[#EFE8DF] dark:border-slate-700 flex items-center justify-center text-espresso-900 dark:text-white hover:text-tan-600 transition-colors shadow-2xs"
                                 title="Previous Chart"
                             >
                                 <i data-lucide="chevron-left" class="w-3.5 h-3.5"></i>
@@ -405,7 +405,7 @@
                             <button 
                                 type="button" 
                                 @click="nextChart()" 
-                                class="w-7 h-7 rounded-lg bg-[#FAF8F5] dark:bg-[#201815] border border-[#EFE8DF] dark:border-[#2E241F] flex items-center justify-center text-espresso-900 dark:text-white hover:text-tan-600 transition-colors shadow-2xs"
+                                class="w-7 h-7 rounded-lg bg-[#FAF8F5] dark:bg-slate-900 border border-[#EFE8DF] dark:border-slate-700 flex items-center justify-center text-espresso-900 dark:text-white hover:text-tan-600 transition-colors shadow-2xs"
                                 title="Next Chart"
                             >
                                 <i data-lucide="chevron-right" class="w-3.5 h-3.5"></i>
@@ -419,7 +419,7 @@
                         <button 
                             type="button" 
                             @click="prevChart()" 
-                            class="hidden sm:flex w-7 h-7 rounded-lg bg-[#FAF8F5] dark:bg-[#201815] border border-[#EFE8DF] dark:border-[#2E241F] items-center justify-center text-gray-500 hover:text-espresso-900 dark:hover:text-white hover:border-tan-400 transition-colors shrink-0 shadow-2xs active:scale-95"
+                            class="hidden sm:flex w-7 h-7 rounded-lg bg-[#FAF8F5] dark:bg-slate-900 border border-[#EFE8DF] dark:border-slate-700 items-center justify-center text-gray-500 hover:text-espresso-900 dark:hover:text-white hover:border-tan-400 transition-colors shrink-0 shadow-2xs active:scale-95"
                             title="Previous Chart"
                         >
                             <i data-lucide="chevron-left" class="w-3.5 h-3.5"></i>
@@ -427,13 +427,13 @@
 
                         <!-- Scrollable / Sliding Tabs Strip -->
                         <div 
-                            class="flex items-center gap-1 p-1 rounded-xl bg-[#FAF8F5] dark:bg-[#201815] border border-[#EFE8DF] dark:border-[#2E241F] overflow-x-auto scrollbar-none flex-nowrap w-full sm:w-auto scroll-smooth"
+                            class="flex items-center gap-1 p-1 rounded-xl bg-[#FAF8F5] dark:bg-slate-900 border border-[#EFE8DF] dark:border-slate-700 overflow-x-auto scrollbar-none flex-nowrap w-full sm:w-auto scroll-smooth"
                         >
                             <button 
                                 id="tab-btn-revenue"
                                 type="button" 
                                 @click="setChart('revenue')"
-                                :class="activeChartTab === 'revenue' ? 'bg-white dark:bg-[#2D221D] text-tan-700 dark:text-gold shadow-2xs font-bold' : 'text-gray-500 hover:text-espresso-900 dark:hover:text-white'"
+                                :class="activeChartTab === 'revenue' ? 'bg-white dark:bg-slate-800 text-tan-700 dark:text-gold shadow-2xs font-bold' : 'text-gray-500 hover:text-espresso-900 dark:hover:text-white'"
                                 class="px-2.5 py-1 rounded-lg text-[11px] transition-all flex items-center gap-1.5 shrink-0"
                             >
                                 <i data-lucide="trending-up" class="w-3 h-3"></i>
@@ -444,7 +444,7 @@
                                 id="tab-btn-orders"
                                 type="button" 
                                 @click="setChart('orders')"
-                                :class="activeChartTab === 'orders' ? 'bg-white dark:bg-[#2D221D] text-tan-700 dark:text-gold shadow-2xs font-bold' : 'text-gray-500 hover:text-espresso-900 dark:hover:text-white'"
+                                :class="activeChartTab === 'orders' ? 'bg-white dark:bg-slate-800 text-tan-700 dark:text-gold shadow-2xs font-bold' : 'text-gray-500 hover:text-espresso-900 dark:hover:text-white'"
                                 class="px-2.5 py-1 rounded-lg text-[11px] transition-all flex items-center gap-1.5 shrink-0"
                             >
                                 <i data-lucide="package-check" class="w-3 h-3"></i>
@@ -455,7 +455,7 @@
                                 id="tab-btn-payments"
                                 type="button" 
                                 @click="setChart('payments')"
-                                :class="activeChartTab === 'payments' ? 'bg-white dark:bg-[#2D221D] text-tan-700 dark:text-gold shadow-2xs font-bold' : 'text-gray-500 hover:text-espresso-900 dark:hover:text-white'"
+                                :class="activeChartTab === 'payments' ? 'bg-white dark:bg-slate-800 text-tan-700 dark:text-gold shadow-2xs font-bold' : 'text-gray-500 hover:text-espresso-900 dark:hover:text-white'"
                                 class="px-2.5 py-1 rounded-lg text-[11px] transition-all flex items-center gap-1.5 shrink-0"
                             >
                                 <i data-lucide="credit-card" class="w-3 h-3"></i>
@@ -466,7 +466,7 @@
                                 id="tab-btn-collections"
                                 type="button" 
                                 @click="setChart('collections')"
-                                :class="activeChartTab === 'collections' ? 'bg-white dark:bg-[#2D221D] text-tan-700 dark:text-gold shadow-2xs font-bold' : 'text-gray-500 hover:text-espresso-900 dark:hover:text-white'"
+                                :class="activeChartTab === 'collections' ? 'bg-white dark:bg-slate-800 text-tan-700 dark:text-gold shadow-2xs font-bold' : 'text-gray-500 hover:text-espresso-900 dark:hover:text-white'"
                                 class="px-2.5 py-1 rounded-lg text-[11px] transition-all flex items-center gap-1.5 shrink-0"
                             >
                                 <i data-lucide="layers" class="w-3 h-3"></i>
@@ -477,7 +477,7 @@
                                 id="tab-btn-regions"
                                 type="button" 
                                 @click="setChart('regions')"
-                                :class="activeChartTab === 'regions' ? 'bg-white dark:bg-[#2D221D] text-tan-700 dark:text-gold shadow-2xs font-bold' : 'text-gray-500 hover:text-espresso-900 dark:hover:text-white'"
+                                :class="activeChartTab === 'regions' ? 'bg-white dark:bg-slate-800 text-tan-700 dark:text-gold shadow-2xs font-bold' : 'text-gray-500 hover:text-espresso-900 dark:hover:text-white'"
                                 class="px-2.5 py-1 rounded-lg text-[11px] transition-all flex items-center gap-1.5 shrink-0"
                             >
                                 <i data-lucide="map-pin" class="w-3 h-3"></i>
@@ -489,7 +489,7 @@
                         <button 
                             type="button" 
                             @click="nextChart()" 
-                            class="hidden sm:flex w-7 h-7 rounded-lg bg-[#FAF8F5] dark:bg-[#201815] border border-[#EFE8DF] dark:border-[#2E241F] items-center justify-center text-gray-500 hover:text-espresso-900 dark:hover:text-white hover:border-tan-400 transition-colors shrink-0 shadow-2xs active:scale-95"
+                            class="hidden sm:flex w-7 h-7 rounded-lg bg-[#FAF8F5] dark:bg-slate-900 border border-[#EFE8DF] dark:border-slate-700 items-center justify-center text-gray-500 hover:text-espresso-900 dark:hover:text-white hover:border-tan-400 transition-colors shrink-0 shadow-2xs active:scale-95"
                             title="Next Chart"
                         >
                             <i data-lucide="chevron-right" class="w-3.5 h-3.5"></i>

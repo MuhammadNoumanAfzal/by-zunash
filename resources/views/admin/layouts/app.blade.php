@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" class="scroll-smooth bg-[#FAF9F6] dark:bg-[#1C1A17]">
+<html lang="en" class="scroll-smooth bg-[#FAF9F6] dark:bg-[#0F172A]">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -48,11 +48,11 @@
                             200: '#D2CEC8',
                             300: '#A9A39A',
                             400: '#736B61',
-                            700: '#3D352E',
-                            800: '#2E2823',
-                            900: '#24201C', // Soft luxury warm dark espresso
-                            950: '#1C1A17', // Base canvas (softer luxury warm charcoal)
-                            DEFAULT: '#24201C',
+                            700: '#334155',
+                            800: '#283548',
+                            900: '#1E293B', // Clean modern Slate card
+                            950: '#0F172A', // Clean modern Slate canvas
+                            DEFAULT: '#1E293B',
                         },
                         tan: {
                             50: '#FDF9F5',
@@ -164,10 +164,10 @@
         }
 
         html.dark dialog {
-            background: #26221E !important;
-            color: #F8F6F2 !important;
-            border-color: #3D352E !important;
-            box-shadow: 0 25px 60px -15px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(197, 161, 107, 0.25) !important;
+            background: #1E293B !important;
+            color: #F8FAFC !important;
+            border-color: #334155 !important;
+            box-shadow: 0 25px 60px -15px rgba(0, 0, 0, 0.7), 0 0 0 1px rgba(197, 161, 107, 0.3) !important;
         }
 
         /* Wider card only for Staff Modal with 12 module checkboxes */
@@ -200,7 +200,7 @@
         }
 
         dialog::backdrop {
-            background: rgba(18, 16, 14, 0.72) !important;
+            background: rgba(15, 23, 42, 0.75) !important;
             backdrop-filter: blur(8px) !important;
             -webkit-backdrop-filter: blur(8px) !important;
             z-index: 9998 !important;
@@ -233,8 +233,8 @@
             align-items: center;
         }
         .dark .ql-toolbar.ql-snow {
-            border-bottom: 1px solid #3D352E !important;
-            background-color: #26221E;
+            border-bottom: 1px solid #334155 !important;
+            background-color: #172033;
         }
         .ql-container.ql-snow {
             border: none !important;
@@ -250,7 +250,7 @@
             line-height: 1.6;
         }
         .dark .ql-editor {
-            color: #FAF8F5;
+            color: #F8FAFC;
         }
         .ql-editor.ql-blank::before {
             color: #A89C91 !important;
@@ -259,21 +259,21 @@
             right: 14px !important;
         }
         .dark .ql-editor.ql-blank::before {
-            color: #9C8F83 !important;
+            color: #8596B0 !important;
         }
         /* Toolbar icons color in dark mode */
         .dark .ql-snow .ql-stroke {
-            stroke: #D6CBC1 !important;
+            stroke: #CBD5E1 !important;
         }
         .dark .ql-snow .ql-fill {
-            fill: #D6CBC1 !important;
+            fill: #CBD5E1 !important;
         }
         .dark .ql-snow .ql-picker {
-            color: #D6CBC1 !important;
+            color: #CBD5E1 !important;
         }
         .dark .ql-snow .ql-picker-options {
-            background-color: #2E2924 !important;
-            border-color: #443B33 !important;
+            background-color: #1E293B !important;
+            border-color: #334155 !important;
         }
         /* Active / Hover icons in Tan & Gold */
         .ql-snow.ql-toolbar button:hover,
@@ -314,9 +314,10 @@
         }
 
         /* ========================================================
-           BY ZUNASH ATELIER REFINED LUXURY DARK THEME ("KAM DARK")
-           Soft warm charcoal canvas (#1C1A17), elevated warm panels (#26221E),
-           crisp champagne-bronze borders (#3D352E), and soothing readable ivory text.
+           BY ZUNASH ATELIER MODERN SLATE EXECUTIVE DARK THEME
+           Clean, sleek Slate-900 canvas (#0F172A), Slate-800 cards (#1E293B),
+           crisp Slate-700 borders (#334155), pure ivory white typography,
+           and vibrant gold luxury highlights. ZERO muddy brown.
            ======================================================== */
         html.dark {
             color-scheme: dark;
@@ -329,7 +330,7 @@
         html.dark .dark\:bg-\[\#0D0A09\],
         html.dark .dark\:bg-espresso-950,
         html.dark .dark\:bg-espresso-900 {
-            background-color: #1C1A17 !important;
+            background-color: #0F172A !important;
         }
 
         /* 2. Primary Elevated Cards, Panels, Modals, Nav Header & Sidebar */
@@ -345,10 +346,13 @@
         html.dark .dark\:bg-\[\#16100E\],
         html.dark .dark\:bg-\[\#1C1613\],
         html.dark .dark\:bg-\[\#120E0C\],
+        html.dark .dark\:bg-\[\#201D1A\],
+        html.dark .dark\:bg-\[\#26221E\],
         html.dark .bg-white.dark\:bg-\[\#161210\],
         html.dark .bg-white.dark\:bg-\[\#1A1513\],
-        html.dark .bg-white.dark\:bg-\[\#1C1613\] {
-            background-color: #26221E !important;
+        html.dark .bg-white.dark\:bg-\[\#1C1613\],
+        html.dark .bg-white.dark\:bg-\[\#26221E\] {
+            background-color: #1E293B !important;
         }
 
         /* 3. Secondary Surfaces, Stat Wells, Filters, Search Bars & Sub-Cards */
@@ -381,11 +385,12 @@
         html.dark .dark\:bg-\[\#2D201A\],
         html.dark .dark\:bg-\[\#2D221D\],
         html.dark .dark\:bg-\[\#2E2520\],
+        html.dark .dark\:bg-\[\#2F2924\],
         html.dark .dark\:bg-\[\#3A2F29\] {
-            background-color: #2F2924 !important;
+            background-color: #283548 !important;
         }
 
-        /* 4. Crisp, Elegant Borders across Cards, Nav, and Containers */
+        /* 4. Crisp, Modern Slate Borders across Cards, Nav, and Containers */
         html.dark .dark\:border-\[\#1A1513\],
         html.dark .dark\:border-\[\#223E32\],
         html.dark .dark\:border-\[\#241C18\],
@@ -410,11 +415,12 @@
         html.dark .dark\:border-\[\#3E2A24\],
         html.dark .dark\:border-\[\#42322C\],
         html.dark .dark\:border-\[\#383029\],
-        html.dark .dark\:border-\[\#3D352E\] {
-            border-color: #3D352E !important;
+        html.dark .dark\:border-\[\#3D352E\],
+        html.dark .dark\:border-\[\#423830\] {
+            border-color: #334155 !important;
         }
 
-        /* 5. Form Controls: Inputs, Selects, Textareas */
+        /* 5. Form Controls: Inputs, Selects, Textareas (Clean Slate Inputs) */
         html.dark input[type="text"],
         html.dark input[type="search"],
         html.dark input[type="email"],
@@ -425,53 +431,53 @@
         html.dark input[type="tel"],
         html.dark select,
         html.dark textarea {
-            background-color: #2A2520 !important;
-            border-color: #443B33 !important;
-            color: #F8F6F2 !important;
+            background-color: #172033 !important;
+            border-color: #3B4861 !important;
+            color: #F8FAFC !important;
         }
 
         html.dark input::placeholder,
         html.dark textarea::placeholder {
-            color: #9C8F83 !important;
+            color: #8596B0 !important;
         }
 
         html.dark input:focus,
         html.dark select:focus,
         html.dark textarea:focus {
             border-color: #C5A16B !important;
-            box-shadow: 0 0 0 2px rgba(197, 161, 107, 0.28) !important;
-            background-color: #302A24 !important;
+            box-shadow: 0 0 0 2px rgba(197, 161, 107, 0.35) !important;
+            background-color: #1E283E !important;
         }
 
-        /* 6. Ultra-Readable Typography in Dark Mode */
+        /* 6. Ultra-Readable Clean Typography in Dark Mode */
         html.dark .text-espresso-950,
         html.dark .text-espresso-900 {
-            color: #F8F6F2 !important;
+            color: #F8FAFC !important;
         }
 
         html.dark .text-espresso-800,
         html.dark .text-\[\#6C635B\],
         html.dark .text-\[\#7F746A\] {
-            color: #D2C7BC !important;
+            color: #CBD5E1 !important;
         }
 
         html.dark .text-\[\#8F8379\],
         html.dark .text-\[\#9C8F85\],
         html.dark .text-\[\#A89C91\] {
-            color: #A99E92 !important;
+            color: #94A3B8 !important;
         }
 
         /* 7. Table Headers & Rows */
         html.dark table thead th {
-            background-color: #2A2520 !important;
-            color: #E2D8CE !important;
-            border-bottom: 1px solid #3D352E !important;
+            background-color: #1E293B !important;
+            color: #E2E8F0 !important;
+            border-bottom: 1px solid #334155 !important;
         }
         html.dark table tbody tr {
-            border-bottom: 1px solid #332B25 !important;
+            border-bottom: 1px solid #293548 !important;
         }
         html.dark table tbody tr:hover {
-            background-color: #2F2A25 !important;
+            background-color: #243144 !important;
         }
     </style>
 
@@ -601,7 +607,7 @@
             }, 10000);
         }
     }"
-    class="bg-[#FAF9F6] dark:bg-[#1C1A17] text-espresso-900 dark:text-[#F8F6F2] antialiased selection:bg-gold selection:text-espresso-950 min-h-screen flex flex-col transition-colors duration-200 w-full max-w-full overflow-x-hidden"
+    class="bg-[#FAF9F6] dark:bg-[#0F172A] text-espresso-900 dark:text-[#F8FAFC] antialiased selection:bg-gold selection:text-espresso-950 min-h-screen flex flex-col transition-colors duration-200 w-full max-w-full overflow-x-hidden"
 >
 
     <div class="min-h-screen flex flex-1 w-full min-w-0 max-w-full overflow-x-hidden">
@@ -609,10 +615,10 @@
         <!-- ======================= LEFT SIDEBAR ======================= -->
         <aside 
             :class="sidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'"
-            class="fixed inset-y-0 left-0 z-50 w-64 bg-white dark:bg-[#201D1A] border-r border-[#ECE6DE] dark:border-[#383029] transition-transform duration-300 ease-in-out flex flex-col justify-between shadow-xs"
+            class="fixed inset-y-0 left-0 z-50 w-64 bg-white dark:bg-[#111827] border-r border-[#ECE6DE] dark:border-[#1F2937] transition-transform duration-300 ease-in-out flex flex-col justify-between shadow-xs"
         >
             <!-- Top Logo & Brand Identity (Official By Zunash Luxury Emblem) -->
-            <div class="px-5 py-4 border-b border-[#ECE6DE] dark:border-[#383029] flex items-center justify-between">
+            <div class="px-5 py-4 border-b border-[#ECE6DE] dark:border-[#1F2937] flex items-center justify-between">
                 <a href="{{ route('admin.dashboard') }}" class="flex flex-col items-start gap-1 group">
                     <img 
                         src="{{ asset('images/logo-dark-bg.png') }}" 
@@ -952,8 +958,8 @@
             </nav>
 
             <!-- Bottom Super Admin Profile & Logout Bar -->
-            <div class="p-3.5 border-t border-[#ECE6DE] dark:border-[#383029] bg-[#FAF9F6]/60 dark:bg-[#1C1A17]">
-                <div class="flex items-center justify-between gap-3 p-2 rounded-xl bg-white dark:bg-[#26221E] border border-[#EAE3DA] dark:border-[#3D352E] shadow-2xs">
+            <div class="p-3.5 border-t border-[#ECE6DE] dark:border-[#1F2937] bg-[#FAF9F6]/60 dark:bg-[#111827]">
+                <div class="flex items-center justify-between gap-3 p-2 rounded-xl bg-white dark:bg-[#1E293B] border border-[#EAE3DA] dark:border-[#334155] shadow-2xs">
                     <div class="flex items-center gap-2.5 min-w-0">
                         <div class="w-9 h-9 rounded-full bg-gradient-to-br from-espresso-900 to-tan-700 text-gold font-cinzel font-bold text-xs flex items-center justify-center shrink-0 shadow-xs border border-gold/40">
                             ZA
@@ -998,10 +1004,10 @@
         ></div>
 
         <!-- ======================= MAIN CONTENT WRAPPER ======================= -->
-        <div class="flex-1 lg:pl-64 flex flex-col min-h-screen w-full min-w-0 max-w-full overflow-x-hidden bg-[#FAF9F6] dark:bg-[#1C1A17] transition-colors duration-200">
+        <div class="flex-1 lg:pl-64 flex flex-col min-h-screen w-full min-w-0 max-w-full overflow-x-hidden bg-[#FAF9F6] dark:bg-[#0F172A] transition-colors duration-200">
 
             <!-- Top Header Bar (Compact Sleek h-14) -->
-            <header class="sticky top-0 z-30 h-14 bg-white/95 dark:bg-[#201D1A]/95 backdrop-blur-md border-b border-[#ECE6DE] dark:border-[#383029] px-3 sm:px-6 flex items-center justify-between gap-2 sm:gap-4 w-full min-w-0">
+            <header class="sticky top-0 z-30 h-14 bg-white/95 dark:bg-[#111827]/95 backdrop-blur-md border-b border-[#ECE6DE] dark:border-[#1F2937] px-3 sm:px-6 flex items-center justify-between gap-2 sm:gap-4 w-full min-w-0">
                 
                 <!-- Left: Hamburger (mobile) + Global Search -->
                 <div class="flex items-center gap-2 sm:gap-3 flex-1 min-w-0 max-w-xl">
@@ -1052,7 +1058,7 @@
                                 @input="search()"
                                 @focus="if (searchQuery.trim().length >= 1) open = true"
                                 autocomplete="off"
-                                class="w-full pl-9 pr-8 py-1.5 text-xs rounded-full bg-[#FAF9F6] dark:bg-[#2A2520] border border-[#E8E1D7] dark:border-[#423830] text-espresso-900 dark:text-[#F8F6F2] placeholder-[#A89C91] focus:outline-hidden focus:border-gold focus:bg-white transition-all shadow-2xs"
+                                class="w-full pl-9 pr-8 py-1.5 text-xs rounded-full bg-[#FAF9F6] dark:bg-[#1E293B] border border-[#E8E1D7] dark:border-[#334155] text-espresso-900 dark:text-[#F8FAFC] placeholder-[#A89C91] focus:outline-hidden focus:border-gold focus:bg-white transition-all shadow-2xs"
                             >
                             <!-- Mini Loading Spinner -->
                             <div x-show="loading" class="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none" x-cloak>
@@ -1070,7 +1076,7 @@
                             x-transition:enter="transition ease-out duration-150"
                             x-transition:enter-start="opacity-0 translate-y-2"
                             x-transition:enter-end="opacity-100 translate-y-0"
-                            class="absolute left-0 right-0 top-full mt-2 bg-white dark:bg-[#24201C] rounded-2xl shadow-2xl border border-[#ECE6DE] dark:border-[#3D352E] overflow-hidden z-50 max-h-[75vh] overflow-y-auto scrollbar-thin text-espresso-900 dark:text-[#F8F6F2] divide-y divide-gray-100 dark:divide-white/10"
+                            class="absolute left-0 right-0 top-full mt-2 bg-white dark:bg-[#1E293B] rounded-2xl shadow-2xl border border-[#ECE6DE] dark:border-[#334155] overflow-hidden z-50 max-h-[75vh] overflow-y-auto scrollbar-thin text-espresso-900 dark:text-[#F8FAFC] divide-y divide-gray-100 dark:divide-white/10"
                         >
                             <!-- If no results -->
                             <div x-show="!loading && results.total === 0" class="p-6 text-center text-xs text-muted">
@@ -1467,7 +1473,7 @@
             </header>
 
             <!-- Main Page View Content (Compact Padding & Tighter Gaps) -->
-            <main class="flex-1 p-3 sm:p-5 space-y-3.5 w-full min-w-0 max-w-full overflow-x-hidden bg-[#FAF9F6] dark:bg-[#1C1A17] transition-colors duration-200">
+            <main class="flex-1 p-3 sm:p-5 space-y-3.5 w-full min-w-0 max-w-full overflow-x-hidden bg-[#FAF9F6] dark:bg-[#0F172A] transition-colors duration-200">
                 @yield('content')
             </main>
 
@@ -1487,10 +1493,10 @@
                     showConfirmButton: false,
                     timer: 3500,
                     timerProgressBar: true,
-                    background: document.documentElement.classList.contains('dark') ? '#26221E' : '#FFFFFF',
-                    color: document.documentElement.classList.contains('dark') ? '#F8F6F2' : '#120E0C',
+                    background: document.documentElement.classList.contains('dark') ? '#1E293B' : '#FFFFFF',
+                    color: document.documentElement.classList.contains('dark') ? '#F8FAFC' : '#120E0C',
                     iconColor: '#C5A16B',
-                    customClass: { popup: 'rounded-2xl border border-[#ECE6DE] dark:border-[#3D352E] shadow-xl text-xs' }
+                    customClass: { popup: 'rounded-2xl border border-[#ECE6DE] dark:border-[#334155] shadow-xl text-xs' }
                 });
             });
         </script>
@@ -1507,8 +1513,8 @@
                     showConfirmButton: false,
                     timer: 4000,
                     timerProgressBar: true,
-                    background: document.documentElement.classList.contains('dark') ? '#26221E' : '#FFFFFF',
-                    color: document.documentElement.classList.contains('dark') ? '#F8F6F2' : '#120E0C',
+                    background: document.documentElement.classList.contains('dark') ? '#1E293B' : '#FFFFFF',
+                    color: document.documentElement.classList.contains('dark') ? '#F8FAFC' : '#120E0C',
                     customClass: { popup: 'rounded-2xl border border-rose-200 dark:border-rose-900/50 shadow-xl text-xs' }
                 });
             });
@@ -1651,7 +1657,7 @@
         x-transition:leave="transition ease-in duration-200 transform"
         x-transition:leave-start="opacity-100 scale-100"
         x-transition:leave-end="opacity-0 scale-95"
-        class="fixed bottom-5 right-5 z-50 max-w-sm w-full bg-[#26221E] text-white rounded-2xl shadow-2xl border-2 border-gold/70 p-4 overflow-hidden"
+        class="fixed bottom-5 right-5 z-50 max-w-sm w-full bg-[#1E293B] text-white rounded-2xl shadow-2xl border-2 border-gold/70 p-4 overflow-hidden"
     >
         <div class="absolute -top-10 -right-10 w-28 h-28 bg-gold/20 rounded-full blur-xl pointer-events-none"></div>
         <div class="flex items-start gap-3 relative z-10">
