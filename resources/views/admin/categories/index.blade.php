@@ -4,15 +4,16 @@
 
 @section('content')
 
-<div class="space-y-6">
 <div class="space-y-6" x-data="{
     searchQuery: '{{ addslashes(request('q', '')) }}',
     openDropdown: false,
-    items: [
-        @foreach($categories as $c)
-            { id: {{ $c->id }}, name: '{{ addslashes($c->name) }}', tagline: '{{ addslashes($c->tagline ?? '') }}', slug: '{{ addslashes($c->slug) }}', count: {{ $c->products_count }} },
-        @endforeach
-    ],
+    items: @json($categories->map(fn($c) => [
+        'id' => $c->id,
+        'name' => $c->name,
+        'tagline' => $c->tagline ?? '',
+        'slug' => $c->slug,
+        'count' => (int) $c->products_count
+    ])),
     get filteredSuggestions() {
         if (!this.searchQuery.trim()) return [];
         const q = this.searchQuery.trim().toLowerCase();
@@ -58,12 +59,10 @@
         </button>
     </div>
 
-    <!-- Search & Filter Controls -->
     <!-- Search & Filter Controls with Keystroke Suggestions -->
-    <div class="bg-white dark:bg-[#1A1513] rounded-2xl border border-[#ECE6DE] dark:border-[#2C2420] p-3.5 sm:p-4 shadow-card">
+    <div class="bg-white dark:bg-slate-800 rounded-2xl border border-[#ECE6DE] dark:border-slate-700 p-3.5 sm:p-4 shadow-card">
         <form action="{{ route('admin.categories.index') }}" method="GET" class="flex flex-col sm:flex-row sm:items-center gap-3">
             
-            <!-- Search Input -->
             <!-- Live Search Input -->
             <div class="relative flex-1">
                 <i data-lucide="search" class="w-4 h-4 text-[#A89C91] absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none"></i>
@@ -78,7 +77,7 @@
                     placeholder="Search collection name, tagline, or slug..." 
                     autocomplete="off"
                     style="padding-left: 2.5rem !important;"
-                    class="w-full pl-10 pr-8 py-2 text-xs rounded-xl bg-[#FAF8F5] dark:bg-[#241D1A] border border-[#E0D7CB] dark:border-[#382D27] text-espresso-900 dark:text-white placeholder-[#A89C91] focus:outline-hidden focus:border-tan-500 transition-colors"
+                    class="w-full pl-10 pr-8 py-2 text-xs rounded-xl bg-[#FAF8F5] dark:bg-slate-900 border border-[#E0D7CB] dark:border-slate-700 text-espresso-900 dark:text-white placeholder-[#A89C91] focus:outline-hidden focus:border-tan-500 transition-colors"
                 >
                 @if(request('q'))
                     <a href="{{ route('admin.categories.index', request()->except('q')) }}" class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-200">
@@ -102,7 +101,7 @@
                     x-show="openDropdown && filteredSuggestions.length > 0" 
                     x-cloak
                     @click.outside="openDropdown = false"
-                    class="absolute left-0 right-0 top-full mt-1.5 bg-white dark:bg-[#1E1714] rounded-2xl border border-[#ECE6DE] dark:border-[#2C2420] shadow-2xl p-2 z-50 divide-y divide-[#F0EAE1] dark:divide-[#28201C]"
+                    class="absolute left-0 right-0 top-full mt-1.5 bg-white dark:bg-slate-900 rounded-2xl border border-[#ECE6DE] dark:border-slate-700 shadow-2xl p-2 z-50 divide-y divide-[#F0EAE1] dark:divide-slate-800"
                 >
                     <div class="px-3 py-1 text-[10px] uppercase font-bold tracking-wider text-tan-600 dark:text-gold-400 flex items-center justify-between">
                         <span>Matching Collections</span>
@@ -113,7 +112,7 @@
                             <button 
                                 type="button" 
                                 @click="selectWord(item.name)"
-                                class="w-full text-left px-3 py-2 text-xs rounded-xl hover:bg-[#FAF8F5] dark:hover:bg-[#28201C] text-espresso-950 dark:text-white font-semibold flex items-center justify-between transition-colors group cursor-pointer"
+                                class="w-full text-left px-3 py-2 text-xs rounded-xl hover:bg-[#FAF8F5] dark:hover:bg-slate-800 text-espresso-950 dark:text-white font-semibold flex items-center justify-between transition-colors group cursor-pointer"
                             >
                                 <div class="flex items-center gap-2 min-w-0">
                                     <i data-lucide="corner-down-right" class="w-3.5 h-3.5 text-tan-600 shrink-0 group-hover:translate-x-0.5 transition-transform"></i>
@@ -131,7 +130,7 @@
                 <select 
                     name="sort" 
                     onchange="this.form.submit()"
-                    class="w-full px-3 py-2 text-xs rounded-xl bg-[#FAF8F5] dark:bg-[#241D1A] border border-[#E0D7CB] dark:border-[#382D27] text-espresso-900 dark:text-white focus:outline-hidden focus:border-tan-500 cursor-pointer"
+                    class="w-full px-3 py-2 text-xs rounded-xl bg-[#FAF8F5] dark:bg-slate-900 border border-[#E0D7CB] dark:border-slate-700 text-espresso-900 dark:text-white focus:outline-hidden focus:border-tan-500 cursor-pointer"
                 >
                     <option value="order" {{ request('sort', 'order') === 'order' ? 'selected' : '' }}>Custom Atelier Order</option>
                     <option value="latest" {{ request('sort') === 'latest' ? 'selected' : '' }}>Newest Created</option>
@@ -169,21 +168,20 @@
     <!-- Category Grid Cards -->
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
         @forelse($categories as $category)
-            <div class="bg-white dark:bg-[#1A1513] rounded-3xl border border-[#ECE6DE] dark:border-[#2C2420] shadow-card p-6 flex flex-col justify-between group hover:border-tan-500 transition-all duration-300">
             <div 
                 x-show="matches('{{ addslashes($category->name) }}', '{{ addslashes($category->tagline ?? '') }}', '{{ addslashes($category->slug) }}')"
-                class="bg-white dark:bg-[#1A1513] rounded-3xl border border-[#ECE6DE] dark:border-[#2C2420] shadow-card p-6 flex flex-col justify-between group hover:border-tan-500 transition-all duration-300"
+                class="bg-white dark:bg-slate-800 rounded-3xl border border-[#ECE6DE] dark:border-slate-700 shadow-card p-6 flex flex-col justify-between group hover:border-tan-500 dark:hover:border-gold transition-all duration-300"
             >
                 <div>
                     <div class="flex items-center justify-between mb-4">
-                        <div class="w-12 h-12 rounded-2xl bg-[#FAF6F2] dark:bg-[#2A1D1A] flex items-center justify-center border border-tan-200 dark:border-[#3A2824] overflow-hidden">
+                        <div class="w-12 h-12 rounded-2xl bg-[#FAF6F2] dark:bg-slate-900 flex items-center justify-center border border-tan-200 dark:border-slate-700 overflow-hidden">
                             @if($category->image)
                                 <img src="{{ $category->image }}" alt="{{ $category->name }}" class="w-full h-full object-cover">
                             @else
                                 <i data-lucide="layers" class="w-6 h-6 text-tan-600"></i>
                             @endif
                         </div>
-                        <span class="px-2.5 py-1 rounded-full text-xs font-bold bg-[#FAF6F2] dark:bg-[#2A1D1A] text-tan-700 dark:text-gold-300 border border-tan-200 dark:border-[#3E2A24]">
+                        <span class="px-2.5 py-1 rounded-full text-xs font-bold bg-[#FAF6F2] dark:bg-slate-900 text-tan-700 dark:text-gold-300 border border-tan-200 dark:border-slate-700">
                             {{ $category->products_count }} Articles
                         </span>
                     </div>
@@ -195,15 +193,15 @@
                         /category/{{ $category->slug }}
                     </div>
 
-                    <p class="text-xs text-[#7A6E64] dark:text-[#A89C91] mt-2.5 line-clamp-2 leading-relaxed">
+                    <p class="text-xs text-[#7A6E64] dark:text-slate-400 mt-2.5 line-clamp-2 leading-relaxed">
                         {{ $category->tagline ?: 'Handcrafted leather collection tailored to luxury sartorial standards.' }}
                     </p>
                 </div>
 
-                <div class="pt-4 mt-4 border-t border-[#F0EAE1] dark:border-[#28201C] flex items-center justify-between">
+                <div class="pt-4 mt-4 border-t border-[#F0EAE1] dark:border-slate-700 flex items-center justify-between">
                     <a 
                         href="{{ route('admin.products.index', ['category' => $category->slug]) }}" 
-                        class="text-xs font-semibold text-tan-600 hover:text-tan-700 flex items-center gap-1"
+                        class="text-xs font-semibold text-tan-600 dark:text-gold hover:underline flex items-center gap-1"
                     >
                         <span>Filter Products</span>
                         <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
@@ -214,7 +212,7 @@
                         <button 
                             type="button" 
                             onclick="openEditCategoryModal({{ json_encode($category) }})"
-                            class="p-1.5 text-gray-400 hover:text-tan-600 hover:bg-[#FAF8F5] dark:hover:bg-[#2A1D1A] rounded-lg transition-colors" 
+                            class="p-1.5 text-gray-400 hover:text-tan-600 dark:hover:text-gold hover:bg-[#FAF8F5] dark:hover:bg-slate-700 rounded-lg transition-colors" 
                             title="Edit Category"
                         >
                             <i data-lucide="edit-3" class="w-4 h-4"></i>
@@ -232,7 +230,7 @@
                 </div>
             </div>
         @empty
-            <div class="col-span-full py-16 text-center bg-white dark:bg-[#1A1513] rounded-3xl border border-[#ECE6DE] dark:border-[#2C2420] p-8 shadow-card space-y-2">
+            <div class="col-span-full py-16 text-center bg-white dark:bg-slate-800 rounded-3xl border border-[#ECE6DE] dark:border-slate-700 p-8 shadow-card space-y-2">
                 <div class="w-12 h-12 rounded-full bg-tan-50 dark:bg-[#201815] text-tan-600 mx-auto flex items-center justify-center mb-2">
                     <i data-lucide="search-x" class="w-6 h-6"></i>
                 </div>
@@ -476,8 +474,16 @@ function openEditCategoryModal(category) {
 // Automatically open Add Category if URL hash is #add-category
 function checkCategoryHash() {
     if (window.location.hash === '#add-category' || window.location.hash === '#addCategoryModal') {
+        window.scrollTo(0, 0);
         const modal = document.getElementById('addCategoryModal');
-        if (modal) modal.showModal();
+        if (modal) {
+            modal.showModal();
+            modal.addEventListener('close', () => {
+                if (window.location.hash === '#add-category' || window.location.hash === '#addCategoryModal') {
+                    history.replaceState(null, '', window.location.pathname);
+                }
+            }, { once: true });
+        }
         if (window.lucide) lucide.createIcons();
     }
 }
