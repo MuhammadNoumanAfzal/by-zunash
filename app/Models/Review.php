@@ -22,6 +22,7 @@ class Review extends Model
         'image',
         'helpful',
         'verified',
+        'is_whatsapp',
         'status',
     ];
 
@@ -29,5 +30,6 @@ class Review extends Model
         'rating' => 'integer',
         'helpful' => 'integer',
         'verified' => 'boolean',
+        'is_whatsapp' => 'boolean',
     ];
 }

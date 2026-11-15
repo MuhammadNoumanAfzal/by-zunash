@@ -4,7 +4,7 @@
 
 @section('content')
 
-<div class="space-y-6">
+<div class="space-y-6" x-data="{ createModalOpen: false }">
 
     <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
@@ -12,14 +12,23 @@
                 Customer Reviews & Testimonials
             </h1>
             <p class="text-xs text-[#8F8379] dark:text-[#A09387] mt-0.5">
-                Verify and curate client testimonials and verified Pakistani patron feedback.
+                Verify, curate, and publish client testimonials and verified WhatsApp chat feedback.
             </p>
         </div>
 
-        <div class="flex items-center gap-2">
-            <span class="px-3.5 py-1.5 rounded-xl bg-white dark:bg-[#1A1513] border border-[#ECE6DE] dark:border-[#2C2420] text-xs font-bold text-espresso-950 dark:text-white shadow-2xs">
-                Average Rating: <span class="text-amber-500">★</span> {{ number_format($averageRating, 1) }} / 5.0
+        <div class="flex items-center gap-2.5">
+            <span class="px-3.5 py-2 rounded-xl bg-white dark:bg-[#1A1513] border border-[#ECE6DE] dark:border-[#2C2420] text-xs font-bold text-espresso-950 dark:text-white shadow-2xs">
+                Average: <span class="text-amber-500">★</span> {{ number_format($averageRating, 1) }} / 5.0
             </span>
+
+            <button 
+                type="button" 
+                @click="createModalOpen = true"
+                class="px-4 py-2 rounded-xl bg-tan-600 hover:bg-tan-700 text-white font-semibold text-xs shadow-md transition-all flex items-center gap-1.5 cursor-pointer"
+            >
+                <i data-lucide="plus" class="w-4 h-4"></i>
+                <span>Add Review / WhatsApp Proof</span>
+            </button>
         </div>
     </div>
 
@@ -151,6 +160,105 @@
 
     <div class="mt-4">
         {{ $reviews->links() }}
+    </div>
+
+    <!-- Add Review / WhatsApp Proof Modal -->
+    <div 
+        x-show="createModalOpen" 
+        x-cloak 
+        x-transition:enter="transition ease-out duration-200"
+        x-transition:enter-start="opacity-0"
+        x-transition:enter-end="opacity-100"
+        x-transition:leave="transition ease-in duration-150"
+        x-transition:leave-start="opacity-100"
+        x-transition:leave-end="opacity-0"
+        class="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4 overflow-y-auto"
+        @click.self="createModalOpen = false"
+    >
+        <div class="bg-white dark:bg-[#1A1513] rounded-3xl border border-[#ECE6DE] dark:border-[#2C2420] max-w-xl w-full p-6 sm:p-8 shadow-2xl relative space-y-5 text-espresso-900 dark:text-white">
+            <div class="flex items-center justify-between pb-3 border-b border-[#F0EAE1] dark:border-[#2C2420]">
+                <div>
+                    <h3 class="font-cinzel text-lg font-bold text-espresso-950 dark:text-white flex items-center gap-2">
+                        <i data-lucide="message-square-plus" class="w-5 h-5 text-tan-600 dark:text-gold"></i>
+                        <span>Add Customer Review / WhatsApp Proof</span>
+                    </h3>
+                    <p class="text-xs text-gray-500 mt-0.5">Publish client feedback or WhatsApp delivery screenshot</p>
+                </div>
+                <button type="button" @click="createModalOpen = false" class="p-1.5 rounded-full hover:bg-gray-100 dark:hover:bg-white/10 text-gray-400">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+            </div>
+
+            <form action="{{ route('admin.reviews.store') }}" method="POST" enctype="multipart/form-data" class="space-y-4">
+                @csrf
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+                    <div>
+                        <label class="block text-xs font-semibold mb-1">Customer / Patron Name <span class="text-rose-500">*</span></label>
+                        <input type="text" name="author" required placeholder="e.g. Dr. Hamza Khan or Adeel" class="w-full px-3 py-2 text-xs rounded-xl bg-[#FAF8F5] dark:bg-[#241D1A] border border-[#E0D7CB] dark:border-[#382D27] text-espresso-900 dark:text-white">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold mb-1">City / Region</label>
+                        <input type="text" name="city" placeholder="e.g. Lahore (DHA) or Islamabad" class="w-full px-3 py-2 text-xs rounded-xl bg-[#FAF8F5] dark:bg-[#241D1A] border border-[#E0D7CB] dark:border-[#382D27] text-espresso-900 dark:text-white">
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+                    <div>
+                        <label class="block text-xs font-semibold mb-1">Product <span class="text-rose-500">*</span></label>
+                        <select name="product_slug" required class="w-full px-3 py-2 text-xs rounded-xl bg-[#FAF8F5] dark:bg-[#241D1A] border border-[#E0D7CB] dark:border-[#382D27] text-espresso-900 dark:text-white">
+                            @foreach($allProducts ?? [] as $p)
+                                <option value="{{ $p->slug }}">{{ $p->name }}</option>
+                            @endforeach
+                        </select>
+                        <input type="hidden" name="product_name" value="">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold mb-1">Rating</label>
+                        <select name="rating" class="w-full px-3 py-2 text-xs rounded-xl bg-[#FAF8F5] dark:bg-[#241D1A] border border-[#E0D7CB] dark:border-[#382D27] text-espresso-900 dark:text-white">
+                            <option value="5">★★★★★ (5 Stars)</option>
+                            <option value="4">★★★★☆ (4 Stars)</option>
+                            <option value="3">★★★☆☆ (3 Stars)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-semibold mb-1">Review Headline</label>
+                    <input type="text" name="title" placeholder="e.g. Leather quality is sheer perfection" class="w-full px-3 py-2 text-xs rounded-xl bg-[#FAF8F5] dark:bg-[#241D1A] border border-[#E0D7CB] dark:border-[#382D27] text-espresso-900 dark:text-white">
+                </div>
+
+                <div>
+                    <label class="block text-xs font-semibold mb-1">Review Comment / WhatsApp Chat Message <span class="text-rose-500">*</span></label>
+                    <textarea name="comment" rows="3" required placeholder="e.g. Sir I received my order today, the buckle mechanism and pure leather feel is extraordinary!" class="w-full px-3 py-2 text-xs rounded-xl bg-[#FAF8F5] dark:bg-[#241D1A] border border-[#E0D7CB] dark:border-[#382D27] text-espresso-900 dark:text-white"></textarea>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-semibold mb-1">Attach Customer Photo or WhatsApp Chat Screenshot</label>
+                    <input type="file" name="image_file" accept="image/*" class="w-full px-3 py-1.5 text-xs rounded-xl bg-[#FAF8F5] dark:bg-[#241D1A] border border-[#E0D7CB] dark:border-[#382D27] file:mr-3 file:py-1 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-bold file:bg-tan-100 file:text-tan-800">
+                </div>
+
+                <div class="flex items-center gap-6 pt-2">
+                    <label class="flex items-center gap-2 text-xs cursor-pointer">
+                        <input type="checkbox" name="is_whatsapp" value="1" checked class="w-4 h-4 rounded text-emerald-600 focus:ring-emerald-500">
+                        <span class="font-semibold text-emerald-700 dark:text-emerald-400">Show in "What's App Reviews"</span>
+                    </label>
+
+                    <label class="flex items-center gap-2 text-xs cursor-pointer">
+                        <input type="checkbox" name="verified" value="1" checked class="w-4 h-4 rounded text-tan-600 focus:ring-tan-500">
+                        <span>Verified Buyer Badge</span>
+                    </label>
+                </div>
+
+                <div class="pt-3 border-t border-[#F0EAE1] dark:border-[#2C2420] flex items-center justify-end gap-2.5">
+                    <button type="button" @click="createModalOpen = false" class="px-4 py-2 text-xs font-semibold rounded-xl text-gray-500 hover:bg-gray-100">
+                        Cancel
+                    </button>
+                    <button type="submit" class="px-5 py-2 text-xs font-bold rounded-xl bg-tan-600 hover:bg-tan-700 text-white shadow-md">
+                        Publish Review
+                    </button>
+                </div>
+            </form>
+        </div>
     </div>
 
 </div>

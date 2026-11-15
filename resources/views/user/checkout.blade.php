@@ -140,8 +140,9 @@
                                 <img :src="item.image" class="w-10 h-10 object-cover rounded-lg border border-ivory-300 shrink-0">
                                 <div class="min-w-0">
                                     <div class="font-bold text-espresso-950 truncate" x-text="item.name"></div>
-                                    <div class="text-[10px] text-muted flex items-center gap-1.5">
+                                    <div class="text-[10px] text-muted flex items-center gap-1.5 flex-wrap">
                                         <span x-show="item.variant" x-text="item.variant"></span>
+                                        <span x-show="item.engraved_name" class="text-amber-800 font-bold bg-amber-50 px-1.5 py-0.5 rounded border border-amber-300" x-text="'Engraved: ' + item.engraved_name"></span>
                                         <span>•</span>
                                         <span class="font-bold text-espresso-900" x-text="'Qty: ' + item.quantity"></span>
                                     </div>
@@ -852,7 +853,10 @@
                                     </div>
                                     
                                     <div class="mt-1 flex items-center justify-between gap-2 flex-wrap">
-                                        <span class="text-[10px] text-espresso-800 font-semibold bg-white px-2 py-0.5 rounded border border-ivory-200" x-show="item.variant" x-text="item.variant"></span>
+                                        <div class="flex items-center gap-1.5 flex-wrap">
+                                            <span class="text-[10px] text-espresso-800 font-semibold bg-white px-2 py-0.5 rounded border border-ivory-200" x-show="item.variant" x-text="item.variant"></span>
+                                            <span class="text-[10px] text-amber-900 font-bold bg-amber-50 px-2 py-0.5 rounded border border-amber-300" x-show="item.engraved_name" x-text="'Engraved: ' + item.engraved_name"></span>
+                                        </div>
                                         <span class="text-[10px] text-muted font-light" x-show="item.quantity > 1" x-text="'@ PKR ' + item.price.toLocaleString()"></span>
                                     </div>
 

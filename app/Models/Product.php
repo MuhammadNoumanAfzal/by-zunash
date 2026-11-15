@@ -44,6 +44,21 @@ class Product extends Model
         'features',
         'specifications',
         'colors',
+        'has_engraving',
+        'engraving_price',
+        'engraving_placeholder',
+        'engraving_note',
+        'has_addons',
+        'addon_product_ids',
+        'addon_discount_percent',
+        'has_gift_set',
+        'gift_deal_id',
+        'gift_set_title',
+        'gift_set_subtitle',
+        'gift_set_price',
+        'gift_set_original_price',
+        'gift_set_image',
+        'whatsapp_reviews',
     ];
 
     protected $casts = [
@@ -63,6 +78,16 @@ class Product extends Model
         'features' => 'array',
         'specifications' => 'array',
         'colors' => 'array',
+        'has_engraving' => 'boolean',
+        'engraving_price' => 'float',
+        'has_addons' => 'boolean',
+        'addon_product_ids' => 'array',
+        'addon_discount_percent' => 'integer',
+        'has_gift_set' => 'boolean',
+        'gift_deal_id' => 'integer',
+        'gift_set_price' => 'float',
+        'gift_set_original_price' => 'float',
+        'whatsapp_reviews' => 'array',
     ];
 
     public function category(): BelongsTo
@@ -108,5 +133,30 @@ class Product extends Model
     {
         if ((float)$this->price <= 0) return 0.0;
         return round((($this->price - (float)($this->cost_price ?? 0)) / $this->price) * 100, 1);
+    }
+
+    /**
+     * Associated Deal for Gift Set Upgrade
+     */
+    public function giftDeal(): BelongsTo
+    {
+        return $this->belongsTo(Deal::class, 'gift_deal_id');
+    }
+
+    /**
+     * Resolved Addon Products collection
+     */
+    public function getResolvedAddonsAttribute()
+    {
+        if (!$this->has_addons || empty($this->addon_product_ids)) {
+            return collect();
+        }
+
+        $ids = is_array($this->addon_product_ids) ? $this->addon_product_ids : json_decode($this->addon_product_ids, true);
+        if (empty($ids)) {
+            return collect();
+        }
+
+        return static::whereIn('id', $ids)->where('id', '!=', $this->id)->get();
     }
 }

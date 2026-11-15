@@ -64,6 +64,9 @@
     leadTime: '{{ old('lead_time', $product->lead_time ?? '') }}',
     paymentMethodRule: '{{ old('allowed_payment_methods', $product->allowed_payment_methods ?? 'all') }}',
     isFreeShipping: {{ old('is_free_shipping', $product->is_free_shipping) ? 'true' : 'false' }},
+    hasEngraving: {{ old('has_engraving', $product->has_engraving) ? 'true' : 'false' }},
+    hasAddons: {{ old('has_addons', $product->has_addons) ? 'true' : 'false' }},
+    hasGiftSet: {{ old('has_gift_set', $product->has_gift_set) ? 'true' : 'false' }},
     primaryPreview: null,
     
     // Color Palette Manager
@@ -763,6 +766,183 @@
                             </p>
                         </div>
                     </label>
+                </div>
+
+                <!-- 4. Personalization & Name Engraving (Advance Payment Only) -->
+                <div class="sm:col-span-2 p-4 rounded-2xl bg-[#FAF8F5] dark:bg-[#201A18] border border-[#E0D7CB] dark:border-[#3A2F29] space-y-3">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <div class="text-xs font-bold text-espresso-950 dark:text-white flex items-center gap-1.5">
+                                <i data-lucide="sparkles" class="w-4 h-4 text-tan-600 dark:text-gold"></i>
+                                <span>Custom Name Engraving & Debossing (Advance Payment Only)</span>
+                            </div>
+                            <p class="text-[11px] text-gray-500 dark:text-gray-400 mt-0.5">
+                                Allows patrons to enter their name or initials debossed on the leather. Enforces Advance Payment.
+                            </p>
+                        </div>
+                        <label class="relative inline-flex items-center cursor-pointer">
+                            <input type="checkbox" name="has_engraving" value="1" x-model="hasEngraving" class="sr-only peer">
+                            <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-tan-600"></div>
+                        </label>
+                    </div>
+
+                    <div x-show="hasEngraving" x-cloak class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-3 border-t border-[#E0D7CB] dark:border-[#3A2F29]">
+                        <div>
+                            <label class="block text-[11px] font-semibold text-espresso-900 dark:text-white mb-1">
+                                Engraving Surcharge (PKR) — 0 for Complimentary
+                            </label>
+                            <input 
+                                type="number" 
+                                name="engraving_price" 
+                                value="{{ old('engraving_price', $product->engraving_price ?? 0) }}" 
+                                placeholder="e.g. 0 (Free) or 499" 
+                                class="w-full px-3 py-2 text-xs rounded-xl bg-white dark:bg-[#16100E] border border-[#DCD3C7] dark:border-[#382D27] text-espresso-900 dark:text-white font-mono"
+                            >
+                        </div>
+                        <div>
+                            <label class="block text-[11px] font-semibold text-espresso-900 dark:text-white mb-1">
+                                Notice Note Shown to Customer
+                            </label>
+                            <input 
+                                type="text" 
+                                name="engraving_note" 
+                                value="{{ old('engraving_note', $product->engraving_note ?: 'Advance payment only. Personalised, so not returnable for change of mind.') }}" 
+                                class="w-full px-3 py-2 text-xs rounded-xl bg-white dark:bg-[#16100E] border border-[#DCD3C7] dark:border-[#382D27] text-espresso-900 dark:text-white"
+                            >
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 5. Cross-Sell Add-ons ("ADD THESE & GET EXTRA 15% OFF") -->
+                <div class="sm:col-span-2 p-4 rounded-2xl bg-[#FAF8F5] dark:bg-[#201A18] border border-[#E0D7CB] dark:border-[#3A2F29] space-y-3">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <div class="text-xs font-bold text-espresso-950 dark:text-white flex items-center gap-1.5">
+                                <i data-lucide="layers" class="w-4 h-4 text-tan-600 dark:text-gold"></i>
+                                <span>Cross-Sell Add-ons ("ADD THESE & GET EXTRA 15% OFF")</span>
+                            </div>
+                            <p class="text-[11px] text-gray-500 dark:text-gray-400 mt-0.5">
+                                Displays checkbox add-ons on the product detail page with 1-click "Claim Offer".
+                            </p>
+                        </div>
+                        <label class="relative inline-flex items-center cursor-pointer">
+                            <input type="checkbox" name="has_addons" value="1" x-model="hasAddons" class="sr-only peer">
+                            <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-tan-600"></div>
+                        </label>
+                    </div>
+
+                    <div x-show="hasAddons" x-cloak class="space-y-3 pt-3 border-t border-[#E0D7CB] dark:border-[#3A2F29]">
+                        <div class="flex items-center gap-3">
+                            <div class="w-36">
+                                <label class="block text-[11px] font-semibold text-espresso-900 dark:text-white mb-1">
+                                    Addon Discount %
+                                </label>
+                                <div class="relative">
+                                    <input 
+                                        type="number" 
+                                        name="addon_discount_percent" 
+                                        value="{{ old('addon_discount_percent', $product->addon_discount_percent ?? 15) }}" 
+                                        min="0" 
+                                        max="80"
+                                        class="w-full px-3 py-2 text-xs rounded-xl bg-white dark:bg-[#16100E] border border-[#DCD3C7] dark:border-[#382D27] text-espresso-900 dark:text-white font-mono"
+                                    >
+                                    <span class="absolute right-3 top-1/2 -translate-y-1/2 text-xs font-bold text-gray-400">%</span>
+                                </div>
+                            </div>
+                            <div class="flex-1 text-[11px] text-gray-500 pt-4">
+                                Select companion products below to offer as discounted add-ons:
+                            </div>
+                        </div>
+
+                        @php
+                            $existingAddons = old('addon_product_ids', $product->addon_product_ids ?? []);
+                            if (!is_array($existingAddons)) $existingAddons = json_decode($existingAddons, true) ?: [];
+                        @endphp
+                        <div class="max-h-48 overflow-y-auto divide-y divide-gray-100 dark:divide-white/5 border border-[#DCD3C7] dark:border-[#382D27] rounded-xl bg-white dark:bg-[#16100E] p-2 space-y-1">
+                            @foreach($allProducts ?? [] as $cand)
+                                <label class="flex items-center gap-2.5 p-1.5 hover:bg-ivory-50 dark:hover:bg-white/5 rounded-lg cursor-pointer">
+                                    <input 
+                                        type="checkbox" 
+                                        name="addon_product_ids[]" 
+                                        value="{{ $cand->id }}"
+                                        {{ in_array($cand->id, $existingAddons) ? 'checked' : '' }}
+                                        class="w-4 h-4 rounded text-tan-600 focus:ring-tan-500 border-gray-300"
+                                    >
+                                    <img src="{{ $cand->image }}" class="w-8 h-8 rounded object-cover border border-gray-200">
+                                    <div class="flex-1 min-w-0 text-xs text-espresso-950 dark:text-white truncate">
+                                        <strong>{{ $cand->name }}</strong>
+                                        <span class="text-gray-400 font-mono text-[10px]"> (PKR {{ number_format($cand->price) }})</span>
+                                    </div>
+                                </label>
+                            @endforeach
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 6. Gift Set / Bundle Upgrade Card -->
+                <div class="sm:col-span-2 p-4 rounded-2xl bg-[#FAF8F5] dark:bg-[#201A18] border border-[#E0D7CB] dark:border-[#3A2F29] space-y-3">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <div class="text-xs font-bold text-espresso-950 dark:text-white flex items-center gap-1.5">
+                                <i data-lucide="gift" class="w-4 h-4 text-tan-600 dark:text-gold"></i>
+                                <span>Gift Set / Bundle Upgrade Card ("Buying as a gift? Get the Set")</span>
+                            </div>
+                            <p class="text-[11px] text-gray-500 dark:text-gray-400 mt-0.5">
+                                Presents a high-converting gift box upsell card with savings amount right on this product page.
+                            </p>
+                        </div>
+                        <label class="relative inline-flex items-center cursor-pointer">
+                            <input type="checkbox" name="has_gift_set" value="1" x-model="hasGiftSet" class="sr-only peer">
+                            <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-tan-600"></div>
+                        </label>
+                    </div>
+
+                    <div x-show="hasGiftSet" x-cloak class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-3 border-t border-[#E0D7CB] dark:border-[#3A2F29]">
+                        <div class="sm:col-span-2">
+                            <label class="block text-[11px] font-semibold text-espresso-900 dark:text-white mb-1">
+                                Link to an Existing Deal / Curated Set (Recommended)
+                            </label>
+                            <select name="gift_deal_id" class="w-full px-3 py-2 text-xs rounded-xl bg-white dark:bg-[#16100E] border border-[#DCD3C7] dark:border-[#382D27] text-espresso-900 dark:text-white">
+                                <option value="">-- Or enter custom gift set details below --</option>
+                                @foreach($deals ?? [] as $d)
+                                    <option value="{{ $d->id }}" {{ old('gift_deal_id', $product->gift_deal_id) == $d->id ? 'selected' : '' }}>
+                                        {{ $d->title }} — PKR {{ number_format($d->deal_price) }} (Save PKR {{ number_format($d->original_price - $d->deal_price) }})
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
+
+                        <div>
+                            <label class="block text-[11px] font-semibold text-espresso-900 dark:text-white mb-1">Custom Gift Set Title</label>
+                            <input type="text" name="gift_set_title" value="{{ old('gift_set_title', $product->gift_set_title) }}" placeholder="e.g. Get the Gentleman's Set instead" class="w-full px-3 py-2 text-xs rounded-xl bg-white dark:bg-[#16100E] border border-[#DCD3C7] dark:border-[#382D27] text-espresso-900 dark:text-white">
+                        </div>
+
+                        <div>
+                            <label class="block text-[11px] font-semibold text-espresso-900 dark:text-white mb-1">Gift Set Subtitle</label>
+                            <input type="text" name="gift_set_subtitle" value="{{ old('gift_set_subtitle', $product->gift_set_subtitle) }}" placeholder="e.g. Belt + Wallet paired in presentation box" class="w-full px-3 py-2 text-xs rounded-xl bg-white dark:bg-[#16100E] border border-[#DCD3C7] dark:border-[#382D27] text-espresso-900 dark:text-white">
+                        </div>
+
+                        <div>
+                            <label class="block text-[11px] font-semibold text-espresso-900 dark:text-white mb-1">Together Gift-Boxed Price (PKR)</label>
+                            <input type="number" name="gift_set_price" value="{{ old('gift_set_price', $product->gift_set_price) }}" placeholder="e.g. 5999" class="w-full px-3 py-2 text-xs rounded-xl bg-white dark:bg-[#16100E] border border-[#DCD3C7] dark:border-[#382D27] text-espresso-900 dark:text-white font-mono">
+                        </div>
+
+                        <div>
+                            <label class="block text-[11px] font-semibold text-espresso-900 dark:text-white mb-1">Separate Total Price (PKR)</label>
+                            <input type="number" name="gift_set_original_price" value="{{ old('gift_set_original_price', $product->gift_set_original_price) }}" placeholder="e.g. 6999" class="w-full px-3 py-2 text-xs rounded-xl bg-white dark:bg-[#16100E] border border-[#DCD3C7] dark:border-[#382D27] text-espresso-900 dark:text-white font-mono">
+                        </div>
+
+                        <div class="sm:col-span-2">
+                            <label class="block text-[11px] font-semibold text-espresso-900 dark:text-white mb-1">Gift Box Image Upload</label>
+                            @if(!empty($product->gift_set_image))
+                                <div class="mb-2 flex items-center gap-2">
+                                    <img src="{{ $product->gift_set_image }}" class="w-12 h-12 rounded object-cover border border-tan-300">
+                                    <span class="text-xs text-gray-500">Current gift box image</span>
+                                </div>
+                            @endif
+                            <input type="file" name="gift_set_image_file" accept="image/*" class="w-full px-3 py-1.5 text-xs rounded-xl bg-white dark:bg-[#16100E] border border-[#DCD3C7] dark:border-[#382D27] text-espresso-900 dark:text-white file:mr-3 file:py-1 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-bold file:bg-tan-100 file:text-tan-800">
+                        </div>
+                    </div>
                 </div>
 
             </div>

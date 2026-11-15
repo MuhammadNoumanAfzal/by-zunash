@@ -364,9 +364,12 @@
                                     </button>
                                 </div>
 
-                                <!-- Variant Pill -->
-                                <div class="mt-1" x-show="item.variant">
-                                    <span class="inline-block px-2 py-0.5 rounded text-[10px] font-semibold text-espresso-800 dark:text-ivory-200 bg-white dark:bg-[#161210] border border-ivory-200 dark:border-white/10 shadow-2xs" x-text="item.variant"></span>
+                                <!-- Variant & Engraving Pills -->
+                                <div class="mt-1 flex flex-wrap gap-1" x-show="item.variant || item.engraved_name">
+                                    <span class="inline-block px-2 py-0.5 rounded text-[10px] font-semibold text-espresso-800 dark:text-ivory-200 bg-white dark:bg-[#161210] border border-ivory-200 dark:border-white/10 shadow-2xs" x-show="item.variant" x-text="item.variant"></span>
+                                    <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-bold text-amber-900 bg-amber-50 dark:bg-amber-950/40 dark:text-amber-300 border border-amber-300/60 shadow-2xs" x-show="item.engraved_name">
+                                        <span>Engraved:</span> <strong x-text="item.engraved_name"></strong>
+                                    </span>
                                 </div>
 
                                 <!-- Price -->

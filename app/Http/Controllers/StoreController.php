@@ -43,6 +43,26 @@ class StoreController extends Controller
                     'features' => is_array($p->features) ? $p->features : [],
                     'specifications' => is_array($p->specifications) ? $p->specifications : [],
                     'colors' => is_array($p->colors) ? $p->colors : [],
+                    'lead_time' => $p->lead_time,
+                    'allowed_payment_methods' => $p->allowed_payment_methods ?? 'all',
+                    'custom_shipping_charge' => $p->custom_shipping_charge,
+                    'weight_kg' => $p->weight_kg,
+                    'is_free_shipping' => (bool)$p->is_free_shipping,
+                    'has_engraving' => (bool)$p->has_engraving,
+                    'engraving_price' => (float)$p->engraving_price,
+                    'engraving_placeholder' => $p->engraving_placeholder,
+                    'engraving_note' => $p->engraving_note,
+                    'has_addons' => (bool)$p->has_addons,
+                    'addon_product_ids' => $p->addon_product_ids,
+                    'addon_discount_percent' => (int)($p->addon_discount_percent ?: 15),
+                    'has_gift_set' => (bool)$p->has_gift_set,
+                    'gift_deal_id' => $p->gift_deal_id,
+                    'gift_set_title' => $p->gift_set_title,
+                    'gift_set_subtitle' => $p->gift_set_subtitle,
+                    'gift_set_price' => $p->gift_set_price ? (float)$p->gift_set_price : null,
+                    'gift_set_original_price' => $p->gift_set_original_price ? (float)$p->gift_set_original_price : null,
+                    'gift_set_image' => $p->gift_set_image,
+                    'whatsapp_reviews' => is_array($p->whatsapp_reviews) ? $p->whatsapp_reviews : [],
                 ];
             });
         }
@@ -284,6 +304,8 @@ class StoreController extends Controller
             abort(404, 'Product not found.');
         }
 
+        $productModel = \App\Models\Product::with(['category', 'subcategory', 'giftDeal'])->where('slug', $slug)->first();
+
         // Related products in same category
         $relatedProducts = $this->getProducts()
             ->where('category', $product['category'])
@@ -298,7 +320,52 @@ class StoreController extends Controller
             ->with('products')
             ->get();
 
-        return view('user.product-details', compact('product', 'relatedProducts', 'companionDeals'));
+        // Resolved Addons for cross-sell (e.g. Add these & get 15% off)
+        $addons = collect();
+        if ($productModel && $productModel->has_addons) {
+            $addons = $productModel->resolved_addons;
+        }
+        if ($addons->isEmpty()) {
+            // Curated fallback add-ons across the atelier catalogue
+            $addons = \App\Models\Product::where('id', '!=', $product['id'])
+                ->whereIn('category_slug', ['accessories', 'wallets', 'belts'])
+                ->where('in_stock', true)
+                ->take(3)
+                ->get();
+        }
+
+        // Companion gift deal (if product has explicit gift deal or companion deal)
+        $giftDeal = null;
+        if ($productModel && $productModel->has_gift_set && $productModel->giftDeal) {
+            $giftDeal = $productModel->giftDeal;
+        } elseif ($companionDeals->isNotEmpty()) {
+            $giftDeal = $companionDeals->first();
+        }
+
+        // WhatsApp reviews & verified customer feedback for social proof
+        $whatsappReviews = \App\Models\Review::where('is_whatsapp', true)
+            ->whereIn('status', ['published', 'approved'])
+            ->latest()
+            ->take(6)
+            ->get();
+
+        $productReviews = \App\Models\Review::whereIn('status', ['published', 'approved'])
+            ->where(function($q) use ($slug, $product) {
+                $q->where('product_slug', $slug)->orWhere('product_name', $product['name']);
+            })
+            ->latest()
+            ->get();
+
+        return view('user.product-details', compact(
+            'product',
+            'productModel',
+            'relatedProducts',
+            'companionDeals',
+            'addons',
+            'giftDeal',
+            'whatsappReviews',
+            'productReviews'
+        ));
     }
 
     /**

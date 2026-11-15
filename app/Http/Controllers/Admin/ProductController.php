@@ -134,7 +134,9 @@ class ProductController extends Controller
     {
         $categories = Category::orderBy('name')->get();
         $subcategories = Subcategory::with('category')->orderBy('name')->get();
-        return view('admin.products.create', compact('categories', 'subcategories'));
+        $allProducts = Product::select('id', 'name', 'price', 'image', 'sku', 'category_slug')->orderBy('name')->get();
+        $deals = \App\Models\Deal::where('is_active', true)->orderBy('title')->get();
+        return view('admin.products.create', compact('categories', 'subcategories', 'allProducts', 'deals'));
     }
 
     /**
@@ -179,6 +181,23 @@ class ProductController extends Controller
             'is_free_shipping' => 'nullable|boolean',
             'meta_title' => 'nullable|string|max:255',
             'meta_description' => 'nullable|string|max:500',
+            'has_engraving' => 'nullable|boolean',
+            'engraving_price' => 'nullable|numeric|min:0',
+            'engraving_placeholder' => 'nullable|string|max:100',
+            'engraving_note' => 'nullable|string|max:255',
+            'has_addons' => 'nullable|boolean',
+            'addon_product_ids' => 'nullable|array',
+            'addon_product_ids.*' => 'nullable|integer',
+            'addon_discount_percent' => 'nullable|integer|min:0|max:100',
+            'has_gift_set' => 'nullable|boolean',
+            'gift_deal_id' => 'nullable|integer',
+            'gift_set_title' => 'nullable|string|max:200',
+            'gift_set_subtitle' => 'nullable|string|max:255',
+            'gift_set_price' => 'nullable|numeric|min:0',
+            'gift_set_original_price' => 'nullable|numeric|min:0',
+            'gift_set_image' => 'nullable|string|max:255',
+            'gift_set_image_file' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:5120',
+            'whatsapp_reviews_raw' => 'nullable|string',
         ]);
 
         $category = null;
@@ -223,6 +242,22 @@ class ProductController extends Controller
         $specifications = $this->parseSpecifications($request);
         $gallery = $this->parseGallery($request, $primaryImage, null, $slug);
 
+        $giftSetImage = !empty($validated['gift_set_image']) ? $validated['gift_set_image'] : null;
+        if ($request->hasFile('gift_set_image_file')) {
+            $giftSetImage = \App\Services\ImageOptimizer::processUpload(
+                $request->file('gift_set_image_file'),
+                'images/deals',
+                'gift-set-' . $slug,
+                800
+            );
+        }
+
+        $whatsappReviews = null;
+        if ($request->filled('whatsapp_reviews_raw')) {
+            $decoded = json_decode($request->input('whatsapp_reviews_raw'), true);
+            $whatsappReviews = is_array($decoded) ? $decoded : null;
+        }
+
         Product::create([
             'name' => $validated['name'],
             'slug' => $slug,
@@ -254,6 +289,21 @@ class ProductController extends Controller
             'colors' => $colors,
             'features' => $features,
             'specifications' => $specifications,
+            'has_engraving' => $request->boolean('has_engraving'),
+            'engraving_price' => ($request->filled('engraving_price') && $request->input('engraving_price') !== '') ? (float)$request->input('engraving_price') : 0.00,
+            'engraving_placeholder' => $validated['engraving_placeholder'] ?? null,
+            'engraving_note' => $validated['engraving_note'] ?? 'Advance payment only. Personalised, so not returnable for change of mind.',
+            'has_addons' => $request->boolean('has_addons'),
+            'addon_product_ids' => $request->input('addon_product_ids', []),
+            'addon_discount_percent' => (int)($request->input('addon_discount_percent') ?: 15),
+            'has_gift_set' => $request->boolean('has_gift_set'),
+            'gift_deal_id' => $request->input('gift_deal_id') ?: null,
+            'gift_set_title' => $validated['gift_set_title'] ?? null,
+            'gift_set_subtitle' => $validated['gift_set_subtitle'] ?? null,
+            'gift_set_price' => $request->filled('gift_set_price') ? (float)$request->input('gift_set_price') : null,
+            'gift_set_original_price' => $request->filled('gift_set_original_price') ? (float)$request->input('gift_set_original_price') : null,
+            'gift_set_image' => $giftSetImage,
+            'whatsapp_reviews' => $whatsappReviews,
             'rating' => 5.0,
             'reviews_count' => 0,
         ]);
@@ -269,7 +319,9 @@ class ProductController extends Controller
     {
         $categories = Category::orderBy('name')->get();
         $subcategories = Subcategory::with('category')->orderBy('name')->get();
-        return view('admin.products.edit', compact('product', 'categories', 'subcategories'));
+        $allProducts = Product::where('id', '!=', $product->id)->select('id', 'name', 'price', 'image', 'sku', 'category_slug')->orderBy('name')->get();
+        $deals = \App\Models\Deal::where('is_active', true)->orderBy('title')->get();
+        return view('admin.products.edit', compact('product', 'categories', 'subcategories', 'allProducts', 'deals'));
     }
 
     /**
@@ -314,6 +366,23 @@ class ProductController extends Controller
             'is_free_shipping' => 'nullable|boolean',
             'meta_title' => 'nullable|string|max:255',
             'meta_description' => 'nullable|string|max:500',
+            'has_engraving' => 'nullable|boolean',
+            'engraving_price' => 'nullable|numeric|min:0',
+            'engraving_placeholder' => 'nullable|string|max:100',
+            'engraving_note' => 'nullable|string|max:255',
+            'has_addons' => 'nullable|boolean',
+            'addon_product_ids' => 'nullable|array',
+            'addon_product_ids.*' => 'nullable|integer',
+            'addon_discount_percent' => 'nullable|integer|min:0|max:100',
+            'has_gift_set' => 'nullable|boolean',
+            'gift_deal_id' => 'nullable|integer',
+            'gift_set_title' => 'nullable|string|max:200',
+            'gift_set_subtitle' => 'nullable|string|max:255',
+            'gift_set_price' => 'nullable|numeric|min:0',
+            'gift_set_original_price' => 'nullable|numeric|min:0',
+            'gift_set_image' => 'nullable|string|max:255',
+            'gift_set_image_file' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:5120',
+            'whatsapp_reviews_raw' => 'nullable|string',
         ]);
 
         $category = null;
@@ -349,6 +418,22 @@ class ProductController extends Controller
         $specifications = $this->parseSpecifications($request, $product->specifications);
         $gallery = $this->parseGallery($request, $primaryImage, $product->gallery, $product->slug);
 
+        $giftSetImage = !empty($validated['gift_set_image']) ? $validated['gift_set_image'] : $product->gift_set_image;
+        if ($request->hasFile('gift_set_image_file')) {
+            $giftSetImage = \App\Services\ImageOptimizer::processUpload(
+                $request->file('gift_set_image_file'),
+                'images/deals',
+                'gift-set-' . $product->slug,
+                800
+            );
+        }
+
+        $whatsappReviews = $product->whatsapp_reviews;
+        if ($request->filled('whatsapp_reviews_raw')) {
+            $decoded = json_decode($request->input('whatsapp_reviews_raw'), true);
+            $whatsappReviews = is_array($decoded) ? $decoded : $product->whatsapp_reviews;
+        }
+
         $product->update([
             'name' => $validated['name'],
             'category_id' => $category?->id,
@@ -379,6 +464,21 @@ class ProductController extends Controller
             'colors' => $colors,
             'features' => $features,
             'specifications' => $specifications,
+            'has_engraving' => $request->boolean('has_engraving'),
+            'engraving_price' => ($request->filled('engraving_price') && $request->input('engraving_price') !== '') ? (float)$request->input('engraving_price') : 0.00,
+            'engraving_placeholder' => $validated['engraving_placeholder'] ?? $product->engraving_placeholder,
+            'engraving_note' => $validated['engraving_note'] ?? ($product->engraving_note ?: 'Advance payment only. Personalised, so not returnable for change of mind.'),
+            'has_addons' => $request->boolean('has_addons'),
+            'addon_product_ids' => $request->input('addon_product_ids', []),
+            'addon_discount_percent' => (int)($request->input('addon_discount_percent') ?: 15),
+            'has_gift_set' => $request->boolean('has_gift_set'),
+            'gift_deal_id' => $request->input('gift_deal_id') ?: null,
+            'gift_set_title' => $validated['gift_set_title'] ?? $product->gift_set_title,
+            'gift_set_subtitle' => $validated['gift_set_subtitle'] ?? $product->gift_set_subtitle,
+            'gift_set_price' => $request->filled('gift_set_price') ? (float)$request->input('gift_set_price') : $product->gift_set_price,
+            'gift_set_original_price' => $request->filled('gift_set_original_price') ? (float)$request->input('gift_set_original_price') : $product->gift_set_original_price,
+            'gift_set_image' => $giftSetImage,
+            'whatsapp_reviews' => $whatsappReviews,
         ]);
 
         return redirect()->route('admin.products.index')

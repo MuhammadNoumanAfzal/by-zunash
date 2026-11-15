@@ -294,7 +294,7 @@ Alpine.store('cart', {
         this.save();
     },
 
-    addItem(product, variant = null, quantity = 1, showPrompt = false) {
+    addItem(product, variant = null, quantity = 1, showPrompt = false, customAttributes = {}) {
         const qty = Math.max(1, parseInt(quantity, 10) || 1);
 
         // Normalize / resolve variant name consistently
@@ -304,39 +304,38 @@ Alpine.store('cart', {
         }
         resolvedVariant = resolvedVariant ? String(resolvedVariant).trim() : null;
 
-        const itemKey = `${product.id}-${resolvedVariant || 'default'}`;
+        const engravingKey = customAttributes.engraved_name ? `engraved-${customAttributes.engraved_name.trim().toLowerCase()}` : '';
+        const itemKey = `${product.id}-${resolvedVariant || 'default'}${engravingKey ? '-' + engravingKey : ''}`;
 
-        // Match existing item by key OR by product id + identical variant
-        const existing = this.items.find(item => {
-            if (item.key === itemKey) return true;
-            if (item.id === product.id) {
-                const itemVar = (item.variant || '').trim();
-                const targetVar = (resolvedVariant || '').trim();
-                return itemVar === targetVar;
-            }
-            return false;
-        });
+        // Match existing item by key
+        const existing = this.items.find(item => item.key === itemKey);
 
         if (existing) {
             existing.quantity = (parseInt(existing.quantity, 10) || 0) + qty;
             existing.key = itemKey;
             if (resolvedVariant) existing.variant = resolvedVariant;
-            if (product.allowed_payment_methods) existing.allowed_payment_methods = product.allowed_payment_methods;
+            if (customAttributes.engraved_name) existing.engraved_name = customAttributes.engraved_name;
+            if (customAttributes.allowed_payment_methods) existing.allowed_payment_methods = customAttributes.allowed_payment_methods;
+            else if (product.allowed_payment_methods) existing.allowed_payment_methods = product.allowed_payment_methods;
             if (product.custom_shipping_charge !== undefined) existing.custom_shipping_charge = product.custom_shipping_charge;
             if (product.is_free_shipping !== undefined) existing.is_free_shipping = Boolean(product.is_free_shipping);
             if (product.weight_kg !== undefined) existing.weight_kg = product.weight_kg;
         } else {
+            const itemPrice = customAttributes.price !== undefined ? Number(customAttributes.price) : Number(product.price);
+            const itemPaymentMethods = customAttributes.allowed_payment_methods || product.allowed_payment_methods || 'all';
+
             this.items.push({
                 key: itemKey,
                 id: product.id,
                 name: product.name,
-                price: Number(product.price),
+                price: itemPrice,
                 originalPrice: product.original_price ? Number(product.original_price) : null,
                 image: product.image,
                 category: product.category_name || product.category,
                 variant: resolvedVariant,
+                engraved_name: customAttributes.engraved_name || null,
                 quantity: qty,
-                allowed_payment_methods: product.allowed_payment_methods || 'all',
+                allowed_payment_methods: itemPaymentMethods,
                 custom_shipping_charge: (product.custom_shipping_charge !== null && product.custom_shipping_charge !== undefined && product.custom_shipping_charge !== '') ? Number(product.custom_shipping_charge) : null,
                 is_free_shipping: Boolean(product.is_free_shipping),
                 weight_kg: product.weight_kg ? Number(product.weight_kg) : 0.50
