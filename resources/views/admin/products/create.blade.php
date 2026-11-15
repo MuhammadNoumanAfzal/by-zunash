@@ -7,13 +7,13 @@
 @php
     // Determine initial step based on validation errors
     $initialStep = 1;
-    if ($errors->hasAny(['price', 'cost_price', 'original_price', 'stock_quantity'])) {
+    if (isset($errors) && $errors->hasAny(['price', 'cost_price', 'original_price', 'stock_quantity'])) {
         $initialStep = 2;
-    } elseif ($errors->hasAny(['allowed_payment_methods', 'custom_shipping_charge', 'weight_kg'])) {
+    } elseif (isset($errors) && $errors->hasAny(['allowed_payment_methods', 'custom_shipping_charge', 'weight_kg'])) {
         $initialStep = 3;
-    } elseif ($errors->hasAny(['image', 'image_file', 'gallery_files'])) {
+    } elseif (isset($errors) && $errors->hasAny(['image', 'image_file', 'gallery_files'])) {
         $initialStep = 4;
-    } elseif ($errors->hasAny(['short_description', 'description', 'spec_material'])) {
+    } elseif (isset($errors) && $errors->hasAny(['short_description', 'description', 'spec_material'])) {
         $initialStep = 5;
     }
 @endphp
@@ -70,17 +70,23 @@
         if (this.step < this.totalSteps) {
             this.step++;
             window.scrollTo({ top: 0, behavior: 'smooth' });
+            setTimeout(() => { if (typeof initRichEditors === 'function') initRichEditors(); }, 80);
         }
     },
     prevStep() {
         if (this.step > 1) {
             this.step--;
             window.scrollTo({ top: 0, behavior: 'smooth' });
+            setTimeout(() => { if (typeof initRichEditors === 'function') initRichEditors(); }, 80);
         }
     },
     goToStep(s) {
         this.step = s;
         window.scrollTo({ top: 0, behavior: 'smooth' });
+        setTimeout(() => { if (typeof initRichEditors === 'function') initRichEditors(); }, 80);
+    },
+    init() {
+        setTimeout(() => { if (typeof initRichEditors === 'function') initRichEditors(); }, 150);
     },
 
     // Image preview helper
@@ -455,7 +461,7 @@
                         step="1" 
                         id="prod_cost_price"
                         name="cost_price" 
-                        value="{{ old('cost_price', 0) }}" 
+                        value="{{ old('cost_price') }}" 
                         placeholder="e.g. 2100"
                         oninput="calculateProfitMargin()"
                         class="w-full px-3.5 py-2.5 text-xs rounded-xl bg-emerald-50/50 dark:bg-emerald-950/20 border border-emerald-300 dark:border-emerald-800/40 text-emerald-900 dark:text-emerald-300 placeholder:text-gray-400 focus:outline-hidden focus:border-emerald-500 font-mono font-bold"
@@ -485,7 +491,7 @@
                     <input 
                         type="number" 
                         name="stock_quantity" 
-                        value="{{ old('stock_quantity', '10') }}" 
+                        value="{{ old('stock_quantity') }}" 
                         placeholder="e.g. 15"
                         required
                         min="0"
@@ -611,8 +617,8 @@
                             type="number" 
                             step="0.05" 
                             name="weight_kg" 
-                            value="{{ old('weight_kg', '0.50') }}" 
-                            placeholder="e.g. 0.25 (wallet) or 1.80 (bag)"
+                            value="{{ old('weight_kg') }}" 
+                            placeholder="e.g. 0.50"
                             class="w-full pl-3.5 pr-12 py-2.5 text-xs rounded-xl bg-[#FAF8F5] dark:bg-[#241D1A] border border-[#E0D7CB] dark:border-[#3A2F29] text-espresso-900 dark:text-white placeholder:text-gray-400 focus:outline-hidden focus:border-tan-500 font-mono font-semibold"
                         >
                         <span class="absolute right-3.5 top-1/2 -translate-y-1/2 text-xs font-bold text-gray-400">KG</span>
@@ -826,67 +832,115 @@
             </div>
 
             <div class="space-y-4">
-                <!-- Short Description -->
+                <!-- Short Description (Rich Editor) -->
                 <div>
-                    <label class="block text-xs font-semibold text-espresso-900 dark:text-white mb-1.5">
-                        Short Tagline Description <span class="text-rose-500">*</span>
+                    <label class="block text-xs font-semibold text-espresso-900 dark:text-white mb-1.5 flex items-center justify-between">
+                        <span>Short Tagline Description <span class="text-rose-500">*</span></span>
+                        <span class="text-[10px] text-tan-600 dark:text-gold-400 font-semibold flex items-center gap-1">
+                            <i data-lucide="sparkles" class="w-3 h-3"></i> Rich Editor
+                        </span>
                     </label>
                     <textarea 
                         name="short_description" 
-                        rows="2" 
-                        required 
-                        placeholder="e.g. Handcrafted full-grain calfskin leather belt with an antique brass 360° swivel buckle."
-                        class="w-full px-3.5 py-2.5 text-xs rounded-xl bg-[#FAF8F5] dark:bg-[#241D1A] border border-[#E0D7CB] dark:border-[#3A2F29] text-espresso-900 dark:text-white placeholder:text-gray-400 focus:outline-hidden focus:border-tan-500"
+                        id="prod_short_desc"
+                        class="hidden"
                     >{{ old('short_description') }}</textarea>
+                    <div class="quill-wrapper rounded-2xl overflow-hidden border border-[#E0D7CB] dark:border-[#3A2F29] bg-[#FAF8F5] dark:bg-[#241D1A]">
+                        <div 
+                            data-rich-editor="compact" 
+                            data-target="#prod_short_desc" 
+                            data-placeholder="e.g. Handcrafted full-grain calfskin leather belt with an antique brass 360° swivel buckle."
+                            style="min-height: 90px;"
+                        >{!! old('short_description') !!}</div>
+                    </div>
+                    @error('short_description')
+                        <p class="text-rose-500 text-[10px] mt-1">{{ $message }}</p>
+                    @enderror
                 </div>
 
-                <!-- Full Editorial Story -->
+                <!-- Artisanal Highlights / Features (Rich Editor) -->
                 <div>
-                    <label class="block text-xs font-semibold text-espresso-900 dark:text-white mb-1.5">
-                        Full Atelier Story & Craft Description
+                    <label class="block text-xs font-semibold text-espresso-900 dark:text-white mb-1.5 flex items-center justify-between">
+                        <span>Artisanal Highlights (Bullet Points)</span>
+                        <span class="text-[10px] text-tan-600 dark:text-gold-400 font-semibold flex items-center gap-1">
+                            <i data-lucide="sparkles" class="w-3 h-3"></i> Rich Editor
+                        </span>
+                    </label>
+                    <textarea 
+                        name="features_raw" 
+                        id="prod_features_raw"
+                        class="hidden"
+                    >{{ old('features_raw') }}</textarea>
+                    <div class="quill-wrapper rounded-2xl overflow-hidden border border-[#E0D7CB] dark:border-[#3A2F29] bg-[#FAF8F5] dark:bg-[#241D1A]">
+                        <div 
+                            data-rich-editor="highlights" 
+                            data-target="#prod_features_raw" 
+                            data-placeholder="Type bullet points (e.g. 100% full-grain calfskin, solid brass hardware, 5-year guarantee...)"
+                            style="min-height: 100px;"
+                        >{!! old('features_raw') !!}</div>
+                    </div>
+                </div>
+
+                <!-- Full Editorial Story (Rich Editor) -->
+                <div>
+                    <label class="block text-xs font-semibold text-espresso-900 dark:text-white mb-1.5 flex items-center justify-between">
+                        <span>Full Atelier Story & Craft Description</span>
+                        <span class="text-[10px] text-tan-600 dark:text-gold-400 font-semibold flex items-center gap-1">
+                            <i data-lucide="sparkles" class="w-3 h-3"></i> Rich Editor
+                        </span>
                     </label>
                     <textarea 
                         name="description" 
-                        rows="4" 
-                        placeholder="Detailed narrative about the hide selection, drum-dyeing, hand-waxed saddle stitching, and heirloom longevity..."
-                        class="w-full px-3.5 py-2.5 text-xs rounded-xl bg-[#FAF8F5] dark:bg-[#241D1A] border border-[#E0D7CB] dark:border-[#3A2F29] text-espresso-900 dark:text-white placeholder:text-gray-400 focus:outline-hidden focus:border-tan-500"
+                        id="prod_desc"
+                        class="hidden"
                     >{{ old('description') }}</textarea>
+                    <div class="quill-wrapper rounded-2xl overflow-hidden border border-[#E0D7CB] dark:border-[#3A2F29] bg-[#FAF8F5] dark:bg-[#241D1A]">
+                        <div 
+                            data-rich-editor="full" 
+                            data-target="#prod_desc" 
+                            data-placeholder="Detailed narrative about the hide selection, drum-dyeing, hand-waxed saddle stitching, and heirloom longevity..."
+                            style="min-height: 140px;"
+                        >{!! old('description') !!}</div>
+                    </div>
                 </div>
 
-                <!-- Specifications Grid -->
+                <!-- Specifications Grid (Clean Empty Placeholders - Zero Pre-Filled Text) -->
                 <div class="pt-3 border-t border-[#F0EAE1] dark:border-[#2C2420]">
-                    <h3 class="text-xs font-bold text-espresso-950 dark:text-white mb-3">
-                        Technical Specifications
-                    </h3>
+                    <div class="flex items-center justify-between mb-3">
+                        <h3 class="text-xs font-bold text-espresso-950 dark:text-white">
+                            Technical Specifications
+                        </h3>
+                        <span class="text-[10px] text-gray-400">All fields are optional</span>
+                    </div>
                     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
                         <div>
                             <label class="block text-[11px] font-semibold text-gray-600 dark:text-gray-400 mb-1">Leather / Material</label>
-                            <input type="text" name="spec_material" value="{{ old('spec_material', '100% Full-Grain Vegetable-Tanned Calfskin') }}" class="w-full px-3 py-2 text-xs rounded-xl bg-[#FAF8F5] dark:bg-[#241D1A] border border-[#E0D7CB] dark:border-[#3A2F29] text-espresso-900 dark:text-white">
+                            <input type="text" name="spec_material" value="{{ old('spec_material') }}" placeholder="e.g. 100% Full-Grain Vegetable-Tanned Calfskin" class="w-full px-3 py-2 text-xs rounded-xl bg-[#FAF8F5] dark:bg-[#241D1A] border border-[#E0D7CB] dark:border-[#3A2F29] text-espresso-900 dark:text-white focus:outline-hidden focus:border-tan-500">
                         </div>
 
                         <div>
                             <label class="block text-[11px] font-semibold text-gray-600 dark:text-gray-400 mb-1">Hardware / Buckle</label>
-                            <input type="text" name="spec_hardware" value="{{ old('spec_hardware', 'Solid Antique Brass Hardware') }}" class="w-full px-3 py-2 text-xs rounded-xl bg-[#FAF8F5] dark:bg-[#241D1A] border border-[#E0D7CB] dark:border-[#3A2F29] text-espresso-900 dark:text-white">
+                            <input type="text" name="spec_hardware" value="{{ old('spec_hardware') }}" placeholder="e.g. Solid Antique Brass Hardware" class="w-full px-3 py-2 text-xs rounded-xl bg-[#FAF8F5] dark:bg-[#241D1A] border border-[#E0D7CB] dark:border-[#3A2F29] text-espresso-900 dark:text-white focus:outline-hidden focus:border-tan-500">
                         </div>
 
                         <div>
                             <label class="block text-[11px] font-semibold text-gray-600 dark:text-gray-400 mb-1">Dimensions & Width</label>
-                            <input type="text" name="spec_dimensions" value="{{ old('spec_dimensions') }}" placeholder="e.g. 35mm (1.38 in) width" class="w-full px-3 py-2 text-xs rounded-xl bg-[#FAF8F5] dark:bg-[#241D1A] border border-[#E0D7CB] dark:border-[#3A2F29] text-espresso-900 dark:text-white">
+                            <input type="text" name="spec_dimensions" value="{{ old('spec_dimensions') }}" placeholder="e.g. 35mm (1.38 in) width" class="w-full px-3 py-2 text-xs rounded-xl bg-[#FAF8F5] dark:bg-[#241D1A] border border-[#E0D7CB] dark:border-[#3A2F29] text-espresso-900 dark:text-white focus:outline-hidden focus:border-tan-500">
                         </div>
 
                         <div>
                             <label class="block text-[11px] font-semibold text-gray-600 dark:text-gray-400 mb-1">Lining & Seams</label>
-                            <input type="text" name="spec_care" value="{{ old('spec_care', 'Hand-waxed bonded nylon thread') }}" class="w-full px-3 py-2 text-xs rounded-xl bg-[#FAF8F5] dark:bg-[#241D1A] border border-[#E0D7CB] dark:border-[#3A2F29] text-espresso-900 dark:text-white">
+                            <input type="text" name="spec_care" value="{{ old('spec_care') }}" placeholder="e.g. Hand-waxed bonded nylon thread" class="w-full px-3 py-2 text-xs rounded-xl bg-[#FAF8F5] dark:bg-[#241D1A] border border-[#E0D7CB] dark:border-[#3A2F29] text-espresso-900 dark:text-white focus:outline-hidden focus:border-tan-500">
                         </div>
 
                         <div>
                             <label class="block text-[11px] font-semibold text-gray-600 dark:text-gray-400 mb-1">Atelier Origin</label>
-                            <input type="text" name="spec_origin" value="{{ old('spec_origin', 'Handcrafted in Lahore, Pakistan') }}" class="w-full px-3 py-2 text-xs rounded-xl bg-[#FAF8F5] dark:bg-[#241D1A] border border-[#E0D7CB] dark:border-[#3A2F29] text-espresso-900 dark:text-white">
+                            <input type="text" name="spec_origin" value="{{ old('spec_origin') }}" placeholder="e.g. Handcrafted in Pakistan" class="w-full px-3 py-2 text-xs rounded-xl bg-[#FAF8F5] dark:bg-[#241D1A] border border-[#E0D7CB] dark:border-[#3A2F29] text-espresso-900 dark:text-white focus:outline-hidden focus:border-tan-500">
                         </div>
 
                         <div>
                             <label class="block text-[11px] font-semibold text-gray-600 dark:text-gray-400 mb-1">Packaging Box</label>
-                            <input type="text" name="spec_packaging" value="{{ old('spec_packaging', 'Rigid Foil-Embossed Presentation Box') }}" class="w-full px-3 py-2 text-xs rounded-xl bg-[#FAF8F5] dark:bg-[#241D1A] border border-[#E0D7CB] dark:border-[#3A2F29] text-espresso-900 dark:text-white">
+                            <input type="text" name="spec_packaging" value="{{ old('spec_packaging') }}" placeholder="e.g. Rigid Foil-Embossed Presentation Box" class="w-full px-3 py-2 text-xs rounded-xl bg-[#FAF8F5] dark:bg-[#241D1A] border border-[#E0D7CB] dark:border-[#3A2F29] text-espresso-900 dark:text-white focus:outline-hidden focus:border-tan-500">
                         </div>
                     </div>
                 </div>
@@ -984,7 +1038,12 @@ function calculateProfitMargin() {
         resultEl.className = 'font-mono font-bold text-xs text-rose-600';
     }
 }
-document.addEventListener('DOMContentLoaded', calculateProfitMargin);
+document.addEventListener('DOMContentLoaded', function() {
+    calculateProfitMargin();
+    if (typeof initRichEditors === 'function') {
+        initRichEditors();
+    }
+});
 </script>
 
 @endsection

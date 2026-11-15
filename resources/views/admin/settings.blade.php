@@ -244,11 +244,11 @@
                     </div>
                     <div>
                         <label class="block text-[11px] font-semibold text-[#6E645E] dark:text-[#C5B8AC] mb-1">Account Number (Optional)</label>
-                        <input type="text" name="payment_bank_account_number" value="{{ $settings['payment_bank_account_number'] ?? '02010108924519' }}" placeholder="e.g. 02010108924519" class="w-full px-3 py-1.5 text-xs rounded-xl bg-white dark:bg-[#16100E] border border-[#DCD3C7] dark:border-[#382D27] text-espresso-900 dark:text-white font-mono">
+                        <input type="text" name="payment_bank_account_number" value="{{ $settings['payment_bank_account_number'] ?? '' }}" placeholder="e.g. 02010108924519" class="w-full px-3 py-1.5 text-xs rounded-xl bg-white dark:bg-[#16100E] border border-[#DCD3C7] dark:border-[#382D27] text-espresso-900 dark:text-white font-mono">
                     </div>
                     <div class="sm:col-span-2">
                         <label class="block text-[11px] font-semibold text-[#6E645E] dark:text-[#C5B8AC] mb-1">IBAN Coordinates (Full 24-character IBAN)</label>
-                        <input type="text" name="payment_bank_iban" value="{{ $settings['payment_bank_iban'] ?? 'PK64MEZN0002010108924519' }}" placeholder="e.g. PK64MEZN0002010108924519" class="w-full px-3 py-1.5 text-xs rounded-xl bg-white dark:bg-[#16100E] border border-[#DCD3C7] dark:border-[#382D27] text-espresso-900 dark:text-white font-mono uppercase">
+                        <input type="text" name="payment_bank_iban" value="{{ $settings['payment_bank_iban'] ?? '' }}" placeholder="e.g. PK64MEZN0002010108924519" class="w-full px-3 py-1.5 text-xs rounded-xl bg-white dark:bg-[#16100E] border border-[#DCD3C7] dark:border-[#382D27] text-espresso-900 dark:text-white font-mono uppercase">
                     </div>
                     <div>
                         <label class="block text-[11px] font-semibold text-[#6E645E] dark:text-[#C5B8AC] mb-1">Method Display Title</label>
@@ -287,7 +287,7 @@
                     </div>
                     <div>
                         <label class="block text-[11px] font-semibold text-[#6E645E] dark:text-[#C5B8AC] mb-1">JazzCash Mobile Number</label>
-                        <input type="text" name="payment_jazzcash_number" value="{{ $settings['payment_jazzcash_number'] ?? '03001234567' }}" placeholder="03001234567" class="w-full px-3 py-1.5 text-xs rounded-xl bg-white dark:bg-[#16100E] border border-[#DCD3C7] dark:border-[#382D27] text-espresso-900 dark:text-white font-mono">
+                        <input type="text" name="payment_jazzcash_number" value="{{ $settings['payment_jazzcash_number'] ?? '' }}" placeholder="e.g. 03001234567" class="w-full px-3 py-1.5 text-xs rounded-xl bg-white dark:bg-[#16100E] border border-[#DCD3C7] dark:border-[#382D27] text-espresso-900 dark:text-white font-mono">
                     </div>
                     <div>
                         <label class="block text-[11px] font-semibold text-[#6E645E] dark:text-[#C5B8AC] mb-1">Method Display Title</label>
@@ -326,7 +326,7 @@
                     </div>
                     <div>
                         <label class="block text-[11px] font-semibold text-[#6E645E] dark:text-[#C5B8AC] mb-1">EasyPaisa Mobile Number</label>
-                        <input type="text" name="payment_easypaisa_number" value="{{ $settings['payment_easypaisa_number'] ?? '03451234567' }}" placeholder="03451234567" class="w-full px-3 py-1.5 text-xs rounded-xl bg-white dark:bg-[#16100E] border border-[#DCD3C7] dark:border-[#382D27] text-espresso-900 dark:text-white font-mono">
+                        <input type="text" name="payment_easypaisa_number" value="{{ $settings['payment_easypaisa_number'] ?? '' }}" placeholder="e.g. 03451234567" class="w-full px-3 py-1.5 text-xs rounded-xl bg-white dark:bg-[#16100E] border border-[#DCD3C7] dark:border-[#382D27] text-espresso-900 dark:text-white font-mono">
                     </div>
                     <div>
                         <label class="block text-[11px] font-semibold text-[#6E645E] dark:text-[#C5B8AC] mb-1">Method Display Title</label>
