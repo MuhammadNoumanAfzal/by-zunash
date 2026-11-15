@@ -30,13 +30,13 @@
 }">
 
     <!-- ======================= 1. COMPACT EXECUTIVE RIBBON ======================= -->
-    <div class="relative overflow-hidden rounded-2xl bg-gradient-to-r from-slate-900 via-slate-800 to-slate-900 text-white py-2.5 px-3.5 sm:px-5 shadow-xs border border-slate-700 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 w-full min-w-0">
+    <div class="relative overflow-hidden rounded-2xl bg-gradient-to-r from-[#1E283A] via-[#26344B] to-[#1E283A] text-white py-2.5 px-3.5 sm:px-5 shadow-xs border border-[#3A4B68] flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 w-full min-w-0">
         <!-- Subtle luxury ambient gold ornament -->
         <div class="absolute -right-10 -top-10 w-44 h-44 rounded-full bg-gold/10 blur-2xl pointer-events-none"></div>
 
         <!-- Left: Brand Title & Live Status -->
         <div class="flex items-center gap-2.5 sm:gap-3 relative z-10 min-w-0">
-            <div class="w-8 h-8 rounded-xl bg-slate-800 text-gold font-cinzel font-bold text-xs flex items-center justify-center shrink-0 border border-gold/40 shadow-xs">
+            <div class="w-8 h-8 rounded-xl bg-[#26344B] text-gold font-cinzel font-bold text-xs flex items-center justify-center shrink-0 border border-gold/40 shadow-xs">
                 BZ
             </div>
             <div class="min-w-0 flex-1">
@@ -57,7 +57,7 @@
 
         <!-- Right: Compact Revenue & Action Button -->
         <div class="flex items-center justify-between sm:justify-end gap-2.5 w-full sm:w-auto shrink-0 relative z-10 pt-1.5 sm:pt-0 border-t border-white/10 sm:border-0">
-            <div class="px-2.5 sm:px-3 py-1 rounded-xl bg-slate-950/60 border border-slate-700 text-left sm:text-right min-w-0">
+            <div class="px-2.5 sm:px-3 py-1 rounded-xl bg-[#182130]/80 border border-[#3A4B68] text-left sm:text-right min-w-0">
                 <span class="text-[8px] font-bold tracking-wider uppercase text-gold-300 block truncate">TOTAL REVENUE (PKR)</span>
                 <div class="font-cinzel text-xs sm:text-base font-bold text-white leading-none mt-0.5 truncate">
                     Rs. {{ number_format($totalRevenue, 0) }}

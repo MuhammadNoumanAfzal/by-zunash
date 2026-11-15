@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" class="scroll-smooth bg-[#FAF9F6] dark:bg-[#0F172A]">
+<html lang="en" class="scroll-smooth bg-[#F7F4ED] dark:bg-[#1E2738]">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -15,15 +15,26 @@
     <link rel="icon" type="image/png" sizes="16x16" href="{{ asset('favicon-16x16.png') }}">
     <link rel="apple-touch-icon" sizes="180x180" href="{{ asset('apple-touch-icon.png') }}">
 
-    <!-- Theme Initialization: Set 'dark' class on html before first render to prevent white flash -->
+    <!-- Theme Initialization: Set theme classes on html before first render to prevent white flash -->
     <script>
         (function() {
             try {
-                const storedTheme = localStorage.getItem('zunash_admin_theme');
-                if (storedTheme === 'dark' || (!storedTheme && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-                    document.documentElement.classList.add('dark');
+                let storedTheme = localStorage.getItem('zunash_admin_theme');
+                if (!storedTheme) {
+                    storedTheme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'slate' : 'creme';
+                } else if (storedTheme === 'dark') {
+                    storedTheme = 'slate';
+                } else if (storedTheme === 'light') {
+                    storedTheme = 'creme';
+                }
+                
+                document.documentElement.classList.remove('dark', 'theme-creme', 'theme-slate', 'theme-blackish');
+                if (storedTheme === 'blackish') {
+                    document.documentElement.classList.add('dark', 'theme-blackish');
+                } else if (storedTheme === 'slate') {
+                    document.documentElement.classList.add('dark', 'theme-slate');
                 } else {
-                    document.documentElement.classList.remove('dark');
+                    document.documentElement.classList.add('theme-creme');
                 }
             } catch (e) {}
         })();
@@ -48,11 +59,11 @@
                             200: '#D2CEC8',
                             300: '#A9A39A',
                             400: '#736B61',
-                            700: '#334155',
-                            800: '#283548',
-                            900: '#1E293B', // Clean modern Slate card
-                            950: '#0F172A', // Clean modern Slate canvas
-                            DEFAULT: '#1E293B',
+                            700: '#3F506D',
+                            800: '#303E56',
+                            900: '#28364E', // Softer Elevated Card
+                            950: '#1E2738', // Softer Eye-Friendly Midnight Blue Canvas
+                            DEFAULT: '#28364E',
                         },
                         tan: {
                             50: '#FDF9F5',
@@ -78,12 +89,12 @@
                             DEFAULT: '#C5A16B',
                         },
                         ivory: {
-                            50: '#FFFFFF',
-                            DEFAULT: '#FAF9F6',
-                            100: '#FAF9F6',
-                            200: '#F4EFEA',
-                            300: '#ECE6DE',
-                            400: '#DFD6CB',
+                            50: '#FCFAF5', // Warm Luxury Pearl Creme
+                            DEFAULT: '#F7F4ED',
+                            100: '#F7F4ED',
+                            200: '#F2EDE4',
+                            300: '#E5DDD0',
+                            400: '#DFD5C4',
                         }
                     },
                     fontFamily: {
@@ -155,19 +166,19 @@
             box-sizing: border-box !important;
             overflow-y: auto !important;
             border-radius: 1.5rem !important;
-            border: 1px solid #ECE6DE !important;
-            background: #ffffff !important;
-            color: #120E0C !important;
-            box-shadow: 0 25px 60px -15px rgba(0, 0, 0, 0.45), 0 0 0 1px rgba(197, 161, 107, 0.25) !important;
+            border: 1px solid #E5DDD0 !important;
+            background: #FCFAF5 !important;
+            color: #241C16 !important;
+            box-shadow: 0 25px 60px -15px rgba(0, 0, 0, 0.25), 0 0 0 1px rgba(197, 161, 107, 0.25) !important;
             outline: none !important;
             z-index: 9999 !important;
         }
 
         html.dark dialog {
-            background: #1E293B !important;
-            color: #F8FAFC !important;
-            border-color: #334155 !important;
-            box-shadow: 0 25px 60px -15px rgba(0, 0, 0, 0.7), 0 0 0 1px rgba(197, 161, 107, 0.3) !important;
+            background: #28364E !important;
+            color: #F1F5F9 !important;
+            border-color: #3F506D !important;
+            box-shadow: 0 25px 60px -15px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(197, 161, 107, 0.3) !important;
         }
 
         /* Wider card only for Staff Modal with 12 module checkboxes */
@@ -200,7 +211,7 @@
         }
 
         dialog::backdrop {
-            background: rgba(15, 23, 42, 0.75) !important;
+            background: rgba(20, 28, 42, 0.7) !important;
             backdrop-filter: blur(8px) !important;
             -webkit-backdrop-filter: blur(8px) !important;
             z-index: 9998 !important;
@@ -233,8 +244,8 @@
             align-items: center;
         }
         .dark .ql-toolbar.ql-snow {
-            border-bottom: 1px solid #334155 !important;
-            background-color: #172033;
+            border-bottom: 1px solid #3F506D !important;
+            background-color: #212C3F;
         }
         .ql-container.ql-snow {
             border: none !important;
@@ -250,7 +261,7 @@
             line-height: 1.6;
         }
         .dark .ql-editor {
-            color: #F8FAFC;
+            color: #F1F5F9;
         }
         .ql-editor.ql-blank::before {
             color: #A89C91 !important;
@@ -259,7 +270,7 @@
             right: 14px !important;
         }
         .dark .ql-editor.ql-blank::before {
-            color: #8596B0 !important;
+            color: #8C9EB5 !important;
         }
         /* Toolbar icons color in dark mode */
         .dark .ql-snow .ql-stroke {
@@ -272,8 +283,8 @@
             color: #CBD5E1 !important;
         }
         .dark .ql-snow .ql-picker-options {
-            background-color: #1E293B !important;
-            border-color: #334155 !important;
+            background-color: #28364E !important;
+            border-color: #3F506D !important;
         }
         /* Active / Hover icons in Tan & Gold */
         .ql-snow.ql-toolbar button:hover,
@@ -314,23 +325,103 @@
         }
 
         /* ========================================================
-           BY ZUNASH ATELIER MODERN SLATE EXECUTIVE DARK THEME
-           Clean, sleek Slate-900 canvas (#0F172A), Slate-800 cards (#1E293B),
-           crisp Slate-700 borders (#334155), pure ivory white typography,
-           and vibrant gold luxury highlights. ZERO muddy brown.
+           BY ZUNASH ATELIER LUXURY CREME LIGHT THEME
+           Warm artisan creme canvas (#F7F4ED), soft pearl-creme cards (#FCFAF5),
+           warm saddle-stitch borders (#E5DDD0), and rich deep espresso text.
+           ZERO stark cold blinding white.
+           ======================================================== */
+        html:not(.dark),
+        html:not(.dark) body,
+        html:not(.dark) main {
+            background-color: #F7F4ED !important;
+            color: #241C16;
+        }
+
+        /* Light Theme: Replace Pure Stark White with Soft Luxury Pearl Creme */
+        html:not(.dark) .bg-white,
+        html:not(.dark) aside,
+        html:not(.dark) header {
+            background-color: #FCFAF5 !important;
+        }
+
+        /* Light Theme: Warm Creme Wells, Filter Bars & Stat Boxes */
+        html:not(.dark) .bg-\[\#FAF8F5\],
+        html:not(.dark) .bg-\[\#FAF9F6\],
+        html:not(.dark) .bg-\[\#FAF4ED\],
+        html:not(.dark) .bg-slate-50,
+        html:not(.dark) .bg-gray-50,
+        html:not(.dark) .bg-slate-100 {
+            background-color: #F2EDE4 !important;
+        }
+
+        /* Light Theme: Warm Artisanal Thread Borders */
+        html:not(.dark) .border-\[\#ECE6DE\],
+        html:not(.dark) .border-\[\#EBE3D8\],
+        html:not(.dark) .border-\[\#F0EAE1\],
+        html:not(.dark) .border-\[\#E0D7CB\],
+        html:not(.dark) .border-gray-200,
+        html:not(.dark) .border-gray-300,
+        html:not(.dark) .border-slate-200 {
+            border-color: #E5DDD0 !important;
+        }
+
+        /* Light Theme Inputs */
+        html:not(.dark) input[type="text"],
+        html:not(.dark) input[type="search"],
+        html:not(.dark) input[type="email"],
+        html:not(.dark) input[type="password"],
+        html:not(.dark) input[type="number"],
+        html:not(.dark) input[type="date"],
+        html:not(.dark) input[type="url"],
+        html:not(.dark) input[type="tel"],
+        html:not(.dark) select,
+        html:not(.dark) textarea {
+            background-color: #F9F6F0 !important;
+            border-color: #D8CEBE !important;
+            color: #241C16 !important;
+        }
+
+        html:not(.dark) input:focus,
+        html:not(.dark) select:focus,
+        html:not(.dark) textarea:focus {
+            background-color: #FFFFFF !important;
+            border-color: #B07D4E !important;
+            box-shadow: 0 0 0 2px rgba(176, 125, 78, 0.2) !important;
+        }
+
+        html:not(.dark) table thead th {
+            background-color: #F2EDE4 !important;
+            color: #4A3A2F !important;
+            border-bottom: 1px solid #E5DDD0 !important;
+        }
+
+        html:not(.dark) table tbody tr {
+            border-bottom: 1px solid #EFE9DD !important;
+        }
+
+        html:not(.dark) table tbody tr:hover {
+            background-color: #F5EFE5 !important;
+        }
+
+        /* ========================================================
+           BY ZUNASH ATELIER SOFT EXECUTIVE SLATE-NAVY DARK THEME
+           Eye-friendly Midnight Canvas (#1E2738), Soft Indigo-Slate Cards (#28364E),
+           Muted Borders (#3F506D), Soft Non-Glare Off-White Typography (#F1F5F9),
+           and Refined Gold Highlights. Eliminates eye strain & gives ultra-premium look.
            ======================================================== */
         html.dark {
             color-scheme: dark;
         }
 
-        /* 1. Base Canvas & Main Backgrounds */
+        /* 1. Base Canvas & Main Backgrounds (Lighter, Softer than #0F172A) */
         html.dark,
         html.dark body,
         html.dark main,
         html.dark .dark\:bg-\[\#0D0A09\],
+        html.dark .dark\:bg-\[\#0F172A\],
         html.dark .dark\:bg-espresso-950,
         html.dark .dark\:bg-espresso-900 {
-            background-color: #0F172A !important;
+            background-color: #1E2738 !important;
         }
 
         /* 2. Primary Elevated Cards, Panels, Modals, Nav Header & Sidebar */
@@ -348,11 +439,13 @@
         html.dark .dark\:bg-\[\#120E0C\],
         html.dark .dark\:bg-\[\#201D1A\],
         html.dark .dark\:bg-\[\#26221E\],
+        html.dark .dark\:bg-slate-800,
+        html.dark .bg-white.dark\:bg-slate-800,
         html.dark .bg-white.dark\:bg-\[\#161210\],
         html.dark .bg-white.dark\:bg-\[\#1A1513\],
         html.dark .bg-white.dark\:bg-\[\#1C1613\],
         html.dark .bg-white.dark\:bg-\[\#26221E\] {
-            background-color: #1E293B !important;
+            background-color: #28364E !important;
         }
 
         /* 3. Secondary Surfaces, Stat Wells, Filters, Search Bars & Sub-Cards */
@@ -386,11 +479,15 @@
         html.dark .dark\:bg-\[\#2D221D\],
         html.dark .dark\:bg-\[\#2E2520\],
         html.dark .dark\:bg-\[\#2F2924\],
-        html.dark .dark\:bg-\[\#3A2F29\] {
-            background-color: #283548 !important;
+        html.dark .dark\:bg-\[\#3A2F29\],
+        html.dark .dark\:bg-slate-900,
+        html.dark .dark\:bg-slate-900\/60,
+        html.dark .dark\:bg-slate-900\/80,
+        html.dark .dark\:bg-slate-900\/90 {
+            background-color: #303E56 !important;
         }
 
-        /* 4. Crisp, Modern Slate Borders across Cards, Nav, and Containers */
+        /* 4. Crisp, Soft Muted Slate Borders */
         html.dark .dark\:border-\[\#1A1513\],
         html.dark .dark\:border-\[\#223E32\],
         html.dark .dark\:border-\[\#241C18\],
@@ -416,11 +513,14 @@
         html.dark .dark\:border-\[\#42322C\],
         html.dark .dark\:border-\[\#383029\],
         html.dark .dark\:border-\[\#3D352E\],
-        html.dark .dark\:border-\[\#423830\] {
-            border-color: #334155 !important;
+        html.dark .dark\:border-\[\#423830\],
+        html.dark .dark\:border-slate-700,
+        html.dark .dark\:border-slate-700\/80,
+        html.dark .dark\:border-slate-700\/60 {
+            border-color: #3F506D !important;
         }
 
-        /* 5. Form Controls: Inputs, Selects, Textareas (Clean Slate Inputs) */
+        /* 5. Form Controls: Inputs, Selects, Textareas (Comfortable Contrast) */
         html.dark input[type="text"],
         html.dark input[type="search"],
         html.dark input[type="email"],
@@ -431,14 +531,14 @@
         html.dark input[type="tel"],
         html.dark select,
         html.dark textarea {
-            background-color: #172033 !important;
-            border-color: #3B4861 !important;
-            color: #F8FAFC !important;
+            background-color: #212C3F !important;
+            border-color: #445777 !important;
+            color: #F1F5F9 !important;
         }
 
         html.dark input::placeholder,
         html.dark textarea::placeholder {
-            color: #8596B0 !important;
+            color: #8C9EB5 !important;
         }
 
         html.dark input:focus,
@@ -446,13 +546,14 @@
         html.dark textarea:focus {
             border-color: #C5A16B !important;
             box-shadow: 0 0 0 2px rgba(197, 161, 107, 0.35) !important;
-            background-color: #1E283E !important;
+            background-color: #263348 !important;
         }
 
-        /* 6. Ultra-Readable Clean Typography in Dark Mode */
+        /* 6. Soft, Non-Glare Typography in Dark Mode (No Eyestrain) */
         html.dark .text-espresso-950,
-        html.dark .text-espresso-900 {
-            color: #F8FAFC !important;
+        html.dark .text-espresso-900,
+        html.dark .dark\:text-white {
+            color: #F1F5F9 !important;
         }
 
         html.dark .text-espresso-800,
@@ -463,21 +564,202 @@
 
         html.dark .text-\[\#8F8379\],
         html.dark .text-\[\#9C8F85\],
-        html.dark .text-\[\#A89C91\] {
-            color: #94A3B8 !important;
+        html.dark .text-\[\#A89C91\],
+        html.dark .dark\:text-slate-400 {
+            color: #9FB0C8 !important;
         }
 
         /* 7. Table Headers & Rows */
         html.dark table thead th {
-            background-color: #1E293B !important;
+            background-color: #28364E !important;
             color: #E2E8F0 !important;
-            border-bottom: 1px solid #334155 !important;
+            border-bottom: 1px solid #3F506D !important;
         }
         html.dark table tbody tr {
-            border-bottom: 1px solid #293548 !important;
+            border-bottom: 1px solid #32425D !important;
         }
         html.dark table tbody tr:hover {
-            background-color: #243144 !important;
+            background-color: #2E3D56 !important;
+        }
+
+        /* ========================================================
+           BY ZUNASH ATELIER OBSIDIAN BLACKISH THEME (TRUE DARK)
+           Deep true blackish charcoal canvas (#0B0F14), rich dark obsidian cards (#161B22),
+           sleek borders (#30363D), vibrant gold luxury accents, and crisp typography (#F0F6FC).
+           Zero bluish tint — pure refined black luxury.
+           ======================================================== */
+        html.theme-blackish {
+            color-scheme: dark;
+        }
+
+        /* 1. Base Canvas & Main Backgrounds in Blackish */
+        html.theme-blackish,
+        html.theme-blackish body,
+        html.theme-blackish main,
+        html.theme-blackish .dark\:bg-\[\#0D0A09\],
+        html.theme-blackish .dark\:bg-\[\#0F172A\],
+        html.theme-blackish .dark\:bg-espresso-950,
+        html.theme-blackish .dark\:bg-espresso-900 {
+            background-color: #0B0F14 !important;
+        }
+
+        /* 2. Elevated Cards, Panels, Modals, Nav Header & Sidebar in Blackish */
+        html.theme-blackish aside,
+        html.theme-blackish header,
+        html.theme-blackish dialog,
+        html.theme-blackish .dark\:bg-\[\#161210\],
+        html.theme-blackish .dark\:bg-\[\#1A1513\],
+        html.theme-blackish .dark\:bg-\[\#1A1412\],
+        html.theme-blackish .dark\:bg-\[\#1A1310\],
+        html.theme-blackish .dark\:bg-\[\#1A120E\],
+        html.theme-blackish .dark\:bg-\[\#140F0D\],
+        html.theme-blackish .dark\:bg-\[\#150F0D\],
+        html.theme-blackish .dark\:bg-\[\#16100E\],
+        html.theme-blackish .dark\:bg-\[\#1C1613\],
+        html.theme-blackish .dark\:bg-\[\#120E0C\],
+        html.theme-blackish .dark\:bg-\[\#201D1A\],
+        html.theme-blackish .dark\:bg-\[\#26221E\],
+        html.theme-blackish .dark\:bg-slate-800,
+        html.theme-blackish .bg-white.dark\:bg-slate-800,
+        html.theme-blackish .bg-white.dark\:bg-\[\#161210\],
+        html.theme-blackish .bg-white.dark\:bg-\[\#1A1513\],
+        html.theme-blackish .bg-white.dark\:bg-\[\#1C1613\],
+        html.theme-blackish .bg-white.dark\:bg-\[\#26221E\] {
+            background-color: #161B22 !important;
+        }
+
+        /* 3. Secondary Surfaces, Stat Wells, Filters, Search Bars & Sub-Cards */
+        html.theme-blackish .dark\:bg-\[\#1D1714\],
+        html.theme-blackish .dark\:bg-\[\#1D1412\],
+        html.theme-blackish .dark\:bg-\[\#1E1612\],
+        html.theme-blackish .dark\:bg-\[\#1E1714\],
+        html.theme-blackish .dark\:bg-\[\#1E1715\],
+        html.theme-blackish .dark\:bg-\[\#1E1815\],
+        html.theme-blackish .dark\:bg-\[\#1E1816\],
+        html.theme-blackish .dark\:bg-\[\#1F1916\],
+        html.theme-blackish .dark\:bg-\[\#201814\],
+        html.theme-blackish .dark\:bg-\[\#201815\],
+        html.theme-blackish .dark\:bg-\[\#201A18\],
+        html.theme-blackish .dark\:bg-\[\#221812\],
+        html.theme-blackish .dark\:bg-\[\#221A16\],
+        html.theme-blackish .dark\:bg-\[\#221B18\],
+        html.theme-blackish .dark\:bg-\[\#241D1A\],
+        html.theme-blackish .dark\:bg-\[\#251A14\],
+        html.theme-blackish .dark\:bg-\[\#251D1A\],
+        html.theme-blackish .dark\:bg-\[\#281E19\],
+        html.theme-blackish .dark\:bg-\[\#281F1B\],
+        html.theme-blackish .dark\:bg-\[\#28201C\],
+        html.theme-blackish .dark\:bg-\[\#2A1D1A\],
+        html.theme-blackish .dark\:bg-\[\#2A1E14\],
+        html.theme-blackish .dark\:bg-\[\#2A1E18\],
+        html.theme-blackish .dark\:bg-\[\#2A1F1A\],
+        html.theme-blackish .dark\:bg-\[\#2A201C\],
+        html.theme-blackish .dark\:bg-\[\#2A221E\],
+        html.theme-blackish .dark\:bg-\[\#2D201A\],
+        html.theme-blackish .dark\:bg-\[\#2D221D\],
+        html.theme-blackish .dark\:bg-\[\#2E2520\],
+        html.theme-blackish .dark\:bg-\[\#2F2924\],
+        html.theme-blackish .dark\:bg-\[\#3A2F29\],
+        html.theme-blackish .dark\:bg-slate-900,
+        html.theme-blackish .dark\:bg-slate-900\/60,
+        html.theme-blackish .dark\:bg-slate-900\/80,
+        html.theme-blackish .dark\:bg-slate-900\/90 {
+            background-color: #21262D !important;
+        }
+
+        /* 4. Crisp Borders in Blackish Mode */
+        html.theme-blackish .dark\:border-\[\#1A1513\],
+        html.theme-blackish .dark\:border-\[\#223E32\],
+        html.theme-blackish .dark\:border-\[\#241C18\],
+        html.theme-blackish .dark\:border-\[\#261E1A\],
+        html.theme-blackish .dark\:border-\[\#28201C\],
+        html.theme-blackish .dark\:border-\[\#2C211B\],
+        html.theme-blackish .dark\:border-\[\#2C221D\],
+        html.theme-blackish .dark\:border-\[\#2C2420\],
+        html.theme-blackish .dark\:border-\[\#2D231E\],
+        html.theme-blackish .dark\:border-\[\#2E241F\],
+        html.theme-blackish .dark\:border-\[\#2E2420\],
+        html.theme-blackish .dark\:border-\[\#2F231D\],
+        html.theme-blackish .dark\:border-\[\#332620\],
+        html.theme-blackish .dark\:border-\[\#342823\],
+        html.theme-blackish .dark\:border-\[\#38261E\],
+        html.theme-blackish .dark\:border-\[\#382B24\],
+        html.theme-blackish .dark\:border-\[\#382D27\],
+        html.theme-blackish .dark\:border-\[\#3A2824\],
+        html.theme-blackish .dark\:border-\[\#3A2F29\],
+        html.theme-blackish .dark\:border-\[\#3D2B24\],
+        html.theme-blackish .dark\:border-\[\#3E291C\],
+        html.theme-blackish .dark\:border-\[\#3E2A24\],
+        html.theme-blackish .dark\:border-\[\#42322C\],
+        html.theme-blackish .dark\:border-\[\#383029\],
+        html.theme-blackish .dark\:border-\[\#3D352E\],
+        html.theme-blackish .dark\:border-\[\#423830\],
+        html.theme-blackish .dark\:border-slate-700,
+        html.theme-blackish .dark\:border-slate-700\/80,
+        html.theme-blackish .dark\:border-slate-700\/60 {
+            border-color: #30363D !important;
+        }
+
+        /* 5. Inputs in Blackish Mode */
+        html.theme-blackish input[type="text"],
+        html.theme-blackish input[type="search"],
+        html.theme-blackish input[type="email"],
+        html.theme-blackish input[type="password"],
+        html.theme-blackish input[type="number"],
+        html.theme-blackish input[type="date"],
+        html.theme-blackish input[type="url"],
+        html.theme-blackish input[type="tel"],
+        html.theme-blackish select,
+        html.theme-blackish textarea {
+            background-color: #0D1117 !important;
+            border-color: #30363D !important;
+            color: #F0F6FC !important;
+        }
+
+        html.theme-blackish input::placeholder,
+        html.theme-blackish textarea::placeholder {
+            color: #8B949E !important;
+        }
+
+        html.theme-blackish input:focus,
+        html.theme-blackish select:focus,
+        html.theme-blackish textarea:focus {
+            border-color: #C5A16B !important;
+            box-shadow: 0 0 0 2px rgba(197, 161, 107, 0.35) !important;
+            background-color: #161B22 !important;
+        }
+
+        /* 6. Typography in Blackish Mode */
+        html.theme-blackish .text-espresso-950,
+        html.theme-blackish .text-espresso-900,
+        html.theme-blackish .dark\:text-white {
+            color: #F0F6FC !important;
+        }
+
+        html.theme-blackish .text-espresso-800,
+        html.theme-blackish .text-\[\#6C635B\],
+        html.theme-blackish .text-\[\#7F746A\] {
+            color: #C9D1D9 !important;
+        }
+
+        html.theme-blackish .text-\[\#8F8379\],
+        html.theme-blackish .text-\[\#9C8F85\],
+        html.theme-blackish .text-\[\#A89C91\],
+        html.theme-blackish .dark\:text-slate-400 {
+            color: #8B949E !important;
+        }
+
+        /* 7. Table in Blackish Mode */
+        html.theme-blackish table thead th {
+            background-color: #161B22 !important;
+            color: #F0F6FC !important;
+            border-bottom: 1px solid #30363D !important;
+        }
+        html.theme-blackish table tbody tr {
+            border-bottom: 1px solid #21262D !important;
+        }
+        html.theme-blackish table tbody tr:hover {
+            background-color: #1F242C !important;
         }
     </style>
 
@@ -486,7 +768,12 @@
 <body 
     x-data="{ 
         sidebarOpen: false,
-        theme: document.documentElement.classList.contains('dark') ? 'dark' : 'light',
+        theme: (function() {
+            let t = localStorage.getItem('zunash_admin_theme');
+            if (t === 'blackish') return 'blackish';
+            if (t === 'slate' || t === 'dark') return 'slate';
+            return 'creme';
+        })(),
         categoriesOpen: {{ request()->routeIs('admin.categories*') ? 'true' : 'false' }},
         subcategoriesOpen: {{ request()->routeIs('admin.subcategories*') ? 'true' : 'false' }},
         productsOpen: {{ request()->routeIs('admin.products*') ? 'true' : 'false' }},
@@ -509,15 +796,30 @@
             localStorage.setItem('zunash_sound_enabled', this.soundEnabled ? 'true' : 'false');
             if (this.soundEnabled) this.playChime();
         },
-        toggleTheme() {
-            this.theme = this.theme === 'light' ? 'dark' : 'light';
-            localStorage.setItem('zunash_admin_theme', this.theme);
-            if (this.theme === 'dark') {
-                document.documentElement.classList.add('dark');
+        setTheme(newTheme) {
+            this.theme = newTheme;
+            localStorage.setItem('zunash_admin_theme', newTheme);
+            document.documentElement.classList.remove('dark', 'theme-creme', 'theme-slate', 'theme-blackish');
+            if (newTheme === 'blackish') {
+                document.documentElement.classList.add('dark', 'theme-blackish');
+            } else if (newTheme === 'slate') {
+                document.documentElement.classList.add('dark', 'theme-slate');
             } else {
-                document.documentElement.classList.remove('dark');
+                document.documentElement.classList.add('theme-creme');
             }
-            window.dispatchEvent(new CustomEvent('themechanged', { detail: this.theme }));
+            window.dispatchEvent(new CustomEvent('themechanged', { detail: newTheme }));
+        },
+        cycleTheme() {
+            if (this.theme === 'creme') {
+                this.setTheme('slate');
+            } else if (this.theme === 'slate') {
+                this.setTheme('blackish');
+            } else {
+                this.setTheme('creme');
+            }
+        },
+        toggleTheme() {
+            this.cycleTheme();
         },
         playChime() {
             if (!this.soundEnabled) return;
@@ -607,7 +909,7 @@
             }, 10000);
         }
     }"
-    class="bg-[#FAF9F6] dark:bg-[#0F172A] text-espresso-900 dark:text-[#F8FAFC] antialiased selection:bg-gold selection:text-espresso-950 min-h-screen flex flex-col transition-colors duration-200 w-full max-w-full overflow-x-hidden"
+    class="bg-[#F7F4ED] dark:bg-[#1E2738] text-espresso-900 dark:text-[#F1F5F9] antialiased selection:bg-gold selection:text-espresso-950 min-h-screen flex flex-col transition-colors duration-200 w-full max-w-full overflow-x-hidden"
 >
 
     <div class="min-h-screen flex flex-1 w-full min-w-0 max-w-full overflow-x-hidden">
@@ -1004,7 +1306,7 @@
         ></div>
 
         <!-- ======================= MAIN CONTENT WRAPPER ======================= -->
-        <div class="flex-1 lg:pl-64 flex flex-col min-h-screen w-full min-w-0 max-w-full overflow-x-hidden bg-[#FAF9F6] dark:bg-[#0F172A] transition-colors duration-200">
+        <div class="flex-1 lg:pl-64 flex flex-col min-h-screen w-full min-w-0 max-w-full overflow-x-hidden bg-[#F7F4ED] dark:bg-[#1E2738] transition-colors duration-200">
 
             <!-- Top Header Bar (Compact Sleek h-14) -->
             <header class="sticky top-0 z-30 h-14 bg-white/95 dark:bg-[#111827]/95 backdrop-blur-md border-b border-[#ECE6DE] dark:border-[#1F2937] px-3 sm:px-6 flex items-center justify-between gap-2 sm:gap-4 w-full min-w-0">
@@ -1442,19 +1744,93 @@
                         </template>
                     </button>
 
-                    <!-- Dark / Light Theme Toggle -->
-                    <button 
-                        @click="toggleTheme()" 
-                        class="w-8 h-8 rounded-full border border-[#E0D7CB] dark:border-[#3A2F29] flex items-center justify-center text-gray-500 hover:text-gold-600 transition-colors"
-                        title="Toggle Dark/Light Mode"
-                    >
-                        <template x-if="theme === 'light'">
-                            <i data-lucide="moon" class="w-3.5 h-3.5"></i>
-                        </template>
-                        <template x-if="theme === 'dark'">
-                            <i data-lucide="sun" class="w-3.5 h-3.5 text-amber-400"></i>
-                        </template>
-                    </button>
+                    <!-- 3-Theme Switcher: Luxury Creme / Soft Midnight Slate / Obsidian Blackish -->
+                    <div class="relative" x-data="{ openThemeMenu: false }">
+                        <button 
+                            type="button"
+                            @click="openThemeMenu = !openThemeMenu" 
+                            class="flex items-center gap-1.5 px-2.5 py-1.5 rounded-full border transition-all text-xs font-semibold cursor-pointer border-[#E0D7CB] dark:border-slate-700 hover:border-gold-500 bg-[#FCFAF5] dark:bg-slate-800 text-espresso-950 dark:text-white shadow-2xs"
+                            title="Switch Atelier Appearance (Creme / Slate Navy / Obsidian Blackish)"
+                        >
+                            <span x-show="theme === 'creme'" class="flex items-center gap-1 text-amber-600">
+                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+                                </svg>
+                                <span class="hidden md:inline text-[10px] font-bold">Creme</span>
+                            </span>
+
+                            <span x-show="theme === 'slate'" class="flex items-center gap-1 text-sky-400">
+                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+                                </svg>
+                                <span class="hidden md:inline text-[10px] font-bold">Slate Blue</span>
+                            </span>
+
+                            <span x-show="theme === 'blackish'" class="flex items-center gap-1 text-gold-400">
+                                <span class="w-2.5 h-2.5 rounded-full bg-black border border-gold-400/80"></span>
+                                <span class="hidden md:inline text-[10px] font-bold">Blackish</span>
+                            </span>
+
+                            <svg class="w-3 h-3 text-gray-400 transition-transform duration-200" :class="openThemeMenu ? 'rotate-180' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                            </svg>
+                        </button>
+
+                        <!-- Theme Options Dropdown -->
+                        <div 
+                            x-show="openThemeMenu" 
+                            @click.away="openThemeMenu = false" 
+                            x-cloak 
+                            x-transition.opacity.duration.150ms
+                            class="absolute right-0 mt-1.5 w-52 rounded-xl bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 shadow-xl py-1.5 z-50 text-xs"
+                        >
+                            <div class="px-3 py-1 text-[10px] font-bold text-gray-400 dark:text-slate-400 uppercase tracking-wider">
+                                Atelier Appearance
+                            </div>
+
+                            <!-- 1. Luxury Creme (Light) -->
+                            <button 
+                                type="button" 
+                                @click="setTheme('creme'); openThemeMenu = false;" 
+                                class="w-full text-left px-3 py-2 flex items-center justify-between hover:bg-gray-100 dark:hover:bg-slate-700/60 transition-colors cursor-pointer"
+                                :class="theme === 'creme' ? 'text-amber-700 dark:text-gold-400 font-bold bg-amber-500/10' : 'text-gray-700 dark:text-slate-200'"
+                            >
+                                <span class="flex items-center gap-2">
+                                    <span class="w-3.5 h-3.5 rounded-full bg-[#F7F4ED] border border-[#E5DDD0]"></span>
+                                    <span>☀️ Luxury Creme <span class="text-[10px] text-gray-400">(Day)</span></span>
+                                </span>
+                                <span x-show="theme === 'creme'" class="text-amber-600 font-bold">✓</span>
+                            </button>
+
+                            <!-- 2. Midnight Slate (Soft Dark) -->
+                            <button 
+                                type="button" 
+                                @click="setTheme('slate'); openThemeMenu = false;" 
+                                class="w-full text-left px-3 py-2 flex items-center justify-between hover:bg-gray-100 dark:hover:bg-slate-700/60 transition-colors cursor-pointer"
+                                :class="theme === 'slate' ? 'text-sky-400 font-bold bg-sky-500/10' : 'text-gray-700 dark:text-slate-200'"
+                            >
+                                <span class="flex items-center gap-2">
+                                    <span class="w-3.5 h-3.5 rounded-full bg-[#1E2738] border border-sky-400"></span>
+                                    <span>🌙 Midnight Slate <span class="text-[10px] text-gray-400">(Soft Blue)</span></span>
+                                </span>
+                                <span x-show="theme === 'slate'" class="text-sky-400 font-bold">✓</span>
+                            </button>
+
+                            <!-- 3. Obsidian Blackish (True Dark) -->
+                            <button 
+                                type="button" 
+                                @click="setTheme('blackish'); openThemeMenu = false;" 
+                                class="w-full text-left px-3 py-2 flex items-center justify-between hover:bg-gray-100 dark:hover:bg-slate-700/60 transition-colors cursor-pointer"
+                                :class="theme === 'blackish' ? 'text-gold-400 font-bold bg-gold/10' : 'text-gray-700 dark:text-slate-200'"
+                            >
+                                <span class="flex items-center gap-2">
+                                    <span class="w-3.5 h-3.5 rounded-full bg-[#0B0F14] border border-gold-400"></span>
+                                    <span>🌑 Obsidian Blackish <span class="text-[10px] text-gray-400">(True Dark)</span></span>
+                                </span>
+                                <span x-show="theme === 'blackish'" class="text-gold-400 font-bold">✓</span>
+                            </button>
+                        </div>
+                    </div>
 
                     <!-- Currency Identifier Pill (PKR / Rs.) -->
                     <div class="hidden sm:flex items-center text-[10px] font-bold rounded-full border border-gold/40 px-2.5 py-1 text-espresso-900 dark:text-gold bg-gold/10">
@@ -1473,7 +1849,7 @@
             </header>
 
             <!-- Main Page View Content (Compact Padding & Tighter Gaps) -->
-            <main class="flex-1 p-3 sm:p-5 space-y-3.5 w-full min-w-0 max-w-full overflow-x-hidden bg-[#FAF9F6] dark:bg-[#0F172A] transition-colors duration-200">
+            <main class="flex-1 p-3 sm:p-5 space-y-3.5 w-full min-w-0 max-w-full overflow-x-hidden bg-[#F7F4ED] dark:bg-[#1E2738] transition-colors duration-200">
                 @yield('content')
             </main>
 
