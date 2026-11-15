@@ -4,16 +4,22 @@
 
 @section('content')
 
+@php
+    $categorySuggestions = $categories->map(function ($c) {
+        return [
+            'id' => $c->id,
+            'name' => $c->name,
+            'tagline' => $c->tagline ?? '',
+            'slug' => $c->slug,
+            'count' => (int) $c->products_count,
+        ];
+    })->values();
+@endphp
+
 <div class="space-y-6" x-data="{
     searchQuery: '{{ addslashes(request('q', '')) }}',
     openDropdown: false,
-    items: @json($categories->map(fn($c) => [
-        'id' => $c->id,
-        'name' => $c->name,
-        'tagline' => $c->tagline ?? '',
-        'slug' => $c->slug,
-        'count' => (int) $c->products_count
-    ])),
+    items: {{ Js::from($categorySuggestions) }},
     get filteredSuggestions() {
         if (!this.searchQuery.trim()) return [];
         const q = this.searchQuery.trim().toLowerCase();

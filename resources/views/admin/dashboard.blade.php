@@ -76,16 +76,62 @@
 
 
     <!-- ======================= 1.1 EXECUTIVE SALES, FULFILLMENT & PROFIT AUDIT ======================= -->
-    <div class="rounded-2xl bg-white dark:bg-slate-800 border border-[#ECE6DE] dark:border-slate-700 p-3.5 sm:p-5 shadow-xs w-full min-w-0 space-y-4">
+    <div 
+        x-data="{ 
+            openAudit: localStorage.getItem('zunash_audit_collapsed') !== 'true',
+            activeTab: localStorage.getItem('zunash_audit_tab') || 'all',
+            showCustom: {{ $timeframe === 'custom' ? 'true' : 'false' }},
+            openViewDropdown: false,
+            saveAuditState() {
+                localStorage.setItem('zunash_audit_collapsed', !this.openAudit ? 'true' : 'false');
+                localStorage.setItem('zunash_audit_tab', this.activeTab);
+            },
+            toggleAudit() {
+                this.openAudit = !this.openAudit;
+                this.saveAuditState();
+            },
+            selectView(tab) {
+                this.openAudit = true;
+                this.activeTab = tab;
+                this.saveAuditState();
+                this.openViewDropdown = false;
+            },
+            collapseAudit() {
+                this.openAudit = false;
+                this.saveAuditState();
+                this.openViewDropdown = false;
+            }
+        }"
+        class="rounded-2xl bg-white dark:bg-slate-800 border border-[#ECE6DE] dark:border-slate-700 p-3.5 sm:p-5 shadow-xs w-full min-w-0 space-y-4"
+    >
         
         <!-- Header Controls: Timeframe Pills, Custom Date Range & CSV Download -->
         <div class="flex flex-col xl:flex-row xl:items-center xl:justify-between gap-3 pb-3.5 border-b border-[#F0EAE1] dark:border-slate-700">
             <div>
-                <div class="flex items-center gap-2">
+                <div class="flex items-center gap-2 flex-wrap">
                     <span class="w-2.5 h-2.5 rounded-full bg-gold"></span>
                     <h2 class="font-cinzel text-sm sm:text-base font-bold text-espresso-950 dark:text-white">
                         Executive Sales, COD Delivery & Real Profit Audit
                     </h2>
+
+                    <!-- Quick Accordion Toggle Pill -->
+                    <button 
+                        type="button" 
+                        @click="toggleAudit()" 
+                        class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-semibold border transition-all cursor-pointer bg-slate-100 hover:bg-slate-200 dark:bg-slate-900 dark:hover:bg-slate-700 border-slate-300 dark:border-slate-700 text-slate-700 dark:text-slate-300"
+                        :title="openAudit ? 'Click to collapse metrics' : 'Click to expand metrics'"
+                    >
+                        <span x-text="openAudit ? 'Hide Cards' : 'Open Cards (8)'"></span>
+                        <svg 
+                            class="w-3 h-3 transition-transform duration-200" 
+                            :class="openAudit ? 'rotate-180' : ''" 
+                            fill="none" 
+                            stroke="currentColor" 
+                            viewBox="0 0 24 24"
+                        >
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7" />
+                        </svg>
+                    </button>
                 </div>
                 <p class="text-[11px] text-gray-500 dark:text-slate-400 mt-0.5">
                     Auditing Period: <strong class="text-tan-700 dark:text-gold-400 font-mono">{{ $dateLabel }}</strong>
@@ -93,7 +139,7 @@
             </div>
 
             <!-- Controls (Filter Buttons & Download) -->
-            <div class="flex flex-wrap items-center gap-2" x-data="{ showCustom: {{ $timeframe === 'custom' ? 'true' : 'false' }} }">
+            <div class="flex flex-wrap items-center gap-2">
                 
                 <!-- Timeframe Quick Filter Buttons -->
                 <div class="inline-flex rounded-xl bg-[#FAF8F5] dark:bg-slate-900/80 p-1 border border-[#E0D7CB] dark:border-slate-700 text-xs font-semibold">
@@ -131,6 +177,89 @@
                     </form>
                 </div>
 
+                <!-- Cards Display Dropdown Menu (Open & Close Dropdown) -->
+                <div class="relative">
+                    <button 
+                        type="button" 
+                        @click="openViewDropdown = !openViewDropdown" 
+                        class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-gray-300 dark:border-slate-700 bg-[#FAF8F5] dark:bg-slate-900 hover:bg-white dark:hover:bg-slate-700 text-xs font-semibold text-espresso-950 dark:text-white shadow-2xs active:scale-95 transition-all cursor-pointer"
+                        title="Display view or open/close cards"
+                    >
+                        <i data-lucide="layout-grid" class="w-3.5 h-3.5 text-tan-600 dark:text-gold-400"></i>
+                        <span x-text="!openAudit ? 'Cards: Collapsed' : (activeTab === 'all' ? 'Cards: All (8)' : (activeTab === 'profit' ? 'Cards: Profit (4)' : 'Cards: Delivery (4)'))"></span>
+                        <svg class="w-3.5 h-3.5 transition-transform duration-200" :class="openViewDropdown ? 'rotate-180' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                        </svg>
+                    </button>
+
+                    <!-- Dropdown Options -->
+                    <div 
+                        x-show="openViewDropdown" 
+                        @click.away="openViewDropdown = false" 
+                        x-cloak 
+                        x-transition.opacity.duration.150ms
+                        class="absolute right-0 mt-1.5 w-60 rounded-xl bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 shadow-xl py-1.5 z-40 text-xs"
+                    >
+                        <div class="px-3 py-1 text-[10px] font-bold text-gray-400 dark:text-slate-400 uppercase tracking-wider">
+                            Card Display Options
+                        </div>
+                        
+                        <button 
+                            type="button" 
+                            @click="selectView('all')" 
+                            class="w-full text-left px-3 py-2 flex items-center justify-between hover:bg-gray-100 dark:hover:bg-slate-700/60 transition-colors cursor-pointer"
+                            :class="openAudit && activeTab === 'all' ? 'text-amber-600 dark:text-gold-400 font-bold bg-amber-500/5' : 'text-gray-700 dark:text-slate-200'"
+                        >
+                            <span class="flex items-center gap-2">
+                                <span class="w-2 h-2 rounded-full bg-gold"></span>
+                                <span>Show All 8 Metrics</span>
+                            </span>
+                            <span x-show="openAudit && activeTab === 'all'" class="text-amber-500 font-bold">✓</span>
+                        </button>
+
+                        <button 
+                            type="button" 
+                            @click="selectView('profit')" 
+                            class="w-full text-left px-3 py-2 flex items-center justify-between hover:bg-gray-100 dark:hover:bg-slate-700/60 transition-colors cursor-pointer"
+                            :class="openAudit && activeTab === 'profit' ? 'text-emerald-600 dark:text-emerald-400 font-bold bg-emerald-500/5' : 'text-gray-700 dark:text-slate-200'"
+                        >
+                            <span class="flex items-center gap-2">
+                                <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+                                <span>Profit & Revenue Only (4)</span>
+                            </span>
+                            <span x-show="openAudit && activeTab === 'profit'" class="text-emerald-500 font-bold">✓</span>
+                        </button>
+
+                        <button 
+                            type="button" 
+                            @click="selectView('logistics')" 
+                            class="w-full text-left px-3 py-2 flex items-center justify-between hover:bg-gray-100 dark:hover:bg-slate-700/60 transition-colors cursor-pointer"
+                            :class="openAudit && activeTab === 'logistics' ? 'text-sky-600 dark:text-sky-400 font-bold bg-sky-500/5' : 'text-gray-700 dark:text-slate-200'"
+                        >
+                            <span class="flex items-center gap-2">
+                                <span class="w-2 h-2 rounded-full bg-sky-500"></span>
+                                <span>Orders & Delivery Only (4)</span>
+                            </span>
+                            <span x-show="openAudit && activeTab === 'logistics'" class="text-sky-500 font-bold">✓</span>
+                        </button>
+
+                        <div class="my-1 border-t border-gray-100 dark:border-slate-700"></div>
+
+                        <button 
+                            type="button" 
+                            @click="collapseAudit()" 
+                            class="w-full text-left px-3 py-2 flex items-center justify-between hover:bg-gray-100 dark:hover:bg-slate-700/60 transition-colors cursor-pointer"
+                            :class="!openAudit ? 'text-amber-600 dark:text-amber-400 font-bold bg-amber-500/5' : 'text-gray-700 dark:text-slate-200'"
+                        >
+                            <span class="flex items-center gap-2">
+                                <span class="w-2 h-2 rounded-full bg-slate-400"></span>
+                                <span>Collapse / Hide Cards</span>
+                            </span>
+                            <span x-show="!openAudit" class="text-amber-500 font-bold">✓</span>
+                        </button>
+                    </div>
+                </div>
+
                 <!-- Daily Closing & PDF Reports Buttons -->
                 <a 
                     href="{{ route('admin.analytics.daily-closing') }}" 
@@ -164,124 +293,206 @@
             </div>
         </div>
 
-        <!-- 8 Executive Operational & Profit Metrics Grid -->
-        <div class="grid grid-cols-2 md:grid-cols-4 gap-2.5 sm:gap-3">
+        <!-- Collapsed Quick Summary Bar (Clicking anywhere expands it) -->
+        <div 
+            x-show="!openAudit" 
+            x-cloak 
+            @click="toggleAudit()" 
+            class="cursor-pointer group flex flex-col md:flex-row md:items-center justify-between gap-3 p-3 rounded-xl bg-slate-50 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-700/80 hover:border-amber-500/60 transition-all shadow-xs"
+        >
+            <div class="flex flex-wrap items-center gap-x-5 gap-y-1.5 text-xs">
+                <span class="text-slate-500 dark:text-slate-400 font-medium">Quick Snapshot:</span>
+                <span class="inline-flex items-center gap-1.5 text-slate-700 dark:text-slate-200">
+                    <span class="w-2 h-2 rounded-full bg-slate-400"></span>
+                    Orders: <strong class="text-espresso-950 dark:text-white font-cinzel">{{ $filterOrdersCount }}</strong>
+                </span>
+                <span class="inline-flex items-center gap-1.5 text-emerald-700 dark:text-emerald-300">
+                    <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+                    Delivered: <strong class="font-cinzel">{{ $filterDeliveredCount }}</strong>
+                    <span class="text-[10px] px-1 rounded bg-emerald-500/10 dark:bg-emerald-500/20 font-bold">({{ $filterDeliveryRate }}%)</span>
+                </span>
+                <span class="inline-flex items-center gap-1.5 text-slate-700 dark:text-slate-200">
+                    <span class="w-2 h-2 rounded-full bg-tan-500"></span>
+                    Gross: <strong class="text-espresso-950 dark:text-white font-cinzel">Rs. {{ number_format($filterDeliveredRevenue) }}</strong>
+                </span>
+                <span class="inline-flex items-center gap-1.5 text-amber-700 dark:text-gold-300">
+                    <span class="w-2 h-2 rounded-full bg-amber-500"></span>
+                    Net Profit: <strong class="font-cinzel">Rs. {{ number_format($filterNetProfit) }}</strong>
+                    <span class="text-[10px] px-1 rounded bg-amber-500/10 dark:bg-amber-500/20 font-bold">({{ $filterProfitMargin }}% margin)</span>
+                </span>
+            </div>
+
+            <div class="inline-flex items-center gap-1.5 text-xs font-semibold text-tan-700 dark:text-gold-400 group-hover:translate-x-0.5 transition-transform shrink-0">
+                <span>Click to open full cards</span>
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                </svg>
+            </div>
+        </div>
+
+        <!-- Expanded Cards Section with View Tabs -->
+        <div x-show="openAudit" x-transition.opacity.duration.150ms class="space-y-3">
             
-            <!-- Metric 1: Total Orders Placed -->
-            <div class="p-3 rounded-xl bg-[#FAF8F5] dark:bg-slate-900/60 border border-[#EBE3D8] dark:border-slate-700">
-                <div class="text-[10px] font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400 flex items-center justify-between">
-                    <span>Total Orders Placed</span>
-                    <i data-lucide="shopping-cart" class="w-3.5 h-3.5 text-tan-600"></i>
+            <!-- Category Tabs: All / Profit & Cash / COD & Delivery -->
+            <div class="flex flex-wrap items-center justify-between gap-2">
+                <div class="inline-flex rounded-lg bg-[#FAF8F5] dark:bg-slate-900/90 p-0.5 border border-[#E0D7CB] dark:border-slate-700 text-xs">
+                    <button 
+                        type="button" 
+                        @click="selectView('all')" 
+                        :class="activeTab === 'all' ? 'bg-white dark:bg-slate-800 text-espresso-950 dark:text-white font-bold shadow-2xs' : 'text-gray-500 dark:text-slate-400 hover:text-espresso-900 dark:hover:text-white'"
+                        class="px-2.5 py-1 rounded-md transition-colors cursor-pointer"
+                    >
+                        All Metrics (8)
+                    </button>
+                    <button 
+                        type="button" 
+                        @click="selectView('profit')" 
+                        :class="activeTab === 'profit' ? 'bg-white dark:bg-slate-800 text-emerald-700 dark:text-emerald-300 font-bold shadow-2xs' : 'text-gray-500 dark:text-slate-400 hover:text-espresso-900 dark:hover:text-white'"
+                        class="px-2.5 py-1 rounded-md transition-colors flex items-center gap-1 cursor-pointer"
+                    >
+                        <span>💰 Profit & Cash (4)</span>
+                    </button>
+                    <button 
+                        type="button" 
+                        @click="selectView('logistics')" 
+                        :class="activeTab === 'logistics' ? 'bg-white dark:bg-slate-800 text-sky-700 dark:text-sky-300 font-bold shadow-2xs' : 'text-gray-500 dark:text-slate-400 hover:text-espresso-900 dark:hover:text-white'"
+                        class="px-2.5 py-1 rounded-md transition-colors flex items-center gap-1 cursor-pointer"
+                    >
+                        <span>📦 COD & Delivery (4)</span>
+                    </button>
                 </div>
-                <div class="font-cinzel text-xl sm:text-2xl font-bold text-espresso-950 dark:text-white mt-1">
-                    {{ $filterOrdersCount }}
-                </div>
-                <div class="text-[10px] text-gray-500 mt-0.5">
-                    In selected timeframe
-                </div>
+
+                <button 
+                    type="button" 
+                    @click="collapseAudit()" 
+                    class="text-[11px] text-gray-500 hover:text-espresso-950 dark:text-slate-400 dark:hover:text-white flex items-center gap-1 transition-colors cursor-pointer"
+                >
+                    <span>Collapse section</span>
+                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7" />
+                    </svg>
+                </button>
             </div>
 
-            <!-- Metric 2: Successfully Delivered (COD Collected) -->
-            <div class="p-3 rounded-xl bg-emerald-50/50 dark:bg-emerald-950/20 border border-emerald-200/80 dark:border-emerald-800/40">
-                <div class="text-[10px] font-bold uppercase tracking-wider text-emerald-800 dark:text-emerald-300 flex items-center justify-between">
-                    <span>Delivered Orders</span>
-                    <span class="px-1.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-700 dark:text-emerald-300 text-[9px] font-bold">
-                        {{ $filterDeliveryRate }}% Success
-                    </span>
+            <!-- 8 Executive Operational & Profit Metrics Grid -->
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-2.5 sm:gap-3">
+                
+                <!-- Metric 1: Total Orders Placed -->
+                <div x-show="activeTab === 'all' || activeTab === 'logistics'" class="p-3 rounded-xl bg-[#FAF8F5] dark:bg-slate-900/60 border border-[#EBE3D8] dark:border-slate-700">
+                    <div class="text-[10px] font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400 flex items-center justify-between">
+                        <span>Total Orders Placed</span>
+                        <i data-lucide="shopping-cart" class="w-3.5 h-3.5 text-tan-600"></i>
+                    </div>
+                    <div class="font-cinzel text-xl sm:text-2xl font-bold text-espresso-950 dark:text-white mt-1">
+                        {{ $filterOrdersCount }}
+                    </div>
+                    <div class="text-[10px] text-gray-500 mt-0.5">
+                        In selected timeframe
+                    </div>
                 </div>
-                <div class="font-cinzel text-xl sm:text-2xl font-bold text-emerald-800 dark:text-emerald-200 mt-1">
-                    {{ $filterDeliveredCount }}
-                </div>
-                <div class="text-[10px] text-emerald-700/80 dark:text-emerald-400 mt-0.5">
-                    Cash collected & fulfilled
-                </div>
-            </div>
 
-            <!-- Metric 3: In Transit / Dispatched -->
-            <div class="p-3 rounded-xl bg-sky-50/50 dark:bg-sky-950/20 border border-sky-200/80 dark:border-sky-800/40">
-                <div class="text-[10px] font-bold uppercase tracking-wider text-sky-800 dark:text-sky-300 flex items-center justify-between">
-                    <span>In Transit / Dispatched</span>
-                    <i data-lucide="truck" class="w-3.5 h-3.5 text-sky-600"></i>
+                <!-- Metric 2: Successfully Delivered (COD Collected) -->
+                <div x-show="activeTab === 'all' || activeTab === 'logistics'" class="p-3 rounded-xl bg-emerald-50/50 dark:bg-emerald-950/20 border border-emerald-200/80 dark:border-emerald-800/40">
+                    <div class="text-[10px] font-bold uppercase tracking-wider text-emerald-800 dark:text-emerald-300 flex items-center justify-between">
+                        <span>Delivered Orders</span>
+                        <span class="px-1.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-700 dark:text-emerald-300 text-[9px] font-bold">
+                            {{ $filterDeliveryRate }}% Success
+                        </span>
+                    </div>
+                    <div class="font-cinzel text-xl sm:text-2xl font-bold text-emerald-800 dark:text-emerald-200 mt-1">
+                        {{ $filterDeliveredCount }}
+                    </div>
+                    <div class="text-[10px] text-emerald-700/80 dark:text-emerald-400 mt-0.5">
+                        Cash collected & fulfilled
+                    </div>
                 </div>
-                <div class="font-cinzel text-xl sm:text-2xl font-bold text-sky-800 dark:text-sky-200 mt-1">
-                    {{ $filterDispatchedCount }}
-                </div>
-                <div class="text-[10px] text-sky-700/80 dark:text-sky-400 mt-0.5">
-                    With Courier (TCS / Trax / PostEx)
-                </div>
-            </div>
 
-            <!-- Metric 4: COD Returns & Failed Deliveries -->
-            <div class="p-3 rounded-xl bg-rose-50/50 dark:bg-rose-950/20 border border-rose-200/80 dark:border-rose-800/40">
-                <div class="text-[10px] font-bold uppercase tracking-wider text-rose-800 dark:text-rose-300 flex items-center justify-between">
-                    <span>COD Returns & Failed</span>
-                    <span class="px-1.5 py-0.5 rounded-full bg-rose-500/20 text-rose-700 dark:text-rose-300 text-[9px] font-bold">
-                        {{ $filterReturnRate }}% Return Rate
-                    </span>
+                <!-- Metric 3: In Transit / Dispatched -->
+                <div x-show="activeTab === 'all' || activeTab === 'logistics'" class="p-3 rounded-xl bg-sky-50/50 dark:bg-sky-950/20 border border-sky-200/80 dark:border-sky-800/40">
+                    <div class="text-[10px] font-bold uppercase tracking-wider text-sky-800 dark:text-sky-300 flex items-center justify-between">
+                        <span>In Transit / Dispatched</span>
+                        <i data-lucide="truck" class="w-3.5 h-3.5 text-sky-600"></i>
+                    </div>
+                    <div class="font-cinzel text-xl sm:text-2xl font-bold text-sky-800 dark:text-sky-200 mt-1">
+                        {{ $filterDispatchedCount }}
+                    </div>
+                    <div class="text-[10px] text-sky-700/80 dark:text-sky-400 mt-0.5">
+                        With Courier (TCS / Trax / PostEx)
+                    </div>
                 </div>
-                <div class="font-cinzel text-xl sm:text-2xl font-bold text-rose-700 dark:text-rose-300 mt-1">
-                    {{ $filterReturnedCount }}
-                </div>
-                <div class="text-[10px] text-rose-600/80 dark:text-rose-400 mt-0.5">
-                    Loss: Rs. {{ number_format($filterReturnLosses) }}
-                </div>
-            </div>
 
-            <!-- Metric 5: Delivered Revenue (Gross) -->
-            <div class="p-3 rounded-xl bg-[#FAF8F5] dark:bg-slate-900/60 border border-[#EBE3D8] dark:border-slate-700">
-                <div class="text-[10px] font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400">
-                    Delivered Gross Revenue
+                <!-- Metric 4: COD Returns & Failed Deliveries -->
+                <div x-show="activeTab === 'all' || activeTab === 'logistics'" class="p-3 rounded-xl bg-rose-50/50 dark:bg-rose-950/20 border border-rose-200/80 dark:border-rose-800/40">
+                    <div class="text-[10px] font-bold uppercase tracking-wider text-rose-800 dark:text-rose-300 flex items-center justify-between">
+                        <span>COD Returns & Failed</span>
+                        <span class="px-1.5 py-0.5 rounded-full bg-rose-500/20 text-rose-700 dark:text-rose-300 text-[9px] font-bold">
+                            {{ $filterReturnRate }}% Return Rate
+                        </span>
+                    </div>
+                    <div class="font-cinzel text-xl sm:text-2xl font-bold text-rose-700 dark:text-rose-300 mt-1">
+                        {{ $filterReturnedCount }}
+                    </div>
+                    <div class="text-[10px] text-rose-600/80 dark:text-rose-400 mt-0.5">
+                        Loss: Rs. {{ number_format($filterReturnLosses) }}
+                    </div>
                 </div>
-                <div class="font-cinzel text-lg sm:text-xl font-bold text-espresso-950 dark:text-white mt-1">
-                    Rs. {{ number_format($filterDeliveredRevenue) }}
-                </div>
-                <div class="text-[10px] text-gray-500 mt-0.5">
-                    From {{ $filterDeliveredCount }} completed orders
-                </div>
-            </div>
 
-            <!-- Metric 6: Real COGS (Product Purchase Cost) -->
-            <div class="p-3 rounded-xl bg-[#FAF8F5] dark:bg-slate-900/60 border border-[#EBE3D8] dark:border-slate-700">
-                <div class="text-[10px] font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400">
-                    Product Purchase Cost (COGS)
+                <!-- Metric 5: Delivered Revenue (Gross) -->
+                <div x-show="activeTab === 'all' || activeTab === 'profit'" class="p-3 rounded-xl bg-[#FAF8F5] dark:bg-slate-900/60 border border-[#EBE3D8] dark:border-slate-700">
+                    <div class="text-[10px] font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400">
+                        Delivered Gross Revenue
+                    </div>
+                    <div class="font-cinzel text-lg sm:text-xl font-bold text-espresso-950 dark:text-white mt-1">
+                        Rs. {{ number_format($filterDeliveredRevenue) }}
+                    </div>
+                    <div class="text-[10px] text-gray-500 mt-0.5">
+                        From {{ $filterDeliveredCount }} completed orders
+                    </div>
                 </div>
-                <div class="font-cinzel text-lg sm:text-xl font-bold text-espresso-950 dark:text-white mt-1">
-                    Rs. {{ number_format($filterRealCogs) }}
-                </div>
-                <div class="text-[10px] text-gray-500 mt-0.5">
-                    Real raw material & craft cost
-                </div>
-            </div>
 
-            <!-- Metric 7: Lost Courier Charges on Returns -->
-            <div class="p-3 rounded-xl bg-amber-50/50 dark:bg-amber-950/20 border border-amber-200/80 dark:border-amber-800/40">
-                <div class="text-[10px] font-bold uppercase tracking-wider text-amber-800 dark:text-amber-300">
-                    Courier Return Freight Loss
+                <!-- Metric 6: Real COGS (Product Purchase Cost) -->
+                <div x-show="activeTab === 'all' || activeTab === 'profit'" class="p-3 rounded-xl bg-[#FAF8F5] dark:bg-slate-900/60 border border-[#EBE3D8] dark:border-slate-700">
+                    <div class="text-[10px] font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400">
+                        Product Purchase Cost (COGS)
+                    </div>
+                    <div class="font-cinzel text-lg sm:text-xl font-bold text-espresso-950 dark:text-white mt-1">
+                        Rs. {{ number_format($filterRealCogs) }}
+                    </div>
+                    <div class="text-[10px] text-gray-500 mt-0.5">
+                        Real raw material & craft cost
+                    </div>
                 </div>
-                <div class="font-cinzel text-lg sm:text-xl font-bold text-amber-800 dark:text-amber-300 mt-1">
-                    Rs. {{ number_format($filterReturnLosses) }}
-                </div>
-                <div class="text-[10px] text-amber-700/80 dark:text-amber-400 mt-0.5">
-                    Non-delivery courier invoice
-                </div>
-            </div>
 
-            <!-- Metric 8: Net Realized Profit (Real In-Pocket Cash) -->
-            <div class="p-3 rounded-xl bg-gradient-to-br from-emerald-500/10 via-tan-500/10 to-gold/20 border border-gold/40">
-                <div class="text-[10px] font-bold uppercase tracking-wider text-emerald-800 dark:text-gold-300 flex items-center justify-between">
-                    <span>Net Realized Profit</span>
-                    <span class="px-1.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-800 dark:text-emerald-300 text-[9px] font-bold">
-                        {{ $filterProfitMargin }}% Margin
-                    </span>
+                <!-- Metric 7: Lost Courier Charges on Returns -->
+                <div x-show="activeTab === 'all' || activeTab === 'profit'" class="p-3 rounded-xl bg-amber-50/50 dark:bg-amber-950/20 border border-amber-200/80 dark:border-amber-800/40">
+                    <div class="text-[10px] font-bold uppercase tracking-wider text-amber-800 dark:text-amber-300">
+                        Courier Return Freight Loss
+                    </div>
+                    <div class="font-cinzel text-lg sm:text-xl font-bold text-amber-800 dark:text-amber-300 mt-1">
+                        Rs. {{ number_format($filterReturnLosses) }}
+                    </div>
+                    <div class="text-[10px] text-amber-700/80 dark:text-amber-400 mt-0.5">
+                        Non-delivery courier invoice
+                    </div>
                 </div>
-                <div class="font-cinzel text-lg sm:text-xl font-bold text-emerald-700 dark:text-emerald-300 mt-1">
-                    Rs. {{ number_format($filterNetProfit) }}
-                </div>
-                <div class="text-[10px] text-emerald-600 dark:text-emerald-400 mt-0.5 font-medium">
-                    (Revenue - COGS - Return Losses)
-                </div>
-            </div>
 
+                <!-- Metric 8: Net Realized Profit (Real In-Pocket Cash) -->
+                <div x-show="activeTab === 'all' || activeTab === 'profit'" class="p-3 rounded-xl bg-gradient-to-br from-emerald-500/10 via-tan-500/10 to-gold/20 border border-gold/40">
+                    <div class="text-[10px] font-bold uppercase tracking-wider text-emerald-800 dark:text-gold-300 flex items-center justify-between">
+                        <span>Net Realized Profit</span>
+                        <span class="px-1.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-800 dark:text-emerald-300 text-[9px] font-bold">
+                            {{ $filterProfitMargin }}% Margin
+                        </span>
+                    </div>
+                    <div class="font-cinzel text-lg sm:text-xl font-bold text-emerald-700 dark:text-emerald-300 mt-1">
+                        Rs. {{ number_format($filterNetProfit) }}
+                    </div>
+                    <div class="text-[10px] text-emerald-600 dark:text-emerald-400 mt-0.5 font-medium">
+                        (Revenue - COGS - Return Losses)
+                    </div>
+                </div>
+
+            </div>
         </div>
 
     </div>
