@@ -245,7 +245,7 @@
                 this.product, 
                 this.getVariantLabel(), 
                 this.quantity, 
-                true,
+                false,
                 {
                     price: this.currentProductPrice,
                     engraved_name: isEngraved ? this.engravedName.trim().toUpperCase() : null,

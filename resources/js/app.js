@@ -178,32 +178,9 @@ window.ZunashAlert = {
 
     // Cart Notification with Action
     cartAdded(product) {
-        return Swal.fire({
-            title: 'Added to Shopping Bag',
-            html: `
-                <div style="display: flex; align-items: center; gap: 14px; text-align: left; padding: 10px 0;">
-                    <img src="${product.image}" style="width: 60px; height: 75px; object-fit: cover; border-radius: 6px; border: 1px solid rgba(197, 161, 107, 0.4);" />
-                    <div>
-                        <div style="font-family: 'Playfair Display', serif; font-weight: 600; font-size: 15px; color: #FFFFFF;">${product.name}</div>
-                        <div style="color: #C5A16B; font-weight: 700; margin-top: 4px; font-size: 14px;">PKR ${Number(product.price).toLocaleString()}</div>
-                    </div>
-                </div>
-            `,
-            showCancelButton: true,
-            confirmButtonText: 'Checkout Now',
-            cancelButtonText: 'Continue Browsing',
-            customClass: {
-                popup: 'byzunash-swal-popup',
-                title: 'byzunash-swal-title',
-                htmlContainer: 'byzunash-swal-html',
-                confirmButton: 'byzunash-swal-confirm-btn',
-                cancelButton: 'byzunash-swal-cancel-btn'
-            }
-        }).then((result) => {
-            if (result.isConfirmed) {
-                window.location.href = '/checkout';
-            }
-        });
+        if (window.Alpine && Alpine.store('cart')) {
+            Alpine.store('cart').isOpen = true;
+        }
     }
 };
 
@@ -344,12 +321,11 @@ Alpine.store('cart', {
         this.save();
         this.refreshIcons();
 
-        if (showPrompt) {
-            window.ZunashAlert.cartAdded(product);
-        } else {
+        // Standard smooth luxury ecommerce behavior: toast notification + open slide-over cart drawer
+        if (window.ZunashAlert) {
             window.ZunashAlert.toast(`"${product.name}" added to shopping bag.`, 'success');
-            this.isOpen = true;
         }
+        this.isOpen = true;
     },
 
     updateQuantity(key, quantity) {
