@@ -588,5 +588,8 @@ class DatabaseSeeder extends Seeder
         foreach ($settings as $k => $v) {
             StoreSetting::set($k, $v);
         }
+
+        // 8. Seed 4 Feature-Testing Products (Prepaid Only, Standard COD, Laser Name Engraving, Addons & Gift Deals)
+        $this->call(DemoTestingProductsSeeder::class);
     }
 }

@@ -817,20 +817,10 @@
                             <!-- CTA 2: BUY IT NOW (Solid Luxury Charcoal) -->
                             <button 
                                 type="button" 
-                                @click="buyNow('prepaid')" 
+                                @click="buyNow()" 
                                 class="w-full h-12 px-6 bg-[#1a1412] hover:bg-black text-white text-xs uppercase tracking-widest font-bold rounded-xl transition-all active:scale-[0.98] flex items-center justify-center gap-2 shadow-md"
                             >
                                 <span>BUY IT NOW</span>
-                            </button>
-
-                            <!-- CTA 3: Buy with Cash on Delivery (Solid Black with Shopping Cart Icon) -->
-                            <button 
-                                type="button" 
-                                @click="buyNow('cod')" 
-                                class="w-full h-12 px-6 bg-black hover:bg-neutral-900 text-white text-xs uppercase tracking-widest font-bold rounded-xl transition-all active:scale-[0.98] flex items-center justify-center gap-2.5 shadow-lg border border-white/10"
-                            >
-                                <i data-lucide="shopping-cart" class="w-4 h-4 text-white"></i>
-                                <span>Buy with Cash on Delivery</span>
                             </button>
 
                             <!-- WhatsApp Quick Order -->
@@ -1673,11 +1663,11 @@
                 <div class="shrink-0 flex items-center gap-1.5">
                     <button 
                         type="button" 
-                        @click="buyNow('cod')" 
-                        class="px-3.5 py-2.5 bg-black hover:bg-neutral-900 text-white text-[11px] font-bold uppercase tracking-wider rounded-xl transition-all active:scale-95 flex items-center gap-1.5 shadow-md border border-white/10"
+                        @click="buyNow()" 
+                        class="px-4 py-2.5 bg-[#1a1412] hover:bg-black text-white text-[11px] font-bold uppercase tracking-wider rounded-xl transition-all active:scale-95 flex items-center gap-1.5 shadow-md border border-white/10"
                     >
-                        <i data-lucide="shopping-cart" class="w-3.5 h-3.5 text-white"></i>
-                        <span>Buy with Cash on Delivery</span>
+                        <span>BUY IT NOW</span>
+                        <i data-lucide="arrow-right" class="w-3.5 h-3.5 text-gold-400"></i>
                     </button>
                 </div>
             </div>
