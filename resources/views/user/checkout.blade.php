@@ -69,6 +69,7 @@
 
         <!-- Success Order Confirmation View (Shown when order placed) -->
         <div 
+            id="order-confirmation-receipt"
             x-show="orderPlaced" 
             x-cloak 
             x-transition:enter="transition ease-out duration-500"
@@ -256,6 +257,70 @@
             </div>
         </div>
 
+        <!-- Mobile Order Summary Collapsible Accordion (Standard Shopify Style - lg:hidden) -->
+        <div x-show="!orderPlaced" class="lg:hidden mb-6 bg-white rounded-2xl border border-ivory-300 shadow-sm overflow-hidden" x-data="{ mobileSummaryOpen: false }">
+            <button 
+                type="button" 
+                @click="mobileSummaryOpen = !mobileSummaryOpen"
+                class="w-full py-3.5 px-4 flex items-center justify-between text-xs font-semibold bg-[#FAF7F2] border-b border-ivory-200 transition-colors cursor-pointer"
+            >
+                <div class="flex items-center gap-2 text-espresso-950 font-bold">
+                    <svg class="w-4 h-4 text-tan-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" /></svg>
+                    <span x-text="mobileSummaryOpen ? 'Hide Order Summary' : 'Show Order Summary'"></span>
+                    <span class="text-[10px] text-muted font-normal" x-text="'(' + (Alpine.store('cart') ? Alpine.store('cart').count : 0) + ' items)'"></span>
+                    <svg class="w-3.5 h-3.5 text-muted transition-transform duration-200" :class="mobileSummaryOpen ? 'rotate-180' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" /></svg>
+                </div>
+                <div class="font-cinzel text-sm font-bold text-espresso-950">
+                    Rs. <span x-text="calculatedTotal.toLocaleString()"></span>
+                </div>
+            </button>
+
+            <!-- Expanded Items List in Mobile Accordion -->
+            <div x-show="mobileSummaryOpen" x-cloak x-transition.opacity.duration.200ms class="p-4 space-y-4">
+                <div class="space-y-3 max-h-72 overflow-y-auto divide-y divide-ivory-200">
+                    <template x-for="item in (Alpine.store('cart') ? Alpine.store('cart').items : [])" :key="'mob-' + item.key">
+                        <div class="pt-3 first:pt-0 flex items-center gap-3">
+                            <div class="relative w-12 h-12 rounded-xl bg-ivory-100 border border-ivory-300 overflow-hidden shrink-0">
+                                <img :src="item.image" :alt="item.name" class="w-full h-full object-cover">
+                                <span class="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-espresso text-gold text-[9px] font-bold flex items-center justify-center" x-text="item.quantity"></span>
+                            </div>
+                            <div class="min-w-0 flex-1 text-xs">
+                                <div class="font-bold text-espresso-950 truncate" x-text="item.name"></div>
+                                <div class="text-[10px] text-muted flex items-center gap-1.5 flex-wrap">
+                                    <span x-show="item.color" x-text="item.color"></span>
+                                    <span x-show="item.size" x-text="'Size: ' + item.size"></span>
+                                    <span x-show="item.engraved_name" class="text-amber-800 font-bold bg-amber-50 px-1.5 py-0.2 rounded text-[9px]" x-text="'✍️ ' + item.engraved_name"></span>
+                                </div>
+                            </div>
+                            <div class="font-cinzel font-bold text-xs text-espresso-950 shrink-0">
+                                Rs. <span x-text="(item.price * item.quantity).toLocaleString()"></span>
+                            </div>
+                        </div>
+                    </template>
+                </div>
+
+                <!-- Price Breakdown in Mobile Summary -->
+                <div class="border-t border-ivory-200 pt-3 space-y-2 text-xs">
+                    <div class="flex justify-between text-muted">
+                        <span>Subtotal</span>
+                        <span class="font-medium text-espresso-900">Rs. <span x-text="(Alpine.store('cart') ? Alpine.store('cart').subtotal : 0).toLocaleString()"></span></span>
+                    </div>
+                    <div class="flex justify-between text-muted">
+                        <span>Delivery (Pakistan)</span>
+                        <span class="font-medium" :class="shippingCharge === 0 ? 'text-emerald-700 font-bold' : 'text-espresso-900'" x-text="shippingCharge === 0 ? 'FREE' : 'Rs. ' + shippingCharge.toLocaleString()"></span>
+                    </div>
+                    <div class="flex justify-between text-muted" x-show="discountAmount > 0">
+                        <span class="text-emerald-700">Discount Applied</span>
+                        <span class="text-emerald-700 font-bold">- Rs. <span x-text="discountAmount.toLocaleString()"></span></span>
+                    </div>
+                    <div class="flex justify-between text-sm font-bold text-espresso-950 pt-2 border-t border-ivory-200">
+                        <span>Total Due</span>
+                        <span class="font-cinzel text-base text-gold-700">Rs. <span x-text="calculatedTotal.toLocaleString()"></span></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <!-- Checkout Form Grid -->
         <div x-show="!orderPlaced" class="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-10 items-start">
             
@@ -322,7 +387,7 @@
                             </div>
                         </div>
 
-                        <!-- Phone & Email Grid -->
+                        <!-- Phone & Email Grid with Real-Time Validation -->
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                             <div>
                                 <div class="flex items-center justify-between mb-1.5">
@@ -334,7 +399,10 @@
                                         WhatsApp for Dispatch
                                     </span>
                                 </div>
-                                <div class="flex items-center rounded-xl border border-ivory-300 bg-[#FAF7F2]/60 focus-within:bg-white focus-within:border-gold focus-within:ring-4 focus-within:ring-gold/15 transition-all shadow-2xs overflow-hidden">
+                                <div 
+                                    class="flex items-center rounded-xl border bg-[#FAF7F2]/60 focus-within:bg-white focus-within:ring-4 transition-all shadow-2xs overflow-hidden"
+                                    :class="phoneError ? 'border-red-400 focus-within:border-red-500 focus-within:ring-red-100' : 'border-ivory-300 focus-within:border-gold focus-within:ring-gold/15'"
+                                >
                                     <div class="flex items-center gap-1.5 px-3.5 py-3.5 bg-ivory-100/90 border-r border-ivory-300 text-xs font-semibold text-espresso-900 select-none flex-shrink-0">
                                         <span class="text-base leading-none">🇵🇰</span>
                                         <span class="font-mono text-xs font-bold">+92</span>
@@ -342,11 +410,15 @@
                                     <input 
                                         type="tel" 
                                         x-model="phone" 
-                                        placeholder="321 4700545" 
+                                        @input="validatePhone()"
+                                        @blur="validatePhone()"
+                                        placeholder="0321 4700545" 
                                         class="w-full px-3.5 py-3.5 bg-transparent text-xs sm:text-sm text-espresso-950 focus:outline-none font-mono placeholder:text-muted/60"
                                         required
                                     >
                                 </div>
+                                <p x-show="phoneError" x-text="phoneError" x-cloak class="text-[10px] text-red-600 mt-1 font-semibold flex items-center gap-1">
+                                </p>
                             </div>
                             <div>
                                 <label class="block text-[11px] uppercase tracking-wider font-bold text-espresso-900 mb-1.5">
@@ -355,9 +427,14 @@
                                 <input 
                                     type="email" 
                                     x-model="email" 
+                                    @input="validateEmail()"
+                                    @blur="validateEmail()"
                                     placeholder="client@example.com" 
-                                    class="w-full px-4 py-3 bg-[#FAF7F2]/60 hover:bg-white focus:bg-white border border-ivory-300 focus:border-gold rounded-xl text-xs sm:text-sm text-espresso-950 focus:outline-none focus:ring-4 focus:ring-gold/15 transition-all shadow-2xs"
+                                    class="w-full px-4 py-3 bg-[#FAF7F2]/60 hover:bg-white focus:bg-white border rounded-xl text-xs sm:text-sm text-espresso-950 focus:outline-none focus:ring-4 transition-all shadow-2xs"
+                                    :class="emailError ? 'border-red-400 focus:border-red-500 focus:ring-red-100' : 'border-ivory-300 focus:border-gold focus:ring-gold/15'"
                                 >
+                                <p x-show="emailError" x-text="emailError" x-cloak class="text-[10px] text-red-600 mt-1 font-semibold flex items-center gap-1">
+                                </p>
                             </div>
                         </div>
 
@@ -375,24 +452,48 @@
                             >
                         </div>
 
-                        <!-- City & Postal Code Grid -->
+                        <!-- City & Postal Code Grid (Select OR Custom Type City) -->
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                             <div>
-                                <label class="block text-[11px] uppercase tracking-wider font-bold text-espresso-900 mb-1.5">
-                                    City <span class="text-gold-700">*</span>
-                                </label>
-                                <div class="relative">
+                                <div class="flex items-center justify-between mb-1.5">
+                                    <label class="block text-[11px] uppercase tracking-wider font-bold text-espresso-900">
+                                        City / Town <span class="text-gold-700">*</span>
+                                    </label>
+                                    <button 
+                                        type="button" 
+                                        @click="isCustomCity = !isCustomCity; if (isCustomCity) { city = '__custom__'; $nextTick(() => $refs.customCityInput?.focus()); } else { city = 'Lahore'; }"
+                                        class="text-[10px] text-tan-600 hover:text-espresso-900 font-semibold underline cursor-pointer"
+                                    >
+                                        <span x-text="isCustomCity ? '← Choose from common list' : '+ Type custom city ✍️'"></span>
+                                    </button>
+                                </div>
+
+                                <!-- Common Cities Dropdown -->
+                                <div class="relative" x-show="!isCustomCity">
                                     <select 
                                         x-model="city" 
+                                        @change="if (city === '__custom__') { isCustomCity = true; $nextTick(() => $refs.customCityInput?.focus()); }"
                                         class="w-full appearance-none px-4 py-3 bg-[#FAF7F2]/60 hover:bg-white focus:bg-white border border-ivory-300 focus:border-gold rounded-xl text-xs sm:text-sm text-espresso-950 focus:outline-none focus:ring-4 focus:ring-gold/15 transition-all shadow-2xs font-semibold cursor-pointer"
                                     >
                                         @foreach($pakistaniCities as $cityName)
                                             <option value="{{ $cityName }}">{{ $cityName }}</option>
                                         @endforeach
+                                        <option value="__custom__">✍️ Other City / Area (Type your own)</option>
                                     </select>
                                     <div class="absolute inset-y-0 right-0 pr-3.5 flex items-center pointer-events-none text-espresso-700">
                                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg>
                                     </div>
+                                </div>
+
+                                <!-- Custom City Manual Input Field -->
+                                <div x-show="isCustomCity" x-cloak class="relative">
+                                    <input 
+                                        type="text" 
+                                        x-ref="customCityInput"
+                                        x-model="customCity" 
+                                        placeholder="Enter your city / tehsil / district" 
+                                        class="w-full px-4 py-3 bg-white border border-gold focus:border-gold rounded-xl text-xs sm:text-sm text-espresso-950 focus:outline-none focus:ring-4 focus:ring-gold/15 transition-all shadow-2xs font-semibold"
+                                    >
                                 </div>
                             </div>
                             <div>
@@ -1021,6 +1122,10 @@ function checkoutForm() {
         phone: '',
         address: '',
         city: 'Lahore',
+        customCity: '',
+        isCustomCity: false,
+        phoneError: '',
+        emailError: '',
         postalCode: '',
         orderNotes: '',
         paymentMethod: '{{ $defaultPaymentMethod ?? 'cod' }}',
@@ -1028,6 +1133,34 @@ function checkoutForm() {
         orderNumber: '',
         error: '',
         isSubmitting: false,
+
+        validatePhone() {
+            const clean = (this.phone || '').replace(/[^0-9]/g, '');
+            if (!clean) {
+                this.phoneError = '';
+                return false;
+            }
+            if (!/^(0?3[0-9]{9})$/.test(clean)) {
+                this.phoneError = 'Please enter a valid Pakistani mobile number (e.g. 0321 4700545).';
+                return false;
+            }
+            this.phoneError = '';
+            return true;
+        },
+
+        validateEmail() {
+            if (!this.email || !this.email.trim()) {
+                this.emailError = '';
+                return true;
+            }
+            const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!regex.test(this.email.trim())) {
+                this.emailError = 'Please enter a valid email address (e.g. client@gmail.com).';
+                return false;
+            }
+            this.emailError = '';
+            return true;
+        },
 
         // Placed Order Snapshot for Receipt / Print
         placedOrderItems: [],
@@ -1263,8 +1396,55 @@ function checkoutForm() {
         placeOrder() {
             this.error = '';
 
-            if (!this.firstName || !this.lastName || !this.phone || !this.address || !this.city) {
-                this.error = 'Please fill out all mandatory shipping details (First Name, Last Name, WhatsApp Phone, Address, City).';
+            // 1. Phone number validation (Pakistani formats: 03XXXXXXXXX or 3XXXXXXXXX)
+            const cleanPhone = (this.phone || '').replace(/[^0-9]/g, '');
+            if (!cleanPhone || !/^(0?3[0-9]{9})$/.test(cleanPhone)) {
+                this.phoneError = 'Please enter a valid 10 or 11-digit Pakistani mobile number (e.g. 0321 4700545).';
+                this.error = this.phoneError;
+                if (window.ZunashAlert) {
+                    window.ZunashAlert.toast(this.error, 'error');
+                }
+                const phoneInput = document.getElementById('checkout-phone-input');
+                if (phoneInput) {
+                    phoneInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    phoneInput.focus();
+                }
+                return;
+            }
+
+            // 2. Email validation (if filled)
+            if (this.email && this.email.trim()) {
+                const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                if (!regex.test(this.email.trim())) {
+                    this.emailError = 'Please enter a valid email address (e.g. name@gmail.com).';
+                    this.error = this.emailError;
+                    if (window.ZunashAlert) {
+                        window.ZunashAlert.toast(this.error, 'error');
+                    }
+                    const emailInput = document.getElementById('checkout-email-input');
+                    if (emailInput) {
+                        emailInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                        emailInput.focus();
+                    }
+                    return;
+                }
+            }
+
+            // 3. Resolve City (either dropdown or custom input)
+            const finalCity = (this.city === '__custom__' || this.isCustomCity) 
+                ? (this.customCity || '').trim() 
+                : (this.city || '').trim();
+
+            if (!finalCity) {
+                this.error = 'Please select or enter your delivery city / town.';
+                if (window.ZunashAlert) {
+                    window.ZunashAlert.toast(this.error, 'error');
+                }
+                return;
+            }
+
+            if (!this.firstName || !this.lastName || !this.address) {
+                this.error = 'Please fill out all mandatory shipping details (First Name, Last Name, Delivery Address).';
                 if (window.ZunashAlert) {
                     window.ZunashAlert.toast(this.error, 'error');
                 }
@@ -1285,10 +1465,10 @@ function checkoutForm() {
             formData.append('_token', '{{ csrf_token() }}');
             formData.append('first_name', this.firstName);
             formData.append('last_name', this.lastName);
-            formData.append('email', this.email || (this.phone.replace(/[^0-9]/g, '') + '@byzunash.store'));
+            formData.append('email', this.email || (cleanPhone + '@byzunash.store'));
             formData.append('phone', this.phone);
             formData.append('address', this.address);
-            formData.append('city', this.city);
+            formData.append('city', finalCity);
             formData.append('postal_code', this.postalCode || '');
             formData.append('order_notes', this.orderNotes || '');
             formData.append('payment_method', this.paymentMethod);
@@ -1301,6 +1481,16 @@ function checkoutForm() {
             formData.append('items', JSON.stringify(Alpine.store('cart').items));
             formData.append('subtotal', Alpine.store('cart').subtotal);
             formData.append('total', this.calculatedTotal);
+
+            const triggerReceiptScroll = () => {
+                window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
+                document.documentElement.scrollTop = 0;
+                document.body.scrollTop = 0;
+                const el = document.getElementById('order-confirmation-receipt');
+                if (el) {
+                    el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+            };
 
             fetch('{{ route('checkout.process') }}', {
                 method: 'POST',
@@ -1324,19 +1514,22 @@ function checkoutForm() {
                     this.placedOrderDiscount = this.discountAmount || 0;
                     this.placedOrderDate = new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
 
+                    // Switch immediately to confirmation view and scroll to top
+                    this.orderPlaced = true;
+                    if (Alpine.store('cart')) Alpine.store('cart').clear();
+
+                    triggerReceiptScroll();
+                    this.$nextTick(triggerReceiptScroll);
+                    setTimeout(triggerReceiptScroll, 120);
+                    setTimeout(triggerReceiptScroll, 350);
+
                     if (window.ZunashAlert) {
                         window.ZunashAlert.success(
                             'Order Placed Successfully!',
                             'Shukriya, <strong>' + this.firstName + '</strong>! Your order reference <strong style="color: #C5A16B; font-family: monospace;">' + this.orderNumber + '</strong> has been recorded. Our client concierge will contact you at <strong>' + this.phone + '</strong> prior to courier dispatch.'
                         ).then(() => {
-                            this.orderPlaced = true;
-                            Alpine.store('cart').clear();
-                            window.scrollTo({ top: 0, behavior: 'smooth' });
+                            triggerReceiptScroll();
                         });
-                    } else {
-                        this.orderPlaced = true;
-                        Alpine.store('cart').clear();
-                        window.scrollTo({ top: 0, behavior: 'smooth' });
                     }
                 } else {
                     this.error = data.message || 'Something went wrong while placing order.';
@@ -1354,8 +1547,12 @@ function checkoutForm() {
                 this.placedOrderDiscount = this.discountAmount || 0;
                 this.placedOrderDate = new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
                 this.orderPlaced = true;
-                Alpine.store('cart').clear();
-                window.scrollTo({ top: 0, behavior: 'smooth' });
+                if (Alpine.store('cart')) Alpine.store('cart').clear();
+
+                triggerReceiptScroll();
+                this.$nextTick(triggerReceiptScroll);
+                setTimeout(triggerReceiptScroll, 120);
+                setTimeout(triggerReceiptScroll, 350);
             });
         }
     };

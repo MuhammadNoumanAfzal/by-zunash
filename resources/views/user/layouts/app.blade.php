@@ -514,6 +514,18 @@
         </span>
     </a>
 
+    <!-- Smooth Auto-Scroll & Viewport Management -->
+    <script>
+        if ('scrollRestoration' in history) {
+            history.scrollRestoration = 'manual';
+        }
+        window.addEventListener('pageshow', function() {
+            if (!window.location.hash) {
+                window.scrollTo(0, 0);
+            }
+        });
+    </script>
+
     @stack('scripts')
 </body>
 </html>

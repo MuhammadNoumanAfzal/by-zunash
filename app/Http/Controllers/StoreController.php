@@ -304,57 +304,101 @@ class StoreController extends Controller
             abort(404, 'Product not found.');
         }
 
-        $productModel = \App\Models\Product::with(['category', 'subcategory', 'giftDeal'])->where('slug', $slug)->first();
+        $productModel = null;
+        try {
+            $hasGiftDealCol = \Illuminate\Support\Facades\Schema::hasColumn('products', 'gift_deal_id');
+            $withRelations = ['category', 'subcategory'];
+            if ($hasGiftDealCol) {
+                $withRelations[] = 'giftDeal';
+            }
+            $productModel = \App\Models\Product::with($withRelations)->where('slug', $slug)->first();
+        } catch (\Throwable $e) {
+            try {
+                $productModel = \App\Models\Product::where('slug', $slug)->first();
+            } catch (\Throwable $ex) {
+                $productModel = null;
+            }
+        }
 
         // Related products in same category
         $relatedProducts = $this->getProducts()
-            ->where('category', $product['category'])
+            ->where('category', $product['category'] ?? '')
             ->where('id', '!=', $product['id'])
             ->take(4);
 
         // Find active companion deals/bundles that include this product
-        $companionDeals = \App\Models\Deal::active()
-            ->whereHas('products', function ($q) use ($product) {
-                $q->where('products.id', $product['id']);
-            })
-            ->with('products')
-            ->get();
+        $companionDeals = collect();
+        try {
+            if (\Illuminate\Support\Facades\Schema::hasTable('deals')) {
+                $companionDeals = \App\Models\Deal::active()
+                    ->whereHas('products', function ($q) use ($product) {
+                        $q->where('products.id', $product['id']);
+                    })
+                    ->with('products')
+                    ->get();
+            }
+        } catch (\Throwable $e) {
+            $companionDeals = collect();
+        }
 
         // Resolved Addons for cross-sell (e.g. Add these & get 15% off)
         $addons = collect();
-        if ($productModel && $productModel->has_addons) {
-            $addons = $productModel->resolved_addons;
+        try {
+            if ($productModel && !empty($productModel->has_addons)) {
+                $addons = $productModel->resolved_addons ?? collect();
+            }
+        } catch (\Throwable $e) {
+            $addons = collect();
         }
-        if ($addons->isEmpty()) {
-            // Curated fallback add-ons across the atelier catalogue
-            $addons = \App\Models\Product::where('id', '!=', $product['id'])
-                ->whereIn('category_slug', ['accessories', 'wallets', 'belts'])
-                ->where('in_stock', true)
-                ->take(3)
-                ->get();
+
+        if (empty($addons) || (is_object($addons) && method_exists($addons, 'isEmpty') && $addons->isEmpty())) {
+            try {
+                $addons = \App\Models\Product::where('id', '!=', $product['id'])
+                    ->where('in_stock', true)
+                    ->take(3)
+                    ->get();
+            } catch (\Throwable $e) {
+                $addons = collect();
+            }
         }
 
         // Companion gift deal (if product has explicit gift deal or companion deal)
         $giftDeal = null;
-        if ($productModel && $productModel->has_gift_set && $productModel->giftDeal) {
-            $giftDeal = $productModel->giftDeal;
-        } elseif ($companionDeals->isNotEmpty()) {
-            $giftDeal = $companionDeals->first();
+        try {
+            if ($productModel && !empty($productModel->has_gift_set) && $productModel->giftDeal) {
+                $giftDeal = $productModel->giftDeal;
+            } elseif ($companionDeals->isNotEmpty()) {
+                $giftDeal = $companionDeals->first();
+            }
+        } catch (\Throwable $e) {
+            $giftDeal = null;
         }
 
         // WhatsApp reviews & verified customer feedback for social proof
-        $whatsappReviews = \App\Models\Review::where('is_whatsapp', true)
-            ->whereIn('status', ['published', 'approved'])
-            ->latest()
-            ->take(6)
-            ->get();
+        $whatsappReviews = collect();
+        $productReviews = collect();
+        try {
+            if (\Illuminate\Support\Facades\Schema::hasTable('reviews')) {
+                $hasWhatsappCol = \Illuminate\Support\Facades\Schema::hasColumn('reviews', 'is_whatsapp');
+                if ($hasWhatsappCol) {
+                    $whatsappReviews = \App\Models\Review::where('is_whatsapp', true)
+                        ->whereIn('status', ['published', 'approved'])
+                        ->latest()
+                        ->take(6)
+                        ->get();
+                }
 
-        $productReviews = \App\Models\Review::whereIn('status', ['published', 'approved'])
-            ->where(function($q) use ($slug, $product) {
-                $q->where('product_slug', $slug)->orWhere('product_name', $product['name']);
-            })
-            ->latest()
-            ->get();
+                $productReviews = \App\Models\Review::whereIn('status', ['published', 'approved'])
+                    ->where(function($q) use ($slug, $product) {
+                        $q->where('product_slug', $slug)->orWhere('product_name', $product['name'] ?? '');
+                    })
+                    ->latest()
+                    ->get();
+            }
+        } catch (\Throwable $e) {
+            $whatsappReviews = collect();
+            $productReviews = collect();
+        }
 
         return view('user.product-details', compact(
             'product',

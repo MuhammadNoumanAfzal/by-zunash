@@ -502,37 +502,38 @@
         </div>
     </div>
 
-    <!-- Mobile Navigation Drawer with Accordion Subcategories -->
-    <div 
-        x-show="mobileMenuOpen" 
-        x-cloak
-        style="display: none;"
-        class="lg:hidden fixed inset-0 z-50 flex"
-    >
-        <!-- Backdrop -->
+    <!-- Mobile Navigation Drawer with Accordion Subcategories (Teleported to body to prevent sticky header clipping on scroll) -->
+    <template x-teleport="body">
         <div 
             x-show="mobileMenuOpen" 
-            x-transition:enter="transition-opacity ease-linear duration-300"
-            x-transition:enter-start="opacity-0"
-            x-transition:enter-end="opacity-100"
-            x-transition:leave="transition-opacity ease-linear duration-300"
-            x-transition:leave-start="opacity-100"
-            x-transition:leave-end="opacity-0"
-            @click="mobileMenuOpen = false" 
-            class="fixed inset-0 bg-espresso-950/60 backdrop-blur-xs"
-        ></div>
-
-        <!-- Drawer Content -->
-        <div 
-            x-show="mobileMenuOpen" 
-            x-transition:enter="transition ease-in-out duration-300 transform"
-            x-transition:enter-start="-translate-x-full"
-            x-transition:enter-end="translate-x-0"
-            x-transition:leave="transition ease-in-out duration-300 transform"
-            x-transition:leave-start="translate-x-0"
-            x-transition:leave-end="-translate-x-full"
-            class="relative max-w-xs w-full bg-white dark:bg-[#161210] h-full shadow-2xl flex flex-col justify-between py-6 px-6 z-10 overflow-y-auto"
+            x-cloak
+            style="display: none;"
+            class="lg:hidden fixed inset-0 z-[9999] flex"
         >
+            <!-- Backdrop -->
+            <div 
+                x-show="mobileMenuOpen" 
+                x-transition:enter="transition-opacity ease-linear duration-300"
+                x-transition:enter-start="opacity-0"
+                x-transition:enter-end="opacity-100"
+                x-transition:leave="transition-opacity ease-linear duration-300"
+                x-transition:leave-start="opacity-100"
+                x-transition:leave-end="opacity-0"
+                @click="mobileMenuOpen = false" 
+                class="fixed inset-0 bg-espresso-950/70 backdrop-blur-xs"
+            ></div>
+
+            <!-- Drawer Content -->
+            <div 
+                x-show="mobileMenuOpen" 
+                x-transition:enter="transition ease-in-out duration-300 transform"
+                x-transition:enter-start="-translate-x-full"
+                x-transition:enter-end="translate-x-0"
+                x-transition:leave="transition ease-in-out duration-300 transform"
+                x-transition:leave-start="translate-x-0"
+                x-transition:leave-end="-translate-x-full"
+                class="relative max-w-xs w-full bg-white dark:bg-[#161210] h-full shadow-2xl flex flex-col justify-between py-6 px-6 z-10 overflow-y-auto"
+            >
             <div>
                 <!-- Drawer Header -->
                 <div class="flex items-center justify-between pb-6 border-b border-ivory-200 dark:border-white/10">
@@ -672,5 +673,5 @@
                 </div>
             </div>
         </div>
-    </div>
+    </template>
 </header>

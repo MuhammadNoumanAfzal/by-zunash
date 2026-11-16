@@ -114,17 +114,17 @@
     // Addon cross-sells preparation
     $addonsData = ($addons ?? collect())->map(function($a) use ($product) {
         $discountPct = (int)($product['addon_discount_percent'] ?? 15);
-        $originalPrice = (float)$a->price;
+        $originalPrice = (float)($a->price ?? ($a['price'] ?? 0));
         $discountedPrice = round($originalPrice * (1 - ($discountPct / 100)));
         return [
-            'id' => $a->id,
-            'name' => $a->name,
-            'image' => $a->image,
+            'id' => $a->id ?? ($a['id'] ?? 0),
+            'name' => $a->name ?? ($a['name'] ?? ''),
+            'image' => $a->image ?? ($a['image'] ?? ''),
             'original_price' => $originalPrice,
             'price' => $discountedPrice,
-            'savings' => $originalPrice - $discountedPrice,
-            'category' => $a->category_slug ?? 'accessories',
-            'colors' => $a->colors,
+            'savings' => max(0, $originalPrice - $discountedPrice),
+            'category' => $a->category_slug ?? ($a['category_slug'] ?? 'accessories'),
+            'colors' => $a->colors ?? ($a['colors'] ?? []),
             'selected' => false,
         ];
     })->values();
